@@ -41,7 +41,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        {this.state.isMounted && !window.devToolsExtension && getConfig('NODE_ENV') === 'development' && <DevTools />}
+        {this.state.isMounted && !window.devToolsExtension && false && getConfig('NODE_ENV') === 'development' && <DevTools />}
         {this.props.children}
       </div>
     );
@@ -65,7 +65,7 @@ App.propTypes = {
 App.defaultProps = {
   children: null,
   language: null,
-  theme: 'light'
+  theme: 'light',
 };
 
 const mapStateToProps = state => ({

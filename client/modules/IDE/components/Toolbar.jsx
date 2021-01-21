@@ -52,27 +52,31 @@ class Toolbar extends React.Component {
   }
 
   canEditProjectName() {
-    return (this.props.owner && this.props.owner.username
-      && this.props.owner.username === this.props.currentUser)
-      || !this.props.owner || !this.props.owner.username;
+    return (
+      (this.props.owner &&
+        this.props.owner.username &&
+        this.props.owner.username === this.props.currentUser) ||
+      !this.props.owner ||
+      !this.props.owner.username
+    );
   }
 
   render() {
     const playButtonClass = classNames({
       'toolbar__play-button': true,
-      'toolbar__play-button--selected': this.props.isPlaying
+      'toolbar__play-button--selected': this.props.isPlaying,
     });
     const stopButtonClass = classNames({
       'toolbar__stop-button': true,
-      'toolbar__stop-button--selected': !this.props.isPlaying
+      'toolbar__stop-button--selected': !this.props.isPlaying,
     });
     const preferencesButtonClass = classNames({
       'toolbar__preferences-button': true,
-      'toolbar__preferences-button--selected': this.props.preferencesIsVisible
+      'toolbar__preferences-button--selected': this.props.preferencesIsVisible,
     });
     const nameContainerClass = classNames({
       'toolbar__project-name-container': true,
-      'toolbar__project-name-container--editing': this.props.project.isEditingName
+      'toolbar__project-name-container--editing': this.props.project.isEditingName,
     });
 
     const canEditProjectName = this.canEditProjectName();
@@ -120,48 +124,49 @@ class Toolbar extends React.Component {
             {this.props.t('Toolbar.Auto-refresh')}
           </label>
         </div>
-        <div className={nameContainerClass}>
-          <button
-            className="toolbar__project-name"
-            onClick={() => {
-              if (canEditProjectName) {
-                this.props.showEditProjectName();
-                setTimeout(() => this.projectNameInput.focus(), 0);
-              }
-            }}
-            disabled={!canEditProjectName}
-            aria-label={this.props.t('Toolbar.EditSketchARIA')}
-          >
-            <span>{this.props.project.name}</span>
-            {
-              canEditProjectName &&
-              <EditProjectNameIcon
-                className="toolbar__edit-name-button"
-                focusable="false"
-                aria-hidden="true"
-              />
-            }
-          </button>
-          <input
-            type="text"
-            maxLength="128"
-            className="toolbar__project-name-input"
-            aria-label={this.props.t('Toolbar.NewSketchNameARIA')}
-            value={this.state.projectNameInputValue}
-            onChange={this.handleProjectNameChange}
-            ref={(element) => { this.projectNameInput = element; }}
-            onBlur={this.handleProjectNameSave}
-            onKeyPress={this.handleKeyPress}
-          />
-          {(() => { // eslint-disable-line
-            if (this.props.owner) {
-              return (
-                <p className="toolbar__project-owner">
-                  {this.props.t('Toolbar.By')} <Link to={`/${this.props.owner.username}/sketches`}>{this.props.owner.username}</Link>
-                </p>
-              );
-            }
-          })()}
+        <div className={nameContainerClass} style={{ flexDirection: 'column' }}>
+          <span className="toolbar__project-name__label">Sketch name</span>
+          <div>
+            <button
+              className="toolbar__project-name"
+              onClick={() => {
+                if (canEditProjectName) {
+                  this.props.showEditProjectName();
+                  setTimeout(() => this.projectNameInput.focus(), 0);
+                }
+              }}
+              disabled={!canEditProjectName}
+              aria-label={this.props.t('Toolbar.EditSketchARIA')}
+            >
+              <span>{this.props.project.name}</span>
+              {canEditProjectName && (
+                <EditProjectNameIcon
+                  className="toolbar__edit-name-button"
+                  focusable="false"
+                  aria-hidden="true"
+                />
+              )}
+            </button>
+            <input
+              type="text"
+              maxLength="128"
+              className="toolbar__project-name-input"
+              aria-label={this.props.t('Toolbar.NewSketchNameARIA')}
+              value={this.state.projectNameInputValue}
+              onChange={this.handleProjectNameChange}
+              ref={(element) => {
+                this.projectNameInput = element;
+              }}
+              onBlur={this.handleProjectNameSave}
+              onKeyPress={this.handleKeyPress}
+            />
+            {this.props.owner && (
+              <p className="toolbar__project-owner">
+                {this.props.t('Toolbar.By')}{' '}
+                <Link to={`/${this.props.owner.username}/sketches`}>{this.props.owner.username}</Link>
+              </p>
+            )}
+          </div>
         </div>
         <button
           className={preferencesButtonClass}
@@ -182,7 +187,7 @@ Toolbar.propTypes = {
   setProjectName: PropTypes.func.isRequired,
   openPreferences: PropTypes.func.isRequired,
   owner: PropTypes.shape({
-    username: PropTypes.string
+    username: PropTypes.string,
   }),
   project: PropTypes.shape({
     name: PropTypes.string.isRequired,
@@ -200,13 +205,12 @@ Toolbar.propTypes = {
   startAccessibleSketch: PropTypes.func.isRequired,
   saveProject: PropTypes.func.isRequired,
   currentUser: PropTypes.string,
-  t: PropTypes.func.isRequired
-
+  t: PropTypes.func.isRequired,
 };
 
 Toolbar.defaultProps = {
   owner: undefined,
-  currentUser: undefined
+  currentUser: undefined,
 };
 
 function mapStateToProps(state) {

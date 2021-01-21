@@ -104,7 +104,11 @@
 	margin-left: #{10 / $base-font-size}rem;
 	padding-left: #{10 / $base-font-size}rem;
   display: flex;
-  align-items: center;
+
+  .toolbar__project-name__label {
+	  font-size: 0.75em;
+	  padding: 0 6px;
+  }
 }
 
 .toolbar__project-name {

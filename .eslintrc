@@ -21,14 +21,16 @@
     "no-alert": 0,
     "no-underscore-dangle": 0,
     "max-len": [1, 120, 2, {"ignoreComments": true, "ignoreTemplateLiterals": true}],
-    "quote-props": [1, "consistent-as-needed"],
+    "quote-props":"off",
     "no-unused-vars": [1, {"vars": "local", "args": "none"}],
-    "consistent-return": ["error", { "treatUndefinedAsUnspecified": true }],
+    "consistent-return": ["error", { "treatUndefinedAsUnspecified": false }],
     "no-param-reassign": [2, { "props": false }],
     "react/self-closing-comp": ["error", {
       "component": true,
       "html": false
     }],
+    "arrow-parens": "off",
+    "object-curly-newline": 0,
     "newline-per-chained-call": 0,
     "react/prefer-stateless-function": [2,
       { "ignorePureComponents": true

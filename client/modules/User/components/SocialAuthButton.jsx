@@ -11,31 +11,41 @@ import { unlinkService } from '../actions';
 
 const authUrls = {
   github: '/auth/github',
-  google: '/auth/google'
+  google: '/auth/google',
 };
 
 const icons = {
   github: GithubIcon,
-  google: GoogleIcon
+  google: GoogleIcon,
 };
 
 const services = {
   github: 'github',
-  google: 'google'
+  google: 'google',
 };
 
 const servicesLabels = {
   github: 'GitHub',
-  google: 'Google'
+  google: 'Google',
 };
 
 const StyledButton = styled(Button)`
   width: ${remSize(300)};
+  height: @0px;
+  // font-weight: 900;
+
+  &&&,
+  * {
+    background: none;
+    border: none;
+  }
+
+  svg {
+    height: 20px;
+  }
 `;
 
-function SocialAuthButton({
-  service, linkStyle, isConnected, t
-}) {
+function SocialAuthButton({ service, linkStyle, isConnected, t }) {
   const ServiceIcon = icons[service];
   const serviceLabel = servicesLabels[service];
   const loginLabel = t('SocialAuthButton.Login', { serviceauth: serviceLabel });
@@ -48,26 +58,22 @@ function SocialAuthButton({
       return (
         <StyledButton
           iconBefore={<ServiceIcon aria-label={ariaLabel} />}
-          onClick={() => { dispatch(unlinkService(service)); }}
+          onClick={() => {
+            dispatch(unlinkService(service));
+          }}
         >
           {unlinkLabel}
         </StyledButton>
       );
     }
     return (
-      <StyledButton
-        iconBefore={<ServiceIcon aria-label={ariaLabel} />}
-        href={authUrls[service]}
-      >
+      <StyledButton iconBefore={<ServiceIcon aria-label={ariaLabel} />} href={authUrls[service]}>
         {connectLabel}
       </StyledButton>
     );
   }
   return (
-    <StyledButton
-      iconBefore={<ServiceIcon aria-label={ariaLabel} />}
-      href={authUrls[service]}
-    >
+    <StyledButton iconBefore={<ServiceIcon aria-label={ariaLabel} />} href={authUrls[service]}>
       {loginLabel}
     </StyledButton>
   );
@@ -79,12 +85,12 @@ SocialAuthButton.propTypes = {
   service: PropTypes.oneOf(['github', 'google']).isRequired,
   linkStyle: PropTypes.bool,
   isConnected: PropTypes.bool,
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
 };
 
 SocialAuthButton.defaultProps = {
   linkStyle: false,
-  isConnected: false
+  isConnected: false,
 };
 
 const SocialAuthButtonPublic = withTranslation()(SocialAuthButton);
