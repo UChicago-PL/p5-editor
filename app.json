@@ -3,7 +3,11 @@
   "description": "The p5.js Web Editor is an in-browser editor for creative coding, specifically for writing p5.js sketches.",
   "repository": "https://github.com/processing/p5.js-web-editor",
   "logo": "https://p5js.org/assets/img/p5js.svg",
-  "keywords": ["processing", "p5js", "p5.js"],
+  "keywords": [
+    "processing",
+    "p5js",
+    "p5.js"
+  ],
   "addons": [
     {
       "plan": "mongolab:sandbox",
@@ -88,6 +92,6 @@
     }
   },
   "scripts": {
-    "postdeploy": "MONGO_URL=$MONGO_URI MAILGUN_KEY=$MAILGUN_API_KEY npm run fetch-examples:prod"
+    "postdeploy": "MONGO_URL=$MONGO_URI npm run fetch-examples:prod"
   }
 }

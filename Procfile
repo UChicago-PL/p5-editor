@@ -1,1 +1,1 @@
-web: MONGO_URL=$MONGO_URI MAILGUN_KEY=$MAILGUN_API_KEY npm run start:prod
+web: MONGO_URL=$MONGO_URI npm run start:prod
