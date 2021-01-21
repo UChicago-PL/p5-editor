@@ -4,9 +4,9 @@ import lodash from 'lodash';
 
 import passport from 'passport';
 import GitHubStrategy from 'passport-github';
-import LocalStrategy from 'passport-local';
-import GoogleStrategy from 'passport-google-oauth20';
-import { BasicStrategy } from 'passport-http';
+// import LocalStrategy from 'passport-local';
+// import GoogleStrategy from 'passport-google-oauth20';
+// import { BasicStrategy } from 'passport-http';
 
 import User from '../models/user';
 
@@ -28,49 +28,49 @@ passport.deserializeUser((id, done) => {
 /**
  * Sign in using Email/Username and Password.
  */
-passport.use(
-  new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-    User.findByEmailOrUsername(email)
-      .then((user) => {
-        // eslint-disable-line consistent-return
-        if (!user) {
-          return done(null, false, { msg: `Email ${email} not found.` });
-        }
-        user.comparePassword(password, (innerErr, isMatch) => {
-          if (isMatch) {
-            return done(null, user);
-          }
-          return done(null, false, { msg: 'Invalid email or password.' });
-        });
-      })
-      .catch((err) => done(null, false, { msg: err }));
-  }),
-);
+// passport.use(
+//   new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
+//     User.findByEmailOrUsername(email)
+//       .then((user) => {
+//         // eslint-disable-line consistent-return
+//         if (!user) {
+//           return done(null, false, { msg: `Email ${email} not found.` });
+//         }
+//         user.comparePassword(password, (innerErr, isMatch) => {
+//           if (isMatch) {
+//             return done(null, user);
+//           }
+//           return done(null, false, { msg: 'Invalid email or password.' });
+//         });
+//       })
+//       .catch((err) => done(null, false, { msg: err }));
+//   }),
+// );
 
 /**
  * Authentificate using Basic Auth (Username + Api Key)
  */
-passport.use(
-  new BasicStrategy((userid, key, done) => {
-    User.findByUsername(userid, (err, user) => {
-      // eslint-disable-line consistent-return
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        return done(null, false);
-      }
-      user.findMatchingKey(key, (innerErr, isMatch, keyDocument) => {
-        if (isMatch) {
-          keyDocument.lastUsedAt = Date.now();
-          user.save();
-          return done(null, user);
-        }
-        return done(null, false, { msg: 'Invalid username or API key' });
-      });
-    });
-  }),
-);
+// passport.use(
+//   new BasicStrategy((userid, key, done) => {
+//     User.findByUsername(userid, (err, user) => {
+//       // eslint-disable-line consistent-return
+//       if (err) {
+//         return done(err);
+//       }
+//       if (!user) {
+//         return done(null, false);
+//       }
+//       user.findMatchingKey(key, (innerErr, isMatch, keyDocument) => {
+//         if (isMatch) {
+//           keyDocument.lastUsedAt = Date.now();
+//           user.save();
+//           return done(null, user);
+//         }
+//         return done(null, false, { msg: 'Invalid username or API key' });
+//       });
+//     });
+//   }),
+// );
 
 /*
   Input:
@@ -160,80 +160,80 @@ passport.use(
 /**
  * Sign in with Google.
  */
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: '/auth/google/callback',
-      passReqToCallback: true,
-      scope: ['openid email'],
-    },
-    (req, accessToken, refreshToken, profile, done) => {
-      User.findOne({ google: profile._json.emails[0].value }, (findByGoogleErr, existingUser) => {
-        if (existingUser) {
-          if (req.user && req.user.email !== existingUser.email) {
-            done(new Error('Google account is already linked to another account.'));
-            return;
-          }
-          done(null, existingUser);
-          return;
-        }
+// passport.use(
+//   new GoogleStrategy(
+//     {
+//       clientID: process.env.GOOGLE_ID,
+//       clientSecret: process.env.GOOGLE_SECRET,
+//       callbackURL: '/auth/google/callback',
+//       passReqToCallback: true,
+//       scope: ['openid email'],
+//     },
+//     (req, accessToken, refreshToken, profile, done) => {
+//       User.findOne({ google: profile._json.emails[0].value }, (findByGoogleErr, existingUser) => {
+//         if (existingUser) {
+//           if (req.user && req.user.email !== existingUser.email) {
+//             done(new Error('Google account is already linked to another account.'));
+//             return;
+//           }
+//           done(null, existingUser);
+//           return;
+//         }
 
-        const primaryEmail = profile._json.emails[0].value;
+//         const primaryEmail = profile._json.emails[0].value;
 
-        if (req.user) {
-          if (!req.user.google) {
-            req.user.google = profile._json.emails[0].value;
-            req.user.tokens.push({ kind: 'google', accessToken });
-            req.user.verified = User.EmailConfirmation.Verified;
-          }
-          req.user.save((saveErr) => done(null, req.user));
-        } else {
-          User.findByEmail(primaryEmail, (findByEmailErr, existingEmailUser) => {
-            let username = profile._json.emails[0].value.split('@')[0];
-            User.findByUsername(
-              username,
-              { caseInsensitive: true },
-              (findByUsernameErr, existingUsernameUser) => {
-                if (existingUsernameUser) {
-                  username = generateUniqueUsername(username);
-                }
-                // what if a username is already taken from the display name too?
-                // then, append a random friendly word?
-                if (existingEmailUser) {
-                  existingEmailUser.email = existingEmailUser.email || primaryEmail;
-                  existingEmailUser.google = profile._json.emails[0].value;
-                  existingEmailUser.username = existingEmailUser.username || username;
-                  existingEmailUser.tokens.push({ kind: 'google', accessToken });
-                  existingEmailUser.name = existingEmailUser.name || profile._json.displayName;
-                  existingEmailUser.verified = User.EmailConfirmation.Verified;
-                  existingEmailUser.save((saveErr) => {
-                    if (saveErr) {
-                      console.log(saveErr);
-                    }
-                    done(null, existingEmailUser);
-                  });
-                } else {
-                  const user = new User();
-                  user.email = primaryEmail;
-                  user.google = profile._json.emails[0].value;
-                  user.username = username;
-                  user.tokens.push({ kind: 'google', accessToken });
-                  user.name = profile._json.displayName;
-                  user.verified = User.EmailConfirmation.Verified;
-                  user.save((saveErr) => {
-                    if (saveErr) {
-                      console.log(saveErr);
-                    }
-                    done(null, user);
-                  });
-                }
-              },
-            );
-          });
-        }
-      });
-    },
-  ),
-);
+//         if (req.user) {
+//           if (!req.user.google) {
+//             req.user.google = profile._json.emails[0].value;
+//             req.user.tokens.push({ kind: 'google', accessToken });
+//             req.user.verified = User.EmailConfirmation.Verified;
+//           }
+//           req.user.save((saveErr) => done(null, req.user));
+//         } else {
+//           User.findByEmail(primaryEmail, (findByEmailErr, existingEmailUser) => {
+//             let username = profile._json.emails[0].value.split('@')[0];
+//             User.findByUsername(
+//               username,
+//               { caseInsensitive: true },
+//               (findByUsernameErr, existingUsernameUser) => {
+//                 if (existingUsernameUser) {
+//                   username = generateUniqueUsername(username);
+//                 }
+//                 // what if a username is already taken from the display name too?
+//                 // then, append a random friendly word?
+//                 if (existingEmailUser) {
+//                   existingEmailUser.email = existingEmailUser.email || primaryEmail;
+//                   existingEmailUser.google = profile._json.emails[0].value;
+//                   existingEmailUser.username = existingEmailUser.username || username;
+//                   existingEmailUser.tokens.push({ kind: 'google', accessToken });
+//                   existingEmailUser.name = existingEmailUser.name || profile._json.displayName;
+//                   existingEmailUser.verified = User.EmailConfirmation.Verified;
+//                   existingEmailUser.save((saveErr) => {
+//                     if (saveErr) {
+//                       console.log(saveErr);
+//                     }
+//                     done(null, existingEmailUser);
+//                   });
+//                 } else {
+//                   const user = new User();
+//                   user.email = primaryEmail;
+//                   user.google = profile._json.emails[0].value;
+//                   user.username = username;
+//                   user.tokens.push({ kind: 'google', accessToken });
+//                   user.name = profile._json.displayName;
+//                   user.verified = User.EmailConfirmation.Verified;
+//                   user.save((saveErr) => {
+//                     if (saveErr) {
+//                       console.log(saveErr);
+//                     }
+//                     done(null, user);
+//                   });
+//                 }
+//               },
+//             );
+//           });
+//         }
+//       });
+//     },
+//   ),
+// );

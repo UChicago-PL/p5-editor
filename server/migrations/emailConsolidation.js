@@ -4,9 +4,8 @@ import User from '../models/user';
 import Project from '../models/project';
 import Collection from '../models/collection';
 import { moveObjectToUserInS3, copyObjectInS3 } from '../controllers/aws.controller';
-import mail from '../utils/mail';
-import { renderAccountConsolidation } from '../views/mail';
-
+// import mail from '../utils/mail';
+// import { renderAccountConsolidation } from '../views/mail';
 
 const mongoConnectionString = process.env.MONGO_URL;
 const { ObjectId } = mongoose.Types;
@@ -28,31 +27,31 @@ const agg = [
   {
     $project: {
       email: {
-        $toLower: [
-          '$email'
-        ]
-      }
-    }
-  }, {
+        $toLower: ['$email'],
+      },
+    },
+  },
+  {
     $group: {
       _id: '$email',
       total: {
-        $sum: 1
-      }
-    }
-  }, {
+        $sum: 1,
+      },
+    },
+  },
+  {
     $match: {
       total: {
-        $gt: 1
-      }
-    }
-  }, {
+        $gt: 1,
+      },
+    },
+  },
+  {
     $sort: {
-      total: -1
-    }
-  }
+      total: -1,
+    },
+  },
 ];
-
 
 // steps to make this work
 // iterate through the results
@@ -89,30 +88,38 @@ fs.readFile('duplicates.json', async (err, file) => {
 });
 
 async function consolidateAccount(email) {
-  return User.find({ email }).collation({ locale: 'en', strength: 2 })
-    .sort({ createdAt: 1 }).exec()
+  return User.find({ email })
+    .collation({ locale: 'en', strength: 2 })
+    .sort({ createdAt: 1 })
+    .exec()
     .then((result) => {
       [currentUser, ...duplicates] = result;
       console.log('Current User: ', currentUser._id, ' ', currentUser.email);
-      duplicates = duplicates.map(dup => dup._id);
+      duplicates = duplicates.map((dup) => dup._id);
       console.log('Duplicates: ', duplicates);
       return Project.find({
-        user: { $in: duplicates }
+        user: { $in: duplicates },
       }).exec();
-    }).then((sketches) => {
+    })
+    .then((sketches) => {
       const saveSketchPromises = [];
       sketches.forEach((sketch) => {
         console.log('SketchId: ', sketch._id);
         console.log('UserId: ', sketch.user);
         const moveSketchFilesPromises = [];
         sketch.files.forEach((file) => {
-        // if the file url contains sketch user
-          if (file.url && file.url.includes(process.env.S3_BUCKET_URL_BASE) && !file.url.includes(currentUser._id)) {
+          // if the file url contains sketch user
+          if (
+            file.url &&
+            file.url.includes(process.env.S3_BUCKET_URL_BASE) &&
+            !file.url.includes(currentUser._id)
+          ) {
             if (file.url.includes(sketch.user)) {
               const fileSavePromise = moveObjectToUserInS3(file.url, currentUser._id)
                 .then((newUrl) => {
                   file.url = newUrl;
-                }).catch((err) => {
+                })
+                .catch((err) => {
                   console.log('Move Error:');
                   console.log(err);
                 });
@@ -121,7 +128,8 @@ async function consolidateAccount(email) {
               const fileSavePromise = copyObjectInS3(file.url, currentUser._id)
                 .then((newUrl) => {
                   file.url = newUrl;
-                }).catch((err) => {
+                })
+                .catch((err) => {
                   console.log('Copy Error:');
                   console.log(err);
                 });
@@ -136,46 +144,50 @@ async function consolidateAccount(email) {
         saveSketchPromises.push(sketchSavePromise);
       });
       return Promise.all(saveSketchPromises);
-    }).then(() => {
+    })
+    .then(() => {
       console.log('Moved and updated all sketches.');
       return Collection.updateMany(
         { owner: { $in: duplicates } },
-        { $set: { owner: ObjectId(currentUser.id) } }
+        { $set: { owner: ObjectId(currentUser.id) } },
       );
-    }).then(() => {
+    })
+    .then(() => {
       console.log('Moved and updated all collections.');
       return User.deleteMany({ _id: { $in: duplicates } });
-    }).then(() => {
+    })
+    .then(() => {
       console.log('Deleted other user accounts.');
       currentUser.email = currentUser.email.toLowerCase();
       return currentUser.save();
-    }).then(() => {
+    })
+    .then(() => {
       console.log('Migrated email to lowercase.');
       // const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-      const mailOptions = renderAccountConsolidation({
-        body: {
-          domain: 'https://editor.p5js.org',
-          username: currentUser.username,
-          email: currentUser.email
-        },
-        to: currentUser.email,
-      });
+      // const mailOptions = renderAccountConsolidation({
+      //   body: {
+      //     domain: 'https://editor.p5js.org',
+      //     username: currentUser.username,
+      //     email: currentUser.email,
+      //   },
+      //   to: currentUser.email,
+      // });
 
       return new Promise((resolve, reject) => {
-        mail.send(mailOptions, (mailErr, result) => {
-          console.log('Sent email.');
-          if (mailErr) {
-            return reject(mailErr);
-          }
-          return resolve(result);
-        });
+        // mail.send(mailOptions, (mailErr, result) => {
+        //   console.log('Sent email.');
+        //   if (mailErr) {
+        //     return reject(mailErr);
+        //   }
+        //   return resolve(result);
+        // });
       });
-    }).catch((err) => {
+    })
+    .catch((err) => {
       console.log(err);
       process.exit(1);
     });
 }
-
 
 // let duplicates = [
 //   "5ce3d936e0f9df0022d8330c",
@@ -210,7 +222,6 @@ async function consolidateAccount(email) {
 //     });
 //   });
 // });
-
 
 // import s3 from '@auth0/s3';
 
