@@ -126,7 +126,7 @@ class Toolbar extends React.Component {
         </div>
         <div className={nameContainerClass} style={{ flexDirection: 'column' }}>
           <span className="toolbar__project-name__label">Sketch name</span>
-          <div>
+          <div style={{ display: 'flex' }}>
             <button
               className="toolbar__project-name"
               onClick={() => {
@@ -168,6 +168,7 @@ class Toolbar extends React.Component {
             )}
           </div>
         </div>
+        <button> SUBMIT </button>
         <button
           className={preferencesButtonClass}
           onClick={this.props.openPreferences}
