@@ -70,20 +70,21 @@ class DashboardView extends React.Component {
 
   returnToDashboard = () => {
     browserHistory.push(`/${this.ownerName()}/collections`);
-  }
+  };
 
   renderActionButton(tabKey, username, t) {
     switch (tabKey) {
       case TabKey.assets:
         return this.isOwner() && <AssetSize />;
       case TabKey.collections:
-        return this.isOwner() && (
-          <React.Fragment>
-            <Button to={`/${username}/collections/create`}>
-              {t('DashboardView.CreateCollection')}
-            </Button>
-            <CollectionSearchbar />
-          </React.Fragment>);
+        return (
+          this.isOwner() && (
+            <React.Fragment>
+              <Button to={`/${username}/collections/create`}>{t('DashboardView.CreateCollection')}</Button>
+              <CollectionSearchbar />
+            </React.Fragment>
+          )
+        );
       case TabKey.sketches:
       default:
         return (
@@ -122,26 +123,20 @@ class DashboardView extends React.Component {
             <h2 className="dashboard-header__header__title">{this.ownerName()}</h2>
             <div className="dashboard-header__nav">
               <DashboardTabSwitcherPublic currentTab={currentTab} isOwner={isOwner} username={username} />
-              {actions &&
-                <div className="dashboard-header__actions">
-                  {actions}
-                </div>
-              }
+              {actions && <div className="dashboard-header__actions">{actions}</div>}
             </div>
           </div>
 
-          <div className="dashboard-content">
-            {this.renderContent(currentTab, username)}
-          </div>
+          <div className="dashboard-content">{this.renderContent(currentTab, username)}</div>
         </main>
-        {this.isCollectionCreate() &&
+        {this.isCollectionCreate() && (
           <Overlay
             title={this.props.t('DashboardView.CreateCollectionOverlay')}
             closeOverlay={this.returnToDashboard}
           >
             <CollectionCreate />
           </Overlay>
-        }
+        )}
       </div>
     );
   }
@@ -167,7 +162,7 @@ DashboardView.propTypes = {
   user: PropTypes.shape({
     username: PropTypes.string,
   }),
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
 };
 
 export default withTranslation()(connect(mapStateToProps)(DashboardView));

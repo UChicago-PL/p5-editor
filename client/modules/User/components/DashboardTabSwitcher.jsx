@@ -7,6 +7,7 @@ const TabKey = {
   assets: 'assets',
   collections: 'collections',
   sketches: 'sketches',
+  gists: 'gists',
 };
 
 const Tab = ({ children, isSelected, to }) => {
@@ -16,9 +17,7 @@ const Tab = ({ children, isSelected, to }) => {
   const content = isSelected ? <span>{children}</span> : <Link to={location}>{children}</Link>;
   return (
     <li className={`dashboard-header__tab ${isSelected && selectedClassName}`}>
-      <h4 className="dashboard-header__tab__title">
-        {content}
-      </h4>
+      <h4 className="dashboard-header__tab__title">{content}</h4>
     </li>
   );
 };
@@ -29,14 +28,19 @@ Tab.propTypes = {
   to: PropTypes.string.isRequired,
 };
 
-const DashboardTabSwitcher = ({
-  currentTab, isOwner, username, t
-}) => (
+const DashboardTabSwitcher = ({ currentTab, isOwner, username, t }) => (
   <ul className="dashboard-header__switcher">
     <div className="dashboard-header__tabs">
-      <Tab to={`/${username}/sketches`} isSelected={currentTab === TabKey.sketches}>{t('DashboardTabSwitcher.Sketches')}</Tab>
-      <Tab to={`/${username}/collections`} isSelected={currentTab === TabKey.collections}>{t('DashboardTabSwitcher.Collections')}</Tab>
-      {isOwner && <Tab to={`/${username}/assets`} isSelected={currentTab === TabKey.assets}>{t('DashboardTabSwitcher.Assets')}</Tab>}
+      <Tab to={`/${username}/sketches`} isSelected={currentTab === TabKey.sketches}>
+        {t('DashboardTabSwitcher.Sketches')}
+      </Tab>
+      {/* {isOwner && (
+        <Tab to={`/${username}/gists`} isSelected={currentTab === TabKey.gists}>
+          {t('DashboardTabSwitcher.Gists')}
+        </Tab>
+      )} */}
+      {/* <Tab to={`/${username}/collections`} isSelected={currentTab === TabKey.collections}>{t('DashboardTabSwitcher.Collections')}</Tab>
+      {isOwner && <Tab to={`/${username}/assets`} isSelected={currentTab === TabKey.assets}>{t('DashboardTabSwitcher.Assets')}</Tab>} */}
     </div>
   </ul>
 );
@@ -45,9 +49,8 @@ DashboardTabSwitcher.propTypes = {
   currentTab: PropTypes.string.isRequired,
   isOwner: PropTypes.bool.isRequired,
   username: PropTypes.string.isRequired,
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
 };
-
 
 const DashboardTabSwitcherPublic = withTranslation()(DashboardTabSwitcher);
 export { DashboardTabSwitcherPublic as default, TabKey };
