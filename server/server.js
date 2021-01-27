@@ -27,7 +27,6 @@ import serverRoutes from './routes/server.routes';
 import embedRoutes from './routes/embed.routes';
 import assetRoutes from './routes/asset.routes';
 import passportRoutes from './routes/passport.routes';
-import studyRoutes from './routes/study.routes';
 import { requestsOfTypeJSON } from './utils/requestsOfType';
 
 import { renderIndex } from './views/index';
@@ -138,7 +137,6 @@ app.use(assetRoutes);
 
 app.use('/', embedRoutes);
 app.use('/', passportRoutes);
-app.use('/', studyRoutes);
 
 // configure passport
 require('./config/passport');
