@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-for */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import { useDispatch } from 'react-redux';
 import Button from '../../../common/Button';
@@ -8,6 +8,7 @@ import { submitToGH } from '../../User/actions';
 
 function SubmitForm(props) {
   const { repos, project } = props;
+  const [submitState, setSubmitState] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -30,8 +31,14 @@ function SubmitForm(props) {
 
   function onSubmit(formProps) {
     return dispatch(
-      submitToGH({ ...formProps, repo: repos.find(({ fullName }) => fullName === formProps.repo), project }),
-    );
+      submitToGH({
+        ...formProps,
+        repo: repos.find(({ fullName }) => fullName === formProps.repo),
+        project
+      })
+    ).then((result) => {
+      setSubmitState(result.data);
+    });
   }
 
   return (
@@ -41,8 +48,8 @@ function SubmitForm(props) {
       onSubmit={onSubmit}
       initialValues={{ toSubFolder: 'no' }}
     >
-      {(xx, yy) => {
-        const { handleSubmit, invalid, submitting, touched, errors, values } = xx;
+      {(formProps) => {
+        const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
         const currRepo = repos.find(({ fullName }) => fullName === values.repo);
         const showNameInput = values.toSubFolder.includes('yes');
         return (
@@ -51,9 +58,11 @@ function SubmitForm(props) {
               <div className="flex-down">
                 <label htmlFor="repo">Target Repo</label>
                 <Field name="repo" component="select">
-                  <option />
-                  {repos.map((repo) => (
-                    <option value={repo.fullName}>{repo.fullName}</option>
+                  <option key="empty" />
+                  {repos.map((repo, idx) => (
+                    <option value={repo.fullName} key={repo.fullName}>
+                      {repo.fullName}
+                    </option>
                   ))}
                 </Field>
                 {currRepo && (
@@ -105,6 +114,24 @@ function SubmitForm(props) {
               <Button type="submit" disabled={invalid || submitting}>
                 Submit
               </Button>
+              {submitting && <div>Submitting...</div>}
+              {!submitting && submitState && submitState.success && (
+                <div>
+                  Success!{' '}
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={submitState.prURL
+                      .replace('https://api.github.com/repos/', 'https://github.com/')
+                      .replace('/pulls/', '/pull/')}
+                  >
+                    click here to view pull request
+                  </a>
+                </div>
+              )}
+              {!submitting && submitState && !submitState.success && (
+                <div>Failure! {JSON.stringify(submitState)}</div>
+              )}
             </div>
           </form>
         );
@@ -116,7 +143,7 @@ SubmitForm.propTypes = {
   repos: PropTypes.arrayOf(PropTypes.object).isRequired,
   project: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
-  }).isRequired,
+    id: PropTypes.string.isRequired
+  }).isRequired
 };
 export default SubmitForm;

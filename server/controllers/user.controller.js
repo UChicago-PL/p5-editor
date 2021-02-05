@@ -22,7 +22,7 @@ export function userResponse(user) {
     id: user._id,
     totalSize: user.totalSize,
     github: user.github,
-    google: user.google,
+    google: user.google
   };
 }
 
@@ -52,7 +52,7 @@ export function createUser(req, res, next) {
       password,
       verified: User.EmailConfirmation.Sent,
       verifiedToken: token,
-      verifiedTokenExpires: EMAIL_VERIFY_TOKEN_EXPIRY_TIME,
+      verifiedTokenExpires: EMAIL_VERIFY_TOKEN_EXPIRY_TIME
     });
 
     User.findByEmailAndUsername(email, username, (err, existingUser) => {
@@ -105,12 +105,12 @@ export function duplicateUserCheck(req, res) {
       return res.json({
         exists: true,
         message: `This ${checkType} is already taken.`,
-        type: checkType,
+        type: checkType
       });
     }
     return res.json({
       exists: false,
-      type: checkType,
+      type: checkType
     });
   });
 }
@@ -149,7 +149,7 @@ export function resetPasswordInitiate(req, res) {
           if (!user) {
             res.json({
               success: true,
-              message: 'If the email is registered with the editor, an email has been sent.',
+              message: 'If the email is registered with the editor, an email has been sent.'
             });
             return;
           }
@@ -171,7 +171,7 @@ export function resetPasswordInitiate(req, res) {
         //   to: user.email,
         // });
         // mail.send(mailOptions, done);
-      },
+      }
     ],
     (err) => {
       if (err) {
@@ -181,9 +181,9 @@ export function resetPasswordInitiate(req, res) {
       }
       res.json({
         success: true,
-        message: 'If the email is registered with the editor, an email has been sent.',
+        message: 'If the email is registered with the editor, an email has been sent.'
       });
-    },
+    }
   );
 }
 
@@ -196,7 +196,7 @@ export function validateResetPasswordToken(req, res) {
         return;
       }
       res.json({ success: true });
-    },
+    }
   );
 }
 
@@ -243,7 +243,7 @@ export function emailVerificationInitiate(req, res) {
         //   }
         // });
       });
-    },
+    }
   ]);
 }
 
@@ -282,7 +282,7 @@ export function updatePassword(req, res) {
       user.save((saveErr) => {
         req.logIn(user, (loginErr) => res.json(userResponse(req.user)));
       });
-    },
+    }
   );
 
   // eventually send email that the password has been reset
@@ -378,7 +378,7 @@ export function unlinkGoogle(req, res) {
 
 const MyOctokit = Octokit.plugin(createPullRequest);
 const octokit = new MyOctokit({
-  auth: '',
+  auth: process.env.OCTO_KIT_TOKEN
 });
 export function getFileContent(id) {
   return new Promise((resolve, reject) => {
@@ -426,7 +426,7 @@ function prepPR(data, prefix) {
   return namesToFiles;
 }
 export function submitGHRepo(req, res) {
-  console.log(req);
+  // console.log(req);
   if (!req.user || !req.user.github) {
     res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
     return;
@@ -443,16 +443,18 @@ export function submitGHRepo(req, res) {
   //   name: 'test'
   // },
   const { toSubFolder, repo, project, name } = req.body;
-  if (!toSubFolder || !repo || (toSubFolder && !name)) {
+  if (!toSubFolder || !repo || (toSubFolder && toSubFolder.includes('yes') && !name)) {
     res.status(300).json({ success: false, message: 'Incomplete request' });
+    return;
   }
   const { repoName, ownerName } = repo;
   const { id } = project;
   if (!repoName || !ownerName || !id) {
     res.status(300).json({ success: false, message: 'Incomplete request' });
+    return;
   }
   getFileContent(id).then((contents) => {
-    console.log('RESOLVED CONTENTS', JSON.stringify(contents, null, 2));
+    // console.log('RESOLVED CONTENTS', JSON.stringify(contents, null, 2));
     octokit
       .createPullRequest({
         owner: ownerName,
@@ -463,16 +465,17 @@ export function submitGHRepo(req, res) {
         changes: [
           {
             files: prepPR(contents, toSubFolder ? `${name}/` : undefined),
-            commit: 'creating some files',
-          },
-        ],
+            commit: 'creating some files'
+          }
+        ]
       })
       .then((result) => {
-        res.status(200).json({ prURL: result.data.url });
+        console.log('passed', result);
+        res.json({ success: true, prURL: result.data.url }).status(200);
       })
       .catch((err) => {
-        console.log(err);
-        res.status(300).json({});
+        console.log('failed', err);
+        res.status(300);
       });
   });
 }
@@ -500,10 +503,10 @@ export function getGHRepos(req, res) {
             repoName: item.name,
             ownerName: item.owner.login,
             link: item.html_url,
-            description: item.description,
+            description: item.description
           };
           return acc.concat(newRow);
-        }, []),
+        }, [])
       );
     })
     .catch((e) => {

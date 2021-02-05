@@ -83,102 +83,109 @@ class Toolbar extends React.Component {
 
     return (
       <div className="toolbar">
-        <button
-          className="toolbar__play-sketch-button"
-          onClick={() => {
-            this.props.startAccessibleSketch();
-            this.props.setTextOutput(true);
-            this.props.setGridOutput(true);
-          }}
-          aria-label={this.props.t('Toolbar.PlaySketchARIA')}
-          disabled={this.props.infiniteLoop}
-        >
-          <PlayIcon focusable="false" aria-hidden="true" />
-        </button>
-        <button
-          className={playButtonClass}
-          onClick={this.props.startSketch}
-          aria-label={this.props.t('Toolbar.PlayOnlyVisualSketchARIA')}
-          disabled={this.props.infiniteLoop}
-        >
-          <PlayIcon focusable="false" aria-hidden="true" />
-        </button>
-        <button
-          className={stopButtonClass}
-          onClick={this.props.stopSketch}
-          aria-label={this.props.t('Toolbar.StopSketchARIA')}
-        >
-          <StopIcon focusable="false" aria-hidden="true" />
-        </button>
-        <div className="toolbar__autorefresh">
-          <input
-            id="autorefresh"
-            className="checkbox__autorefresh"
-            type="checkbox"
-            checked={this.props.autorefresh}
-            onChange={(event) => {
-              this.props.setAutorefresh(event.target.checked);
+        <div className="flex h-center">
+          <button
+            className="toolbar__play-sketch-button"
+            onClick={() => {
+              this.props.startAccessibleSketch();
+              this.props.setTextOutput(true);
+              this.props.setGridOutput(true);
             }}
-          />
-          <label htmlFor="autorefresh" className="toolbar__autorefresh-label">
-            {this.props.t('Toolbar.Auto-refresh')}
-          </label>
-        </div>
-        <div className={nameContainerClass} style={{ flexDirection: 'column' }}>
-          <span className="toolbar__project-name__label">Sketch name</span>
-          <div style={{ display: 'flex' }}>
-            <button
-              className="toolbar__project-name"
-              onClick={() => {
-                if (canEditProjectName) {
-                  this.props.showEditProjectName();
-                  setTimeout(() => this.projectNameInput.focus(), 0);
-                }
-              }}
-              disabled={!canEditProjectName}
-              aria-label={this.props.t('Toolbar.EditSketchARIA')}
-            >
-              <span>{this.props.project.name}</span>
-              {canEditProjectName && (
-                <EditProjectNameIcon
-                  className="toolbar__edit-name-button"
-                  focusable="false"
-                  aria-hidden="true"
-                />
-              )}
-            </button>
+            aria-label={this.props.t('Toolbar.PlaySketchARIA')}
+            disabled={this.props.infiniteLoop}
+          >
+            <PlayIcon focusable="false" aria-hidden="true" />
+          </button>
+          <button
+            className={playButtonClass}
+            onClick={this.props.startSketch}
+            aria-label={this.props.t('Toolbar.PlayOnlyVisualSketchARIA')}
+            disabled={this.props.infiniteLoop}
+          >
+            <PlayIcon focusable="false" aria-hidden="true" />
+          </button>
+          <button
+            className={stopButtonClass}
+            onClick={this.props.stopSketch}
+            aria-label={this.props.t('Toolbar.StopSketchARIA')}
+          >
+            <StopIcon focusable="false" aria-hidden="true" />
+          </button>
+          <div className="toolbar__autorefresh">
             <input
-              type="text"
-              maxLength="128"
-              className="toolbar__project-name-input"
-              aria-label={this.props.t('Toolbar.NewSketchNameARIA')}
-              value={this.state.projectNameInputValue}
-              onChange={this.handleProjectNameChange}
-              ref={(element) => {
-                this.projectNameInput = element;
+              id="autorefresh"
+              className="checkbox__autorefresh"
+              type="checkbox"
+              checked={this.props.autorefresh}
+              onChange={(event) => {
+                this.props.setAutorefresh(event.target.checked);
               }}
-              onBlur={this.handleProjectNameSave}
-              onKeyPress={this.handleKeyPress}
             />
-            {this.props.owner && (
-              <p className="toolbar__project-owner">
-                {this.props.t('Toolbar.By')}{' '}
-                <Link to={`/${this.props.owner.username}/sketches`}>{this.props.owner.username}</Link>
-              </p>
-            )}
+            <label htmlFor="autorefresh" className="toolbar__autorefresh-label">
+              {this.props.t('Toolbar.Auto-refresh')}
+            </label>
+          </div>
+          <div className={`${nameContainerClass} flex-down`}>
+            <div className="flex">
+              <div className="flex-down">
+                <span className="toolbar__project-name__label">Sketch name</span>
+                <button
+                  className="toolbar__project-name"
+                  onClick={() => {
+                    if (canEditProjectName) {
+                      this.props.showEditProjectName();
+                      setTimeout(() => this.projectNameInput.focus(), 0);
+                    }
+                  }}
+                  disabled={!canEditProjectName}
+                  aria-label={this.props.t('Toolbar.EditSketchARIA')}
+                >
+                  <span>{this.props.project.name}</span>
+                  {canEditProjectName && (
+                    <EditProjectNameIcon
+                      className="toolbar__edit-name-button"
+                      focusable="false"
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+                <input
+                  type="text"
+                  maxLength="128"
+                  className="toolbar__project-name-input"
+                  aria-label={this.props.t('Toolbar.NewSketchNameARIA')}
+                  value={this.state.projectNameInputValue}
+                  onChange={this.handleProjectNameChange}
+                  ref={(element) => {
+                    this.projectNameInput = element;
+                  }}
+                  onBlur={this.handleProjectNameSave}
+                  onKeyPress={this.handleKeyPress}
+                />
+              </div>
+              {this.props.owner && (
+                <div className="toolbar__project-owner flex-down">
+                  <span className="toolbar__project-name__label">By User</span>
+                  <div className="toolbar__project-name" style={{ paddingLeft: '6px', height: '20px' }}>
+                    <Link to={`/${this.props.owner.username}/sketches`}>{this.props.owner.username}</Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <button className="submit-assignment-button" onClick={this.props.openSubmitModal}>
-          {' '}
-          SUBMIT{' '}
-        </button>
-        <button
-          className={preferencesButtonClass}
-          onClick={this.props.openPreferences}
-          aria-label={this.props.t('Toolbar.OpenPreferencesARIA')}
-        >
-          <PreferencesIcon focusable="false" aria-hidden="true" />
-        </button>
+        <div className="flex">
+          <button className="submit-assignment-button" onClick={this.props.openSubmitModal}>
+            SUBMIT
+          </button>
+          <button
+            className={preferencesButtonClass}
+            onClick={this.props.openPreferences}
+            aria-label={this.props.t('Toolbar.OpenPreferencesARIA')}
+          >
+            <PreferencesIcon focusable="false" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     );
   }
