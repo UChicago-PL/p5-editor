@@ -4,18 +4,11 @@ const user = (state = { authenticated: false }, action) => {
   console.log(action.type);
   switch (action.type) {
     case ActionTypes.AUTH_USER:
-      return {
-        ...action.user,
-        authenticated: true,
-      };
+      return { ...action.user, authenticated: true };
     case ActionTypes.UNAUTH_USER:
-      return {
-        authenticated: false,
-      };
+      return { authenticated: false };
     case ActionTypes.AUTH_ERROR:
-      return {
-        authenticated: false,
-      };
+      return { authenticated: false };
     case ActionTypes.RESET_PASSWORD_INITIATE:
       return Object.assign({}, state, { resetPasswordInitiate: true });
     case ActionTypes.RESET_PASSWORD_RESET:

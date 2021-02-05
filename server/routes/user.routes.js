@@ -4,7 +4,8 @@ import isAuthenticated from '../utils/isAuthenticated';
 
 const router = new Router();
 
-router.get('/submit-gh-repo', UserController.submitGHRepo);
+router.post('/submit-gh-repo', UserController.submitGHRepo);
+router.get('/gh-repos', UserController.getGHRepos);
 
 // todo delete most of these routes
 router.post('/signup', UserController.createUser);

@@ -88,20 +88,47 @@ export function validateAndSignUpUser(formValues) {
   };
 }
 
+const exampleGHRepos = [
+  {
+    fullName: 'uchicago-vis-pl-lab/test-assignment-mcnuttandrew',
+    repoName: 'test-assignment-mcnuttandrew',
+    ownerName: 'uchicago-vis-pl-lab',
+    link: 'https://github.com/uchicago-vis-pl-lab/test-assignment-mcnuttandrew',
+    description: 'test-assignment-mcnuttandrew created by GitHub Classroom',
+  },
+];
+const debugging = true;
 export function getGHRepos() {
+  if (debugging) {
+    return (dispatch) =>
+      dispatch({
+        type: ActionTypes.RECEIVE_GH_REPOS,
+        payload: exampleGHRepos.sort((a, b) => a.fullName.localeCompare(b.fullName)),
+      });
+  }
   return (dispatch) =>
     apiClient
       .get('/gh-repos')
       .then((response) => {
-        console.log('response gh-repos', response);
+        console.log(response.data);
+        dispatch({
+          type: ActionTypes.RECEIVE_GH_REPOS,
+          payload: response.data.sort((a, b) => a.fullName.localeCompare(b.fullName)),
+        });
       })
       .catch((error) => {
         console.log('ERROR', error);
       });
 }
 
+export function submitToGH(formProps) {
+  // TODO, ALSO FILE A SAVE ACTION
+  // TODO dispatch some like posting actions and wait for generated pr link
+  const postParams = formProps;
+  return (dispatch) => apiClient.post('/submit-gh-repo', postParams);
+}
+
 export function getUser() {
-  console.log('get user');
   return (dispatch) => {
     apiClient
       .get('/session')
@@ -117,7 +144,6 @@ export function getUser() {
           preferences: response.data.preferences,
         });
         setLanguage(response.data.preferences.language, { persistPreference: false });
-        getGHRepos()(dispatch);
       })
       .catch((error) => {
         const { response } = error;

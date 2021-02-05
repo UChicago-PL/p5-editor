@@ -347,7 +347,7 @@ class IDEView extends React.Component {
             createFolder={this.props.createFolder}
           />
         )}
-        {this.props.ide.submitModalVisible && <SubmitModal closeModal={this.props.closeSubmitModal} />}
+        {this.props.ide.submitModalVisible && <SubmitModal />}
         {this.props.ide.uploadFileModalVisible && (
           <UploadFileModal closeModal={this.props.closeUploadFileModal} />
         )}

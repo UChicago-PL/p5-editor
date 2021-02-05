@@ -29,6 +29,7 @@
       "component": true,
       "html": false
     }],
+    "arrow-body-style":"off",
     "arrow-parens": "off",
     "object-curly-newline": 0,
     "newline-per-chained-call": 0,
