@@ -25,7 +25,7 @@ const initialState = {
   previousPath: '/',
   errorType: undefined,
   runtimeErrorWarningVisible: true,
-  parentId: undefined,
+  parentId: undefined
 };
 
 const ide = (state = initialState, action) => {
@@ -44,7 +44,7 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, {
         modalIsVisible: true,
         parentId: action.parentId,
-        newFolderModalVisible: false,
+        newFolderModalVisible: false
       });
     case ActionTypes.HIDE_MODAL:
       return Object.assign({}, state, { modalIsVisible: false });
@@ -70,7 +70,7 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, {
         newFolderModalVisible: true,
         parentId: action.parentId,
-        modalIsVisible: false,
+        modalIsVisible: false
       });
     case ActionTypes.CLOSE_NEW_FOLDER_MODAL:
       return Object.assign({}, state, { newFolderModalVisible: false });
@@ -79,7 +79,7 @@ const ide = (state = initialState, action) => {
         shareModalVisible: true,
         shareModalProjectId: action.payload.shareModalProjectId,
         shareModalProjectName: action.payload.shareModalProjectName,
-        shareModalProjectUsername: action.payload.shareModalProjectUsername,
+        shareModalProjectUsername: action.payload.shareModalProjectUsername
       });
     case ActionTypes.CLOSE_SHARE_MODAL:
       return Object.assign({}, state, { shareModalVisible: false });

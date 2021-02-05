@@ -21,7 +21,7 @@ class Toolbar extends React.Component {
     this.handleProjectNameSave = this.handleProjectNameSave.bind(this);
 
     this.state = {
-      projectNameInputValue: props.project.name,
+      projectNameInputValue: props.project.name
     };
   }
 
@@ -40,7 +40,7 @@ class Toolbar extends React.Component {
     const newProjectName = this.state.projectNameInputValue.trim();
     if (newProjectName.length === 0) {
       this.setState({
-        projectNameInputValue: this.props.project.name,
+        projectNameInputValue: this.props.project.name
       });
     } else {
       this.props.setProjectName(newProjectName);
@@ -64,23 +64,23 @@ class Toolbar extends React.Component {
   render() {
     const playButtonClass = classNames({
       'toolbar__play-button': true,
-      'toolbar__play-button--selected': this.props.isPlaying,
+      'toolbar__play-button--selected': this.props.isPlaying
     });
     const stopButtonClass = classNames({
       'toolbar__stop-button': true,
-      'toolbar__stop-button--selected': !this.props.isPlaying,
+      'toolbar__stop-button--selected': !this.props.isPlaying
     });
     const preferencesButtonClass = classNames({
       'toolbar__preferences-button': true,
-      'toolbar__preferences-button--selected': this.props.preferencesIsVisible,
+      'toolbar__preferences-button--selected': this.props.preferencesIsVisible
     });
     const nameContainerClass = classNames({
       'toolbar__project-name-container': true,
-      'toolbar__project-name-container--editing': this.props.project.isEditingName,
+      'toolbar__project-name-container--editing': this.props.project.isEditingName
     });
 
     const canEditProjectName = this.canEditProjectName();
-    console.log(this.props);
+
     return (
       <div className="toolbar">
         <button
@@ -197,7 +197,7 @@ Toolbar.propTypes = {
   project: PropTypes.shape({
     name: PropTypes.string.isRequired,
     isEditingName: PropTypes.bool,
-    id: PropTypes.string,
+    id: PropTypes.string
   }).isRequired,
   saveProject: PropTypes.func.isRequired,
   setAutorefresh: PropTypes.func.isRequired,
@@ -208,12 +208,12 @@ Toolbar.propTypes = {
   startAccessibleSketch: PropTypes.func.isRequired,
   startSketch: PropTypes.func.isRequired,
   stopSketch: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired
 };
 
 Toolbar.defaultProps = {
   owner: undefined,
-  currentUser: undefined,
+  currentUser: undefined
 };
 
 function mapStateToProps(state) {
@@ -224,14 +224,14 @@ function mapStateToProps(state) {
     isPlaying: state.ide.isPlaying,
     owner: state.project.owner,
     preferencesIsVisible: state.ide.preferencesIsVisible,
-    project: state.project,
+    project: state.project
   };
 }
 
 const mapDispatchToProps = {
   ...IDEActions,
   ...preferenceActions,
-  ...projectActions,
+  ...projectActions
 };
 
 export const ToolbarComponent = withTranslation()(Toolbar);

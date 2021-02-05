@@ -8,7 +8,7 @@ import { showToast, setToastText } from '../IDE/actions/toast';
 export function authError(error) {
   return {
     type: ActionTypes.AUTH_ERROR,
-    payload: error,
+    payload: error
   };
 }
 
@@ -23,28 +23,28 @@ export function loginUser(formValues) {
 export function loginUserSuccess(user) {
   return {
     type: ActionTypes.AUTH_USER,
-    user,
+    user
   };
 }
 
 export function authenticateUser(user) {
   return {
     type: ActionTypes.AUTH_USER,
-    user,
+    user
   };
 }
 
 export function loginUserFailure(error) {
   return {
     type: ActionTypes.AUTH_ERROR,
-    error,
+    error
   };
 }
 
 export function setPreferences(preferences) {
   return {
     type: ActionTypes.SET_PREFERENCES,
-    preferences,
+    preferences
   };
 }
 
@@ -94,8 +94,8 @@ const exampleGHRepos = [
     repoName: 'test-assignment-mcnuttandrew',
     ownerName: 'uchicago-vis-pl-lab',
     link: 'https://github.com/uchicago-vis-pl-lab/test-assignment-mcnuttandrew',
-    description: 'test-assignment-mcnuttandrew created by GitHub Classroom',
-  },
+    description: 'test-assignment-mcnuttandrew created by GitHub Classroom'
+  }
 ];
 const debugging = true;
 export function getGHRepos() {
@@ -103,7 +103,7 @@ export function getGHRepos() {
     return (dispatch) =>
       dispatch({
         type: ActionTypes.RECEIVE_GH_REPOS,
-        payload: exampleGHRepos.sort((a, b) => a.fullName.localeCompare(b.fullName)),
+        payload: exampleGHRepos.sort((a, b) => a.fullName.localeCompare(b.fullName))
       });
   }
   return (dispatch) =>
@@ -113,7 +113,7 @@ export function getGHRepos() {
         console.log(response.data);
         dispatch({
           type: ActionTypes.RECEIVE_GH_REPOS,
-          payload: response.data.sort((a, b) => a.fullName.localeCompare(b.fullName)),
+          payload: response.data.sort((a, b) => a.fullName.localeCompare(b.fullName))
         });
       })
       .catch((error) => {
@@ -137,11 +137,11 @@ export function getUser() {
 
         dispatch({
           type: ActionTypes.AUTH_USER,
-          user: response.data,
+          user: response.data
         });
         dispatch({
           type: ActionTypes.SET_PREFERENCES,
-          preferences: response.data.preferences,
+          preferences: response.data.preferences
         });
         setLanguage(response.data.preferences.language, { persistPreference: false });
       })
@@ -178,7 +178,7 @@ export function logoutUser() {
       .get('/logout')
       .then(() => {
         dispatch({
-          type: ActionTypes.UNAUTH_USER,
+          type: ActionTypes.UNAUTH_USER
         });
       })
       .catch((error) => {
@@ -192,7 +192,7 @@ export function initiateResetPassword(formValues) {
   return (dispatch) =>
     new Promise((resolve) => {
       dispatch({
-        type: ActionTypes.RESET_PASSWORD_INITIATE,
+        type: ActionTypes.RESET_PASSWORD_INITIATE
       });
       return apiClient
         .post('/reset-password', formValues)
@@ -201,7 +201,7 @@ export function initiateResetPassword(formValues) {
           const { response } = error;
           dispatch({
             type: ActionTypes.ERROR,
-            message: response.data,
+            message: response.data
           });
           resolve({ error });
         });
@@ -211,7 +211,7 @@ export function initiateResetPassword(formValues) {
 export function initiateVerification() {
   return (dispatch) => {
     dispatch({
-      type: ActionTypes.EMAIL_VERIFICATION_INITIATE,
+      type: ActionTypes.EMAIL_VERIFICATION_INITIATE
     });
     apiClient
       .post('/verify/send', {})
@@ -222,7 +222,7 @@ export function initiateVerification() {
         const { response } = error;
         dispatch({
           type: ActionTypes.ERROR,
-          message: response.data,
+          message: response.data
         });
       });
   };
@@ -232,21 +232,21 @@ export function verifyEmailConfirmation(token) {
   return (dispatch) => {
     dispatch({
       type: ActionTypes.EMAIL_VERIFICATION_VERIFY,
-      state: 'checking',
+      state: 'checking'
     });
     return apiClient
       .get(`/verify?t=${token}`, {})
       .then((response) =>
         dispatch({
           type: ActionTypes.EMAIL_VERIFICATION_VERIFIED,
-          message: response.data,
-        }),
+          message: response.data
+        })
       )
       .catch((error) => {
         const { response } = error;
         dispatch({
           type: ActionTypes.EMAIL_VERIFICATION_INVALID,
-          message: response.data,
+          message: response.data
         });
       });
   };
@@ -254,7 +254,7 @@ export function verifyEmailConfirmation(token) {
 
 export function resetPasswordReset() {
   return {
-    type: ActionTypes.RESET_PASSWORD_RESET,
+    type: ActionTypes.RESET_PASSWORD_RESET
   };
 }
 
@@ -267,8 +267,8 @@ export function validateResetPasswordToken(token) {
       })
       .catch(() =>
         dispatch({
-          type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN,
-        }),
+          type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN
+        })
       );
   };
 }
@@ -285,17 +285,17 @@ export function updatePassword(formValues, token) {
         })
         .catch((error) => {
           dispatch({
-            type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN,
+            type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN
           });
           resolve({ error });
-        }),
+        })
     );
 }
 
 export function updateSettingsSuccess(user) {
   return {
     type: ActionTypes.SETTINGS_UPDATED,
-    user,
+    user
   };
 }
 
@@ -316,14 +316,14 @@ export function updateSettings(formValues) {
         .catch((error) => {
           const { response } = error;
           resolve({ error });
-        }),
+        })
     );
 }
 
 export function createApiKeySuccess(user) {
   return {
     type: ActionTypes.API_KEY_CREATED,
-    user,
+    user
   };
 }
 
@@ -347,7 +347,7 @@ export function removeApiKey(keyId) {
       .then((response) => {
         dispatch({
           type: ActionTypes.API_KEY_REMOVED,
-          user: response.data,
+          user: response.data
         });
       })
       .catch((error) => {
@@ -364,7 +364,7 @@ export function unlinkService(service) {
       .then((response) => {
         dispatch({
           type: ActionTypes.AUTH_USER,
-          user: response.data,
+          user: response.data
         });
       })
       .catch((error) => {
