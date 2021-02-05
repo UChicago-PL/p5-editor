@@ -8,7 +8,7 @@ import { showToast, setToastText } from '../IDE/actions/toast';
 export function authError(error) {
   return {
     type: ActionTypes.AUTH_ERROR,
-    payload: error
+    payload: error,
   };
 }
 
@@ -23,28 +23,28 @@ export function loginUser(formValues) {
 export function loginUserSuccess(user) {
   return {
     type: ActionTypes.AUTH_USER,
-    user
+    user,
   };
 }
 
 export function authenticateUser(user) {
   return {
     type: ActionTypes.AUTH_USER,
-    user
+    user,
   };
 }
 
 export function loginUserFailure(error) {
   return {
     type: ActionTypes.AUTH_ERROR,
-    error
+    error,
   };
 }
 
 export function setPreferences(preferences) {
   return {
     type: ActionTypes.SET_PREFERENCES,
-    preferences
+    preferences,
   };
 }
 
@@ -62,8 +62,7 @@ export function validateAndLoginUser(formProps) {
           browserHistory.push(previousPath);
           resolve();
         })
-        .catch(error =>
-          resolve({ password: error.response.data.message, _error: 'Login failed!' }));
+        .catch((error) => resolve({ password: error.response.data.message, _error: 'Login failed!' }));
     });
   };
 }
@@ -89,20 +88,38 @@ export function validateAndSignUpUser(formValues) {
   };
 }
 
-export function getUser() {
-  return (dispatch) => {
-    apiClient.get('/session')
+export function getGHRepos() {
+  return (dispatch) =>
+    apiClient
+      .get('/gh-repos')
       .then((response) => {
+        console.log('response gh-repos', response);
+      })
+      .catch((error) => {
+        console.log('ERROR', error);
+      });
+}
+
+export function getUser() {
+  console.log('get user');
+  return (dispatch) => {
+    apiClient
+      .get('/session')
+      .then((response) => {
+        console.log(response);
+
         dispatch({
           type: ActionTypes.AUTH_USER,
-          user: response.data
+          user: response.data,
         });
         dispatch({
           type: ActionTypes.SET_PREFERENCES,
-          preferences: response.data.preferences
+          preferences: response.data.preferences,
         });
         setLanguage(response.data.preferences.language, { persistPreference: false });
-      }).catch((error) => {
+        getGHRepos()(dispatch);
+      })
+      .catch((error) => {
         const { response } = error;
         const message = response.message || response.data.error;
         dispatch(authError(message));
@@ -112,7 +129,8 @@ export function getUser() {
 
 export function validateSession() {
   return (dispatch, getState) => {
-    apiClient.get('/session')
+    apiClient
+      .get('/session')
       .then((response) => {
         const state = getState();
         if (state.user.username !== response.data.username) {
@@ -130,10 +148,11 @@ export function validateSession() {
 
 export function logoutUser() {
   return (dispatch) => {
-    apiClient.get('/logout')
+    apiClient
+      .get('/logout')
       .then(() => {
         dispatch({
-          type: ActionTypes.UNAUTH_USER
+          type: ActionTypes.UNAUTH_USER,
         });
       })
       .catch((error) => {
@@ -144,29 +163,32 @@ export function logoutUser() {
 }
 
 export function initiateResetPassword(formValues) {
-  return dispatch => new Promise((resolve) => {
-    dispatch({
-      type: ActionTypes.RESET_PASSWORD_INITIATE
-    });
-    return apiClient.post('/reset-password', formValues)
-      .then(() => resolve())
-      .catch((error) => {
-        const { response } = error;
-        dispatch({
-          type: ActionTypes.ERROR,
-          message: response.data
-        });
-        resolve({ error });
+  return (dispatch) =>
+    new Promise((resolve) => {
+      dispatch({
+        type: ActionTypes.RESET_PASSWORD_INITIATE,
       });
-  });
+      return apiClient
+        .post('/reset-password', formValues)
+        .then(() => resolve())
+        .catch((error) => {
+          const { response } = error;
+          dispatch({
+            type: ActionTypes.ERROR,
+            message: response.data,
+          });
+          resolve({ error });
+        });
+    });
 }
 
 export function initiateVerification() {
   return (dispatch) => {
     dispatch({
-      type: ActionTypes.EMAIL_VERIFICATION_INITIATE
+      type: ActionTypes.EMAIL_VERIFICATION_INITIATE,
     });
-    apiClient.post('/verify/send', {})
+    apiClient
+      .post('/verify/send', {})
       .then(() => {
         // do nothing
       })
@@ -174,7 +196,7 @@ export function initiateVerification() {
         const { response } = error;
         dispatch({
           type: ActionTypes.ERROR,
-          message: response.data
+          message: response.data,
         });
       });
   };
@@ -186,60 +208,68 @@ export function verifyEmailConfirmation(token) {
       type: ActionTypes.EMAIL_VERIFICATION_VERIFY,
       state: 'checking',
     });
-    return apiClient.get(`/verify?t=${token}`, {})
-      .then(response => dispatch({
-        type: ActionTypes.EMAIL_VERIFICATION_VERIFIED,
-        message: response.data,
-      }))
+    return apiClient
+      .get(`/verify?t=${token}`, {})
+      .then((response) =>
+        dispatch({
+          type: ActionTypes.EMAIL_VERIFICATION_VERIFIED,
+          message: response.data,
+        }),
+      )
       .catch((error) => {
         const { response } = error;
         dispatch({
           type: ActionTypes.EMAIL_VERIFICATION_INVALID,
-          message: response.data
+          message: response.data,
         });
       });
   };
 }
 
-
 export function resetPasswordReset() {
   return {
-    type: ActionTypes.RESET_PASSWORD_RESET
+    type: ActionTypes.RESET_PASSWORD_RESET,
   };
 }
 
 export function validateResetPasswordToken(token) {
   return (dispatch) => {
-    apiClient.get(`/reset-password/${token}`)
+    apiClient
+      .get(`/reset-password/${token}`)
       .then(() => {
         // do nothing if the token is valid
       })
-      .catch(() => dispatch({
-        type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN
-      }));
+      .catch(() =>
+        dispatch({
+          type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN,
+        }),
+      );
   };
 }
 
 export function updatePassword(formValues, token) {
-  return dispatch => new Promise(resolve =>
-    apiClient.post(`/reset-password/${token}`, formValues)
-      .then((response) => {
-        dispatch(loginUserSuccess(response.data));
-        browserHistory.push('/');
-        resolve();
-      })
-      .catch((error) => {
-        dispatch({
-          type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN
-        });
-        resolve({ error });
-      }));
+  return (dispatch) =>
+    new Promise((resolve) =>
+      apiClient
+        .post(`/reset-password/${token}`, formValues)
+        .then((response) => {
+          dispatch(loginUserSuccess(response.data));
+          browserHistory.push('/');
+          resolve();
+        })
+        .catch((error) => {
+          dispatch({
+            type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN,
+          });
+          resolve({ error });
+        }),
+    );
 }
 
 export function updateSettingsSuccess(user) {
   return {
     type: ActionTypes.SETTINGS_UPDATED,
-    user
+    user,
   };
 }
 
@@ -248,29 +278,33 @@ export function submitSettings(formValues) {
 }
 
 export function updateSettings(formValues) {
-  return dispatch =>
-    new Promise(resolve =>
-      submitSettings(formValues).then((response) => {
-        dispatch(updateSettingsSuccess(response.data));
-        dispatch(showToast(5500));
-        dispatch(setToastText('Toast.SettingsSaved'));
-        resolve();
-      }).catch((error) => {
-        const { response } = error;
-        resolve({ error });
-      }));
+  return (dispatch) =>
+    new Promise((resolve) =>
+      submitSettings(formValues)
+        .then((response) => {
+          dispatch(updateSettingsSuccess(response.data));
+          dispatch(showToast(5500));
+          dispatch(setToastText('Toast.SettingsSaved'));
+          resolve();
+        })
+        .catch((error) => {
+          const { response } = error;
+          resolve({ error });
+        }),
+    );
 }
 
 export function createApiKeySuccess(user) {
   return {
     type: ActionTypes.API_KEY_CREATED,
-    user
+    user,
   };
 }
 
 export function createApiKey(label) {
-  return dispatch =>
-    apiClient.post('/account/api-keys', { label })
+  return (dispatch) =>
+    apiClient
+      .post('/account/api-keys', { label })
       .then((response) => {
         dispatch(createApiKeySuccess(response.data));
       })
@@ -281,12 +315,13 @@ export function createApiKey(label) {
 }
 
 export function removeApiKey(keyId) {
-  return dispatch =>
-    apiClient.delete(`/account/api-keys/${keyId}`)
+  return (dispatch) =>
+    apiClient
+      .delete(`/account/api-keys/${keyId}`)
       .then((response) => {
         dispatch({
           type: ActionTypes.API_KEY_REMOVED,
-          user: response.data
+          user: response.data,
         });
       })
       .catch((error) => {
@@ -298,13 +333,15 @@ export function removeApiKey(keyId) {
 export function unlinkService(service) {
   return (dispatch) => {
     if (!['github', 'google'].includes(service)) return;
-    apiClient.delete(`/auth/${service}`)
+    apiClient
+      .delete(`/auth/${service}`)
       .then((response) => {
         dispatch({
           type: ActionTypes.AUTH_USER,
-          user: response.data
+          user: response.data,
         });
-      }).catch((error) => {
+      })
+      .catch((error) => {
         const { response } = error;
         const message = response.message || response.data.error;
         dispatch(authError(message));

@@ -80,7 +80,7 @@ class Toolbar extends React.Component {
     });
 
     const canEditProjectName = this.canEditProjectName();
-
+    console.log(this.props);
     return (
       <div className="toolbar">
         <button
@@ -168,7 +168,10 @@ class Toolbar extends React.Component {
             )}
           </div>
         </div>
-        <button> SUBMIT </button>
+        <button className="submit-assignment-button" onClick={this.props.openSubmitModal}>
+          {' '}
+          SUBMIT{' '}
+        </button>
         <button
           className={preferencesButtonClass}
           onClick={this.props.openPreferences}
@@ -182,30 +185,29 @@ class Toolbar extends React.Component {
 }
 
 Toolbar.propTypes = {
+  autorefresh: PropTypes.bool.isRequired,
+  currentUser: PropTypes.string,
+  hideEditProjectName: PropTypes.func.isRequired,
+  infiniteLoop: PropTypes.bool.isRequired,
   isPlaying: PropTypes.bool.isRequired,
-  preferencesIsVisible: PropTypes.bool.isRequired,
-  stopSketch: PropTypes.func.isRequired,
-  setProjectName: PropTypes.func.isRequired,
   openPreferences: PropTypes.func.isRequired,
-  owner: PropTypes.shape({
-    username: PropTypes.string,
-  }),
+  openSubmitModal: PropTypes.func.isRequired,
+  owner: PropTypes.shape({ username: PropTypes.string }),
+  preferencesIsVisible: PropTypes.bool.isRequired,
   project: PropTypes.shape({
     name: PropTypes.string.isRequired,
     isEditingName: PropTypes.bool,
     id: PropTypes.string,
   }).isRequired,
-  showEditProjectName: PropTypes.func.isRequired,
-  hideEditProjectName: PropTypes.func.isRequired,
-  infiniteLoop: PropTypes.bool.isRequired,
-  autorefresh: PropTypes.bool.isRequired,
-  setAutorefresh: PropTypes.func.isRequired,
-  setTextOutput: PropTypes.func.isRequired,
-  setGridOutput: PropTypes.func.isRequired,
-  startSketch: PropTypes.func.isRequired,
-  startAccessibleSketch: PropTypes.func.isRequired,
   saveProject: PropTypes.func.isRequired,
-  currentUser: PropTypes.string,
+  setAutorefresh: PropTypes.func.isRequired,
+  setGridOutput: PropTypes.func.isRequired,
+  setProjectName: PropTypes.func.isRequired,
+  setTextOutput: PropTypes.func.isRequired,
+  showEditProjectName: PropTypes.func.isRequired,
+  startAccessibleSketch: PropTypes.func.isRequired,
+  startSketch: PropTypes.func.isRequired,
+  stopSketch: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
 };
 

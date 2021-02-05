@@ -14,6 +14,7 @@ const initialState = {
   shareModalProjectId: 'abcd',
   shareModalProjectName: 'My Cute Sketch',
   shareModalProjectUsername: 'p5_user',
+  submitModalVisible: false,
   editorOptionsVisible: false,
   keyboardShortcutVisible: false,
   unsavedChanges: false,
@@ -24,7 +25,7 @@ const initialState = {
   previousPath: '/',
   errorType: undefined,
   runtimeErrorWarningVisible: true,
-  parentId: undefined
+  parentId: undefined,
 };
 
 const ide = (state = initialState, action) => {
@@ -43,7 +44,7 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, {
         modalIsVisible: true,
         parentId: action.parentId,
-        newFolderModalVisible: false
+        newFolderModalVisible: false,
       });
     case ActionTypes.HIDE_MODAL:
       return Object.assign({}, state, { modalIsVisible: false });
@@ -69,7 +70,7 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, {
         newFolderModalVisible: true,
         parentId: action.parentId,
-        modalIsVisible: false
+        modalIsVisible: false,
       });
     case ActionTypes.CLOSE_NEW_FOLDER_MODAL:
       return Object.assign({}, state, { newFolderModalVisible: false });
@@ -118,6 +119,10 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, { uploadFileModalVisible: true, parentId: action.parentId });
     case ActionTypes.CLOSE_UPLOAD_FILE_MODAL:
       return Object.assign({}, state, { uploadFileModalVisible: false });
+    case ActionTypes.OPEN_SUBMIT_MODEL:
+      return Object.assign({}, state, { submitModalVisible: true });
+    case ActionTypes.CLOSE_SUBMIT_MODEL:
+      return Object.assign({}, state, { submitModalVisible: false });
     default:
       return state;
   }

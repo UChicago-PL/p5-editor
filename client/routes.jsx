@@ -34,26 +34,41 @@ const onRouteChange = (store) => {
   store.dispatch(stopSketch());
 };
 
-const routes = store => (
-  <Route path="/" component={App} onChange={() => { onRouteChange(store); }}>
+const routes = (store) => (
+  <Route
+    path="/"
+    component={App}
+    onChange={() => {
+      onRouteChange(store);
+    }}
+  >
     <IndexRoute onEnter={checkAuth(store)} component={mobileFirst(MobileIDEView, IDEView)} />
 
-    <Route path="/login" component={userIsNotAuthenticated(mobileFirst(responsiveForm(LoginView), LoginView))} />
-    <Route path="/signup" component={userIsNotAuthenticated(mobileFirst(responsiveForm(SignupView), SignupView))} />
+    <Route
+      path="/login"
+      component={userIsNotAuthenticated(mobileFirst(responsiveForm(LoginView), LoginView))}
+    />
+    <Route
+      path="/signup"
+      component={userIsNotAuthenticated(mobileFirst(responsiveForm(SignupView), SignupView))}
+    />
     <Route path="/reset-password" component={userIsNotAuthenticated(ResetPasswordView)} />
     <Route path="/verify" component={EmailVerificationView} />
-    <Route
-      path="/reset-password/:reset_password_token"
-      component={NewPasswordView}
-    />
+    <Route path="/reset-password/:reset_password_token" component={NewPasswordView} />
     <Route path="/projects/:project_id" component={IDEView} />
     <Route path="/:username/full/:project_id" component={FullView} />
     <Route path="/full/:project_id" component={FullView} />
 
-    <Route path="/:username/assets" component={userIsAuthenticated(userIsAuthorized(mobileFirst(MobileDashboardView, DashboardView)))} />
+    <Route
+      path="/:username/assets"
+      component={userIsAuthenticated(userIsAuthorized(mobileFirst(MobileDashboardView, DashboardView)))}
+    />
     <Route path="/:username/sketches" component={mobileFirst(MobileDashboardView, DashboardView)} />
     <Route path="/:username/sketches/:project_id" component={mobileFirst(MobileIDEView, IDEView)} />
-    <Route path="/:username/sketches/:project_id/add-to-collection" component={mobileFirst(MobileIDEView, IDEView)} />
+    <Route
+      path="/:username/sketches/:project_id/add-to-collection"
+      component={mobileFirst(MobileIDEView, IDEView)}
+    />
     <Route path="/:username/collections" component={mobileFirst(MobileDashboardView, DashboardView)} />
 
     <Route path="/:username/collections/create" component={DashboardView} />
@@ -65,9 +80,9 @@ const routes = store => (
     <Route path="/about" component={IDEView} />
 
     {/* Mobile-only Routes */}
+    {/* TODO delete */}
     <Route path="/preview" component={MobileSketchView} />
     <Route path="/preferences" component={MobilePreferences} />
-
   </Route>
 );
 

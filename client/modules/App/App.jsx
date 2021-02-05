@@ -20,8 +20,7 @@ class App extends React.Component {
   componentWillReceiveProps(nextProps) {
     const locationWillChange = nextProps.location !== this.props.location;
     const shouldSkipRemembering =
-      nextProps.location.state &&
-      nextProps.location.state.skipSavingPath === true;
+      nextProps.location.state && nextProps.location.state.skipSavingPath === true;
 
     if (locationWillChange && !shouldSkipRemembering) {
       this.props.setPreviousPath(this.props.location.pathname);
@@ -41,7 +40,11 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        {this.state.isMounted && !window.devToolsExtension && false && getConfig('NODE_ENV') === 'development' && <DevTools />}
+        {/* TODO remove */}
+        {this.state.isMounted &&
+          !window.devToolsExtension &&
+          false &&
+          getConfig('NODE_ENV') === 'development' && <DevTools />}
         {this.props.children}
       </div>
     );
@@ -68,7 +71,7 @@ App.defaultProps = {
   theme: 'light',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   theme: state.preferences.theme,
   language: state.preferences.language,
 });

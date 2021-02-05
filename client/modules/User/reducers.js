@@ -1,19 +1,20 @@
 import * as ActionTypes from '../../constants';
 
 const user = (state = { authenticated: false }, action) => {
+  console.log(action.type);
   switch (action.type) {
     case ActionTypes.AUTH_USER:
       return {
         ...action.user,
-        authenticated: true
+        authenticated: true,
       };
     case ActionTypes.UNAUTH_USER:
       return {
-        authenticated: false
+        authenticated: false,
       };
     case ActionTypes.AUTH_ERROR:
       return {
-        authenticated: false
+        authenticated: false,
       };
     case ActionTypes.RESET_PASSWORD_INITIATE:
       return Object.assign({}, state, { resetPasswordInitiate: true });
