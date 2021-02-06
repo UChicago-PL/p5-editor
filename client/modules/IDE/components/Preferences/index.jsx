@@ -25,7 +25,7 @@ class Preferences extends React.Component {
     this.setFontSize = this.setFontSize.bind(this);
 
     this.state = {
-      fontSize: props.fontSize,
+      fontSize: props.fontSize
     };
   }
 
@@ -33,7 +33,7 @@ class Preferences extends React.Component {
     const INTEGER_REGEX = /^[0-9\b]+$/;
     if (event.target.value === '' || INTEGER_REGEX.test(event.target.value)) {
       this.setState({
-        fontSize: event.target.value,
+        fontSize: event.target.value
       });
     }
   }
@@ -99,12 +99,8 @@ class Preferences extends React.Component {
         <Tabs>
           <TabList>
             <div className="tabs__titles">
-              <Tab>
-                <h4 className="tabs__title">{this.props.t('Preferences.GeneralSettings')}</h4>
-              </Tab>
-              <Tab>
-                <h4 className="tabs__title">{this.props.t('Preferences.Accessibility')}</h4>
-              </Tab>
+              <Tab><h4 className="tabs__title">{this.props.t('Preferences.GeneralSettings')}</h4></Tab>
+              <Tab><h4 className="tabs__title">{this.props.t('Preferences.Accessibility')}</h4></Tab>
             </div>
           </TabList>
           <TabPanel>
@@ -121,9 +117,7 @@ class Preferences extends React.Component {
                   value="light"
                   checked={this.props.theme === 'light'}
                 />
-                <label htmlFor="light-theme-on" className="preference__option">
-                  {this.props.t('Preferences.LightTheme')}
-                </label>
+                <label htmlFor="light-theme-on" className="preference__option">{this.props.t('Preferences.LightTheme')}</label>
                 <input
                   type="radio"
                   onChange={() => this.props.setTheme('dark')}
@@ -134,9 +128,7 @@ class Preferences extends React.Component {
                   value="dark"
                   checked={this.props.theme === 'dark'}
                 />
-                <label htmlFor="dark-theme-on" className="preference__option">
-                  {this.props.t('Preferences.DarkTheme')}
-                </label>
+                <label htmlFor="dark-theme-on" className="preference__option">{this.props.t('Preferences.DarkTheme')}</label>
                 <input
                   type="radio"
                   onChange={() => this.props.setTheme('contrast')}
@@ -147,9 +139,7 @@ class Preferences extends React.Component {
                   value="contrast"
                   checked={this.props.theme === 'contrast'}
                 />
-                <label htmlFor="high-contrast-theme-on" className="preference__option">
-                  {this.props.t('Preferences.HighContrastTheme')}
-                </label>
+                <label htmlFor="high-contrast-theme-on" className="preference__option">{this.props.t('Preferences.HighContrastTheme')}</label>
               </div>
             </div>
             <div className="preference">
@@ -171,12 +161,8 @@ class Preferences extends React.Component {
                   value={this.state.fontSize}
                   onChange={this.onFontInputChange}
                   type="text"
-                  ref={(element) => {
-                    this.fontSizeInput = element;
-                  }}
-                  onClick={() => {
-                    this.fontSizeInput.select();
-                  }}
+                  ref={(element) => { this.fontSizeInput = element; }}
+                  onClick={() => { this.fontSizeInput.select(); }}
                 />
               </form>
               <button
@@ -202,9 +188,7 @@ class Preferences extends React.Component {
                   value="On"
                   checked={this.props.autosave}
                 />
-                <label htmlFor="autosave-on" className="preference__option">
-                  {this.props.t('Preferences.On')}
-                </label>
+                <label htmlFor="autosave-on" className="preference__option">{this.props.t('Preferences.On')}</label>
                 <input
                   type="radio"
                   onChange={() => this.props.setAutosave(false)}
@@ -215,9 +199,7 @@ class Preferences extends React.Component {
                   value="Off"
                   checked={!this.props.autosave}
                 />
-                <label htmlFor="autosave-off" className="preference__option">
-                  {this.props.t('Preferences.Off')}
-                </label>
+                <label htmlFor="autosave-off" className="preference__option">{this.props.t('Preferences.Off')}</label>
               </div>
             </div>
             <div className="preference">
@@ -233,9 +215,7 @@ class Preferences extends React.Component {
                   value="On"
                   checked={this.props.autocloseBracketsQuotes}
                 />
-                <label htmlFor="autoclosebracketsquotes-on" className="preference__option">
-                  {this.props.t('Preferences.On')}
-                </label>
+                <label htmlFor="autoclosebracketsquotes-on" className="preference__option">{this.props.t('Preferences.On')}</label>
                 <input
                   type="radio"
                   onChange={() => this.props.setAutocloseBracketsQuotes(false)}
@@ -246,9 +226,7 @@ class Preferences extends React.Component {
                   value="Off"
                   checked={!this.props.autocloseBracketsQuotes}
                 />
-                <label htmlFor="autoclosebracketsquotes-off" className="preference__option">
-                  {this.props.t('Preferences.Off')}
-                </label>
+                <label htmlFor="autoclosebracketsquotes-off" className="preference__option">{this.props.t('Preferences.Off')}</label>
               </div>
             </div>
             <div className="preference">
@@ -264,9 +242,7 @@ class Preferences extends React.Component {
                   value="On"
                   checked={this.props.linewrap}
                 />
-                <label htmlFor="linewrap-on" className="preference__option">
-                  {this.props.t('Preferences.On')}
-                </label>
+                <label htmlFor="linewrap-on" className="preference__option">{this.props.t('Preferences.On')}</label>
                 <input
                   type="radio"
                   onChange={() => this.props.setLinewrap(false)}
@@ -277,9 +253,7 @@ class Preferences extends React.Component {
                   value="Off"
                   checked={!this.props.linewrap}
                 />
-                <label htmlFor="linewrap-off" className="preference__option">
-                  {this.props.t('Preferences.Off')}
-                </label>
+                <label htmlFor="linewrap-off" className="preference__option">{this.props.t('Preferences.Off')}</label>
               </div>
             </div>
           </TabPanel>
@@ -297,9 +271,7 @@ class Preferences extends React.Component {
                   value="On"
                   checked={this.props.lineNumbers}
                 />
-                <label htmlFor="line-numbers-on" className="preference__option">
-                  {this.props.t('Preferences.On')}
-                </label>
+                <label htmlFor="line-numbers-on" className="preference__option">{this.props.t('Preferences.On')}</label>
                 <input
                   type="radio"
                   onChange={() => this.props.setLineNumbers(false)}
@@ -310,9 +282,7 @@ class Preferences extends React.Component {
                   value="Off"
                   checked={!this.props.lineNumbers}
                 />
-                <label htmlFor="line-numbers-off" className="preference__option">
-                  {this.props.t('Preferences.Off')}
-                </label>
+                <label htmlFor="line-numbers-off" className="preference__option">{this.props.t('Preferences.Off')}</label>
               </div>
             </div>
             <div className="preference">
@@ -328,9 +298,7 @@ class Preferences extends React.Component {
                   value="On"
                   checked={this.props.lintWarning}
                 />
-                <label htmlFor="lint-warning-on" className="preference__option">
-                  {this.props.t('Preferences.On')}
-                </label>
+                <label htmlFor="lint-warning-on" className="preference__option">{this.props.t('Preferences.On')}</label>
                 <input
                   type="radio"
                   onChange={() => this.props.setLintWarning(false)}
@@ -341,9 +309,7 @@ class Preferences extends React.Component {
                   value="Off"
                   checked={!this.props.lintWarning}
                 />
-                <label htmlFor="lint-warning-off" className="preference__option">
-                  {this.props.t('Preferences.Off')}
-                </label>
+                <label htmlFor="lint-warning-off" className="preference__option">{this.props.t('Preferences.Off')}</label>
                 <button
                   className="preference__preview-button"
                   onClick={() => beep.play()}
@@ -367,11 +333,9 @@ class Preferences extends React.Component {
                   name="text output"
                   id="text-output-on"
                   value="On"
-                  checked={this.props.textOutput}
+                  checked={(this.props.textOutput)}
                 />
-                <label htmlFor="text-output-on" className="preference__option preference__canvas">
-                  {this.props.t('Preferences.PlainText')}
-                </label>
+                <label htmlFor="text-output-on" className="preference__option preference__canvas">{this.props.t('Preferences.PlainText')}</label>
                 <input
                   type="checkbox"
                   onChange={(event) => {
@@ -381,11 +345,9 @@ class Preferences extends React.Component {
                   name="table output"
                   id="table-output-on"
                   value="On"
-                  checked={this.props.gridOutput}
+                  checked={(this.props.gridOutput)}
                 />
-                <label htmlFor="table-output-on" className="preference__option preference__canvas">
-                  {this.props.t('Preferences.TableText')}
-                </label>
+                <label htmlFor="table-output-on" className="preference__option preference__canvas">{this.props.t('Preferences.TableText')}</label>
                 <input
                   type="checkbox"
                   onChange={(event) => {
@@ -395,11 +357,9 @@ class Preferences extends React.Component {
                   name="sound output"
                   id="sound-output-on"
                   value="On"
-                  checked={this.props.soundOutput}
+                  checked={(this.props.soundOutput)}
                 />
-                <label htmlFor="sound-output-on" className="preference__option preference__canvas">
-                  {this.props.t('Preferences.Sound')}
-                </label>
+                <label htmlFor="sound-output-on" className="preference__option preference__canvas">{this.props.t('Preferences.Sound')}</label>
               </div>
             </div>
           </TabPanel>
