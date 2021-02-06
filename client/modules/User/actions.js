@@ -122,10 +122,7 @@ export function getGHRepos() {
 }
 
 export function submitToGH(formProps) {
-  // TODO, ALSO FILE A SAVE ACTION
-  // TODO dispatch some like posting actions and wait for generated pr link
-  const postParams = formProps;
-  return (dispatch) => apiClient.post('/submit-gh-repo', postParams);
+  return (dispatch) => apiClient.post('/submit-gh-repo', formProps);
 }
 
 export function getUser() {
@@ -133,16 +130,8 @@ export function getUser() {
     apiClient
       .get('/session')
       .then((response) => {
-        console.log(response);
-
-        dispatch({
-          type: ActionTypes.AUTH_USER,
-          user: response.data
-        });
-        dispatch({
-          type: ActionTypes.SET_PREFERENCES,
-          preferences: response.data.preferences
-        });
+        dispatch({ type: ActionTypes.AUTH_USER, user: response.data });
+        dispatch({ type: ActionTypes.SET_PREFERENCES, preferences: response.data.preferences });
         setLanguage(response.data.preferences.language, { persistPreference: false });
       })
       .catch((error) => {
@@ -177,9 +166,7 @@ export function logoutUser() {
     apiClient
       .get('/logout')
       .then(() => {
-        dispatch({
-          type: ActionTypes.UNAUTH_USER
-        });
+        dispatch({ type: ActionTypes.UNAUTH_USER });
       })
       .catch((error) => {
         const { response } = error;

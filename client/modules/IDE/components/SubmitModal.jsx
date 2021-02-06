@@ -33,15 +33,6 @@ class SubmitalModal extends React.Component {
     this.props.closeSubmitModal();
   }
 
-  // handleSave() {
-  //   if (this.props.user.authenticated) {
-  //     this.props.saveProject(this.props.cmController.getContent());
-  //   } else {
-  //     this.props.showErrorModal('forceAuthentication');
-  //   }
-  //   this.setDropdown('none');
-  // }
-
   render() {
     const { repos, user, project } = this.props;
     const isAuthed = user.authenticated;
@@ -77,23 +68,20 @@ SubmitalModal.propTypes = {
   repos: PropTypes.arrayOf(PropTypes.object).isRequired,
   user: PropTypes.shape({
     username: PropTypes.string,
-    authenticated: PropTypes.bool.isRequired,
+    authenticated: PropTypes.bool.isRequired
   }).isRequired,
   project: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired
   }).isRequired,
-  t: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired
 };
 
-function mapStateToProps(state, props) {
-  console.log(state);
+function mapStateToProps(state) {
   return {
     user: state.user,
-    sorting: state.sorting,
-    loading: state.loading,
     project: state.project,
-    repos: state.repos,
+    repos: state.repos
   };
 }
 

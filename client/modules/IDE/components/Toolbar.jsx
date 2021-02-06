@@ -51,6 +51,14 @@ class Toolbar extends React.Component {
     }
   }
 
+  handleSave() {
+    if (this.props.user.authenticated) {
+      this.props.saveProject(this.props.cmController.getContent());
+    } else {
+      this.props.showErrorModal('forceAuthentication');
+    }
+  }
+
   canEditProjectName() {
     return (
       (this.props.owner &&
@@ -175,7 +183,13 @@ class Toolbar extends React.Component {
           </div>
         </div>
         <div className="flex">
-          <button className="submit-assignment-button" onClick={this.props.openSubmitModal}>
+          <button
+            className="submit-assignment-button"
+            onClick={() => {
+              this.handleSave();
+              this.props.openSubmitModal();
+            }}
+          >
             SUBMIT
           </button>
           <button
@@ -193,6 +207,14 @@ class Toolbar extends React.Component {
 
 Toolbar.propTypes = {
   autorefresh: PropTypes.bool.isRequired,
+  cmController: PropTypes.shape({
+    findNext: PropTypes.func,
+    findPrev: PropTypes.func,
+    getContent: PropTypes.func,
+    showFind: PropTypes.func,
+    showReplace: PropTypes.func,
+    tidyCode: PropTypes.func
+  }),
   currentUser: PropTypes.string,
   hideEditProjectName: PropTypes.func.isRequired,
   infiniteLoop: PropTypes.bool.isRequired,
@@ -212,15 +234,22 @@ Toolbar.propTypes = {
   setProjectName: PropTypes.func.isRequired,
   setTextOutput: PropTypes.func.isRequired,
   showEditProjectName: PropTypes.func.isRequired,
+  showErrorModal: PropTypes.func.isRequired,
   startAccessibleSketch: PropTypes.func.isRequired,
   startSketch: PropTypes.func.isRequired,
   stopSketch: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    authenticated: PropTypes.bool.isRequired,
+    username: PropTypes.string,
+    id: PropTypes.string
+  }).isRequired
 };
 
 Toolbar.defaultProps = {
   owner: undefined,
-  currentUser: undefined
+  currentUser: undefined,
+  cmController: {}
 };
 
 function mapStateToProps(state) {
@@ -231,7 +260,8 @@ function mapStateToProps(state) {
     isPlaying: state.ide.isPlaying,
     owner: state.project.owner,
     preferencesIsVisible: state.ide.preferencesIsVisible,
-    project: state.project
+    project: state.project,
+    user: state.user
   };
 }
 

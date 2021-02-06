@@ -65,7 +65,7 @@ class IDEView extends React.Component {
 
     this.state = {
       consoleSize: props.ide.consoleIsExpanded ? 150 : 29,
-      sidebarSize: props.ide.sidebarIsExpanded ? 160 : 20,
+      sidebarSize: props.ide.sidebarIsExpanded ? 160 : 20
     };
   }
 
@@ -100,13 +100,13 @@ class IDEView extends React.Component {
 
     if (this.props.ide.consoleIsExpanded !== nextProps.ide.consoleIsExpanded) {
       this.setState({
-        consoleSize: nextProps.ide.consoleIsExpanded ? 150 : 29,
+        consoleSize: nextProps.ide.consoleIsExpanded ? 150 : 29
       });
     }
 
     if (this.props.ide.sidebarIsExpanded !== nextProps.ide.sidebarIsExpanded) {
       this.setState({
-        sidebarSize: nextProps.ide.sidebarIsExpanded ? 160 : 20,
+        sidebarSize: nextProps.ide.sidebarIsExpanded ? 160 : 20
       });
     }
   }
@@ -228,7 +228,7 @@ class IDEView extends React.Component {
         </Helmet>
         {this.props.toast.isVisible && <Toast />}
         <Nav warnIfUnsavedChanges={this.handleUnsavedChanges} cmController={this.cmController} />
-        <Toolbar key={this.props.project.id} />
+        <Toolbar key={this.props.project.id} cmController={this.cmController} />
         {this.props.ide.preferencesIsVisible && (
           <Overlay
             title={this.props.t('Preferences.Settings')}
@@ -297,7 +297,7 @@ class IDEView extends React.Component {
                 borderLeftWidth: '2px',
                 borderRightWidth: '2px',
                 width: '2px',
-                margin: '0px 0px',
+                margin: '0px 0px'
               }}
             >
               <SplitPane
@@ -444,15 +444,15 @@ IDEView.propTypes = {
     PropTypes.shape({
       content: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-    }),
+      name: PropTypes.string.isRequired
+    })
   ).isRequired,
   getProject: PropTypes.func.isRequired,
   hideErrorModal: PropTypes.func.isRequired,
   htmlFile: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired
   }).isRequired,
   ide: PropTypes.shape({
     consoleIsExpanded: PropTypes.bool.isRequired,
@@ -474,7 +474,7 @@ IDEView.propTypes = {
     sidebarIsExpanded: PropTypes.bool.isRequired,
     submitModalVisible: PropTypes.bool.isRequired,
     unsavedChanges: PropTypes.bool.isRequired,
-    uploadFileModalVisible: PropTypes.bool.isRequired,
+    uploadFileModalVisible: PropTypes.bool.isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
@@ -485,7 +485,7 @@ IDEView.propTypes = {
   params: PropTypes.shape({
     project_id: PropTypes.string,
     username: PropTypes.string,
-    reset_password_token: PropTypes.string,
+    reset_password_token: PropTypes.string
   }).isRequired,
   preferences: PropTypes.shape({
     autocloseBracketsQuotes: PropTypes.bool.isRequired,
@@ -499,13 +499,13 @@ IDEView.propTypes = {
     lintWarning: PropTypes.bool.isRequired,
     soundOutput: PropTypes.bool.isRequired,
     textOutput: PropTypes.bool.isRequired,
-    theme: PropTypes.string.isRequired,
+    theme: PropTypes.string.isRequired
   }).isRequired,
   project: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string.isRequired,
     owner: PropTypes.shape({ id: PropTypes.string, username: PropTypes.string }),
-    updatedAt: PropTypes.string,
+    updatedAt: PropTypes.string
   }).isRequired,
   route: PropTypes.oneOfType([PropTypes.object, PropTypes.element]).isRequired,
   router: PropTypes.shape({ setRouteLeaveHook: PropTypes.func }).isRequired,
@@ -513,7 +513,7 @@ IDEView.propTypes = {
   selectedFile: PropTypes.shape({
     id: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
   }).isRequired,
   setAllAccessibleOutput: PropTypes.func.isRequired,
   setAutocloseBracketsQuotes: PropTypes.func.isRequired,
@@ -537,8 +537,8 @@ IDEView.propTypes = {
   user: PropTypes.shape({
     authenticated: PropTypes.bool.isRequired,
     id: PropTypes.string,
-    username: PropTypes.string,
-  }).isRequired,
+    username: PropTypes.string
+  }).isRequired
 };
 
 function mapStateToProps(state) {
@@ -556,7 +556,7 @@ function mapStateToProps(state) {
     project: state.project,
     toast: state.toast,
     console: state.console,
-    isUserOwner: getIsUserOwner(state),
+    isUserOwner: getIsUserOwner(state)
   };
 }
 
@@ -571,9 +571,9 @@ function mapDispatchToProps(dispatch) {
       PreferencesActions,
       UserActions,
       ToastActions,
-      ConsoleActions,
+      ConsoleActions
     ),
-    dispatch,
+    dispatch
   );
 }
 

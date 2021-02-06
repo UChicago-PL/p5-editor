@@ -426,22 +426,11 @@ function prepPR(data, prefix) {
   return namesToFiles;
 }
 export function submitGHRepo(req, res) {
-  // console.log(req);
   if (!req.user || !req.user.github) {
     res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
     return;
   }
-  // body: {
-  //   toSubFolder: 'yes',
-  //   repo: {
-  //     fullName: 'uchicago-vis-pl-lab/test-assignment-mcnuttandrew',
-  //     repoName: 'test-assignment-mcnuttandrew',
-  //     ownerName: 'uchicago-vis-pl-lab',
-  //     link: 'https://github.com/uchicago-vis-pl-lab/test-assignment-mcnuttandrew',
-  //     description: 'test-assignment-mcnuttandrew created by GitHub Classroom'
-  //   },
-  //   name: 'test'
-  // },
+
   const { toSubFolder, repo, project, name } = req.body;
   if (!toSubFolder || !repo || (toSubFolder && toSubFolder.includes('yes') && !name)) {
     res.status(300).json({ success: false, message: 'Incomplete request' });
@@ -454,7 +443,6 @@ export function submitGHRepo(req, res) {
     return;
   }
   getFileContent(id).then((contents) => {
-    // console.log('RESOLVED CONTENTS', JSON.stringify(contents, null, 2));
     octokit
       .createPullRequest({
         owner: ownerName,
@@ -488,12 +476,13 @@ export function getGHRepos(req, res) {
   }
   octokit
     // .request('GET /search/repositories?q=user:{user}', { user: req.user.username })
+    // TODO update to correct org
     .request('GET /orgs/uchicago-vis-pl-lab/repos')
     .then((result) => {
-      console.log(JSON.stringify(result, null, 2));
+      // console.log(JSON.stringify(result, null, 2));
       res.status(200).json(
         result.data.reduce((acc, item) => {
-          // ignore items not affailiated with logged in user
+          // ignore items not affiliated with logged in user
           console.log('test', item.full_name, req.user.username);
           if (!item.full_name.includes(req.user.username)) {
             return acc;
