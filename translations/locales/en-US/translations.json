@@ -90,7 +90,7 @@
   },
   "About": {
     "Title": "About",
-    "TitleHelmet": "p5.js Web Editor | About",
+    "TitleHelmet": "CMSC11111 Editor | About",
     "Contribute": "Contribute",
     "NewP5": "New to p5.js?",
     "Report": "Report a bug",
