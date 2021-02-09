@@ -6,9 +6,11 @@ import isAfter from 'date-fns/isAfter';
 import request from 'request';
 import slugify from 'slugify';
 import Project from '../models/project';
+import LogItem from '../models/logItem';
 import User from '../models/user';
 import { resolvePathToFile } from '../utils/filePath';
 import generateFileSystemSafeName from '../utils/generateFileSystemSafeName';
+import isPartOfStudy from '../utils/isPartOfStudy';
 
 export { default as createProject, apiCreateProject } from './project.controller/createProject';
 export { default as deleteProject } from './project.controller/deleteProject';
@@ -41,6 +43,19 @@ export function updateProject(req, res) {
           res.status(400).json({ success: false });
           return;
         }
+
+        if (isPartOfStudy(updatedProject.user.id)) {
+          LogItem.create({ logType: 'snapshot',
+            projectSnapshot: {
+              project: updatedProject._id, files: updatedProject.files
+            }
+          }, (err, _logItem) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }
+
         if (req.body.files && updatedProject.files.length !== req.body.files.length) {
           const oldFileIds = updatedProject.files.map(file => file.id);
           const newFileIds = req.body.files.map(file => file.id);

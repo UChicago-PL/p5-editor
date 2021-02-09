@@ -7,7 +7,7 @@ import './user';
 
 const { Schema } = mongoose;
 
-const fileSchema = new Schema(
+export const fileSchema = new Schema(
   {
     name: { type: String, default: 'sketch.js' },
     content: { type: String, default: '' },
@@ -87,5 +87,7 @@ projectSchema.methods.isSlugUnique = async function isSlugUnique(cb) {
     throw err;
   }
 };
+
+export const File = mongoose.model('File', fileSchema);
 
 export default mongoose.model('Project', projectSchema);
