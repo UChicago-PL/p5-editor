@@ -60,6 +60,11 @@ export function renderIndex() {
       <script src='${
         process.env.NODE_ENV === 'production' ? `${assetsManifest['/app.js']}` : '/app.js'
       }'></script>
+      <script type="application/javascript">
+        if (!location.href.includes('localhost') && location.protocol !== 'https:') {
+           location.replace('https:' + location.href.substring(location.protocol.length));
+        }
+      </script>
     </body>
   </html>
   `;
