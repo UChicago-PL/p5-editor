@@ -1,6 +1,8 @@
 import * as ActionTypes from '../../../constants';
 import { clearConsole } from './console';
 
+import { logRun } from './project';
+
 export function startVisualSketch() {
   return {
     type: ActionTypes.START_SKETCH
@@ -261,6 +263,7 @@ export function startSketch() {
   return (dispatch) => {
     dispatch(clearConsole());
     dispatch(startSketchAndRefresh());
+    dispatch(logRun());
   };
 }
 
@@ -269,6 +272,7 @@ export function startAccessibleSketch() {
     dispatch(clearConsole());
     dispatch(startAccessibleOutput());
     dispatch(startSketchAndRefresh());
+    dispatch(logRun());
   };
 }
 
@@ -285,3 +289,4 @@ export function createError(error) {
     error
   };
 }
+

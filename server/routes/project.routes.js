@@ -18,4 +18,6 @@ router.get('/:username/projects', ProjectController.getProjectsForUser);
 
 router.get('/projects/:project_id/zip', ProjectController.downloadProjectAsZip);
 
+router.post('/projects/:project_id/log', isAuthenticated, ProjectController.createLogItem);
+
 export default router;

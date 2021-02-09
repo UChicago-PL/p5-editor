@@ -274,3 +274,25 @@ export function downloadProjectAsZip(req, res) {
     buildZip(project, req, res);
   });
 }
+
+export function createLogItem(req, res) {
+  Project.findById(req.params.project_id, (findProjectErr, project) => {
+    if (!project.user.equals(req.user._id)) {
+      res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
+      return;
+    }
+
+    LogItem.create({ logType: 'run',
+      projectSnapshot: {
+        project: req.params.project_id, files: req.body
+      }
+    }, (createLogItemErr, logItem) => {
+      if (createLogItemErr) {
+        console.log(createLogItemErr);
+        res.status(400).json({ success: false });
+        return;
+      }
+      res.json(logItem);
+    });
+  });
+}

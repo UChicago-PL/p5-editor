@@ -380,3 +380,17 @@ export function deleteProject(id) {
       });
   };
 }
+
+export function logRun() {
+  return (dispatch, getState) => {
+    const state = getState();
+
+    const formParams = {};
+    formParams.files = [...state.files];
+
+    console.log(state.project.id);
+    if (state.project.id) {
+      apiClient.post(`/projects/${state.project.id}/log`, formParams);
+    }
+  };
+}

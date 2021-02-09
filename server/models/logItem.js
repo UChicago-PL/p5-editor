@@ -18,7 +18,7 @@ const logItemSchema = new Schema(
   {
     logType: {
       type: String,
-      enum: ['snapshot', 'submission'],
+      enum: ['snapshot', 'run', 'submission'],
     },
     projectSnapshot: { type: projectSnapshotSchema },
   },
