@@ -95,14 +95,15 @@ export function getGHRepos() {
       .get('/gh-repos')
       .then((response) => {
         console.log(response.data);
+        const classRepos = response.data
+          .filter((x) => x.fullName.includes('UChicago-PL/'))
+          .sort((a, b) => a.fullName.localeCompare(b.fullName));
+        const ownRepos = response.data
+          .filter((x) => !x.fullName.includes('UChicago-PL/'))
+          .sort((a, b) => a.fullName.localeCompare(b.fullName));
         dispatch({
           type: ActionTypes.RECEIVE_GH_REPOS,
-          payload: response.data.sort((a, b) => {
-            const [prefixA, suffixA] = a.fullName.split('/');
-            const [prefixB, suffixB] = b.fullName.split('/');
-            const prefixCompare = prefixA.localeCompare(prefixB);
-            return prefixCompare !== 0 ? prefixCompare : suffixA.localeCompare(suffixB);
-          })
+          payload: classRepos.concat(ownRepos)
         });
       })
       .catch((error) => {
