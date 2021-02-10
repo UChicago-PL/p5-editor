@@ -1,5 +1,3 @@
-import slugify from 'slugify';
-import friendlyWords from 'friendly-words';
 import lodash from 'lodash';
 
 import passport from 'passport';
@@ -9,11 +7,6 @@ import GitHubStrategy from 'passport-github';
 // import { BasicStrategy } from 'passport-http';
 
 import User from '../models/user';
-
-// function generateUniqueUsername(username) {
-//   const adj = friendlyWords.predicates[Math.floor(Math.random() * friendlyWords.predicates.length)];
-//   return slugify(`${username} ${adj}`);
-// }
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -98,7 +91,7 @@ passport.use(
       callbackURL: '/auth/github/callback',
       passReqToCallback: true,
       // repo is for creating pull requests
-      scope: ['repo', 'user:email'],
+      scope: ['repo', 'user:email']
     },
     (req, accessToken, refreshToken, profile, done) => {
       User.findOne({ github: profile.id }, (findByGithubErr, existingUser) => {
@@ -142,14 +135,14 @@ passport.use(
                   user.name = profile.displayName;
                   user.verified = User.EmailConfirmation.Verified;
                   user.save((saveErr) => done(null, user));
-                },
+                }
               );
             }
           });
         }
       });
-    },
-  ),
+    }
+  )
 );
 
 /**

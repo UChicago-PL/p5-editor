@@ -34,7 +34,7 @@ class SubmitalModal extends React.Component {
   }
 
   render() {
-    const { repos, user, project } = this.props;
+    const { repos, user, project, repoLoadState } = this.props;
     const isAuthed = user.authenticated;
     return (
       <section
@@ -55,6 +55,8 @@ class SubmitalModal extends React.Component {
             </button>
           </div>
           {isAuthed && <SubmitForm repos={repos} project={project} />}
+          {repoLoadState === 'loading' && <div>LOADING REPOS</div>}
+          {repoLoadState === 'error' && <div>ERROR LOADING REPOS</div>}
           {!isAuthed && <div>You must be logged into to use this feature</div>}
         </div>
       </section>
@@ -66,6 +68,7 @@ SubmitalModal.propTypes = {
   closeSubmitModal: PropTypes.func.isRequired,
   getGHRepos: PropTypes.func.isRequired,
   repos: PropTypes.arrayOf(PropTypes.object).isRequired,
+  repoLoadState: PropTypes.string.isRequired,
   user: PropTypes.shape({
     username: PropTypes.string,
     authenticated: PropTypes.bool.isRequired
@@ -81,7 +84,8 @@ function mapStateToProps(state) {
   return {
     user: state.user,
     project: state.project,
-    repos: state.repos
+    repos: state.repos.repos,
+    repoLoadState: state.repos.loadState
   };
 }
 

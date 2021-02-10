@@ -89,7 +89,8 @@ export function validateAndSignUpUser(formValues) {
 }
 
 export function getGHRepos() {
-  return (dispatch) =>
+  return (dispatch) => {
+    dispatch({ type: ActionTypes.LOADING_GH_REPOS });
     apiClient
       .get('/gh-repos')
       .then((response) => {
@@ -101,7 +102,9 @@ export function getGHRepos() {
       })
       .catch((error) => {
         console.log('ERROR', error);
+        dispatch({ type: ActionTypes.RECEIVE_GH_REPOS_ERROR });
       });
+  };
 }
 
 export function submitToGH(formProps) {
