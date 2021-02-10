@@ -6,6 +6,8 @@ if (process.env.NODE_ENV === 'development') {
   require('dotenv').config();
 }
 
+const dist = require('./constants.js').dist
+
 
 // react hmr being fucked up has to do with the multiple entries!!! cool.
 module.exports = {
@@ -24,7 +26,7 @@ module.exports = {
     ]
   },
   output: {
-    path: `${__dirname}`,
+    path: dist,
     filename: '[name].js',
     publicPath: '/'
   },
@@ -44,7 +46,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
         patterns: [
-          {from: path.resolve(__dirname, '../translations/locales') , to: path.resolve(__dirname, 'locales')}
+          {from: path.resolve(__dirname, '../translations/locales') , to: path.resolve(dist, 'locales')}
         ]
       }
     )

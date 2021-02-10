@@ -13,6 +13,9 @@ if (process.env.NODE_ENV === "development") {
   require('dotenv').config();
 }
 
+const dist = require('constants.js').dist
+
+
 module.exports = [{
   devtool: 'source-map',
   mode: 'production',
@@ -25,7 +28,7 @@ module.exports = [{
     ]
   },
   output: {
-    path: path.resolve(__dirname, '../dist/static'),
+    path: dist,
     filename: '[name].[hash].js',
     publicPath: '/'
   },
@@ -156,7 +159,7 @@ module.exports = [{
     }),
     new CopyWebpackPlugin({
       patterns: [
-        {from: path.resolve(__dirname, '../translations/locales') , to: path.resolve(__dirname, '../dist/static/locales')}
+        {from: path.resolve(__dirname, '../translations/locales') , to: path.resolve(dist, 'locales')}
       ]
       }
     )
@@ -172,7 +175,7 @@ module.exports = [{
   devtool: 'source-map',
   mode: 'production',
   output: {
-    path: path.resolve(__dirname, '../dist/static'),
+    path: dist,
     filename: 'previewScripts.js',
     publicPath: '/'
   },
