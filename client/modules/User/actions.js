@@ -88,24 +88,7 @@ export function validateAndSignUpUser(formValues) {
   };
 }
 
-const exampleGHRepos = [
-  {
-    fullName: 'uchicago-vis-pl-lab/test-assignment-mcnuttandrew',
-    repoName: 'test-assignment-mcnuttandrew',
-    ownerName: 'uchicago-vis-pl-lab',
-    link: 'https://github.com/uchicago-vis-pl-lab/test-assignment-mcnuttandrew',
-    description: 'test-assignment-mcnuttandrew created by GitHub Classroom'
-  }
-];
-const debugging = true;
 export function getGHRepos() {
-  if (debugging) {
-    return (dispatch) =>
-      dispatch({
-        type: ActionTypes.RECEIVE_GH_REPOS,
-        payload: exampleGHRepos.sort((a, b) => a.fullName.localeCompare(b.fullName))
-      });
-  }
   return (dispatch) =>
     apiClient
       .get('/gh-repos')
