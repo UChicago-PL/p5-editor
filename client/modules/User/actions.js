@@ -98,6 +98,7 @@ export function getGHRepos() {
         dispatch({
           type: ActionTypes.RECEIVE_GH_REPOS,
           payload: response.data.sort((a, b) => {
+            console.log(a, b);
             const [prefixA, suffixA] = a.split('/');
             const [prefixB, suffixB] = b.split('/');
             const prefixCompare = prefixA.localeCompare(prefixB);
