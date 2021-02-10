@@ -9,12 +9,6 @@ import passport from 'passport';
 import path from 'path';
 import basicAuth from 'express-basic-auth';
 
-// Webpack Requirements
-import webpack from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import config from '../webpack/config.dev';
-
 // Import all required modules
 import api from './routes/api.routes';
 import users from './routes/user.routes';
@@ -32,6 +26,8 @@ import { requestsOfTypeJSON } from './utils/requestsOfType';
 import { renderIndex } from './views/index';
 import { get404Sketch } from './views/404Page';
 
+import { dist } from '../webpack/constants';
+
 const app = new Express();
 const MongoStore = connectMongo(session);
 
@@ -42,13 +38,6 @@ const allowedCorsOrigins = [/p5js\.org$/];
 // to allow client-only development
 if (process.env.CORS_ALLOW_LOCALHOST === 'true') {
   allowedCorsOrigins.push(/localhost/);
-}
-
-// Run Webpack dev server in development mode
-if (process.env.NODE_ENV === 'development') {
-  const compiler = webpack(config);
-  app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
-  app.use(webpackHotMiddleware(compiler));
 }
 
 const mongoConnectionString = process.env.MONGO_URL;
@@ -107,18 +96,14 @@ if (process.env.BASIC_USERNAME && process.env.BASIC_PASSWORD) {
 // Body parser, cookie parser, sessions, serve public assets
 app.use(
   '/locales',
-  Express.static(path.resolve(__dirname, '../dist/static/locales'), {
+  Express.static(path.resolve(dist, 'locales'), {
     // Browsers must revalidate for changes to the locale files
     // It doesn't actually mean "don't cache this file"
     // See: https://jakearchibald.com/2016/caching-best-practices/
     setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache'),
   }),
 );
-app.use(
-  Express.static(path.resolve(__dirname, '../dist/static'), {
-    maxAge: process.env.STATIC_MAX_AGE || (process.env.NODE_ENV === 'production' ? '1d' : '0'),
-  }),
-);
+app.use(Express.static(dist), );
 
 app.use(passport.initialize());
 app.use(passport.session());
