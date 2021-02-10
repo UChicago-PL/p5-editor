@@ -98,15 +98,10 @@ export function getGHRepos() {
         dispatch({
           type: ActionTypes.RECEIVE_GH_REPOS,
           payload: response.data.sort((a, b) => {
-            console.log(a, b);
-            const [prefixA, suffixA] = a.split('/');
-            const [prefixB, suffixB] = b.split('/');
+            const [prefixA, suffixA] = a.fullName.split('/');
+            const [prefixB, suffixB] = b.fullName.split('/');
             const prefixCompare = prefixA.localeCompare(prefixB);
             return prefixCompare !== 0 ? prefixCompare : suffixA.localeCompare(suffixB);
-            // if (prefixA.localeCompare(prefixB) !== 0) {
-            //   return prefixA.localeCompare(prefixB);
-            // }
-            // a.fullName.localeCompare(b.fullName);
           })
         });
       })
