@@ -94,7 +94,6 @@ export function getGHRepos() {
     apiClient
       .get('/gh-repos')
       .then((response) => {
-        console.log(response.data);
         const classRepos = response.data
           .filter((x) => x.fullName.includes('UChicago-PL/'))
           .sort((a, b) => a.fullName.localeCompare(b.fullName));
