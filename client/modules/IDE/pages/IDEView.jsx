@@ -15,6 +15,7 @@ import NewFileModal from '../components/NewFileModal';
 import NewFolderModal from '../components/NewFolderModal';
 import UploadFileModal from '../components/UploadFileModal';
 import ShareModal from '../components/ShareModal';
+import SubmitModal from '../components/SubmitModal';
 import KeyboardShortcutModal from '../components/KeyboardShortcutModal';
 import ErrorModal from '../components/ErrorModal';
 import Nav from '../../../components/Nav';
@@ -36,19 +37,19 @@ import Feedback from '../components/Feedback';
 import { CollectionSearchbar } from '../components/Searchbar';
 import { getIsUserOwner } from '../selectors/users';
 
-
 function getTitle(props) {
   const { id } = props.project;
   return id ? `CMSC11111 Editor | ${props.project.name}` : 'CMSC11111 Editor';
 }
 
 function warnIfUnsavedChanges(props, nextLocation) {
-  const toAuth = nextLocation &&
+  const toAuth =
+    nextLocation &&
     nextLocation.action === 'PUSH' &&
     (nextLocation.pathname === '/login' || nextLocation.pathname === '/signup');
-  const onAuth = nextLocation &&
-    (props.location.pathname === '/login' || props.location.pathname === '/signup');
-  if (props.ide.unsavedChanges && (!toAuth && !onAuth)) {
+  const onAuth =
+    nextLocation && (props.location.pathname === '/login' || props.location.pathname === '/signup');
+  if (props.ide.unsavedChanges && !toAuth && !onAuth) {
     if (!window.confirm(props.t('Nav.WarningUnsavedChanges'))) {
       return false;
     }
@@ -64,7 +65,7 @@ class IDEView extends React.Component {
 
     this.state = {
       consoleSize: props.ide.consoleIsExpanded ? 150 : 29,
-      sidebarSize: props.ide.sidebarIsExpanded ? 160 : 20,
+      sidebarSize: props.ide.sidebarIsExpanded ? 160 : 20
     };
   }
 
@@ -84,10 +85,7 @@ class IDEView extends React.Component {
     this.isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
     document.addEventListener('keydown', this.handleGlobalKeydown, false);
 
-    this.props.router.setRouteLeaveHook(
-      this.props.route,
-      this.handleUnsavedChanges
-    );
+    this.props.router.setRouteLeaveHook(this.props.route, this.handleUnsavedChanges);
 
     // window.onbeforeunload = this.handleUnsavedChanges;
     window.addEventListener('beforeunload', this.handleBeforeUnload);
@@ -102,13 +100,13 @@ class IDEView extends React.Component {
 
     if (this.props.ide.consoleIsExpanded !== nextProps.ide.consoleIsExpanded) {
       this.setState({
-        consoleSize: nextProps.ide.consoleIsExpanded ? 150 : 29,
+        consoleSize: nextProps.ide.consoleIsExpanded ? 150 : 29
       });
     }
 
     if (this.props.ide.sidebarIsExpanded !== nextProps.ide.sidebarIsExpanded) {
       this.setState({
-        sidebarSize: nextProps.ide.sidebarIsExpanded ? 160 : 20,
+        sidebarSize: nextProps.ide.sidebarIsExpanded ? 160 : 20
       });
     }
   }
@@ -147,8 +145,7 @@ class IDEView extends React.Component {
     }
 
     if (this.props.route.path !== prevProps.route.path) {
-      this.props.router.setRouteLeaveHook(this.props.route, () =>
-        warnIfUnsavedChanges(this.props));
+      this.props.router.setRouteLeaveHook(this.props.route, () => warnIfUnsavedChanges(this.props));
     }
   }
   componentWillUnmount() {
@@ -158,16 +155,10 @@ class IDEView extends React.Component {
   }
   handleGlobalKeydown(e) {
     // 83 === s
-    if (
-      e.keyCode === 83 &&
-      ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))
-    ) {
+    if (e.keyCode === 83 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {
       e.preventDefault();
       e.stopPropagation();
-      if (
-        this.props.isUserOwner ||
-        (this.props.user.authenticated && !this.props.project.owner)
-      ) {
+      if (this.props.isUserOwner || (this.props.user.authenticated && !this.props.project.owner)) {
         this.props.saveProject(this.cmController.getContent());
       } else if (this.props.user.authenticated) {
         this.props.cloneProject();
@@ -175,41 +166,23 @@ class IDEView extends React.Component {
         this.props.showErrorModal('forceAuthentication');
       }
       // 13 === enter
-    } else if (
-      e.keyCode === 13 &&
-      e.shiftKey &&
-      ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))
-    ) {
+    } else if (e.keyCode === 13 && e.shiftKey && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {
       e.preventDefault();
       e.stopPropagation();
       this.props.stopSketch();
-    } else if (
-      e.keyCode === 13 &&
-      ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))
-    ) {
+    } else if (e.keyCode === 13 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {
       e.preventDefault();
       e.stopPropagation();
       this.props.startSketch();
       // 50 === 2
-    } else if (
-      e.keyCode === 50 &&
-      ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac)) &&
-      e.shiftKey
-    ) {
+    } else if (e.keyCode === 50 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac)) && e.shiftKey) {
       e.preventDefault();
       this.props.setAllAccessibleOutput(false);
       // 49 === 1
-    } else if (
-      e.keyCode === 49 &&
-      ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac)) &&
-      e.shiftKey
-    ) {
+    } else if (e.keyCode === 49 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac)) && e.shiftKey) {
       e.preventDefault();
       this.props.setAllAccessibleOutput(true);
-    } else if (
-      e.keyCode === 66 &&
-      ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))
-    ) {
+    } else if (e.keyCode === 66 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {
       e.preventDefault();
       if (!this.props.ide.sidebarIsExpanded) {
         this.props.expandSidebar();
@@ -230,11 +203,13 @@ class IDEView extends React.Component {
         this.props.closeUploadFileModal();
       } else if (this.props.ide.modalIsVisible) {
         this.props.closeNewFileModal();
+      } else if (this.props.ide.submitModalVisible) {
+        this.props.closeSubmitModal();
       }
     }
   }
 
-  handleUnsavedChanges = nextLocation => warnIfUnsavedChanges(this.props, nextLocation);
+  handleUnsavedChanges = (nextLocation) => warnIfUnsavedChanges(this.props, nextLocation);
 
   handleBeforeUnload = (e) => {
     const confirmationMessage = this.props.t('Nav.WarningUnsavedChanges');
@@ -243,7 +218,7 @@ class IDEView extends React.Component {
       return confirmationMessage;
     }
     return null;
-  }
+  };
 
   render() {
     return (
@@ -252,11 +227,8 @@ class IDEView extends React.Component {
           <title>{getTitle(this.props)}</title>
         </Helmet>
         {this.props.toast.isVisible && <Toast />}
-        <Nav
-          warnIfUnsavedChanges={this.handleUnsavedChanges}
-          cmController={this.cmController}
-        />
-        <Toolbar key={this.props.project.id} />
+        <Nav warnIfUnsavedChanges={this.handleUnsavedChanges} cmController={this.cmController} />
+        <Toolbar key={this.props.project.id} cmController={this.cmController} />
         {this.props.ide.preferencesIsVisible && (
           <Overlay
             title={this.props.t('Preferences.Settings')}
@@ -291,7 +263,7 @@ class IDEView extends React.Component {
           <SplitPane
             split="vertical"
             size={this.state.sidebarSize}
-            onChange={size => this.setState({ sidebarSize: size })}
+            onChange={(size) => this.setState({ sidebarSize: size })}
             onDragFinished={this._handleSidebarPaneOnDragFinished}
             allowResize={this.props.ide.sidebarIsExpanded}
             minSize={125}
@@ -325,7 +297,7 @@ class IDEView extends React.Component {
                 borderLeftWidth: '2px',
                 borderRightWidth: '2px',
                 width: '2px',
-                margin: '0px 0px',
+                margin: '0px 0px'
               }}
             >
               <SplitPane
@@ -333,11 +305,15 @@ class IDEView extends React.Component {
                 primary="second"
                 size={this.state.consoleSize}
                 minSize={29}
-                onChange={size => this.setState({ consoleSize: size })}
+                onChange={(size) => this.setState({ consoleSize: size })}
                 allowResize={this.props.ide.consoleIsExpanded}
                 className="editor-preview-subpanel"
               >
-                <Editor provideController={(ctl) => { this.cmController = ctl; }} />
+                <Editor
+                  provideController={(ctl) => {
+                    this.cmController = ctl;
+                  }}
+                />
                 <Console />
               </SplitPane>
               <section className="preview-frame-holder">
@@ -350,8 +326,7 @@ class IDEView extends React.Component {
                     ref={(element) => {
                       this.overlay = element;
                     }}
-                  >
-                  </div>
+                  />
                   <div>
                     {((this.props.preferences.textOutput ||
                       this.props.preferences.gridOutput ||
@@ -372,6 +347,7 @@ class IDEView extends React.Component {
             createFolder={this.props.createFolder}
           />
         )}
+        {this.props.ide.submitModalVisible && <SubmitModal />}
         {this.props.ide.uploadFileModalVisible && (
           <UploadFileModal closeModal={this.props.closeUploadFileModal} />
         )}
@@ -436,10 +412,7 @@ class IDEView extends React.Component {
             ariaLabel={this.props.t('Common.ErrorARIA')}
             closeOverlay={this.props.hideErrorModal}
           >
-            <ErrorModal
-              type={this.props.ide.errorType}
-              closeModal={this.props.hideErrorModal}
-            />
+            <ErrorModal type={this.props.ide.errorType} closeModal={this.props.hideErrorModal} />
           </Overlay>
         )}
       </div>
@@ -448,139 +421,133 @@ class IDEView extends React.Component {
 }
 
 IDEView.propTypes = {
-  params: PropTypes.shape({
-    project_id: PropTypes.string,
-    username: PropTypes.string,
-    reset_password_token: PropTypes.string,
-  }).isRequired,
-  location: PropTypes.shape({
-    pathname: PropTypes.string,
-  }).isRequired,
-  getProject: PropTypes.func.isRequired,
-  user: PropTypes.shape({
-    authenticated: PropTypes.bool.isRequired,
-    id: PropTypes.string,
-    username: PropTypes.string,
-  }).isRequired,
-  saveProject: PropTypes.func.isRequired,
-  ide: PropTypes.shape({
-    errorType: PropTypes.string,
-    keyboardShortcutVisible: PropTypes.bool.isRequired,
-    shareModalVisible: PropTypes.bool.isRequired,
-    shareModalProjectId: PropTypes.string.isRequired,
-    shareModalProjectName: PropTypes.string.isRequired,
-    shareModalProjectUsername: PropTypes.string.isRequired,
-    previousPath: PropTypes.string.isRequired,
-    previewIsRefreshing: PropTypes.bool.isRequired,
-    isPlaying: PropTypes.bool.isRequired,
-    isAccessibleOutputPlaying: PropTypes.bool.isRequired,
-    projectOptionsVisible: PropTypes.bool.isRequired,
-    preferencesIsVisible: PropTypes.bool.isRequired,
-    modalIsVisible: PropTypes.bool.isRequired,
-    uploadFileModalVisible: PropTypes.bool.isRequired,
-    newFolderModalVisible: PropTypes.bool.isRequired,
-    justOpenedProject: PropTypes.bool.isRequired,
-    sidebarIsExpanded: PropTypes.bool.isRequired,
-    consoleIsExpanded: PropTypes.bool.isRequired,
-    unsavedChanges: PropTypes.bool.isRequired,
-  }).isRequired,
-  stopSketch: PropTypes.func.isRequired,
-  project: PropTypes.shape({
-    id: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    owner: PropTypes.shape({
-      username: PropTypes.string,
-      id: PropTypes.string,
-    }),
-    updatedAt: PropTypes.string,
-  }).isRequired,
-  editorAccessibility: PropTypes.shape({
-    lintMessages: PropTypes.objectOf(PropTypes.shape()).isRequired,
-  }).isRequired,
-  preferences: PropTypes.shape({
-    autosave: PropTypes.bool.isRequired,
-    fontSize: PropTypes.number.isRequired,
-    linewrap: PropTypes.bool.isRequired,
-    lineNumbers: PropTypes.bool.isRequired,
-    lintWarning: PropTypes.bool.isRequired,
-    textOutput: PropTypes.bool.isRequired,
-    gridOutput: PropTypes.bool.isRequired,
-    soundOutput: PropTypes.bool.isRequired,
-    theme: PropTypes.string.isRequired,
-    autorefresh: PropTypes.bool.isRequired,
-    language: PropTypes.string.isRequired,
-    autocloseBracketsQuotes: PropTypes.bool.isRequired
-  }).isRequired,
+  autosaveProject: PropTypes.func.isRequired,
+  clearPersistedState: PropTypes.func.isRequired,
+  cloneProject: PropTypes.func.isRequired,
+  closeKeyboardShortcutModal: PropTypes.func.isRequired,
+  closeNewFileModal: PropTypes.func.isRequired,
+  closeNewFolderModal: PropTypes.func.isRequired,
   closePreferences: PropTypes.func.isRequired,
-  setAutocloseBracketsQuotes: PropTypes.func.isRequired,
-  setFontSize: PropTypes.func.isRequired,
-  setAutosave: PropTypes.func.isRequired,
-  setLineNumbers: PropTypes.func.isRequired,
-  setLinewrap: PropTypes.func.isRequired,
-  setLintWarning: PropTypes.func.isRequired,
-  setTextOutput: PropTypes.func.isRequired,
-  setGridOutput: PropTypes.func.isRequired,
-  setSoundOutput: PropTypes.func.isRequired,
-  setAllAccessibleOutput: PropTypes.func.isRequired,
-  files: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-  })).isRequired,
-  selectedFile: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  setSelectedFile: PropTypes.func.isRequired,
+  closeProjectOptions: PropTypes.func.isRequired,
+  closeShareModal: PropTypes.func.isRequired,
+  closeSubmitModal: PropTypes.func.isRequired,
+  closeUploadFileModal: PropTypes.func.isRequired,
+  collapseConsole: PropTypes.func.isRequired,
+  collapseSidebar: PropTypes.func.isRequired,
+  createFolder: PropTypes.func.isRequired,
+  deleteFile: PropTypes.func.isRequired,
+  editorAccessibility: PropTypes.shape({ lintMessages: PropTypes.objectOf(PropTypes.shape()).isRequired })
+    .isRequired,
+  expandConsole: PropTypes.func.isRequired,
+  expandSidebar: PropTypes.func.isRequired,
+  files: PropTypes.arrayOf(
+    PropTypes.shape({
+      content: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    })
+  ).isRequired,
+  getProject: PropTypes.func.isRequired,
+  hideErrorModal: PropTypes.func.isRequired,
   htmlFile: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired
   }).isRequired,
+  ide: PropTypes.shape({
+    consoleIsExpanded: PropTypes.bool.isRequired,
+    errorType: PropTypes.string,
+    isAccessibleOutputPlaying: PropTypes.bool.isRequired,
+    isPlaying: PropTypes.bool.isRequired,
+    justOpenedProject: PropTypes.bool.isRequired,
+    keyboardShortcutVisible: PropTypes.bool.isRequired,
+    modalIsVisible: PropTypes.bool.isRequired,
+    newFolderModalVisible: PropTypes.bool.isRequired,
+    preferencesIsVisible: PropTypes.bool.isRequired,
+    previewIsRefreshing: PropTypes.bool.isRequired,
+    previousPath: PropTypes.string.isRequired,
+    projectOptionsVisible: PropTypes.bool.isRequired,
+    shareModalProjectId: PropTypes.string.isRequired,
+    shareModalProjectName: PropTypes.string.isRequired,
+    shareModalProjectUsername: PropTypes.string.isRequired,
+    shareModalVisible: PropTypes.bool.isRequired,
+    sidebarIsExpanded: PropTypes.bool.isRequired,
+    submitModalVisible: PropTypes.bool.isRequired,
+    unsavedChanges: PropTypes.bool.isRequired,
+    uploadFileModalVisible: PropTypes.bool.isRequired
+  }).isRequired,
+  isUserOwner: PropTypes.bool.isRequired,
+  location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   newFile: PropTypes.func.isRequired,
-  expandSidebar: PropTypes.func.isRequired,
-  collapseSidebar: PropTypes.func.isRequired,
-  cloneProject: PropTypes.func.isRequired,
-  expandConsole: PropTypes.func.isRequired,
-  collapseConsole: PropTypes.func.isRequired,
-  deleteFile: PropTypes.func.isRequired,
-  updateFileName: PropTypes.func.isRequired,
-  openProjectOptions: PropTypes.func.isRequired,
-  closeProjectOptions: PropTypes.func.isRequired,
   newFolder: PropTypes.func.isRequired,
-  closeNewFolderModal: PropTypes.func.isRequired,
-  closeNewFileModal: PropTypes.func.isRequired,
-  createFolder: PropTypes.func.isRequired,
-  closeShareModal: PropTypes.func.isRequired,
-  closeKeyboardShortcutModal: PropTypes.func.isRequired,
-  toast: PropTypes.shape({
-    isVisible: PropTypes.bool.isRequired,
+  openProjectOptions: PropTypes.func.isRequired,
+  openUploadFileModal: PropTypes.func.isRequired,
+  params: PropTypes.shape({
+    project_id: PropTypes.string,
+    username: PropTypes.string,
+    reset_password_token: PropTypes.string
   }).isRequired,
-  autosaveProject: PropTypes.func.isRequired,
-  router: PropTypes.shape({
-    setRouteLeaveHook: PropTypes.func,
+  preferences: PropTypes.shape({
+    autocloseBracketsQuotes: PropTypes.bool.isRequired,
+    autorefresh: PropTypes.bool.isRequired,
+    autosave: PropTypes.bool.isRequired,
+    fontSize: PropTypes.number.isRequired,
+    gridOutput: PropTypes.bool.isRequired,
+    language: PropTypes.string.isRequired,
+    lineNumbers: PropTypes.bool.isRequired,
+    linewrap: PropTypes.bool.isRequired,
+    lintWarning: PropTypes.bool.isRequired,
+    soundOutput: PropTypes.bool.isRequired,
+    textOutput: PropTypes.bool.isRequired,
+    theme: PropTypes.string.isRequired
+  }).isRequired,
+  project: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    owner: PropTypes.shape({ id: PropTypes.string, username: PropTypes.string }),
+    updatedAt: PropTypes.string
   }).isRequired,
   route: PropTypes.oneOfType([PropTypes.object, PropTypes.element]).isRequired,
-  setTheme: PropTypes.func.isRequired,
+  router: PropTypes.shape({ setRouteLeaveHook: PropTypes.func }).isRequired,
+  saveProject: PropTypes.func.isRequired,
+  selectedFile: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
+  }).isRequired,
+  setAllAccessibleOutput: PropTypes.func.isRequired,
+  setAutocloseBracketsQuotes: PropTypes.func.isRequired,
+  setAutosave: PropTypes.func.isRequired,
+  setFontSize: PropTypes.func.isRequired,
+  setGridOutput: PropTypes.func.isRequired,
+  setLineNumbers: PropTypes.func.isRequired,
+  setLinewrap: PropTypes.func.isRequired,
+  setLintWarning: PropTypes.func.isRequired,
   setPreviousPath: PropTypes.func.isRequired,
+  setSelectedFile: PropTypes.func.isRequired,
+  setSoundOutput: PropTypes.func.isRequired,
+  setTextOutput: PropTypes.func.isRequired,
+  setTheme: PropTypes.func.isRequired,
   showErrorModal: PropTypes.func.isRequired,
-  hideErrorModal: PropTypes.func.isRequired,
-  clearPersistedState: PropTypes.func.isRequired,
   startSketch: PropTypes.func.isRequired,
-  openUploadFileModal: PropTypes.func.isRequired,
-  closeUploadFileModal: PropTypes.func.isRequired,
+  stopSketch: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
-  isUserOwner: PropTypes.bool.isRequired
+  toast: PropTypes.shape({ isVisible: PropTypes.bool.isRequired }).isRequired,
+  updateFileName: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    authenticated: PropTypes.bool.isRequired,
+    id: PropTypes.string,
+    username: PropTypes.string
+  }).isRequired
 };
 
 function mapStateToProps(state) {
   return {
     files: state.files,
     selectedFile:
-      state.files.find(file => file.isSelectedFile) ||
-      state.files.find(file => file.name === 'sketch.js') ||
-      state.files.find(file => file.name !== 'root'),
+      state.files.find((file) => file.isSelectedFile) ||
+      state.files.find((file) => file.name === 'sketch.js') ||
+      state.files.find((file) => file.name !== 'root'),
     htmlFile: getHTMLFile(state.files),
     ide: state.ide,
     preferences: state.preferences,
@@ -609,6 +576,5 @@ function mapDispatchToProps(dispatch) {
     dispatch
   );
 }
-
 
 export default withTranslation()(withRouter(connect(mapStateToProps, mapDispatchToProps)(IDEView)));
