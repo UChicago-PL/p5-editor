@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === 'development') {
   require('dotenv').config();
 }
 
-const dist = require('./constants.js').dist
+const { dist, devPort } = require('./constants.js');
 
 
 // react hmr being fucked up has to do with the multiple entries!!! cool.
@@ -17,7 +17,6 @@ module.exports = {
     app: [
       'core-js/modules/es6.promise',
       'core-js/modules/es6.array.iterator',
-      'webpack-hot-middleware/client',
       'react-hot-loader/patch',
       './client/index.jsx',
     ],
@@ -29,6 +28,11 @@ module.exports = {
     path: dist,
     filename: '[name].js',
     publicPath: '/'
+  },
+  devServer: {
+    contentBase: dist,
+    port: devPort,
+    hot: true,
   },
   resolve: {
     extensions: ['.js', '.jsx'],
