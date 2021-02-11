@@ -44,7 +44,7 @@ export function updateProject(req, res) {
           return;
         }
 
-        if (isPartOfStudy(updatedProject.user.github)) {
+        if (isPartOfStudy(req.user.github)) {
           createLogItem('snapshot', updatedProject._id, updatedProject.files, () => {});
         }
 

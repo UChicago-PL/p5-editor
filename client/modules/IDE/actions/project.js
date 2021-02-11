@@ -394,6 +394,8 @@ export function logRun() {
     if (state.project.id) {
       makeRequest(state.project.id);
     } else {
+      // in this case, saveProject will invoke the createProject function on the backend,
+      // so a snapshot log won't be automatically created
       dispatch(saveProject()).then(() => {
         const newState = getState();
         makeRequest(newState.project.id);
