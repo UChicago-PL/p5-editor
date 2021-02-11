@@ -45,16 +45,7 @@ export function updateProject(req, res) {
         }
 
         if (isPartOfStudy(updatedProject.user.github)) {
-          LogItem.create({ logType: 'snapshot',
-            projectSnapshot: {
-              project: updatedProject._id, files: updatedProject.files
-            }
-          }, (err, logItem) => {
-            if (err) {
-              console.log(err);
-              console.log(logItem);
-            }
-          });
+          createLogItem('snapshot', updatedProject._id, updatedProject.files, () => {});
         }
 
         if (req.body.files && updatedProject.files.length !== req.body.files.length) {
@@ -276,24 +267,35 @@ export function downloadProjectAsZip(req, res) {
   });
 }
 
-export function createLogItem(req, res) {
+export function createLogItem(logType, projectId, projectFiles, callback) {
+  LogItem.create({
+    logType,
+    projectSnapshot: {
+      project: projectId, files: projectFiles
+    }
+  }, (createLogItemErr, logItem) => {
+    if (createLogItemErr) {
+      console.log(createLogItemErr);
+      console.log(logItem);
+    }
+    callback(createLogItemErr, logItem);
+  });
+}
+
+export function logRun(req, res) {
   Project.findById(req.params.project_id, (findProjectErr, project) => {
     if (!project.user.equals(req.user._id)) {
       res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
-      return;
+    } else if (!isPartOfStudy(req.user.github)) {
+      res.status(403).json({ success: false, message: 'User is not part of study.' });
+    } else {
+      createLogItem('run', req.params.project_id, req.body, (err, logItem) => {
+        if (err) {
+          res.status(400).json({ success: false });
+        } else {
+          res.json(logItem);
+        }
+      });
     }
-
-    LogItem.create({ logType: 'run',
-      projectSnapshot: {
-        project: req.params.project_id, files: req.body
-      }
-    }, (createLogItemErr, logItem) => {
-      if (createLogItemErr) {
-        console.log(createLogItemErr);
-        res.status(400).json({ success: false });
-        return;
-      }
-      res.json(logItem);
-    });
   });
 }

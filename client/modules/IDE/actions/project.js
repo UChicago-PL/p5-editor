@@ -388,8 +388,16 @@ export function logRun() {
     const formParams = {};
     formParams.files = [...state.files];
 
+    const makeRequest = (projectId) =>
+      apiClient.post(`/projects/${projectId}/log`, formParams);
+
     if (state.project.id) {
-      apiClient.post(`/projects/${state.project.id}/log`, formParams);
+      makeRequest(state.project.id);
+    } else {
+      dispatch(saveProject()).then(() => {
+        const newState = getState();
+        makeRequest(newState.project.id);
+      });
     }
   };
 }
