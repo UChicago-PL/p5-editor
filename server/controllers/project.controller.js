@@ -44,14 +44,15 @@ export function updateProject(req, res) {
           return;
         }
 
-        if (isPartOfStudy(updatedProject.user.id)) {
+        if (isPartOfStudy(updatedProject.user.github)) {
           LogItem.create({ logType: 'snapshot',
             projectSnapshot: {
               project: updatedProject._id, files: updatedProject.files
             }
-          }, (err, _logItem) => {
+          }, (err, logItem) => {
             if (err) {
               console.log(err);
+              console.log(logItem);
             }
           });
         }

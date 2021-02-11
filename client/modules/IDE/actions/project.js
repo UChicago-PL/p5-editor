@@ -388,7 +388,6 @@ export function logRun() {
     const formParams = {};
     formParams.files = [...state.files];
 
-    console.log(state.project.id);
     if (state.project.id) {
       apiClient.post(`/projects/${state.project.id}/log`, formParams);
     }
