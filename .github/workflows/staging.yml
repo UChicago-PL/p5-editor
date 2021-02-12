@@ -14,11 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Check output
-        run: echo ${{ GITHUB_REF#refs/heads }}
+        run: echo $GITHUB_REF#refs/heads
       - uses: akhileshns/heroku-deploy@v3.0.0
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "cmsc-11111-editor-staging"
           heroku_email: "mcnutt.andrew@gmail.com"
-          branch: ${{ GITHUB_REF#refs/heads }}
+          branch: $GITHUB_REF#refs/heads
           usedocker: false
