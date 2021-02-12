@@ -17,12 +17,11 @@ jobs:
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
-      - run: echo "test test"
-      - run: echo ${{ steps.extract_branch.outputs.branch }}
+      - run: echo ${{GITHUB_REF#refs/heads/}}
       - uses: akhileshns/heroku-deploy@v3.0.0
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "cmsc-11111-editor-staging"
           heroku_email: "mcnutt.andrew@gmail.com"
-          branch: ${{ steps.extract_branch.outputs.branch }}
+          branch: ${{GITHUB_REF#refs/heads/}}
           usedocker: false
