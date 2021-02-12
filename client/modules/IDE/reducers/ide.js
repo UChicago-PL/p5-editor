@@ -14,6 +14,7 @@ const initialState = {
   shareModalProjectId: 'abcd',
   shareModalProjectName: 'My Cute Sketch',
   shareModalProjectUsername: 'p5_user',
+  submitModalVisible: false,
   editorOptionsVisible: false,
   keyboardShortcutVisible: false,
   unsavedChanges: false,
@@ -78,7 +79,7 @@ const ide = (state = initialState, action) => {
         shareModalVisible: true,
         shareModalProjectId: action.payload.shareModalProjectId,
         shareModalProjectName: action.payload.shareModalProjectName,
-        shareModalProjectUsername: action.payload.shareModalProjectUsername,
+        shareModalProjectUsername: action.payload.shareModalProjectUsername
       });
     case ActionTypes.CLOSE_SHARE_MODAL:
       return Object.assign({}, state, { shareModalVisible: false });
@@ -118,6 +119,10 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, { uploadFileModalVisible: true, parentId: action.parentId });
     case ActionTypes.CLOSE_UPLOAD_FILE_MODAL:
       return Object.assign({}, state, { uploadFileModalVisible: false });
+    case ActionTypes.OPEN_SUBMIT_MODEL:
+      return Object.assign({}, state, { submitModalVisible: true });
+    case ActionTypes.CLOSE_SUBMIT_MODEL:
+      return Object.assign({}, state, { submitModalVisible: false });
     default:
       return state;
   }

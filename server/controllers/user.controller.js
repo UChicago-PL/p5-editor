@@ -1,6 +1,8 @@
 import crypto from 'crypto';
 import async from 'async';
-
+import { Octokit } from '@octokit/rest';
+import { createPullRequest } from 'octokit-plugin-create-pull-request';
+import Project from '../models/project';
 import User from '../models/user';
 // import mail from '../utils/mail';
 // import {
@@ -20,7 +22,7 @@ export function userResponse(user) {
     id: user._id,
     totalSize: user.totalSize,
     github: user.github,
-    google: user.google,
+    google: user.google
   };
 }
 
@@ -50,7 +52,7 @@ export function createUser(req, res, next) {
       password,
       verified: User.EmailConfirmation.Sent,
       verifiedToken: token,
-      verifiedTokenExpires: EMAIL_VERIFY_TOKEN_EXPIRY_TIME,
+      verifiedTokenExpires: EMAIL_VERIFY_TOKEN_EXPIRY_TIME
     });
 
     User.findByEmailAndUsername(email, username, (err, existingUser) => {
@@ -103,12 +105,12 @@ export function duplicateUserCheck(req, res) {
       return res.json({
         exists: true,
         message: `This ${checkType} is already taken.`,
-        type: checkType,
+        type: checkType
       });
     }
     return res.json({
       exists: false,
-      type: checkType,
+      type: checkType
     });
   });
 }
@@ -147,7 +149,7 @@ export function resetPasswordInitiate(req, res) {
           if (!user) {
             res.json({
               success: true,
-              message: 'If the email is registered with the editor, an email has been sent.',
+              message: 'If the email is registered with the editor, an email has been sent.'
             });
             return;
           }
@@ -169,7 +171,7 @@ export function resetPasswordInitiate(req, res) {
         //   to: user.email,
         // });
         // mail.send(mailOptions, done);
-      },
+      }
     ],
     (err) => {
       if (err) {
@@ -179,9 +181,9 @@ export function resetPasswordInitiate(req, res) {
       }
       res.json({
         success: true,
-        message: 'If the email is registered with the editor, an email has been sent.',
+        message: 'If the email is registered with the editor, an email has been sent.'
       });
-    },
+    }
   );
 }
 
@@ -194,7 +196,7 @@ export function validateResetPasswordToken(req, res) {
         return;
       }
       res.json({ success: true });
-    },
+    }
   );
 }
 
@@ -241,7 +243,7 @@ export function emailVerificationInitiate(req, res) {
         //   }
         // });
       });
-    },
+    }
   ]);
 }
 
@@ -280,7 +282,7 @@ export function updatePassword(req, res) {
       user.save((saveErr) => {
         req.logIn(user, (loginErr) => res.json(userResponse(req.user)));
       });
-    },
+    }
   );
 
   // eventually send email that the password has been reset
@@ -363,6 +365,7 @@ export function unlinkGithub(req, res) {
   res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
 }
 
+// todo remove
 export function unlinkGoogle(req, res) {
   if (req.user) {
     req.user.google = undefined;
@@ -371,4 +374,137 @@ export function unlinkGoogle(req, res) {
     return;
   }
   res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
+}
+
+export function getFileContent(id) {
+  return new Promise((resolve, reject) => {
+    Project.findById(id, (err, project) => {
+      if (err || project === null) {
+        reject(new Error('Project with that id does not exist.'));
+        return;
+      }
+      resolve(project);
+    });
+  });
+}
+function prepPR(data, prefix) {
+  const idsToFiles = data.files.reduce((acc, file) => {
+    acc[file.id] = file;
+    return acc;
+  }, {});
+  const childrenIdsToParentsIds = data.files.reduce((acc, file) => {
+    file.children.forEach((childId) => {
+      acc[childId] = file.id;
+    });
+    return acc;
+  }, {});
+
+  function getName(id) {
+    const thisFile = idsToFiles[id];
+    const parentid = childrenIdsToParentsIds[id];
+    if (!parentid) {
+      return '';
+    }
+    return `${getName(parentid)}/${thisFile.name}`;
+  }
+  const idsToNames = Object.keys(idsToFiles).reduce((acc, id) => {
+    acc[id] = getName(id).slice(1);
+    return acc;
+  }, {});
+
+  const namesToFiles = data.files.reduce((acc, file) => {
+    if (file.fileType === 'file') {
+      acc[`${prefix || ''}${idsToNames[file.id]}`] = file.content;
+    }
+    return acc;
+  }, {});
+
+  return namesToFiles;
+}
+export function submitGHRepo(req, res) {
+  if (!req.user || !req.user.github || !req.user.githubToken) {
+    res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
+    return;
+  }
+
+  const { toSubFolder, repo, project, name } = req.body;
+  if (!toSubFolder || !repo || (toSubFolder && toSubFolder.includes('yes') && !name)) {
+    res.status(300).json({ success: false, message: 'Incomplete request' });
+    return;
+  }
+  const { repoName, ownerName } = repo;
+  const { id } = project;
+  if (!repoName || !ownerName || !id) {
+    res.status(300).json({ success: false, message: 'Incomplete request' });
+    return;
+  }
+  getFileContent(id).then((contents) => {
+    const O = Octokit.plugin(createPullRequest);
+    new O({ auth: req.user.githubToken })
+      .createPullRequest({
+        owner: ownerName,
+        repo: repoName,
+        title: 'Submit Project',
+        body: 'Sample description',
+        head: `autogenerated-pr-${Math.floor(Math.random() * 1000000)}`,
+        changes: [
+          {
+            files: prepPR(contents, toSubFolder.toLowerCase() === 'yes' ? `${name}/` : ''),
+            commit: 'creating some files'
+          }
+        ]
+      })
+      .then((result) => {
+        console.log('passed', result);
+        res.json({ success: true, prURL: result.data.url }).status(200);
+      })
+      .catch((err) => {
+        console.log('failed', err);
+        res.status(300);
+      });
+  });
+}
+
+function formatRepo(repo) {
+  return {
+    fullName: repo.full_name,
+    repoName: repo.name,
+    ownerName: repo.owner.login,
+    link: repo.html_url,
+    description: repo.description
+  };
+}
+
+export function getGHRepos(req, res) {
+  if (!req.user || !req.user.github || !req.user.githubToken) {
+    res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
+    return;
+  }
+
+  const octo = new Octokit({ auth: req.user.githubToken });
+  Promise.all([
+    octo
+      .request('GET /orgs/UChicago-PL/repos')
+      .then((result) => {
+        const { data } = result;
+        return data.filter((x) => x.full_name.includes(req.user.username)).map(formatRepo);
+      })
+      .catch((e) => {
+        console.log('call error', e);
+        return undefined;
+      }),
+    octo
+      .request('GET /user/repos?affiliation=owner&per_page=100')
+      .then(({ data }) => data.map(formatRepo))
+      .catch((e) => {
+        console.log('call error', e);
+        return undefined;
+      })
+  ]).then(([classRepos, ownRepos]) => {
+    if (!classRepos || !ownRepos) {
+      res.status(300);
+      return;
+    }
+    res.status(200).json(classRepos.concat(ownRepos));
+  });
 }

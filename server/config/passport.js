@@ -1,5 +1,3 @@
-import slugify from 'slugify';
-import friendlyWords from 'friendly-words';
 import lodash from 'lodash';
 
 import passport from 'passport';
@@ -9,11 +7,6 @@ import GitHubStrategy from 'passport-github';
 // import { BasicStrategy } from 'passport-http';
 
 import User from '../models/user';
-
-function generateUniqueUsername(username) {
-  const adj = friendlyWords.predicates[Math.floor(Math.random() * friendlyWords.predicates.length)];
-  return slugify(`${username} ${adj}`);
-}
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -97,7 +90,8 @@ passport.use(
       clientSecret: process.env.GITHUB_SECRET,
       callbackURL: '/auth/github/callback',
       passReqToCallback: true,
-      scope: ['user:email'],
+      // repo is for creating pull requests
+      scope: ['repo', 'user:email']
     },
     (req, accessToken, refreshToken, profile, done) => {
       User.findOne({ github: profile.id }, (findByGithubErr, existingUser) => {
@@ -114,11 +108,9 @@ passport.use(
         const primaryEmail = getPrimaryEmail(profile.emails);
 
         if (req.user) {
-          if (!req.user.github) {
-            req.user.github = profile.id;
-            req.user.tokens.push({ kind: 'github', accessToken });
-            req.user.verified = User.EmailConfirmation.Verified;
-          }
+          req.user.github = profile.id;
+          req.user.githubToken = accessToken;
+          req.user.verified = User.EmailConfirmation.Verified;
           req.user.save((saveErr) => done(null, req.user));
         } else {
           User.findByEmail(emails, (findByEmailErr, existingEmailUser) => {
@@ -126,35 +118,31 @@ passport.use(
               existingEmailUser.email = existingEmailUser.email || primaryEmail;
               existingEmailUser.github = profile.id;
               existingEmailUser.username = existingEmailUser.username || profile.username;
-              existingEmailUser.tokens.push({ kind: 'github', accessToken });
+              existingEmailUser.githubToken = accessToken;
               existingEmailUser.name = existingEmailUser.name || profile.displayName;
               existingEmailUser.verified = User.EmailConfirmation.Verified;
               existingEmailUser.save((saveErr) => done(null, existingEmailUser));
             } else {
-              let { username } = profile;
               User.findByUsername(
-                username,
+                profile.username,
                 { caseInsensitive: true },
                 (findByUsernameErr, existingUsernameUser) => {
-                  if (existingUsernameUser) {
-                    username = generateUniqueUsername(username);
-                  }
                   const user = new User();
                   user.email = primaryEmail;
                   user.github = profile.id;
                   user.username = profile.username;
-                  user.tokens.push({ kind: 'github', accessToken });
+                  user.githubToken = accessToken;
                   user.name = profile.displayName;
                   user.verified = User.EmailConfirmation.Verified;
                   user.save((saveErr) => done(null, user));
-                },
+                }
               );
             }
           });
         }
       });
-    },
-  ),
+    }
+  )
 );
 
 /**

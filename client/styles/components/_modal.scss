@@ -32,21 +32,22 @@
   margin-bottom: #{20 / $base-font-size}rem;
 }
 
-.new-folder-form__input-wrapper, .new-file-form__input-wrapper {
+.new-folder-form__input-wrapper, .new-file-form__input-wrapper, .submit-repo-form__input-wrapper {
   display: flex;
 }
 
-.new-file-form__name-label, .new-folder-form__name-label {
+.new-file-form__name-label, .new-folder-form__name-label, .submit-repo-form__name-label {
   @extend %hidden-element;
 }
 
-.new-file-form__name-input, .new-folder-form__name-input {
+.new-file-form__name-input, .new-folder-form__name-input, .submit-repo-form__name-input {
   margin-right: #{10 / $base-font-size}rem;
   flex: 1;
 }
 
 input.new-file-form__submit,
-input.new-folder-form__submit {
+input.new-folder-form__submit,
+input.submit-repo-form__name-input {
   @include themify() {
     background-color: getThemifyVariable("button-secondary-background-color");
   }
