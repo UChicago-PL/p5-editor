@@ -13,15 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set output
-        id: vars
-        run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
       - name: Check output
-        run: echo ${{ steps.vars.outputs.short_ref }}
+        run: echo ${{ github.head_ref }}
       - uses: akhileshns/heroku-deploy@v3.0.0
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "cmsc-11111-editor-staging"
           heroku_email: "mcnutt.andrew@gmail.com"
-          branch: ${{ steps.vars.outputs.short_ref }}
+          branch: ${{ github.head_ref }}
           usedocker: false
