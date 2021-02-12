@@ -37,6 +37,9 @@ import Feedback from '../components/Feedback';
 import { CollectionSearchbar } from '../components/Searchbar';
 import { getIsUserOwner } from '../selectors/users';
 
+
+import { autosaveEvery } from '../../../constants';
+
 function getTitle(props) {
   const { id } = props.project;
   return id ? `CMSC11111 Editor | ${props.project.name}` : 'CMSC11111 Editor';
@@ -133,7 +136,7 @@ class IDEView extends React.Component {
           if (this.autosaveInterval) {
             clearTimeout(this.autosaveInterval);
           }
-          this.autosaveInterval = setTimeout(this.props.autosaveProject, 20000);
+          this.autosaveInterval = setTimeout(this.props.autosaveProject, autosaveEvery);
         }
       } else if (this.autosaveInterval && !this.props.preferences.autosave) {
         clearTimeout(this.autosaveInterval);

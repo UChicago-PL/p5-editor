@@ -6,9 +6,11 @@ import isAfter from 'date-fns/isAfter';
 import request from 'request';
 import slugify from 'slugify';
 import Project from '../models/project';
+import LogItem from '../models/logItem';
 import User from '../models/user';
 import { resolvePathToFile } from '../utils/filePath';
 import generateFileSystemSafeName from '../utils/generateFileSystemSafeName';
+import isPartOfStudy from '../utils/isPartOfStudy';
 
 export { default as createProject, apiCreateProject } from './project.controller/createProject';
 export { default as deleteProject } from './project.controller/deleteProject';
@@ -41,6 +43,11 @@ export function updateProject(req, res) {
           res.status(400).json({ success: false });
           return;
         }
+
+        if (isPartOfStudy(req.user.github)) {
+          createLogItem('snapshot', updatedProject._id, updatedProject.files, () => {});
+        }
+
         if (req.body.files && updatedProject.files.length !== req.body.files.length) {
           const oldFileIds = updatedProject.files.map(file => file.id);
           const newFileIds = req.body.files.map(file => file.id);
@@ -257,5 +264,38 @@ export function downloadProjectAsZip(req, res) {
   Project.findById(req.params.project_id, (err, project) => {
     // save project to some path
     buildZip(project, req, res);
+  });
+}
+
+export function createLogItem(logType, projectId, projectFiles, callback) {
+  LogItem.create({
+    logType,
+    projectSnapshot: {
+      project: projectId, files: projectFiles
+    }
+  }, (createLogItemErr, logItem) => {
+    if (createLogItemErr) {
+      console.log(createLogItemErr);
+      console.log(logItem);
+    }
+    callback(createLogItemErr, logItem);
+  });
+}
+
+export function logRun(req, res) {
+  Project.findById(req.params.project_id, (findProjectErr, project) => {
+    if (!project.user.equals(req.user._id)) {
+      res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
+    } else if (!isPartOfStudy(req.user.github)) {
+      res.status(403).json({ success: false, message: 'User is not part of study.' });
+    } else {
+      createLogItem(req.body.type === 'auto' ? 'run-auto' : 'run-manual', req.params.project_id, req.body.files, (err, logItem) => {
+        if (err) {
+          res.status(400).json({ success: false });
+        } else {
+          res.json(logItem);
+        }
+      });
+    }
   });
 }

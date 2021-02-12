@@ -36,12 +36,12 @@ const SectionSubeader = styled.h3`
 const MobilePreferences = () => {
   // Props
   const {
-    theme, autosave, linewrap, textOutput, gridOutput, soundOutput, lineNumbers, lintWarning
+    theme, linewrap, textOutput, gridOutput, soundOutput, lineNumbers, lintWarning
   } = useSelector(state => state.preferences);
 
   // Actions
   const {
-    setTheme, setAutosave, setLinewrap, setTextOutput, setGridOutput, setSoundOutput, setLineNumbers, setLintWarning,
+    setTheme, setLinewrap, setTextOutput, setGridOutput, setSoundOutput, setLineNumbers, setLintWarning,
   } = bindActionCreators({ ...PreferencesActions, ...IdeActions }, useDispatch());
 
   const { t } = useTranslation();
@@ -58,7 +58,6 @@ const MobilePreferences = () => {
       ),
       onSelect: x => setTheme(x) // setTheme
     },
-    preferenceOnOff(t('MobilePreferences.Autosave'), autosave, setAutosave, 'autosave'),
     preferenceOnOff(t('MobilePreferences.WordWrap'), linewrap, setLinewrap, 'linewrap')
   ];
 

@@ -1,6 +1,8 @@
 import * as ActionTypes from '../../../constants';
 import { clearConsole } from './console';
 
+import { logRun } from './project';
+
 export function startVisualSketch() {
   return {
     type: ActionTypes.START_SKETCH
@@ -10,19 +12,6 @@ export function startVisualSketch() {
 export function stopVisualSketch() {
   return {
     type: ActionTypes.STOP_SKETCH
-  };
-}
-
-export function startRefreshSketch() {
-  return {
-    type: ActionTypes.START_SKETCH_REFRESH
-  };
-}
-
-export function startSketchAndRefresh() {
-  return (dispatch) => {
-    dispatch(startVisualSketch());
-    dispatch(startRefreshSketch());
   };
 }
 
@@ -269,10 +258,24 @@ export function showRuntimeErrorWarning() {
   };
 }
 
+export function startRefreshSketch() {
+  return {
+    type: ActionTypes.START_SKETCH_REFRESH
+  };
+}
+
+export function startSketchAndRefresh() {
+  return (dispatch) => {
+    dispatch(startVisualSketch());
+    dispatch(startRefreshSketch());
+  };
+}
+
 export function startSketch() {
   return (dispatch) => {
     dispatch(clearConsole());
     dispatch(startSketchAndRefresh());
+    dispatch(logRun('manual'));
   };
 }
 
@@ -281,6 +284,14 @@ export function startAccessibleSketch() {
     dispatch(clearConsole());
     dispatch(startAccessibleOutput());
     dispatch(startSketchAndRefresh());
+    dispatch(logRun('manual'));
+  };
+}
+
+export function startAutoRefreshSketch() {
+  return (dispatch) => {
+    dispatch(startRefreshSketch());
+    dispatch(logRun('auto'));
   };
 }
 
@@ -297,3 +308,4 @@ export function createError(error) {
     error
   };
 }
+

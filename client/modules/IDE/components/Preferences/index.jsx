@@ -14,7 +14,6 @@ import beepUrl from '../../../../sounds/audioAlert.mp3';
 class Preferences extends React.Component {
   constructor(props) {
     super(props);
-    this.handleUpdateAutosave = this.handleUpdateAutosave.bind(this);
     this.handleUpdateLinewrap = this.handleUpdateLinewrap.bind(this);
     this.handleLintWarning = this.handleLintWarning.bind(this);
     this.handleLineNumbers = this.handleLineNumbers.bind(this);
@@ -66,11 +65,6 @@ class Preferences extends React.Component {
   increaseFontSize() {
     const newValue = this.state.fontSize + 2;
     this.setFontSize(newValue);
-  }
-
-  handleUpdateAutosave(event) {
-    const value = event.target.value === 'true';
-    this.props.setAutosave(value);
   }
 
   handleUpdateLinewrap(event) {
@@ -174,33 +168,6 @@ class Preferences extends React.Component {
                 <PlusIcon focusable="false" aria-hidden="true" />
                 <h6 className="preference__label">{this.props.t('Preferences.IncreaseFont')}</h6>
               </button>
-            </div>
-            <div className="preference">
-              <h4 className="preference__title">{this.props.t('Preferences.Autosave')}</h4>
-              <div className="preference__options">
-                <input
-                  type="radio"
-                  onChange={() => this.props.setAutosave(true)}
-                  aria-label={this.props.t('Preferences.AutosaveOnARIA')}
-                  name="autosave"
-                  id="autosave-on"
-                  className="preference__radio-button"
-                  value="On"
-                  checked={this.props.autosave}
-                />
-                <label htmlFor="autosave-on" className="preference__option">{this.props.t('Preferences.On')}</label>
-                <input
-                  type="radio"
-                  onChange={() => this.props.setAutosave(false)}
-                  aria-label={this.props.t('Preferences.AutosaveOffARIA')}
-                  name="autosave"
-                  id="autosave-off"
-                  className="preference__radio-button"
-                  value="Off"
-                  checked={!this.props.autosave}
-                />
-                <label htmlFor="autosave-off" className="preference__option">{this.props.t('Preferences.Off')}</label>
-              </div>
             </div>
             <div className="preference">
               <h4 className="preference__title">{this.props.t('Preferences.AutocloseBracketsQuotes')}</h4>
@@ -373,10 +340,8 @@ Preferences.propTypes = {
   fontSize: PropTypes.number.isRequired,
   lineNumbers: PropTypes.bool.isRequired,
   setFontSize: PropTypes.func.isRequired,
-  autosave: PropTypes.bool.isRequired,
   linewrap: PropTypes.bool.isRequired,
   setLineNumbers: PropTypes.func.isRequired,
-  setAutosave: PropTypes.func.isRequired,
   setLinewrap: PropTypes.func.isRequired,
   textOutput: PropTypes.bool.isRequired,
   gridOutput: PropTypes.bool.isRequired,

@@ -380,3 +380,27 @@ export function deleteProject(id) {
       });
   };
 }
+
+export function logRun(type) {
+  return (dispatch, getState) => {
+    const state = getState();
+
+    const formParams = {
+      type, files: [...state.files]
+    };
+
+    const makeRequest = (projectId) =>
+      apiClient.post(`/projects/${projectId}/log`, formParams);
+
+    if (state.project.id) {
+      makeRequest(state.project.id);
+    } else {
+      // in this case, saveProject will invoke the createProject function on the backend,
+      // so a snapshot log won't be automatically created
+      dispatch(saveProject()).then(() => {
+        const newState = getState();
+        makeRequest(newState.project.id);
+      });
+    }
+  };
+}

@@ -41,6 +41,9 @@ import { useEffectWithComparison, useEventListener } from '../../../utils/custom
 
 import * as device from '../../../utils/device';
 
+import { autosaveEvery } from '../../../constants';
+
+
 const withChangeDot = (title, unsavedChanges = false) => (
   <span>
     {title}
@@ -160,8 +163,7 @@ const autosave = (autosaveInterval, setAutosaveInterval) => (props, prevProps) =
         if (autosaveInterval) {
           clearTimeout(autosaveInterval);
         }
-        console.log('will save project in 20 seconds');
-        setAutosaveInterval(setTimeout(doAutosave, 20000));
+        setAutosaveInterval(setTimeout(doAutosave, autosaveEvery));
       }
     } else if (autosaveInterval && !preferences.autosave) {
       clearTimeout(autosaveInterval);
