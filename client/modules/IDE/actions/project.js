@@ -381,12 +381,13 @@ export function deleteProject(id) {
   };
 }
 
-export function logRun() {
+export function logRun(type) {
   return (dispatch, getState) => {
     const state = getState();
 
-    const formParams = {};
-    formParams.files = [...state.files];
+    const formParams = {
+      type, files: [...state.files]
+    };
 
     const makeRequest = (projectId) =>
       apiClient.post(`/projects/${projectId}/log`, formParams);

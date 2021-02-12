@@ -15,19 +15,6 @@ export function stopVisualSketch() {
   };
 }
 
-export function startRefreshSketch() {
-  return {
-    type: ActionTypes.START_SKETCH_REFRESH
-  };
-}
-
-export function startSketchAndRefresh() {
-  return (dispatch) => {
-    dispatch(startVisualSketch());
-    dispatch(startRefreshSketch());
-  };
-}
-
 export function endSketchRefresh() {
   return {
     type: ActionTypes.END_SKETCH_REFRESH
@@ -259,11 +246,24 @@ export function showRuntimeErrorWarning() {
   };
 }
 
+export function startRefreshSketch() {
+  return {
+    type: ActionTypes.START_SKETCH_REFRESH
+  };
+}
+
+export function startSketchAndRefresh() {
+  return (dispatch) => {
+    dispatch(startVisualSketch());
+    dispatch(startRefreshSketch());
+  };
+}
+
 export function startSketch() {
   return (dispatch) => {
     dispatch(clearConsole());
     dispatch(startSketchAndRefresh());
-    dispatch(logRun());
+    dispatch(logRun('manual'));
   };
 }
 
@@ -272,7 +272,14 @@ export function startAccessibleSketch() {
     dispatch(clearConsole());
     dispatch(startAccessibleOutput());
     dispatch(startSketchAndRefresh());
-    dispatch(logRun());
+    dispatch(logRun('manual'));
+  };
+}
+
+export function startAutoRefreshSketch() {
+  return (dispatch) => {
+    dispatch(startRefreshSketch());
+    dispatch(logRun('auto'));
   };
 }
 

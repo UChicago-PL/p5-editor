@@ -289,7 +289,7 @@ export function logRun(req, res) {
     } else if (!isPartOfStudy(req.user.github)) {
       res.status(403).json({ success: false, message: 'User is not part of study.' });
     } else {
-      createLogItem('run', req.params.project_id, req.body, (err, logItem) => {
+      createLogItem(req.body.type === 'auto' ? 'run-auto' : 'run-manual', req.params.project_id, req.body.files, (err, logItem) => {
         if (err) {
           res.status(400).json({ success: false });
         } else {
