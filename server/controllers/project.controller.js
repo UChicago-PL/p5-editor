@@ -77,7 +77,7 @@ export function getProject(req, res) {
   const { project_id: projectId, username } = req.params;
   User.findByUsername(username, (err, user) => {
     if (!user) {
-      res.status(404).send({ message: 'Project with that username does not exist' });
+      res.status(404).send({ message: 'Project with that username does not exist.' });
       return;
     }
     Project.findOne({ user: user._id, $or: [{ _id: projectId }, { slug: projectId }] })
