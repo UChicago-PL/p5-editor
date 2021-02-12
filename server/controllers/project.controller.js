@@ -14,7 +14,10 @@ import isPartOfStudy from '../utils/isPartOfStudy';
 
 export { default as createProject, apiCreateProject } from './project.controller/createProject';
 export { default as deleteProject } from './project.controller/deleteProject';
-export { default as getProjectsForUser, apiGetProjectsForUser } from './project.controller/getProjectsForUser';
+export {
+  default as getProjectsForUser,
+  apiGetProjectsForUser
+} from './project.controller/getProjectsForUser';
 
 export function updateProject(req, res) {
   Project.findById(req.params.project_id, (findProjectErr, project) => {
@@ -43,15 +46,15 @@ export function updateProject(req, res) {
           res.status(400).json({ success: false });
           return;
         }
-
-        if (isPartOfStudy(req.user.github)) {
+        if (req.user.github && isPartOfStudy(req.user.username)) {
+          // eslint-disable-next-line no-use-before-define
           createLogItem('snapshot', updatedProject._id, updatedProject.files, () => {});
         }
 
         if (req.body.files && updatedProject.files.length !== req.body.files.length) {
-          const oldFileIds = updatedProject.files.map(file => file.id);
-          const newFileIds = req.body.files.map(file => file.id);
-          const staleIds = oldFileIds.filter(id => newFileIds.indexOf(id) === -1);
+          const oldFileIds = updatedProject.files.map((file) => file.id);
+          const newFileIds = req.body.files.map((file) => file.id);
+          const staleIds = oldFileIds.filter((id) => newFileIds.indexOf(id) === -1);
           staleIds.forEach((staleId) => {
             updatedProject.files.id(staleId).remove();
           });
@@ -72,13 +75,15 @@ export function updateProject(req, res) {
 
 export function getProject(req, res) {
   const { project_id: projectId, username } = req.params;
-  User.findByUsername(username, (err, user) => { // eslint-disable-line
+  User.findByUsername(username, (err, user) => {
+    // eslint-disable-line
     if (!user) {
       return res.status(404).send({ message: 'Project with that username does not exist' });
     }
     Project.findOne({ user: user._id, $or: [{ _id: projectId }, { slug: projectId }] })
       .populate('user', 'username')
-      .exec((err, project) => { // eslint-disable-line
+      .exec((err, project) => {
+        // eslint-disable-line
         if (err) {
           console.log(err);
           return res.status(404).send({ message: 'Project with that id does not exist' });
@@ -105,7 +110,8 @@ export function getProjectsForUserId(userId) {
 export function getProjectAsset(req, res) {
   Project.findById(req.params.project_id)
     .populate('user', 'username')
-    .exec((err, project) => { // eslint-disable-line
+    .exec((err, project) => {
+      // eslint-disable-line
       if (err) {
         return res.status(404).send({ message: 'Project with that id does not exist' });
       }
@@ -132,10 +138,9 @@ export function getProjectAsset(req, res) {
 
 export function getProjects(req, res) {
   if (req.user) {
-    getProjectsForUserId(req.user._id)
-      .then((projects) => {
-        res.json(projects);
-      });
+    getProjectsForUserId(req.user._id).then((projects) => {
+      res.json(projects);
+    });
   } else {
     // could just move this to client side
     res.json([]);
@@ -143,9 +148,7 @@ export function getProjects(req, res) {
 }
 
 export function projectExists(projectId, callback) {
-  Project.findById(projectId, (err, project) => (
-    project ? callback(true) : callback(false)
-  ));
+  Project.findById(projectId, (err, project) => (project ? callback(true) : callback(false)));
 }
 
 export function projectForUserExists(username, projectId, callback) {
@@ -154,18 +157,21 @@ export function projectForUserExists(username, projectId, callback) {
       callback(false);
       return;
     }
-    Project.findOne({ user: user._id, $or: [{ _id: projectId }, { slug: projectId }] }, (innerErr, project) => {
-      if (!project) {
-        callback(false);
-        return;
+    Project.findOne(
+      { user: user._id, $or: [{ _id: projectId }, { slug: projectId }] },
+      (innerErr, project) => {
+        if (!project) {
+          callback(false);
+          return;
+        }
+        callback(true);
       }
-      callback(true);
-    });
+    );
   });
 }
 
 function bundleExternalLibs(project, zip, callback) {
-  const indexHtml = project.files.find(file => file.name.match(/\.html$/));
+  const indexHtml = project.files.find((file) => file.name.match(/\.html$/));
   let numScriptsResolved = 0;
   let numScriptTags = 0;
 
@@ -215,8 +221,8 @@ function bundleExternalLibs(project, zip, callback) {
 
 function buildZip(project, req, res) {
   const zip = archiver('zip');
-  const rootFile = project.files.find(file => file.name === 'root');
-  const numFiles = project.files.filter(file => file.fileType !== 'folder').length;
+  const rootFile = project.files.find((file) => file.name === 'root');
+  const numFiles = project.files.filter((file) => file.fileType !== 'folder').length;
   const { files } = project;
   let numCompletedFiles = 0;
 
@@ -233,7 +239,7 @@ function buildZip(project, req, res) {
     if (file.fileType === 'folder') {
       const newPath = file.name === 'root' ? path : `${path}${file.name}/`;
       file.children.forEach((fileId) => {
-        const childFile = files.find(f => f.id === fileId);
+        const childFile = files.find((f) => f.id === fileId);
         (() => {
           addFileToZip(childFile, newPath);
         })();
@@ -268,34 +274,44 @@ export function downloadProjectAsZip(req, res) {
 }
 
 export function createLogItem(logType, projectId, projectFiles, callback) {
-  LogItem.create({
-    logType,
-    projectSnapshot: {
-      project: projectId, files: projectFiles
+  LogItem.create(
+    {
+      logType,
+      projectSnapshot: {
+        project: projectId,
+        files: projectFiles
+      }
+    },
+    (createLogItemErr, logItem) => {
+      if (createLogItemErr) {
+        console.log(createLogItemErr);
+        console.log(logItem);
+      }
+      callback(createLogItemErr, logItem);
     }
-  }, (createLogItemErr, logItem) => {
-    if (createLogItemErr) {
-      console.log(createLogItemErr);
-      console.log(logItem);
-    }
-    callback(createLogItemErr, logItem);
-  });
+  );
 }
 
 export function logRun(req, res) {
   Project.findById(req.params.project_id, (findProjectErr, project) => {
+    console.log('req.user', req.user);
     if (!project.user.equals(req.user._id)) {
       res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
-    } else if (!isPartOfStudy(req.user.github)) {
+    } else if (!req.user.github || !isPartOfStudy(req.user.username)) {
       res.status(403).json({ success: false, message: 'User is not part of study.' });
     } else {
-      createLogItem(req.body.type === 'auto' ? 'run-auto' : 'run-manual', req.params.project_id, req.body.files, (err, logItem) => {
-        if (err) {
-          res.status(400).json({ success: false });
-        } else {
-          res.json(logItem);
+      createLogItem(
+        req.body.type === 'auto' ? 'run-auto' : 'run-manual',
+        req.params.project_id,
+        req.body.files,
+        (err, logItem) => {
+          if (err) {
+            res.status(400).json({ success: false });
+          } else {
+            res.json(logItem);
+          }
         }
-      });
+      );
     }
   });
 }

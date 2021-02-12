@@ -1,3 +1,8 @@
 import studyParticipants from './studyParticipants.json';
 
-export default (userId) => studyParticipants.ids.includes(userId);
+/**
+ * Check whether or not a user is enrolled in the study
+ */
+export default (userId) => {
+  return studyParticipants.ids.includes(userId);
+};
