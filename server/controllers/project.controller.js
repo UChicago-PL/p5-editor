@@ -76,9 +76,9 @@ export function updateProject(req, res) {
 export function getProject(req, res) {
   const { project_id: projectId, username } = req.params;
   User.findByUsername(username, (err, user) => {
-    // eslint-disable-line
     if (!user) {
-      return res.status(404).send({ message: 'Project with that username does not exist' });
+      res.status(404).send({ message: 'Project with that username does not exist' });
+      return;
     }
     Project.findOne({ user: user._id, $or: [{ _id: projectId }, { slug: projectId }] })
       .populate('user', 'username')
@@ -111,21 +111,24 @@ export function getProjectAsset(req, res) {
   Project.findById(req.params.project_id)
     .populate('user', 'username')
     .exec((err, project) => {
-      // eslint-disable-line
       if (err) {
-        return res.status(404).send({ message: 'Project with that id does not exist' });
+        res.status(404).send({ message: 'Project with that id does not exist' });
+        return;
       }
       if (!project) {
-        return res.status(404).send({ message: 'Project with that id does not exist' });
+        res.status(404).send({ message: 'Project with that id does not exist' });
+        return;
       }
 
       const filePath = req.params[0];
       const resolvedFile = resolvePathToFile(filePath, project.files);
       if (!resolvedFile) {
-        return res.status(404).send({ message: 'Asset does not exist' });
+        res.status(404).send({ message: 'Asset does not exist' });
+        return;
       }
       if (!resolvedFile.url) {
-        return res.send(resolvedFile.content);
+        res.send(resolvedFile.content);
+        return;
       }
       request({ method: 'GET', url: resolvedFile.url, encoding: null }, (innerErr, response, body) => {
         if (innerErr) {
