@@ -22,3 +22,10 @@ jobs:
           heroku_email: "mcnutt.andrew@gmail.com"
           branch: origin/${{ github.event.pull_request.head.ref }}
           usedocker: false
+      - name: comment PR
+        uses: unsplash/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: "Mounted to staging. View at http://cmsc-11111-editor-staging.herokuapp.com/"
+          check_for_duplicate_msg: false  # OPTIONAL 
