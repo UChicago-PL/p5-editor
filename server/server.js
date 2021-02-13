@@ -93,19 +93,17 @@ if (process.env.BASIC_USERNAME && process.env.BASIC_PASSWORD) {
   );
 }
 
-// In development serve files from webpack-dev-server instead
-if (process.env.NODE_ENV === 'production') {
-  app.use(
-    '/locales',
-    Express.static(path.resolve(dist, 'locales'), {
-      // Browsers must revalidate for changes to the locale files
-      // It doesn't actually mean "don't cache this file"
-      // See: https://jakearchibald.com/2016/caching-best-practices/
-      setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache'),
-    }),
-  );
-  app.use(Express.static(dist));
-}
+// Body parser, cookie parser, sessions, serve public assets
+app.use(
+  '/locales',
+  Express.static(path.resolve(dist, 'locales'), {
+    // Browsers must revalidate for changes to the locale files
+    // It doesn't actually mean "don't cache this file"
+    // See: https://jakearchibald.com/2016/caching-best-practices/
+    setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache'),
+  }),
+);
+app.use(Express.static(dist), );
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -168,7 +166,7 @@ app.get('*', (req, res) => {
 // start app
 app.listen(process.env.PORT, (error) => {
   if (!error) {
-    console.log(`CMSC 11111 Web Editor is running on port: ${process.env.PORT}!`); // eslint-disable-line
+    console.log(`p5.js Web Editor is running on port: ${process.env.PORT}!`); // eslint-disable-line
   }
 });
 
