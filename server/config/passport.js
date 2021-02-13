@@ -94,7 +94,7 @@ passport.use(
       scope: ['repo', 'user:email']
     },
     (req, accessToken, refreshToken, profile, done) => {
-      User.findOne({ github: profile.id }, (findByGithubErr, existingUser) => {
+      User.findOne({ github: profile.username }, (findByGithubErr, existingUser) => {
         if (existingUser) {
           if (req.user && req.user.email !== existingUser.email) {
             done(new Error('GitHub account is already linked to another account.'));
@@ -108,7 +108,7 @@ passport.use(
         const primaryEmail = getPrimaryEmail(profile.emails);
 
         if (req.user) {
-          req.user.github = profile.id;
+          req.user.github = profile.username;
           req.user.githubToken = accessToken;
           req.user.verified = User.EmailConfirmation.Verified;
           req.user.save((saveErr) => done(null, req.user));
@@ -116,7 +116,7 @@ passport.use(
           User.findByEmail(emails, (findByEmailErr, existingEmailUser) => {
             if (existingEmailUser) {
               existingEmailUser.email = existingEmailUser.email || primaryEmail;
-              existingEmailUser.github = profile.id;
+              existingEmailUser.github = profile.username;
               existingEmailUser.username = existingEmailUser.username || profile.username;
               existingEmailUser.githubToken = accessToken;
               existingEmailUser.name = existingEmailUser.name || profile.displayName;
@@ -129,7 +129,7 @@ passport.use(
                 (findByUsernameErr, existingUsernameUser) => {
                   const user = new User();
                   user.email = primaryEmail;
-                  user.github = profile.id;
+                  user.github = profile.username;
                   user.username = profile.username;
                   user.githubToken = accessToken;
                   user.name = profile.displayName;
