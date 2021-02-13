@@ -2,7 +2,7 @@ import { browserHistory } from 'react-router';
 import objectID from 'bson-objectid';
 import each from 'async/each';
 import isEqual from 'lodash/isEqual';
-import apiClient, { ROOT_URL } from '../../../utils/apiClient';
+import apiClient from '../../../utils/apiClient';
 import getConfig from '../../../utils/getConfig';
 import * as ActionTypes from '../../../constants';
 import { showToast, setToastText } from './toast';
@@ -15,6 +15,7 @@ import {
 } from './ide';
 import { clearState, saveState } from '../../../persistState';
 
+const ROOT_URL = getConfig('API_URL');
 const S3_BUCKET_URL_BASE = getConfig('S3_BUCKET_URL_BASE');
 const S3_BUCKET = getConfig('S3_BUCKET');
 
