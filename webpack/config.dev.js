@@ -17,8 +17,6 @@ module.exports = {
     app: [
       'core-js/modules/es6.promise',
       'core-js/modules/es6.array.iterator',
-      'webpack-hot-middleware/client',
-      'react-hot-loader/patch',
       './client/index.jsx',
     ],
     previewScripts: [
@@ -38,7 +36,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('development')
@@ -60,7 +57,6 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            plugins: ['react-hot-loader/babel'],
           }
         }, {
           loader: 'eslint-loader'
