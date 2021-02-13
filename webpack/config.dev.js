@@ -15,8 +15,6 @@ module.exports = {
   devtool: 'cheap-module-eval-source-map',
   entry: {
     app: [
-      'core-js/modules/es6.promise',
-      'core-js/modules/es6.array.iterator',
       './client/index.jsx',
     ],
     previewScripts: [

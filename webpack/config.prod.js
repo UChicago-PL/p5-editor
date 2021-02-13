@@ -22,8 +22,6 @@ module.exports = [{
   entry: {
     app: [
       '@babel/polyfill',
-      'core-js/modules/es6.promise',
-      'core-js/modules/es6.array.iterator',
       path.resolve(__dirname, '../client/index.jsx')
     ]
   },
