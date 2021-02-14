@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === "development") {
   require('dotenv').config();
 }
 
-const dist = require('constants.js').dist
+const dist = require('./constants.js').dist
 
 
 module.exports = [{
