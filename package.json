@@ -6,6 +6,7 @@
     "clean": "rimraf dist",
     "start:server": "cross-env BABEL_DISABLE_CACHE=1 NODE_ENV=development nodemon index.js",
     "start:frontend": "cross-env BABEL_DISABLE_CACHE=1 NODE_ENV=development webpack --config webpack/config.dev.js -w",
+    "start:prod": "cross-env NODE_ENV=production node index.js",
     "lint": "eslint client server --ext .jsx --ext .js",
     "lint-fix": "eslint client server --ext .jsx --ext .js --fix",
     "build": "npm run build:client && npm run build:server",
