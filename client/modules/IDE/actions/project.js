@@ -126,8 +126,19 @@ function getSynchedProject(currentState, responseProject) {
   };
 }
 
-export function saveProject(selectedFile = null, autosave = false, mobile = false) {
+export function checkLI(cb) {
   return (dispatch, getState) => {
+    const state = getState();
+    if (!state.user.authenticated) {
+      dispatch(showErrorModal('forceAuthentication'));
+    } else {
+      cb(dispatch, getState);
+    }
+  };
+}
+
+export function saveProject(selectedFile = null, autosave = false, mobile = false) {
+  return checkLI((dispatch, getState) => {
     const state = getState();
     if (state.project.isSaving) {
       return Promise.resolve();
@@ -218,7 +229,7 @@ export function saveProject(selectedFile = null, autosave = false, mobile = fals
           dispatch(projectSaveFail(response.data));
         }
       });
-  };
+  });
 }
 
 export function autosaveProject(mobile = false) {

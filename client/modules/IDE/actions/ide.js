@@ -1,7 +1,7 @@
 import * as ActionTypes from '../../../constants';
 import { clearConsole } from './console';
 
-import { logRun } from './project';
+import { logRun, checkLI } from './project';
 
 export function startVisualSketch() {
   return {
@@ -264,35 +264,30 @@ export function startRefreshSketch() {
   };
 }
 
-export function startSketchAndRefresh() {
-  return (dispatch) => {
+export function startSketch() {
+  return checkLI((dispatch) => {
+    dispatch(clearConsole());
     dispatch(startVisualSketch());
     dispatch(startRefreshSketch());
-  };
-}
-
-export function startSketch() {
-  return (dispatch) => {
-    dispatch(clearConsole());
-    dispatch(startSketchAndRefresh());
     dispatch(logRun('manual'));
-  };
+  });
 }
 
 export function startAccessibleSketch() {
-  return (dispatch) => {
+  return checkLI((dispatch) => {
     dispatch(clearConsole());
     dispatch(startAccessibleOutput());
-    dispatch(startSketchAndRefresh());
+    dispatch(startVisualSketch());
+    dispatch(startRefreshSketch());
     dispatch(logRun('manual'));
-  };
+  });
 }
 
 export function startAutoRefreshSketch() {
-  return (dispatch) => {
+  return checkLI((dispatch) => {
     dispatch(startRefreshSketch());
     dispatch(logRun('auto'));
-  };
+  });
 }
 
 export function stopSketch() {

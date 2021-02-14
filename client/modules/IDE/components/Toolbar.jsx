@@ -52,11 +52,7 @@ class Toolbar extends React.Component {
   }
 
   handleSave() {
-    if (this.props.user.authenticated) {
-      this.props.saveProject(this.props.cmController.getContent());
-    } else {
-      this.props.showErrorModal('forceAuthentication');
-    }
+    this.props.saveProject(this.props.cmController.getContent());
   }
 
   canEditProjectName() {
@@ -234,7 +230,6 @@ Toolbar.propTypes = {
   setProjectName: PropTypes.func.isRequired,
   setTextOutput: PropTypes.func.isRequired,
   showEditProjectName: PropTypes.func.isRequired,
-  showErrorModal: PropTypes.func.isRequired,
   startAccessibleSketch: PropTypes.func.isRequired,
   startSketch: PropTypes.func.isRequired,
   stopSketch: PropTypes.func.isRequired,
