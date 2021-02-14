@@ -12,12 +12,16 @@ const PreviewNav = ({ owner, project, t }) => (
       <div className="nav__item-logo">
         <Logo />
       </div>
-      <Link className="nav__item" to={`/${owner.username}/sketches/${project.id}`}>{project.name}</Link>
+      <Link className="nav__item" to={`/${owner.username}/sketches/${project.id}`}>
+        {project.name}
+      </Link>
       <p className="toolbar__project-owner">{t('PreviewNav.ByUser')}</p>
-      <Link className="nav__item" to={`/${owner.username}/sketches/`}>{owner.username}</Link>
+      <Link className="nav__item" to={`/${owner.username}/sketches/`}>
+        {owner.username}
+      </Link>
     </div>
     <div className="nav__items-right">
-      <Link to={`/${owner.username}/sketches/${project.id}`} aria-label={t('PreviewNav.EditSketchARIA')} >
+      <Link to={`/${owner.username}/sketches/${project.id}`} aria-label={t('PreviewNav.EditSketchARIA')}>
         <CodeIcon className="preview-nav__editor-svg" focusable="false" aria-hidden="true" />
       </Link>
     </div>
@@ -30,7 +34,7 @@ PreviewNav.propTypes = {
   }).isRequired,
   project: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired
   }).isRequired,
   t: PropTypes.func.isRequired
 };

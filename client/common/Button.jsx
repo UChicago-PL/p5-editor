@@ -8,7 +8,7 @@ import { remSize, prop } from '../theme';
 const kinds = {
   block: 'block',
   icon: 'icon',
-  inline: 'inline',
+  inline: 'inline'
 };
 
 // The '&&&' will increase the specificity of the
@@ -208,7 +208,7 @@ Button.defaultProps = {
   href: null,
   'aria-label': null,
   to: null,
-  type: 'button',
+  type: 'button'
 };
 
 Button.kinds = kinds;
@@ -250,7 +250,7 @@ Button.propTypes = {
   /**
    * If using a button, then type is defines the type of button
    */
-  type: PropTypes.oneOf(['button', 'submit']),
+  type: PropTypes.oneOf(['button', 'submit'])
 };
 
 export default Button;

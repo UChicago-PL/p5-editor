@@ -5,7 +5,6 @@ import { withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import SearchIcon from '../../../../images/magnifyingglass.svg';
 
-
 class Searchbar extends React.Component {
   constructor(props) {
     super(props);
@@ -23,7 +22,7 @@ class Searchbar extends React.Component {
     this.setState({ searchValue: '' }, () => {
       this.props.resetSearchTerm();
     });
-  }
+  };
 
   searchChange = () => {
     this.props.setSearchTerm(this.state.searchValue.trim());
@@ -33,7 +32,7 @@ class Searchbar extends React.Component {
     this.setState({ searchValue: e.target.value }, () => {
       this.throttledSearchChange(this.state.searchValue.trim());
     });
-  }
+  };
 
   render() {
     const { searchValue } = this.state;
@@ -49,10 +48,8 @@ class Searchbar extends React.Component {
           placeholder={this.props.searchLabel}
           onChange={this.handleSearchChange}
         />
-        <button
-          className="searchbar__clear-button"
-          onClick={this.handleResetSearch}
-        >{this.props.t('Searchbar.ClearTerm')}
+        <button className="searchbar__clear-button" onClick={this.handleResetSearch}>
+          {this.props.t('Searchbar.ClearTerm')}
         </button>
       </div>
     );

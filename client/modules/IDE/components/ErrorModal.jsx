@@ -8,9 +8,15 @@ class ErrorModal extends React.Component {
     return (
       <p>
         {this.props.t('ErrorModal.MessageLogin')}
-        <Link to="/login" onClick={this.props.closeModal}> {this.props.t('ErrorModal.Login')}</Link>
+        <Link to="/login" onClick={this.props.closeModal}>
+          {' '}
+          {this.props.t('ErrorModal.Login')}
+        </Link>
         {this.props.t('ErrorModal.LoginOr')}
-        <Link to="/signup" onClick={this.props.closeModal}>{this.props.t('ErrorModal.SignUp')}</Link>.
+        <Link to="/signup" onClick={this.props.closeModal}>
+          {this.props.t('ErrorModal.SignUp')}
+        </Link>
+        .
       </p>
     );
   }
@@ -21,34 +27,30 @@ class ErrorModal extends React.Component {
       github: 'GitHub',
       google: 'Google'
     };
-    return (
-      <p>
-        {t('ErrorModal.LinkMessage', { serviceauth: serviceLabels[service] })}
-      </p>
-    );
+    return <p>{t('ErrorModal.LinkMessage', { serviceauth: serviceLabels[service] })}</p>;
   }
 
   staleSession() {
     return (
       <p>
         {this.props.t('ErrorModal.MessageLoggedOut')}
-        <Link to="/login" onClick={this.props.closeModal}>{this.props.t('ErrorModal.LogIn')}</Link>.
+        <Link to="/login" onClick={this.props.closeModal}>
+          {this.props.t('ErrorModal.LogIn')}
+        </Link>
+        .
       </p>
     );
   }
 
   staleProject() {
-    return (
-      <p>
-        {this.props.t('ErrorModal.SavedDifferentWindow')}
-      </p>
-    );
+    return <p>{this.props.t('ErrorModal.SavedDifferentWindow')}</p>;
   }
 
   render() {
     return (
       <div className="error-modal__content">
-        {(() => { // eslint-disable-line
+        {(() => {
+          // eslint-disable-line
           if (this.props.type === 'forceAuthentication') {
             return this.forceAuthentication();
           } else if (this.props.type === 'staleSession') {

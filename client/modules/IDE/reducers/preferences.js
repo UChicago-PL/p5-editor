@@ -1,6 +1,5 @@
 import * as ActionTypes from '../../../constants';
 
-
 const initialState = {
   fontSize: 18,
   autosave: true,

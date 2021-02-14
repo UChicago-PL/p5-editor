@@ -37,7 +37,6 @@ import Feedback from '../components/Feedback';
 import { CollectionSearchbar } from '../components/Searchbar';
 import { getIsUserOwner } from '../selectors/users';
 
-
 import { autosaveEvery } from '../../../constants';
 
 function getTitle(props) {

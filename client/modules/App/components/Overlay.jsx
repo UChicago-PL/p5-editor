@@ -61,27 +61,27 @@ class Overlay extends React.Component {
   }
 
   render() {
-    const {
-      ariaLabel,
-      title,
-      children,
-      actions,
-      isFixedHeight,
-    } = this.props;
+    const { ariaLabel, title, children, actions, isFixedHeight } = this.props;
     return (
       <div className={`overlay ${isFixedHeight ? 'overlay--is-fixed-height' : ''}`}>
         <div className="overlay__content">
           <section
             role="main"
             aria-label={ariaLabel}
-            ref={(node) => { this.node = node; }}
+            ref={(node) => {
+              this.node = node;
+            }}
             className="overlay__body"
           >
             <header className="overlay__header">
               <h2 className="overlay__title">{title}</h2>
               <div className="overlay__actions">
                 {actions}
-                <button className="overlay__close-button" onClick={this.close} aria-label={this.props.t('Overlay.AriaLabel', { title })}>
+                <button
+                  className="overlay__close-button"
+                  onClick={this.close}
+                  aria-label={this.props.t('Overlay.AriaLabel', { title })}
+                >
                   <ExitIcon focusable="false" aria-hidden="true" />
                 </button>
               </div>
@@ -112,7 +112,7 @@ Overlay.defaultProps = {
   closeOverlay: null,
   ariaLabel: 'modal',
   previousPath: '/',
-  isFixedHeight: false,
+  isFixedHeight: false
 };
 
 export default withTranslation()(Overlay);

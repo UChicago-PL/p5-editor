@@ -16,7 +16,11 @@ import Header from '../../components/mobile/Header';
 import PreferencePicker from '../../components/mobile/PreferencePicker';
 import { ExitIcon } from '../../common/icons';
 import { remSize, prop } from '../../theme';
-import { optionsOnOff, optionsPickOne, preferenceOnOff } from '../IDE/components/Preferences/PreferenceCreators';
+import {
+  optionsOnOff,
+  optionsPickOne,
+  preferenceOnOff
+} from '../IDE/components/Preferences/PreferenceCreators';
 
 const Content = styled.div`
   z-index: 0;
@@ -32,16 +36,21 @@ const SectionSubeader = styled.h3`
   color: ${prop('primaryTextColor')};
 `;
 
-
 const MobilePreferences = () => {
   // Props
-  const {
-    theme, linewrap, textOutput, gridOutput, soundOutput, lineNumbers, lintWarning
-  } = useSelector(state => state.preferences);
+  const { theme, linewrap, textOutput, gridOutput, soundOutput, lineNumbers, lintWarning } = useSelector(
+    (state) => state.preferences
+  );
 
   // Actions
   const {
-    setTheme, setLinewrap, setTextOutput, setGridOutput, setSoundOutput, setLineNumbers, setLintWarning,
+    setTheme,
+    setLinewrap,
+    setTextOutput,
+    setGridOutput,
+    setSoundOutput,
+    setLineNumbers,
+    setLintWarning
   } = bindActionCreators({ ...PreferencesActions, ...IdeActions }, useDispatch());
 
   const { t } = useTranslation();
@@ -56,7 +65,7 @@ const MobilePreferences = () => {
         t('MobilePreferences.DarkTheme'),
         t('MobilePreferences.HighContrastTheme')
       ),
-      onSelect: x => setTheme(x) // setTheme
+      onSelect: (x) => setTheme(x) // setTheme
     },
     preferenceOnOff(t('MobilePreferences.WordWrap'), linewrap, setLinewrap, 'linewrap')
   ];
@@ -81,19 +90,25 @@ const MobilePreferences = () => {
         <section className="preferences">
           <Content>
             <SectionHeader>{t('MobilePreferences.GeneralSettings')}</SectionHeader>
-            { generalSettings.map(option => <PreferencePicker key={`${option.title}wrapper`} {...option} />) }
+            {generalSettings.map((option) => (
+              <PreferencePicker key={`${option.title}wrapper`} {...option} />
+            ))}
 
             <SectionHeader>{t('MobilePreferences.Accessibility')}</SectionHeader>
-            { accessibilitySettings.map(option => <PreferencePicker key={`${option.title}wrapper`} {...option} />) }
+            {accessibilitySettings.map((option) => (
+              <PreferencePicker key={`${option.title}wrapper`} {...option} />
+            ))}
 
             <SectionHeader>{t('MobilePreferences.AccessibleOutput')}</SectionHeader>
             <SectionSubeader>{t('MobilePreferences.UsedScreenReader')}</SectionSubeader>
-            { outputSettings.map(option => <PreferencePicker key={`${option.title}wrapper`} {...option} />) }
-
+            {outputSettings.map((option) => (
+              <PreferencePicker key={`${option.title}wrapper`} {...option} />
+            ))}
           </Content>
         </section>
       </section>
-    </Screen>);
+    </Screen>
+  );
 };
 
 export default withRouter(MobilePreferences);

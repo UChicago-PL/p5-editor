@@ -56,24 +56,24 @@ App.propTypes = {
   location: PropTypes.shape({
     pathname: PropTypes.string,
     state: PropTypes.shape({
-      skipSavingPath: PropTypes.bool,
-    }),
+      skipSavingPath: PropTypes.bool
+    })
   }).isRequired,
   setPreviousPath: PropTypes.func.isRequired,
   setLanguage: PropTypes.func.isRequired,
   language: PropTypes.string,
-  theme: PropTypes.string,
+  theme: PropTypes.string
 };
 
 App.defaultProps = {
   children: null,
   language: null,
-  theme: 'light',
+  theme: 'light'
 };
 
 const mapStateToProps = (state) => ({
   theme: state.preferences.theme,
-  language: state.preferences.language,
+  language: state.preferences.language
 });
 
 const mapDispatchToProps = { setPreviousPath, setLanguage };

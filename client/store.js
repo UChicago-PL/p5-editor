@@ -6,9 +6,7 @@ import { clearState, loadState } from './persistState';
 import getConfig from './utils/getConfig';
 
 export default function configureStore(initialState) {
-  const enhancers = [
-    applyMiddleware(thunk),
-  ];
+  const enhancers = [applyMiddleware(thunk)];
 
   if (getConfig('CLIENT') && getConfig('NODE_ENV') === 'development') {
     // Enable DevTools only when rendering on client and during development.
@@ -26,4 +24,3 @@ export default function configureStore(initialState) {
 
   return store;
 }
-

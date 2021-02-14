@@ -26,7 +26,7 @@ class Nav extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      dropdownOpen: 'none',
+      dropdownOpen: 'none'
     };
     this.handleFocus = this.handleFocus.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
@@ -78,7 +78,7 @@ class Nav extends React.PureComponent {
   }
   setDropdown(dropdown) {
     this.setState({
-      dropdownOpen: dropdown,
+      dropdownOpen: dropdown
     });
   }
 
@@ -204,18 +204,18 @@ class Nav extends React.PureComponent {
 
   handleClickOutside() {
     this.setState({
-      dropdownOpen: 'none',
+      dropdownOpen: 'none'
     });
   }
 
   toggleDropdown(dropdown) {
     if (this.state.dropdownOpen === 'none') {
       this.setState({
-        dropdownOpen: dropdown,
+        dropdownOpen: dropdown
       });
     } else {
       this.setState({
-        dropdownOpen: 'none',
+        dropdownOpen: 'none'
       });
     }
   }
@@ -708,28 +708,28 @@ class Nav extends React.PureComponent {
     const navDropdownState = {
       file: classNames({
         nav__item: true,
-        'nav__item--open': this.state.dropdownOpen === 'file',
+        'nav__item--open': this.state.dropdownOpen === 'file'
       }),
       edit: classNames({
         nav__item: true,
-        'nav__item--open': this.state.dropdownOpen === 'edit',
+        'nav__item--open': this.state.dropdownOpen === 'edit'
       }),
       sketch: classNames({
         nav__item: true,
-        'nav__item--open': this.state.dropdownOpen === 'sketch',
+        'nav__item--open': this.state.dropdownOpen === 'sketch'
       }),
       help: classNames({
         nav__item: true,
-        'nav__item--open': this.state.dropdownOpen === 'help',
+        'nav__item--open': this.state.dropdownOpen === 'help'
       }),
       account: classNames({
         nav__item: true,
-        'nav__item--open': this.state.dropdownOpen === 'account',
+        'nav__item--open': this.state.dropdownOpen === 'account'
       }),
       lang: classNames({
         nav__item: true,
-        'nav__item--open': this.state.dropdownOpen === 'lang',
-      }),
+        'nav__item--open': this.state.dropdownOpen === 'lang'
+      })
     };
 
     return (
@@ -759,14 +759,14 @@ Nav.propTypes = {
   user: PropTypes.shape({
     authenticated: PropTypes.bool.isRequired,
     username: PropTypes.string,
-    id: PropTypes.string,
+    id: PropTypes.string
   }).isRequired,
   project: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
     owner: PropTypes.shape({
-      id: PropTypes.string,
-    }),
+      id: PropTypes.string
+    })
   }),
   logoutUser: PropTypes.func.isRequired,
   showShareModal: PropTypes.func.isRequired,
@@ -779,7 +779,7 @@ Nav.propTypes = {
     findNext: PropTypes.func,
     findPrev: PropTypes.func,
     showReplace: PropTypes.func,
-    getContent: PropTypes.func,
+    getContent: PropTypes.func
   }),
   startSketch: PropTypes.func.isRequired,
   stopSketch: PropTypes.func.isRequired,
@@ -788,28 +788,28 @@ Nav.propTypes = {
   newFolder: PropTypes.func.isRequired,
   layout: PropTypes.oneOf(['dashboard', 'project']),
   rootFile: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired
   }).isRequired,
   params: PropTypes.shape({
-    username: PropTypes.string,
+    username: PropTypes.string
   }),
   t: PropTypes.func.isRequired,
   setLanguage: PropTypes.func.isRequired,
   language: PropTypes.string.isRequired,
-  isUserOwner: PropTypes.bool.isRequired,
+  isUserOwner: PropTypes.bool.isRequired
 };
 
 Nav.defaultProps = {
   project: {
     id: undefined,
-    owner: undefined,
+    owner: undefined
   },
   cmController: {},
   layout: 'project',
   warnIfUnsavedChanges: undefined,
   params: {
-    username: undefined,
-  },
+    username: undefined
+  }
 };
 
 function mapStateToProps(state) {
@@ -819,7 +819,7 @@ function mapStateToProps(state) {
     unsavedChanges: state.ide.unsavedChanges,
     rootFile: state.files.filter((file) => file.name === 'root')[0],
     language: state.preferences.language,
-    isUserOwner: getIsUserOwner(state),
+    isUserOwner: getIsUserOwner(state)
   };
 }
 
@@ -829,7 +829,7 @@ const mapDispatchToProps = {
   ...toastActions,
   logoutUser,
   setAllAccessibleOutput,
-  setLanguage,
+  setLanguage
 };
 
 export default withTranslation()(withRouter(connect(mapStateToProps, mapDispatchToProps)(Nav)));

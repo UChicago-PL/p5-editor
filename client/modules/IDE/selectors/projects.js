@@ -3,27 +3,23 @@ import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
 import orderBy from 'lodash/orderBy';
 import { DIRECTION } from '../actions/sorting';
 
-const getSketches = state => state.sketches;
-const getField = state => state.sorting.field;
-const getDirection = state => state.sorting.direction;
-const getSearchTerm = state => state.search.sketchSearchTerm;
+const getSketches = (state) => state.sketches;
+const getField = (state) => state.sorting.field;
+const getDirection = (state) => state.sorting.direction;
+const getSearchTerm = (state) => state.search.sketchSearchTerm;
 
-const getFilteredSketches = createSelector(
-  getSketches,
-  getSearchTerm,
-  (sketches, search) => {
-    if (search) {
-      const searchStrings = sketches.map((sketch) => {
-        const smallSketch = {
-          name: sketch.name
-        };
-        return { ...sketch, searchString: Object.values(smallSketch).join(' ').toLowerCase() };
-      });
-      return searchStrings.filter(sketch => sketch.searchString.includes(search.toLowerCase()));
-    }
-    return sketches;
+const getFilteredSketches = createSelector(getSketches, getSearchTerm, (sketches, search) => {
+  if (search) {
+    const searchStrings = sketches.map((sketch) => {
+      const smallSketch = {
+        name: sketch.name
+      };
+      return { ...sketch, searchString: Object.values(smallSketch).join(' ').toLowerCase() };
+    });
+    return searchStrings.filter((sketch) => sketch.searchString.includes(search.toLowerCase()));
   }
-);
+  return sketches;
+});
 
 const getSortedSketches = createSelector(
   getFilteredSketches,

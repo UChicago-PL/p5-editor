@@ -28,7 +28,7 @@ const App = () => (
 );
 
 render(
-  <Suspense fallback={(<Loader />)}>
+  <Suspense fallback={<Loader />}>
     <App />
   </Suspense>,
   document.getElementById('root')

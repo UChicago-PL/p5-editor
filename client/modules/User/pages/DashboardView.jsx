@@ -18,7 +18,7 @@ import DashboardTabSwitcherPublic, { TabKey } from '../components/DashboardTabSw
 
 class DashboardView extends React.Component {
   static defaultProps = {
-    user: null,
+    user: null
   };
 
   constructor(props) {
@@ -146,23 +146,23 @@ function mapStateToProps(state) {
   return {
     previousPath: state.ide.previousPath,
     user: state.user,
-    theme: state.preferences.theme,
+    theme: state.preferences.theme
   };
 }
 
 DashboardView.propTypes = {
   location: PropTypes.shape({
-    pathname: PropTypes.string.isRequired,
+    pathname: PropTypes.string.isRequired
   }).isRequired,
   params: PropTypes.shape({
-    username: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired
   }).isRequired,
   previousPath: PropTypes.string.isRequired,
   theme: PropTypes.string.isRequired,
   user: PropTypes.shape({
-    username: PropTypes.string,
+    username: PropTypes.string
   }),
-  t: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired
 };
 
 export default withTranslation()(connect(mapStateToProps)(DashboardView));

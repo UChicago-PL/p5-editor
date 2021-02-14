@@ -20,7 +20,7 @@ const Icons = ({ isAdded }) => {
 };
 
 Icons.propTypes = {
-  isAdded: PropTypes.bool.isRequired,
+  isAdded: PropTypes.bool.isRequired
 };
 
 export default Icons;

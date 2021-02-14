@@ -36,7 +36,7 @@ describe('<FileNode />', () => {
       showFolderChildren: jest.fn(),
       hideFolderChildren: jest.fn(),
       openUploadFileModal: jest.fn(),
-      setProjectName: jest.fn(),
+      setProjectName: jest.fn()
     };
 
     render(<FileNode {...props} />);

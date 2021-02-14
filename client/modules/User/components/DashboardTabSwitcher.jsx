@@ -7,7 +7,7 @@ const TabKey = {
   assets: 'assets',
   collections: 'collections',
   sketches: 'sketches',
-  gists: 'gists',
+  gists: 'gists'
 };
 
 const Tab = ({ children, isSelected, to }) => {
@@ -25,7 +25,7 @@ const Tab = ({ children, isSelected, to }) => {
 Tab.propTypes = {
   children: PropTypes.string.isRequired,
   isSelected: PropTypes.bool.isRequired,
-  to: PropTypes.string.isRequired,
+  to: PropTypes.string.isRequired
 };
 
 const DashboardTabSwitcher = ({ currentTab, isOwner, username, t }) => (
@@ -49,7 +49,7 @@ DashboardTabSwitcher.propTypes = {
   currentTab: PropTypes.string.isRequired,
   isOwner: PropTypes.bool.isRequired,
   username: PropTypes.string.isRequired,
-  t: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired
 };
 
 const DashboardTabSwitcherPublic = withTranslation()(DashboardTabSwitcher);

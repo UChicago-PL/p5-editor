@@ -22,7 +22,7 @@ class AssetListRowBase extends React.Component {
 
   onFocusComponent = () => {
     this.setState({ isFocused: true });
-  }
+  };
 
   onBlurComponent = () => {
     this.setState({ isFocused: false });
@@ -31,19 +31,19 @@ class AssetListRowBase extends React.Component {
         this.closeOptions();
       }
     }, 200);
-  }
+  };
 
   openOptions = () => {
     this.setState({
       optionsOpen: true
     });
-  }
+  };
 
   closeOptions = () => {
     this.setState({
       optionsOpen: false
     });
-  }
+  };
 
   toggleOptions = () => {
     if (this.state.optionsOpen) {
@@ -51,12 +51,12 @@ class AssetListRowBase extends React.Component {
     } else {
       this.openOptions();
     }
-  }
+  };
 
   handleDropdownOpen = () => {
     this.closeOptions();
     this.openOptions();
-  }
+  };
 
   handleAssetDelete = () => {
     const { key, name } = this.props.asset;
@@ -64,7 +64,7 @@ class AssetListRowBase extends React.Component {
     if (window.confirm(this.props.t('Common.DeleteConfirmation', { name }))) {
       this.props.deleteAssetRequest(key);
     }
-  }
+  };
 
   render() {
     const { asset, username, t } = this.props;
@@ -78,7 +78,7 @@ class AssetListRowBase extends React.Component {
         </th>
         <td>{prettyBytes(asset.size)}</td>
         <td>
-          { asset.sketchId && <Link to={`/${username}/sketches/${asset.sketchId}`}>{asset.sketchName}</Link> }
+          {asset.sketchId && <Link to={`/${username}/sketches/${asset.sketchId}`}>{asset.sketchName}</Link>}
         </td>
         <td className="asset-table__dropdown-column">
           <button
@@ -90,10 +90,8 @@ class AssetListRowBase extends React.Component {
           >
             <DownFilledTriangleIcon focusable="false" aria-hidden="true" />
           </button>
-          {optionsOpen &&
-            <ul
-              className="asset-table__action-dialogue"
-            >
+          {optionsOpen && (
+            <ul className="asset-table__action-dialogue">
               <li>
                 <button
                   className="asset-table__action-option"
@@ -115,7 +113,8 @@ class AssetListRowBase extends React.Component {
                   {t('AssetList.OpenNewTab')}
                 </Link>
               </li>
-            </ul>}
+            </ul>
+          )}
         </td>
       </tr>
     );
@@ -169,7 +168,7 @@ class AssetList extends React.Component {
 
   renderEmptyTable() {
     if (!this.props.loading && this.props.assetList.length === 0) {
-      return (<p className="asset-table__empty">{this.props.t('AssetList.NoUploadedAssets')}</p>);
+      return <p className="asset-table__empty">{this.props.t('AssetList.NoUploadedAssets')}</p>;
     }
     return null;
   }
@@ -183,7 +182,7 @@ class AssetList extends React.Component {
         </Helmet>
         {this.renderLoader()}
         {this.renderEmptyTable()}
-        {this.hasAssets() &&
+        {this.hasAssets() && (
           <table className="asset-table">
             <thead>
               <tr>
@@ -194,9 +193,12 @@ class AssetList extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {assetList.map(asset => <AssetListRow asset={asset} key={asset.key} t={t} />)}
+              {assetList.map((asset) => (
+                <AssetListRow asset={asset} key={asset.key} t={t} />
+              ))}
             </tbody>
-          </table>}
+          </table>
+        )}
       </article>
     );
   }
@@ -206,13 +208,15 @@ AssetList.propTypes = {
   user: PropTypes.shape({
     username: PropTypes.string
   }).isRequired,
-  assetList: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
-    sketchName: PropTypes.string,
-    sketchId: PropTypes.string
-  })).isRequired,
+  assetList: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      url: PropTypes.string.isRequired,
+      sketchName: PropTypes.string,
+      sketchId: PropTypes.string
+    })
+  ).isRequired,
   getAssets: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   t: PropTypes.func.isRequired

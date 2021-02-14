@@ -23,9 +23,7 @@ class FullView extends React.Component {
           project={{ name: this.props.project.name, id: this.props.params.project_id }}
         />
         <main className="preview-frame-holder">
-          <PreviewFrame
-            fullView
-          />
+          <PreviewFrame fullView />
         </main>
       </div>
     );

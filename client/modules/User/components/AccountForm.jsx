@@ -12,18 +12,17 @@ function asyncValidate(fieldToValidate, value) {
   const queryParams = {};
   queryParams[fieldToValidate] = value;
   queryParams.check_type = fieldToValidate;
-  return apiClient.get('/signup/duplicate_check', { params: queryParams })
-    .then((response) => {
-      if (response.data.exists) {
-        return response.data.message;
-      }
-      return '';
-    });
+  return apiClient.get('/signup/duplicate_check', { params: queryParams }).then((response) => {
+    if (response.data.exists) {
+      return response.data.message;
+    }
+    return '';
+  });
 }
 
 function AccountForm() {
   const { t } = useTranslation();
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const handleInitiateVerification = (evt) => {
@@ -51,9 +50,7 @@ function AccountForm() {
       validate={validateSettings}
       onSubmit={onSubmit}
     >
-      {({
-        handleSubmit, submitting, invalid, restart
-      }) => (
+      {({ handleSubmit, submitting, invalid, restart }) => (
         <form
           className="form"
           onSubmit={(event) => {
@@ -61,9 +58,11 @@ function AccountForm() {
           }}
         >
           <Field name="email" validate={validateEmail} validateFields={[]} initialValue={user.email}>
-            {field => (
+            {(field) => (
               <p className="form__field">
-                <label htmlFor="email" className="form__label">{t('AccountForm.Email')}</label>
+                <label htmlFor="email" className="form__label">
+                  {t('AccountForm.Email')}
+                </label>
                 <input
                   className="form__input"
                   aria-label={t('AccountForm.EmailARIA')}
@@ -77,29 +76,22 @@ function AccountForm() {
               </p>
             )}
           </Field>
-          {
-            user.verified !== 'verified' &&
-            (
-              <p className="form__context">
-                <span className="form__status">{t('AccountForm.Unconfirmed')}</span>
-                {
-                  user.emailVerificationInitiate === true ?
-                    (
-                      <span className="form__status"> {t('AccountForm.EmailSent')}</span>
-                    ) :
-                    (
-                      <Button onClick={handleInitiateVerification}>
-                        {t('AccountForm.Resend')}
-                      </Button>
-                    )
-                }
-              </p>
-            )
-          }
+          {user.verified !== 'verified' && (
+            <p className="form__context">
+              <span className="form__status">{t('AccountForm.Unconfirmed')}</span>
+              {user.emailVerificationInitiate === true ? (
+                <span className="form__status"> {t('AccountForm.EmailSent')}</span>
+              ) : (
+                <Button onClick={handleInitiateVerification}>{t('AccountForm.Resend')}</Button>
+              )}
+            </p>
+          )}
           <Field name="username" validate={validateUsername} validateFields={[]} initialValue={user.username}>
-            {field => (
+            {(field) => (
               <p className="form__field">
-                <label htmlFor="username" className="form__label">{t('AccountForm.UserName')}</label>
+                <label htmlFor="username" className="form__label">
+                  {t('AccountForm.UserName')}
+                </label>
                 <input
                   className="form__input"
                   aria-label={t('AccountForm.UserNameARIA')}
@@ -114,9 +106,11 @@ function AccountForm() {
             )}
           </Field>
           <Field name="currentPassword">
-            {field => (
+            {(field) => (
               <p className="form__field">
-                <label htmlFor="current password" className="form__label">{t('AccountForm.CurrentPassword')}</label>
+                <label htmlFor="current password" className="form__label">
+                  {t('AccountForm.CurrentPassword')}
+                </label>
                 <input
                   className="form__input"
                   aria-label={t('AccountForm.CurrentPasswordARIA')}
@@ -131,9 +125,11 @@ function AccountForm() {
             )}
           </Field>
           <Field name="newPassword">
-            {field => (
+            {(field) => (
               <p className="form__field">
-                <label htmlFor="new password" className="form__label">{t('AccountForm.NewPassword')}</label>
+                <label htmlFor="new password" className="form__label">
+                  {t('AccountForm.NewPassword')}
+                </label>
                 <input
                   className="form__input"
                   aria-label={t('AccountForm.NewPasswordARIA')}
@@ -147,10 +143,8 @@ function AccountForm() {
               </p>
             )}
           </Field>
-          <Button
-            type="submit"
-            disabled={submitting || invalid}
-          >{t('AccountForm.SubmitSaveAllSettings')}
+          <Button type="submit" disabled={submitting || invalid}>
+            {t('AccountForm.SubmitSaveAllSettings')}
           </Button>
         </form>
       )}

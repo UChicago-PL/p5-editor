@@ -3,9 +3,9 @@ import apiClient from '../../../utils/apiClient';
 import * as ActionTypes from '../../../constants';
 
 function updatePreferences(formParams, dispatch) {
-  apiClient.put('/preferences', formParams)
-    .then(() => {
-    })
+  apiClient
+    .put('/preferences', formParams)
+    .then(() => {})
     .catch((error) => {
       const { response } = error;
       dispatch({
@@ -16,7 +16,8 @@ function updatePreferences(formParams, dispatch) {
 }
 
 export function setFontSize(value) {
-  return (dispatch, getState) => { // eslint-disable-line
+  return (dispatch, getState) => {
+    // eslint-disable-line
     dispatch({
       type: ActionTypes.SET_FONT_SIZE,
       value
@@ -247,4 +248,3 @@ export function setLanguage(value, { persistPreference = true } = {}) {
     }
   };
 }
-
