@@ -464,7 +464,7 @@ export function submitGHRepo(req, res) {
   }
   getFileContent(id).then((contents) => {
     const O = Octokit.plugin(createPullRequest);
-    const submissionId = `${Math.floor(Math.random() * 1000000)}`;
+    const submissionId = `${Math.floor(Math.random() * 1000000000000000000000)}`;
     new O({ auth: req.user.githubToken })
       .createPullRequest({
         owner: ownerName,
