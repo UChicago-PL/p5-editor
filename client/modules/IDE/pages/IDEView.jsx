@@ -223,7 +223,6 @@ class IDEView extends React.Component {
   };
 
   render() {
-    console.log('here');
     return (
       <div className="ide">
         <Helmet>

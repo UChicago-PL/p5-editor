@@ -6,6 +6,9 @@ import translations from '../translations/locales/en-US/translations.json';
 i18n.use(initReactI18next).init({
   lng: 'en-US',
   fallbackLng: 'en-US',
+  react: {
+    useSuspense: false
+  },
 
   // have a common namespace used around the full app
   ns: ['translations'],
