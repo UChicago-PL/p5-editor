@@ -126,8 +126,21 @@ function getSynchedProject(currentState, responseProject) {
   };
 }
 
-export function saveProject(selectedFile = null, autosave = false, mobile = false) {
+// If the user is authenticated, run the callback with normal thunk parameters
+// Otherwise show an error dialogue
+export function checkLoggedIn(cb) {
   return (dispatch, getState) => {
+    const state = getState();
+    if (!state.user.authenticated) {
+      dispatch(showErrorModal('forceAuthentication'));
+    } else {
+      cb(dispatch, getState);
+    }
+  };
+}
+
+export function saveProject(selectedFile = null, autosave = false, mobile = false) {
+  return checkLoggedIn((dispatch, getState) => {
     const state = getState();
     if (state.project.isSaving) {
       return Promise.resolve();
@@ -218,7 +231,7 @@ export function saveProject(selectedFile = null, autosave = false, mobile = fals
           dispatch(projectSaveFail(response.data));
         }
       });
-  };
+  });
 }
 
 export function autosaveProject(mobile = false) {

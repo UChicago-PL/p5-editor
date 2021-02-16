@@ -114,11 +114,7 @@ class Nav extends React.PureComponent {
   }
 
   handleSave() {
-    if (this.props.user.authenticated) {
-      this.props.saveProject(this.props.cmController.getContent());
-    } else {
-      this.props.showErrorModal('forceAuthentication');
-    }
+    this.props.saveProject(this.props.cmController.getContent());
     this.setDropdown('none');
   }
 
@@ -774,7 +770,6 @@ Nav.propTypes = {
   }),
   logoutUser: PropTypes.func.isRequired,
   showShareModal: PropTypes.func.isRequired,
-  showErrorModal: PropTypes.func.isRequired,
   unsavedChanges: PropTypes.bool.isRequired,
   warnIfUnsavedChanges: PropTypes.func,
   showKeyboardShortcutModal: PropTypes.func.isRequired,
