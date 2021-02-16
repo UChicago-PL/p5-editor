@@ -15,4 +15,10 @@ jobs:
     - run: npm install
     - run: npm run test
     - run: npm run lint
-    - run: npm run build
+  build:
+    name: Trial build of the codebase
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npm run build
