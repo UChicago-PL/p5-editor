@@ -70,6 +70,19 @@ class IDEView extends React.Component {
       consoleSize: props.ide.consoleIsExpanded ? 150 : 29,
       sidebarSize: props.ide.sidebarIsExpanded ? 160 : 20
     };
+
+    // this needs to happen in the constructor, and not in componentDidMount,
+    // because the content of the file needs to be updated before it is passed on as a prop to the
+    // editor, where it is inserted into codemirror. Once that happens,
+    // changing it seems very complicated
+    const queryParams = new URLSearchParams(window.location.search);
+    if (queryParams.get('code')) {
+      const decodedCode = atob(queryParams.get('code'));
+      // cool gotcha: the initial state for the project doesn't include any files, so trying to
+      // run saveProject with specific code (and thus setting `fileSelected` to not equal null) throws
+      // this does not work: this.props.saveProject(queryParams.get('code'))
+      this.props.updateFileContent(this.props.selectedFile.id, decodedCode);
+    }
   }
 
   componentDidMount() {
@@ -537,6 +550,7 @@ IDEView.propTypes = {
   t: PropTypes.func.isRequired,
   toast: PropTypes.shape({ isVisible: PropTypes.bool.isRequired }).isRequired,
   updateFileName: PropTypes.func.isRequired,
+  updateFileContent: PropTypes.func.isRequired,
   user: PropTypes.shape({
     authenticated: PropTypes.bool.isRequired,
     id: PropTypes.string,
