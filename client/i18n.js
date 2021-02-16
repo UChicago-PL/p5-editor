@@ -1,6 +1,5 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 import { enUS, es, ja } from 'date-fns/locale';
 
@@ -20,7 +19,7 @@ export function languageKeyToDateLocale(lang) {
   const languageMap = {
     'en-US': enUS,
     'es-419': es,
-    ja: ja
+    ja
   };
   return languageMap[lang];
 }

@@ -82,10 +82,10 @@ export function getProject(req, res) {
     }
     Project.findOne({ user: user._id, $or: [{ _id: projectId }, { slug: projectId }] })
       .populate('user', 'username')
-      .exec((err, project) => {
+      .exec((e, project) => {
         // eslint-disable-line
-        if (err) {
-          console.log(err);
+        if (e) {
+          console.log(e);
           return res.status(404).send({ message: 'Project with that id does not exist' });
         }
         return res.json(project);
