@@ -30,7 +30,7 @@ const rootReducer = combineReducers({
   sketches,
   sorting,
   toast,
-  user,
+  user
 });
 
 export default rootReducer;

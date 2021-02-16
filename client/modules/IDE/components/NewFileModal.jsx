@@ -7,7 +7,6 @@ import NewFileForm from './NewFileForm';
 import { closeNewFileModal } from '../actions/ide';
 import ExitIcon from '../../../images/exit.svg';
 
-
 // At some point this will probably be generalized to a generic modal
 // in which you can insert different content
 // but for now, let's just make this work
@@ -40,7 +39,12 @@ class NewFileModal extends React.Component {
 
   render() {
     return (
-      <section className="modal" ref={(element) => { this.modal = element; }}>
+      <section
+        className="modal"
+        ref={(element) => {
+          this.modal = element;
+        }}
+      >
         <div className="modal-content">
           <div className="modal__header">
             <h2 className="modal__title">{this.props.t('NewFileModal.Title')}</h2>
@@ -52,9 +56,7 @@ class NewFileModal extends React.Component {
               <ExitIcon focusable="false" aria-hidden="true" />
             </button>
           </div>
-          <NewFileForm
-            focusOnModal={this.focusOnModal}
-          />
+          <NewFileForm focusOnModal={this.focusOnModal} />
         </div>
       </section>
     );

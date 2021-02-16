@@ -4,16 +4,8 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import EditIcon from '../../../images/pencil.svg';
 
-
 // TODO I think this needs a description prop so that it's accessible
-function EditableInput({
-  validate,
-  value,
-  emptyPlaceholder,
-  InputComponent,
-  inputProps,
-  onChange,
-}) {
+function EditableInput({ validate, value, emptyPlaceholder, InputComponent, inputProps, onChange }) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [currentValue, setCurrentValue] = React.useState(value || '');
   const displayValue = currentValue || emptyPlaceholder;
@@ -63,11 +55,7 @@ function EditableInput({
         aria-label={t('EditableInput.EditValue', { display: displayValue })}
       >
         <span>{displayValue}</span>
-        <EditIcon
-          className="editable-input__icon"
-          focusable="false"
-          aria-hidden="true"
-        />
+        <EditIcon className="editable-input__icon" focusable="false" aria-hidden="true" />
       </button>
 
       <InputComponent
@@ -90,7 +78,7 @@ EditableInput.defaultProps = {
   InputComponent: 'input',
   inputProps: {},
   validate: () => true,
-  value: '',
+  value: ''
 };
 
 EditableInput.propTypes = {
@@ -100,7 +88,7 @@ EditableInput.propTypes = {
   inputProps: PropTypes.object, // eslint-disable-line
   onChange: PropTypes.func.isRequired,
   validate: PropTypes.func,
-  value: PropTypes.string,
+  value: PropTypes.string
 };
 
 export default EditableInput;

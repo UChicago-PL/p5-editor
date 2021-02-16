@@ -7,7 +7,7 @@ export const userIsAuthenticated = connectedRouterRedirect({
   // The url to redirect user to if they fail
   redirectPath: '/login',
   // Determine if the user is authenticated or not
-  authenticatedSelector: state => state.user.authenticated === true,
+  authenticatedSelector: (state) => state.user.authenticated === true,
   // A nice display name for this check
   wrapperDisplayName: 'UserIsAuthenticated'
 });
@@ -15,7 +15,7 @@ export const userIsAuthenticated = connectedRouterRedirect({
 export const userIsNotAuthenticated = connectedRouterRedirect({
   redirectPath: (state, ownProps) => locationHelper.getRedirectQueryParam(ownProps) || '/',
   allowRedirectBack: false,
-  authenticatedSelector: state => state.user.authenticated === false,
+  authenticatedSelector: (state) => state.user.authenticated === false,
   wrapperDisplayName: 'UserIsNotAuthenticated'
 });
 
@@ -25,5 +25,5 @@ export const userIsAuthorized = connectedRouterRedirect({
   authenticatedSelector: (state, ownProps) => {
     const { username } = ownProps.params;
     return state.user.username === username;
-  },
+  }
 });

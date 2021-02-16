@@ -11,22 +11,22 @@ import { unlinkService } from '../actions';
 
 const authUrls = {
   github: '/auth/github',
-  google: '/auth/google',
+  google: '/auth/google'
 };
 
 const icons = {
   github: GithubIcon,
-  google: GoogleIcon,
+  google: GoogleIcon
 };
 
 const services = {
   github: 'github',
-  google: 'google',
+  google: 'google'
 };
 
 const servicesLabels = {
   github: 'GitHub',
-  google: 'Google',
+  google: 'Google'
 };
 
 const StyledButton = styled(Button)`
@@ -85,12 +85,12 @@ SocialAuthButton.propTypes = {
   service: PropTypes.oneOf(['github', 'google']).isRequired,
   linkStyle: PropTypes.bool,
   isConnected: PropTypes.bool,
-  t: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired
 };
 
 SocialAuthButton.defaultProps = {
   linkStyle: false,
-  isConnected: false,
+  isConnected: false
 };
 
 const SocialAuthButtonPublic = withTranslation()(SocialAuthButton);

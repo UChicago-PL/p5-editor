@@ -32,9 +32,7 @@ class Timer extends React.Component {
       'timer__saved-time--notOwner': !this.props.isUserOwner
     });
     return (
-      <span className={timerClass}>
-        {this.props.projectSavedTime !== '' ? this.showSavedTime() : null}
-      </span>
+      <span className={timerClass}>{this.props.projectSavedTime !== '' ? this.showSavedTime() : null}</span>
     );
   }
 }

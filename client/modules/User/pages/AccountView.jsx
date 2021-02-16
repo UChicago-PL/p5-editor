@@ -28,16 +28,8 @@ function SocialLoginPanel(props) {
         {props.t('AccountView.SocialLoginDescription')}
       </p>
       <div className="account__social-stack">
-        <SocialAuthButton
-          service={SocialAuthButton.services.github}
-          linkStyle
-          isConnected={!!user.github}
-        />
-        <SocialAuthButton
-          service={SocialAuthButton.services.google}
-          linkStyle
-          isConnected={!!user.google}
-        />
+        <SocialAuthButton service={SocialAuthButton.services.github} linkStyle isConnected={!!user.github} />
+        <SocialAuthButton service={SocialAuthButton.services.google} linkStyle isConnected={!!user.google} />
       </div>
     </React.Fragment>
   );
@@ -70,7 +62,7 @@ class AccountView extends React.Component {
 
         <Nav layout="dashboard" />
 
-        {showError &&
+        {showError && (
           <Overlay
             title={this.props.t('ErrorModal.LinkTitle')}
             ariaLabel={this.props.t('ErrorModal.LinkTitle')}
@@ -78,23 +70,26 @@ class AccountView extends React.Component {
               browserHistory.push(this.props.location.pathname);
             }}
           >
-            <ErrorModal
-              type="oauthError"
-              service={errorType}
-            />
+            <ErrorModal type="oauthError" service={errorType} />
           </Overlay>
-        }
+        )}
 
         <main className="account-settings">
           <header className="account-settings__header">
             <h1 className="account-settings__title">{this.props.t('AccountView.Settings')}</h1>
           </header>
-          {accessTokensUIEnabled &&
+          {accessTokensUIEnabled && (
             <Tabs className="account__tabs">
               <TabList>
                 <div className="tabs__titles">
-                  <Tab><h4 className="tabs__title">{this.props.t('AccountView.AccountTab')}</h4></Tab>
-                  {accessTokensUIEnabled && <Tab><h4 className="tabs__title">{this.props.t('AccountView.AccessTokensTab')}</h4></Tab>}
+                  <Tab>
+                    <h4 className="tabs__title">{this.props.t('AccountView.AccountTab')}</h4>
+                  </Tab>
+                  {accessTokensUIEnabled && (
+                    <Tab>
+                      <h4 className="tabs__title">{this.props.t('AccountView.AccessTokensTab')}</h4>
+                    </Tab>
+                  )}
                 </div>
               </TabList>
               <TabPanel>
@@ -104,8 +99,8 @@ class AccountView extends React.Component {
                 <APIKeyForm {...this.props} />
               </TabPanel>
             </Tabs>
-          }
-          { !accessTokensUIEnabled && <SocialLoginPanel {...this.props} /> }
+          )}
+          {!accessTokensUIEnabled && <SocialLoginPanel {...this.props} />}
         </main>
       </div>
     );
@@ -124,9 +119,13 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    createApiKey, removeApiKey
-  }, dispatch);
+  return bindActionCreators(
+    {
+      createApiKey,
+      removeApiKey
+    },
+    dispatch
+  );
 }
 
 AccountView.propTypes = {
@@ -138,7 +137,7 @@ AccountView.propTypes = {
     pathname: PropTypes.string.isRequired
   }).isRequired,
   toast: PropTypes.shape({
-    isVisible: PropTypes.bool.isRequired,
+    isVisible: PropTypes.bool.isRequired
   }).isRequired
 };
 

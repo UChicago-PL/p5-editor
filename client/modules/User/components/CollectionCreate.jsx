@@ -28,20 +28,20 @@ class CollectionCreate extends React.Component {
     return this.props.t('CollectionCreate.Title');
   }
 
-  handleTextChange = field => (evt) => {
+  handleTextChange = (field) => (evt) => {
     this.setState({
       collection: {
         ...this.state.collection,
-        [field]: evt.target.value,
+        [field]: evt.target.value
       }
     });
-  }
+  };
 
   handleCreateCollection = (event) => {
     event.preventDefault();
 
     this.props.createCollection(this.state.collection);
-  }
+  };
 
   render() {
     const { generatedCollectionName, creationError } = this.state;
@@ -56,9 +56,13 @@ class CollectionCreate extends React.Component {
         </Helmet>
         <div className="sketches-table-container">
           <form className="form" onSubmit={this.handleCreateCollection}>
-            {creationError && <span className="form-error">{this.props.t('CollectionCreate.FormError')}</span>}
+            {creationError && (
+              <span className="form-error">{this.props.t('CollectionCreate.FormError')}</span>
+            )}
             <p className="form__field">
-              <label htmlFor="name" className="form__label">{this.props.t('CollectionCreate.FormLabel')}</label>
+              <label htmlFor="name" className="form__label">
+                {this.props.t('CollectionCreate.FormLabel')}
+              </label>
               <input
                 className="form__input"
                 aria-label={this.props.t('CollectionCreate.FormLabelARIA')}
@@ -71,7 +75,9 @@ class CollectionCreate extends React.Component {
               {invalid && <span className="form-error">{this.props.t('CollectionCreate.NameRequired')}</span>}
             </p>
             <p className="form__field">
-              <label htmlFor="description" className="form__label">{this.props.t('CollectionCreate.Description')}</label>
+              <label htmlFor="description" className="form__label">
+                {this.props.t('CollectionCreate.Description')}
+              </label>
               <textarea
                 className="form__input form__input-flexible-height"
                 aria-label={this.props.t('CollectionCreate.DescriptionARIA')}
@@ -83,7 +89,9 @@ class CollectionCreate extends React.Component {
                 rows="4"
               />
             </p>
-            <Button type="submit" disabled={invalid}>{this.props.t('CollectionCreate.SubmitCollectionCreate')}</Button>
+            <Button type="submit" disabled={invalid}>
+              {this.props.t('CollectionCreate.SubmitCollectionCreate')}
+            </Button>
           </form>
         </div>
       </div>
@@ -102,7 +110,7 @@ CollectionCreate.propTypes = {
 
 function mapStateToProps(state, ownProps) {
   return {
-    user: state.user,
+    user: state.user
   };
 }
 

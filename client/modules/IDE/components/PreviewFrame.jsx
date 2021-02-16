@@ -21,8 +21,7 @@ import {
   EXTERNAL_LINK_REGEX,
   NOT_EXTERNAL_LINK_REGEX
 } from '../../../../server/utils/fileUtils';
-import { hijackConsoleErrorsScript, startTag, getAllScriptOffsets }
-  from '../../../utils/consoleUtils';
+import { hijackConsoleErrorsScript, startTag, getAllScriptOffsets } from '../../../utils/consoleUtils';
 
 import { getHTMLFile } from '../reducers/files';
 
@@ -30,7 +29,6 @@ import { stopSketch, expandConsole, endSketchRefresh } from '../actions/ide';
 import { setTextOutput, setGridOutput, setSoundOutput } from '../actions/preferences';
 import { setBlobUrl } from '../actions/files';
 import { clearConsole, dispatchConsoleEvent } from '../actions/console';
-
 
 const shouldRenderSketch = (props, prevProps = undefined) => {
   const { isPlaying, previewIsRefreshing, fullView } = props;
@@ -40,12 +38,14 @@ const shouldRenderSketch = (props, prevProps = undefined) => {
 
   if (!prevProps) return false;
 
-  return (props.isPlaying !== prevProps.isPlaying // if sketch starts or stops playing, want to rerender
-    || props.isAccessibleOutputPlaying !== prevProps.isAccessibleOutputPlaying // if user switches textoutput preferences
-    || props.textOutput !== prevProps.textOutput
-    || props.gridOutput !== prevProps.gridOutput
-    || props.soundOutput !== prevProps.soundOutput
-    || (fullView && props.files[0].id !== prevProps.files[0].id));
+  return (
+    props.isPlaying !== prevProps.isPlaying || // if sketch starts or stops playing, want to rerender
+    props.isAccessibleOutputPlaying !== prevProps.isAccessibleOutputPlaying || // if user switches textoutput preferences
+    props.textOutput !== prevProps.textOutput ||
+    props.gridOutput !== prevProps.gridOutput ||
+    props.soundOutput !== prevProps.soundOutput ||
+    (fullView && props.files[0].id !== prevProps.files[0].id)
+  );
 };
 
 class PreviewFrame extends React.Component {
@@ -74,15 +74,18 @@ class PreviewFrame extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('message', this.handleConsoleEvent);
     const iframeBody = this.iframeElement.contentDocument.body;
-    if (iframeBody) { ReactDOM.unmountComponentAtNode(iframeBody); }
+    if (iframeBody) {
+      ReactDOM.unmountComponentAtNode(iframeBody);
+    }
   }
 
   handleConsoleEvent(messageEvent) {
     if (Array.isArray(messageEvent.data)) {
-      const decodedMessages = messageEvent.data.map(message =>
+      const decodedMessages = messageEvent.data.map((message) =>
         Object.assign(Decode(message.log), {
           source: message.source
-        }));
+        })
+      );
 
       decodedMessages.every((message, index, arr) => {
         const { data: args } = message;
@@ -145,7 +148,7 @@ class PreviewFrame extends React.Component {
     const files = this.props.files.slice();
     if (this.props.cmController.getContent) {
       const activeFileInEditor = this.props.cmController.getContent();
-      files.find(file => file.id === activeFileInEditor.id).content = activeFileInEditor.content;
+      files.find((file) => file.id === activeFileInEditor.id).content = activeFileInEditor.content;
     }
     return files;
   }
@@ -278,7 +281,10 @@ class PreviewFrame extends React.Component {
         const resolvedFile = resolvePathToFile(filePath, files);
         if (resolvedFile) {
           if (resolvedFile.url) {
-            newContent = newContent.replace(cssFileString, quoteCharacter + resolvedFile.url + quoteCharacter);
+            newContent = newContent.replace(
+              cssFileString,
+              quoteCharacter + resolvedFile.url + quoteCharacter
+            );
           }
         }
       }
@@ -301,7 +307,9 @@ class PreviewFrame extends React.Component {
             script.innerHTML = resolvedFile.content; // eslint-disable-line
           }
         }
-      } else if (!(script.getAttribute('src') && script.getAttribute('src').match(EXTERNAL_LINK_REGEX)) !== null) {
+      } else if (
+        !(script.getAttribute('src') && script.getAttribute('src').match(EXTERNAL_LINK_REGEX)) !== null
+      ) {
         script.setAttribute('crossorigin', '');
         script.innerHTML = this.resolveJSLinksInString(script.innerHTML, files); // eslint-disable-line
       }
@@ -364,7 +372,9 @@ class PreviewFrame extends React.Component {
         role="main"
         frameBorder="0"
         title="sketch preview"
-        ref={(element) => { this.iframeElement = element; }}
+        ref={(element) => {
+          this.iframeElement = element;
+        }}
         sandbox={sandboxAttributes}
       />
     );
@@ -380,12 +390,14 @@ PreviewFrame.propTypes = {
   htmlFile: PropTypes.shape({
     content: PropTypes.string.isRequired
   }).isRequired,
-  files: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    url: PropTypes.string,
-    id: PropTypes.string.isRequired
-  })).isRequired,
+  files: PropTypes.arrayOf(
+    PropTypes.shape({
+      content: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      url: PropTypes.string,
+      id: PropTypes.string.isRequired
+    })
+  ).isRequired,
   dispatchConsoleEvent: PropTypes.func.isRequired,
   endSketchRefresh: PropTypes.func.isRequired,
   previewIsRefreshing: PropTypes.bool.isRequired,
@@ -396,7 +408,7 @@ PreviewFrame.propTypes = {
   clearConsole: PropTypes.func.isRequired,
   cmController: PropTypes.shape({
     getContent: PropTypes.func
-  }),
+  })
 };
 
 PreviewFrame.defaultProps = {
@@ -422,10 +434,11 @@ function mapStateToProps(state, ownProps) {
   return {
     files: state.files,
     htmlFile: getHTMLFile(state.files),
-    content:
-      (state.files.find(file => file.isSelectedFile) ||
-      state.files.find(file => file.name === 'sketch.js') ||
-      state.files.find(file => file.name !== 'root')).content,
+    content: (
+      state.files.find((file) => file.isSelectedFile) ||
+      state.files.find((file) => file.name === 'sketch.js') ||
+      state.files.find((file) => file.name !== 'root')
+    ).content,
     isPlaying: state.ide.isPlaying,
     isAccessibleOutputPlaying: state.ide.isAccessibleOutputPlaying,
     previewIsRefreshing: state.ide.previewIsRefreshing,
@@ -436,7 +449,6 @@ function mapStateToProps(state, ownProps) {
     autorefresh: state.preferences.autorefresh
   };
 }
-
 
 const mapDispatchToProps = {
   stopSketch,
@@ -450,5 +462,4 @@ const mapDispatchToProps = {
   dispatchConsoleEvent
 };
 
-
-export default (connect(mapStateToProps, mapDispatchToProps)(PreviewFrame));
+export default connect(mapStateToProps, mapDispatchToProps)(PreviewFrame);

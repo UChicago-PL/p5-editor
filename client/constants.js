@@ -149,7 +149,6 @@ export const STOP_LOADING = 'STOP_LOADING';
 export const START_SAVING_PROJECT = 'START_SAVING_PROJECT';
 export const END_SAVING_PROJECT = 'END_SAVING_PROJECT';
 
-
 export const autosaveEvery = 60000; // 1 minute
 export const RECEIVE_GH_REPOS = 'RECEIVE_GH_REPOS';
 export const LOADING_GH_REPOS = 'LOADING_GH_REPOS';

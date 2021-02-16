@@ -8,8 +8,9 @@ import * as UploaderActions from '../actions/uploader';
 import getConfig from '../../../utils/getConfig';
 import { fileExtensionsAndMimeTypes } from '../../../../server/utils/fileUtils';
 
-const s3Bucket = getConfig('S3_BUCKET_URL_BASE') ||
-                 `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
+const s3Bucket =
+  getConfig('S3_BUCKET_URL_BASE') ||
+  `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
 
 class FileUploader extends React.Component {
   componentDidMount() {
@@ -43,9 +44,7 @@ class FileUploader extends React.Component {
   }
 
   render() {
-    return (
-      <div id="uploader" className="uploader dropzone"></div>
-    );
+    return <div id="uploader" className="uploader dropzone"></div>;
   }
 }
 

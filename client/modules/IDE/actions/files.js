@@ -6,7 +6,6 @@ import { setUnsavedChanges, closeNewFolderModal, closeNewFileModal } from './ide
 import { setProjectSavedTime } from './project';
 import { createError } from './ide';
 
-
 function appendToFilename(filename, string) {
   const dotIndex = filename.lastIndexOf('.');
   if (dotIndex === -1) return filename + string;
@@ -14,11 +13,12 @@ function appendToFilename(filename, string) {
 }
 
 function createUniqueName(name, parentId, files) {
-  const siblingFiles = files.find(file => file.id === parentId)
-    .children.map(childFileId => files.find(file => file.id === childFileId));
+  const siblingFiles = files
+    .find((file) => file.id === parentId)
+    .children.map((childFileId) => files.find((file) => file.id === childFileId));
   let testName = name;
   let index = 1;
-  let existingName = siblingFiles.find(file => name === file.name);
+  let existingName = siblingFiles.find((file) => name === file.name);
 
   while (existingName) {
     testName = appendToFilename(name, `-${index}`);
@@ -53,11 +53,10 @@ export function submitFile(formProps, files, parentId, projectId) {
       parentId,
       children: []
     };
-    return apiClient.post(`/projects/${projectId}/files`, postParams)
-      .then(response => ({
-        file: response.data.updatedFile,
-        updatedAt: response.data.project.updatedAt
-      }));
+    return apiClient.post(`/projects/${projectId}/files`, postParams).then((response) => ({
+      file: response.data.updatedFile,
+      updatedAt: response.data.project.updatedAt
+    }));
   }
   const id = objectID().toHexString();
   const file = {
@@ -80,18 +79,20 @@ export function handleCreateFile(formProps) {
     const { parentId } = state.ide;
     const projectId = state.project.id;
     return new Promise((resolve) => {
-      submitFile(formProps, files, parentId, projectId).then((response) => {
-        const { file, updatedAt } = response;
-        dispatch(createFile(file, parentId));
-        if (updatedAt) dispatch(setProjectSavedTime(updatedAt));
-        dispatch(closeNewFileModal());
-        dispatch(setUnsavedChanges(true));
-        resolve();
-      }).catch((error) => {
-        const { response } = error;
-        dispatch(createError(response.data));
-        resolve({ error });
-      });
+      submitFile(formProps, files, parentId, projectId)
+        .then((response) => {
+          const { file, updatedAt } = response;
+          dispatch(createFile(file, parentId));
+          if (updatedAt) dispatch(setProjectSavedTime(updatedAt));
+          dispatch(closeNewFileModal());
+          dispatch(setUnsavedChanges(true));
+          resolve();
+        })
+        .catch((error) => {
+          const { response } = error;
+          dispatch(createError(response.data));
+          resolve({ error });
+        });
     });
   };
 }
@@ -105,11 +106,10 @@ export function submitFolder(formProps, files, parentId, projectId) {
       parentId,
       fileType: 'folder'
     };
-    return apiClient.post(`/projects/${projectId}/files`, postParams)
-      .then(response => ({
-        file: response.data.updatedFile,
-        updatedAt: response.data.project.updatedAt
-      }));
+    return apiClient.post(`/projects/${projectId}/files`, postParams).then((response) => ({
+      file: response.data.updatedFile,
+      updatedAt: response.data.project.updatedAt
+    }));
   }
   const id = objectID().toHexString();
   const file = {
@@ -134,18 +134,20 @@ export function handleCreateFolder(formProps) {
     const { parentId } = state.ide;
     const projectId = state.project.id;
     return new Promise((resolve) => {
-      submitFolder(formProps, files, parentId, projectId).then((response) => {
-        const { file, updatedAt } = response;
-        dispatch(createFile(file, parentId));
-        if (updatedAt) dispatch(setProjectSavedTime(updatedAt));
-        dispatch(closeNewFolderModal());
-        dispatch(setUnsavedChanges(true));
-        resolve();
-      }).catch((error) => {
-        const { response } = error;
-        dispatch(createError(response.data));
-        resolve({ error });
-      });
+      submitFolder(formProps, files, parentId, projectId)
+        .then((response) => {
+          const { file, updatedAt } = response;
+          dispatch(createFile(file, parentId));
+          if (updatedAt) dispatch(setProjectSavedTime(updatedAt));
+          dispatch(closeNewFolderModal());
+          dispatch(setUnsavedChanges(true));
+          resolve();
+        })
+        .catch((error) => {
+          const { response } = error;
+          dispatch(createError(response.data));
+          resolve({ error });
+        });
     });
   };
 }
@@ -170,7 +172,8 @@ export function deleteFile(id, parentId) {
           parentId
         }
       };
-      apiClient.delete(`/projects/${state.project.id}/files/${id}`, deleteConfig)
+      apiClient
+        .delete(`/projects/${state.project.id}/files/${id}`, deleteConfig)
         .then((response) => {
           dispatch(setProjectSavedTime(response.data.project.updatedAt));
           dispatch({

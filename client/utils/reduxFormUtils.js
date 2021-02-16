@@ -13,7 +13,8 @@ export const domOnlyProps = ({
   visited,
   autofilled,
   error,
-  ...domProps }) => domProps;
+  ...domProps
+}) => domProps;
 /* eslint-enable */
 
 // eslint-disable-next-line max-len
@@ -32,7 +33,8 @@ function validateNameEmail(formProps, errors) {
     errors.email = i18n.t('ReduxFormUtils.errorEmptyEmail');
   } else if (
     // eslint-disable-next-line max-len
-    !formProps.email.match(EMAIL_REGEX)) {
+    !formProps.email.match(EMAIL_REGEX)
+  ) {
     errors.email = i18n.t('ReduxFormUtils.errorInvalidEmail');
   }
 }
@@ -98,7 +100,8 @@ export function validateResetPassword(formProps) {
     errors.email = i18n.t('ReduxFormUtils.errorEmptyEmail');
   } else if (
     // eslint-disable-next-line max-len
-    !formProps.email.match(EMAIL_REGEX)) {
+    !formProps.email.match(EMAIL_REGEX)
+  ) {
     errors.email = i18n.t('ReduxFormUtils.errorInvalidEmail');
   }
   return errors;

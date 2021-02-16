@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import SocialAuthButton from '../components/SocialAuthButton';
 import Nav from '../../../components/Nav';
 
-
 function SignupView() {
   const { t } = useTranslation();
   return (

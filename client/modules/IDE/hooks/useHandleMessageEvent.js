@@ -10,7 +10,7 @@ export default function useHandleMessageEvent() {
   const handleMessageEvent = (data) => {
     const { source, messages } = data;
     if (source === 'sketch' && Array.isArray(messages)) {
-      const decodedMessages = messages.map(message => Decode(message.log));
+      const decodedMessages = messages.map((message) => Decode(message.log));
       decodedMessages.every((message, index, arr) => {
         const { data: args } = message;
         let hasInfiniteLoop = false;
