@@ -42,13 +42,19 @@ export function updateProject(req, res) {
       .populate('user', 'username')
       .exec((updateProjectErr, updatedProject) => {
         if (updateProjectErr) {
-          console.log(updateProjectErr);
+          console.log('updateProjectErr', updateProjectErr);
           res.status(400).json({ success: false });
           return;
         }
         if (req.user.github && isPartOfStudy(req.user.username)) {
           // eslint-disable-next-line no-use-before-define
-          createLogItem('snapshot', updatedProject._id, updatedProject.files, () => {});
+          createLogItem({
+            logType: 'snapshot',
+            username: req.user.username,
+            project: updateProject,
+            projectFiles: updatedProject.files,
+            callback: () => {}
+          });
         }
 
         if (req.body.files && updatedProject.files.length !== req.body.files.length) {
@@ -60,7 +66,7 @@ export function updateProject(req, res) {
           });
           updatedProject.save((innerErr, savedProject) => {
             if (innerErr) {
-              console.log(innerErr);
+              console.log('updateProject error save', innerErr);
               res.status(400).json({ success: false });
               return;
             }
@@ -82,10 +88,10 @@ export function getProject(req, res) {
     }
     Project.findOne({ user: user._id, $or: [{ _id: projectId }, { slug: projectId }] })
       .populate('user', 'username')
-      .exec((err, project) => {
+      .exec((e, project) => {
         // eslint-disable-line
-        if (err) {
-          console.log(err);
+        if (e) {
+          console.log('getProject error', e);
           return res.status(404).send({ message: 'Project with that id does not exist' });
         }
         return res.json(project);
@@ -100,7 +106,7 @@ export function getProjectsForUserId(userId) {
       .select('name files id createdAt updatedAt')
       .exec((err, projects) => {
         if (err) {
-          console.log(err);
+          console.log('getProjectsForUserId error', err);
         }
         resolve(projects);
       });
@@ -194,7 +200,7 @@ function bundleExternalLibs(project, zip, callback) {
 
     request({ method: 'GET', url: src, encoding: null }, (err, response, body) => {
       if (err) {
-        console.log(err);
+        console.log('resolveScriptTagSrc', err);
       } else {
         zip.append(body, { name: filename });
         scriptTag.src = filename;
@@ -276,18 +282,24 @@ export function downloadProjectAsZip(req, res) {
   });
 }
 
-export function createLogItem(logType, projectId, projectFiles, callback) {
+export function createLogItem(props) {
+  const { logType, projectFiles, callback, project, username } = props;
+  const projectId = project._id;
+  const projectName = project.name;
+
   LogItem.create(
     {
       logType,
+      username,
       projectSnapshot: {
         project: projectId,
+        projectName,
         files: projectFiles
       }
     },
     (createLogItemErr, logItem) => {
       if (createLogItemErr) {
-        console.log(createLogItemErr);
+        console.log('createLogItemErr', createLogItemErr);
         console.log(logItem);
       }
       callback(createLogItemErr, logItem);
@@ -297,24 +309,24 @@ export function createLogItem(logType, projectId, projectFiles, callback) {
 
 export function logRun(req, res) {
   Project.findById(req.params.project_id, (findProjectErr, project) => {
-    console.log('req.user', req.user);
     if (!project.user.equals(req.user._id)) {
       res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
     } else if (!req.user.github || !isPartOfStudy(req.user.username)) {
       res.status(403).json({ success: false, message: 'User is not part of study.' });
     } else {
-      createLogItem(
-        req.body.type === 'auto' ? 'run-auto' : 'run-manual',
-        req.params.project_id,
-        req.body.files,
-        (err, logItem) => {
+      createLogItem({
+        logType: req.body.type === 'auto' ? 'run-auto' : 'run-manual',
+        project,
+        username: req.user.username,
+        projectFiles: req.body.files,
+        callback: (err, logItem) => {
           if (err) {
             res.status(400).json({ success: false });
           } else {
             res.json(logItem);
           }
         }
-      );
+      });
     }
   });
 }
