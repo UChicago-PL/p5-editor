@@ -21,7 +21,10 @@ body, input, textarea, button {
 	height: 100%;
 }
 
-a {
+// These rules change the base fill and hover fill of the link
+// I'm not sure when this is necessary, but it definitely does not work
+// when the link is the logo, which is pink, not grey
+a:not(.svg__logo_link)  {
 	@include themify() {
 		@extend %link;
 	}

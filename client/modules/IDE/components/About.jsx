@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import SquareLogoIcon from '../../../images/p5js-square-logo.svg';
+import Logo from '../../../components/Logo';
 // import PlayIcon from '../../../images/play.svg';
 import AsteriskIcon from '../../../images/p5-asterisk.svg';
 
@@ -13,7 +13,7 @@ function About(props) {
         <title> {t('About.TitleHelmet')} </title>
       </Helmet>
       <div className="about__content-column">
-        <SquareLogoIcon className="about__logo" role="img" aria-label={t('Common.p5logoARIA')} focusable="false" />
+        <Logo />
       </div>
       <div className="about__content-column">
         <h3 className="about__content-column-title">{t('About.NewP5')}</h3>

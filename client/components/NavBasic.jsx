@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 
-import LogoIcon from '../images/p5js-logo-small.svg';
+import Logo from './Logo';
 import ArrowIcon from '../images/triangle-arrow-left.svg';
 
 class NavBasic extends React.PureComponent {
@@ -15,7 +15,7 @@ class NavBasic extends React.PureComponent {
       <nav className="nav" title="main-navigation" ref={(node) => { this.node = node; }}>
         <ul className="nav__items-left">
           <li className="nav__item-logo">
-            <LogoIcon role="img" aria-label={this.props.t('Common.p5logoARIA')} focusable="false" className="svg__logo" />
+            <Logo />
           </li>
           { this.props.onBack && (
             <li className="nav__item">

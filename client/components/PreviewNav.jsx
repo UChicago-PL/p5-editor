@@ -3,14 +3,14 @@ import React from 'react';
 import { Link } from 'react-router';
 import { withTranslation } from 'react-i18next';
 
-import LogoIcon from '../images/p5js-logo-small.svg';
+import Logo from './Logo';
 import CodeIcon from '../images/code.svg';
 
 const PreviewNav = ({ owner, project, t }) => (
   <nav className="nav preview-nav">
     <div className="nav__items-left">
       <div className="nav__item-logo">
-        <LogoIcon role="img" aria-label={t('Common.p5logoARIA')} focusable="false" className="svg__logo" />
+        <Logo />
       </div>
       <Link className="nav__item" to={`/${owner.username}/sketches/${project.id}`}>{project.name}</Link>
       <p className="toolbar__project-owner">{t('PreviewNav.ByUser')}</p>

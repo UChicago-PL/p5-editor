@@ -20,7 +20,7 @@ import { getIsUserOwner } from '../modules/IDE/selectors/users';
 
 import CaretLeftIcon from '../images/left-arrow.svg';
 import TriangleIcon from '../images/down-filled-triangle.svg';
-import LogoIcon from '../images/p5js-logo-small.svg';
+import Logo from './Logo';
 
 class Nav extends React.PureComponent {
   constructor(props) {
@@ -244,12 +244,7 @@ class Nav extends React.PureComponent {
     return (
       <ul className="nav__items-left">
         <li className="nav__item-logo">
-          <LogoIcon
-            role="img"
-            aria-label={this.props.t('Common.p5logoARIA')}
-            focusable="false"
-            className="svg__logo"
-          />
+          <Logo />
         </li>
         <li className="nav__item nav__item--no-icon">
           <Link to="/" className="nav__back-link">
@@ -266,12 +261,7 @@ class Nav extends React.PureComponent {
     return (
       <ul className="nav__items-left">
         <li className="nav__item-logo">
-          <LogoIcon
-            role="img"
-            aria-label={this.props.t('Common.p5logoARIA')}
-            focusable="false"
-            className="svg__logo"
-          />
+          <Logo />
         </li>
         <li className={navDropdownState.file}>
           <button
