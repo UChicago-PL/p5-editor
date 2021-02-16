@@ -126,7 +126,9 @@ function getSynchedProject(currentState, responseProject) {
   };
 }
 
-export function checkLI(cb) {
+// If the user is authenticated, run the callback with normal thunk parameters
+// Otherwise show an error dialogue
+export function checkLoggedIn(cb) {
   return (dispatch, getState) => {
     const state = getState();
     if (!state.user.authenticated) {
@@ -138,7 +140,7 @@ export function checkLI(cb) {
 }
 
 export function saveProject(selectedFile = null, autosave = false, mobile = false) {
-  return checkLI((dispatch, getState) => {
+  return checkLoggedIn((dispatch, getState) => {
     const state = getState();
     if (state.project.isSaving) {
       return Promise.resolve();

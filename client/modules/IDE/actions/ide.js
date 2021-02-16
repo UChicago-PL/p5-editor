@@ -1,7 +1,7 @@
 import * as ActionTypes from '../../../constants';
 import { clearConsole } from './console';
 
-import { logRun, checkLI } from './project';
+import { logRun, checkLoggedIn } from './project';
 
 export function startVisualSketch() {
   return {
@@ -265,7 +265,7 @@ export function startRefreshSketch() {
 }
 
 export function startSketch() {
-  return checkLI((dispatch) => {
+  return checkLoggedIn((dispatch) => {
     dispatch(clearConsole());
     dispatch(startVisualSketch());
     dispatch(startRefreshSketch());
@@ -274,7 +274,7 @@ export function startSketch() {
 }
 
 export function startAccessibleSketch() {
-  return checkLI((dispatch) => {
+  return checkLoggedIn((dispatch) => {
     dispatch(clearConsole());
     dispatch(startAccessibleOutput());
     dispatch(startVisualSketch());
@@ -284,7 +284,7 @@ export function startAccessibleSketch() {
 }
 
 export function startAutoRefreshSketch() {
-  return checkLI((dispatch) => {
+  return checkLoggedIn((dispatch) => {
     dispatch(startRefreshSketch());
     dispatch(logRun('auto'));
   });
