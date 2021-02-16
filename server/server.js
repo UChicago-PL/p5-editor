@@ -17,6 +17,7 @@ import projects from './routes/project.routes';
 import files from './routes/file.routes';
 import collections from './routes/collection.routes';
 import aws from './routes/aws.routes';
+import previewRoutes from './routes/preview.routes';
 import serverRoutes from './routes/server.routes';
 import embedRoutes from './routes/embed.routes';
 import assetRoutes from './routes/asset.routes';
@@ -46,7 +47,7 @@ app.set('trust proxy', true);
 // Enable Cross-Origin Resource Sharing (CORS) for all origins
 const corsMiddleware = cors({
   credentials: true,
-  origin: allowedCorsOrigins,
+  origin: allowedCorsOrigins
 });
 app.use(corsMiddleware);
 // Enable pre-flight OPTIONS route for all end-points
@@ -64,13 +65,13 @@ app.use(
     name: 'sessionId',
     cookie: {
       httpOnly: true,
-      secure: false,
+      secure: false
     },
     store: new MongoStore({
       mongooseConnection: mongoose.connection,
-      autoReconnect: true,
-    }),
-  }),
+      autoReconnect: true
+    })
+  })
 );
 
 app.use('/api/v1', requestsOfTypeJSON(), api);
@@ -78,7 +79,7 @@ app.use('/api/v1', requestsOfTypeJSON(), api);
 // Sending a valid username:<personal-access-token> combination will
 // return the user's information.
 app.get('/api/v1/auth/access-check', passport.authenticate('basic', { session: false }), (req, res) =>
-  res.json(req.user),
+  res.json(req.user)
 );
 
 // For basic auth, but can't have double basic auth for API
@@ -86,10 +87,10 @@ if (process.env.BASIC_USERNAME && process.env.BASIC_PASSWORD) {
   app.use(
     basicAuth({
       users: {
-        [process.env.BASIC_USERNAME]: process.env.BASIC_PASSWORD,
+        [process.env.BASIC_USERNAME]: process.env.BASIC_PASSWORD
       },
-      challenge: true,
-    }),
+      challenge: true
+    })
   );
 }
 
@@ -100,10 +101,10 @@ app.use(
     // Browsers must revalidate for changes to the locale files
     // It doesn't actually mean "don't cache this file"
     // See: https://jakearchibald.com/2016/caching-best-practices/
-    setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache'),
-  }),
+    setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache')
+  })
 );
-app.use(Express.static(dist), );
+app.use(Express.static(dist));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -122,6 +123,7 @@ app.use(assetRoutes);
 
 app.use('/', embedRoutes);
 app.use('/', passportRoutes);
+app.use('/', previewRoutes);
 
 // configure passport
 require('./config/passport');
