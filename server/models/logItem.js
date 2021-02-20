@@ -9,20 +9,24 @@ const projectSnapshotSchema = new Schema(
   {
     // Project._id is a String for some reason
     project: { type: String, ref: 'Project' },
-    files: { type: [fileSchema] },
+    projectName: { type: String, ref: 'Project' },
+    files: { type: [fileSchema] }
   },
-  { timestamps: true, _id: true, usePushEach: true },
+  { timestamps: true, _id: true, usePushEach: true }
 );
 
 const logItemSchema = new Schema(
   {
     logType: {
       type: String,
-      enum: ['snapshot', 'run-auto', 'run-manual', 'submission'],
+      enum: ['snapshot', 'run-auto', 'run-manual', 'submission']
     },
-    projectSnapshot: { type: projectSnapshotSchema },
+    username: {
+      type: String
+    },
+    projectSnapshot: { type: projectSnapshotSchema }
   },
-  { timestamps: true, _id: true, usePushEach: true },
+  { timestamps: true, _id: true, usePushEach: true }
 );
 
 export default mongoose.model('LogItem', logItemSchema);
