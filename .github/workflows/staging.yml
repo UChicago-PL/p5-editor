@@ -1,3 +1,4 @@
+# deactivated bc it's too aggressive
 # This is a basic workflow to help you get started with Actions
 
 name: Staging
@@ -5,7 +6,7 @@ name: Staging
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the develop branch
-  pull_request
+  # pull_request
 
 
 jobs:

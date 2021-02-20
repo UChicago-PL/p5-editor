@@ -40,8 +40,7 @@ class NavBasic extends React.PureComponent {
 }
 
 NavBasic.propTypes = {
-  onBack: PropTypes.func,
-  t: PropTypes.func.isRequired
+  onBack: PropTypes.func
 };
 
 export default withTranslation()(NavBasic);

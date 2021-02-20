@@ -10,6 +10,7 @@ describe('Nav', () => {
     autosaveProject: jest.fn(),
     exportProjectAsZip: jest.fn(),
     cloneProject: jest.fn(),
+    isUserOwner: true,
     user: {
       authenticated: true,
       username: 'new-user',
