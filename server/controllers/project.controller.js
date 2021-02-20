@@ -10,7 +10,7 @@ import LogItem from '../models/logItem';
 import User from '../models/user';
 import { resolvePathToFile } from '../utils/filePath';
 import generateFileSystemSafeName from '../utils/generateFileSystemSafeName';
-import isPartOfStudy from '../utils/isPartOfStudy';
+import isPartOfStudy from './user.controller/isPartOfStudy';
 
 export { default as createProject, apiCreateProject } from './project.controller/createProject';
 export { default as deleteProject } from './project.controller/deleteProject';
@@ -46,10 +46,12 @@ export function updateProject(req, res) {
           res.status(400).json({ success: false });
           return;
         }
-        if (req.user.github && isPartOfStudy(req.user.username)) {
-          // eslint-disable-next-line no-use-before-define
-          createLogItem('snapshot', updatedProject._id, updatedProject.files, () => {});
-        }
+        isPartOfStudy(req.user.github, (e, studyParticipant) => {
+          if (studyParticipant) {
+            // eslint-disable-next-line no-use-before-define
+            createLogItem('snapshot', updatedProject._id, updatedProject.files, () => {});
+          }
+        });
 
         if (req.body.files && updatedProject.files.length !== req.body.files.length) {
           const oldFileIds = updatedProject.files.map((file) => file.id);
@@ -300,21 +302,25 @@ export function logRun(req, res) {
     console.log('req.user', req.user);
     if (!project.user.equals(req.user._id)) {
       res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
-    } else if (!req.user.github || !isPartOfStudy(req.user.username)) {
-      res.status(403).json({ success: false, message: 'User is not part of study.' });
     } else {
-      createLogItem(
-        req.body.type === 'auto' ? 'run-auto' : 'run-manual',
-        req.params.project_id,
-        req.body.files,
-        (err, logItem) => {
-          if (err) {
-            res.status(400).json({ success: false });
-          } else {
-            res.json(logItem);
-          }
+      isPartOfStudy(req.user.github, (e, studyParticipant) => {
+        if (studyParticipant) {
+          createLogItem(
+            req.body.type === 'auto' ? 'run-auto' : 'run-manual',
+            req.params.project_id,
+            req.body.files,
+            (err, logItem) => {
+              if (err) {
+                res.status(400).json({ success: false });
+              } else {
+                res.json(logItem);
+              }
+            }
+          );
+        } else {
+          res.status(403).json({ success: false, message: 'User is not part of study.' });
         }
-      );
+      });
     }
   });
 }
