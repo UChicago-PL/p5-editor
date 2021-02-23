@@ -304,22 +304,22 @@ export function logRun(req, res) {
       res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
     } else {
       isPartOfStudy(req.user.github, (e, studyParticipant) => {
-        if (studyParticipant) {
-          createLogItem(
-            req.body.type === 'auto' ? 'run-auto' : 'run-manual',
-            req.params.project_id,
-            req.body.files,
-            (err, logItem) => {
-              if (err) {
-                res.status(400).json({ success: false });
-              } else {
-                res.json(logItem);
-              }
-            }
-          );
-        } else {
+        if (!studyParticipant) {
           res.status(403).json({ success: false, message: 'User is not part of study.' });
+          return;
         }
+        createLogItem(
+          req.body.type === 'auto' ? 'run-auto' : 'run-manual',
+          req.params.project_id,
+          req.body.files,
+          (err, logItem) => {
+            if (err) {
+              res.status(400).json({ success: false });
+            } else {
+              res.json(logItem);
+            }
+          }
+        );
       });
     }
   });
