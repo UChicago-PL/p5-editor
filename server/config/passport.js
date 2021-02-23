@@ -7,7 +7,7 @@ import GitHubStrategy from 'passport-github';
 // import { BasicStrategy } from 'passport-http';
 
 import User from '../models/user';
-import UserWhitelist from '../models/userWhitelist';
+import UserAllowlist from '../models/userAllowlist';
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -95,7 +95,7 @@ passport.use(
       scope: ['repo', 'user:email']
     },
     (req, accessToken, refreshToken, profile, done) => {
-      UserWhitelist.exists({ github: profile.username }, (userExistsErr, exists) => {
+      UserAllowlist.exists({ github: profile.username }, (userExistsErr, exists) => {
         if (exists) {
           User.findOne({ github: profile.username }, (findByGithubErr, existingUser) => {
             if (existingUser) {

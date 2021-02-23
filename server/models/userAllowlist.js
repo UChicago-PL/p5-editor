@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const userWhitelistSchema = new Schema(
+const userAllowlistSchema = new Schema(
   {
     github: { type: String, unique: true },
     type: {
@@ -14,4 +14,4 @@ const userWhitelistSchema = new Schema(
   { timestamps: true, _id: true, usePushEach: true }
 );
 
-export default mongoose.model('UserWhitelist', userWhitelistSchema);
+export default mongoose.model('UserAllowlist', userAllowlistSchema);
