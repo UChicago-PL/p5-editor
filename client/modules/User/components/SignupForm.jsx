@@ -31,6 +31,7 @@ function validateEmail(email) {
 
 function SignupForm(props) {
   const dispatch = useDispatch();
+
   function onSubmit(formProps) {
     return dispatch(validateAndSignUpUser(formProps));
   }

@@ -31,6 +31,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       function kw(type) {
         return { type: type, style: 'keyword' };
       }
+
       var A = kw('keyword a'),
         B = kw('keyword b'),
         C = kw('keyword c');
@@ -145,11 +146,13 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
     // Used as scratch variables to communicate multiple values without
     // consing up tons of objects.
     var type, content;
+
     function ret(tp, style, cont) {
       type = tp;
       content = cont;
       return style;
     }
+
     function tokenBase(stream, state) {
       var ch = stream.next();
       if (ch == '"' || ch == "'") {
@@ -357,17 +360,21 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
     // Combinator utils
 
     var cx = { state: null, column: null, marked: null, cc: null };
+
     function pass() {
       for (var i = arguments.length - 1; i >= 0; i--) cx.cc.push(arguments[i]);
     }
+
     function cont() {
       pass.apply(null, arguments);
       return true;
     }
+
     function inList(name, list) {
       for (var v = list; v; v = v.next) if (v.name == name) return true;
       return false;
     }
+
     function register(varname) {
       var state = cx.state;
       cx.marked = 'def';
@@ -389,6 +396,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (parserConfig.globalVars && !inList(varname, state.globalVars))
         state.globalVars = new Var(varname, state.globalVars);
     }
+
     function registerVarScoped(varname, context) {
       if (!context) {
         return null;
@@ -421,25 +429,31 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       this.vars = vars;
       this.block = block;
     }
+
     function Var(name, next) {
       this.name = name;
       this.next = next;
     }
 
     var defaultVars = new Var('this', new Var('arguments', null));
+
     function pushcontext() {
       cx.state.context = new Context(cx.state.context, cx.state.localVars, false);
       cx.state.localVars = defaultVars;
     }
+
     function pushblockcontext() {
       cx.state.context = new Context(cx.state.context, cx.state.localVars, true);
       cx.state.localVars = null;
     }
+
     function popcontext() {
       cx.state.localVars = cx.state.context.vars;
       cx.state.context = cx.state.context.prev;
     }
+
     popcontext.lex = true;
+
     function pushlex(type, info) {
       var result = function () {
         var state = cx.state,
@@ -453,6 +467,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       result.lex = true;
       return result;
     }
+
     function poplex() {
       var state = cx.state;
       if (state.lexical.prev) {
@@ -460,6 +475,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         state.lexical = state.lexical.prev;
       }
     }
+
     poplex.lex = true;
 
     function expect(wanted) {
@@ -468,6 +484,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         else if (wanted == ';' || type == '}' || type == ')' || type == ']') return pass();
         else return cont(exp);
       }
+
       return exp;
     }
 
@@ -538,19 +555,24 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (value == '@') return cont(expression, statement);
       return pass(pushlex('stat'), expression, expect(';'), poplex);
     }
+
     function maybeCatchBinding(type) {
       if (type == '(') return cont(funarg, expect(')'));
     }
+
     function expression(type, value) {
       return expressionInner(type, value, false);
     }
+
     function expressionNoComma(type, value) {
       return expressionInner(type, value, true);
     }
+
     function parenExpr(type) {
       if (type != '(') return pass();
       return cont(pushlex(')'), expression, expect(')'), poplex);
     }
+
     function expressionInner(type, value, noComma) {
       if (cx.state.fatArrowAt == cx.stream.start) {
         var body = noComma ? arrowBodyNoComma : arrowBody;
@@ -584,6 +606,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (type == 'import') return cont(expression);
       return cont();
     }
+
     function maybeexpression(type) {
       if (type.match(/[;\}\)\],]/)) return pass();
       return pass(expression);
@@ -593,6 +616,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (type == ',') return cont(expression);
       return maybeoperatorNoComma(type, value, false);
     }
+
     function maybeoperatorNoComma(type, value, noComma) {
       var me = noComma == false ? maybeoperatorComma : maybeoperatorNoComma;
       var expr = noComma == false ? expression : expressionNoComma;
@@ -621,11 +645,13 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         return cont(expr);
       }
     }
+
     function quasi(type, value) {
       if (type != 'quasi') return pass();
       if (value.slice(value.length - 2) != '${') return cont(quasi);
       return cont(expression, continueQuasi);
     }
+
     function continueQuasi(type) {
       if (type == '}') {
         cx.marked = 'string-2';
@@ -633,14 +659,17 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         return cont(quasi);
       }
     }
+
     function arrowBody(type) {
       findFatArrow(cx.stream, cx.state);
       return pass(type == '{' ? statement : expression);
     }
+
     function arrowBodyNoComma(type) {
       findFatArrow(cx.stream, cx.state);
       return pass(type == '{' ? statement : expressionNoComma);
     }
+
     function maybeTarget(noComma) {
       return function (type) {
         if (type == '.') return cont(noComma ? targetNoComma : target);
@@ -649,28 +678,33 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         else return pass(noComma ? expressionNoComma : expression);
       };
     }
+
     function target(_, value) {
       if (value == 'target') {
         cx.marked = 'keyword';
         return cont(maybeoperatorComma);
       }
     }
+
     function targetNoComma(_, value) {
       if (value == 'target') {
         cx.marked = 'keyword';
         return cont(maybeoperatorNoComma);
       }
     }
+
     function maybelabel(type) {
       if (type == ':') return cont(poplex, statement);
       return pass(maybeoperatorComma, expect(';'), poplex);
     }
+
     function property(type) {
       if (type == 'variable') {
         cx.marked = 'property';
         return cont();
       }
     }
+
     function objprop(type, value) {
       if (type == 'async') {
         cx.marked = 'property';
@@ -701,15 +735,18 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         return pass(afterprop);
       }
     }
+
     function getterSetter(type) {
       if (type != 'variable') return pass(afterprop);
       cx.marked = 'property';
       return cont(functiondef);
     }
+
     function afterprop(type) {
       if (type == ':') return cont(expressionNoComma);
       if (type == '(') return pass(functiondef);
     }
+
     function commasep(what, end, sep) {
       function proceed(type, value) {
         if (sep ? sep.indexOf(type) > -1 : type == ',') {
@@ -724,37 +761,44 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         if (sep && sep.indexOf(';') > -1) return pass(what);
         return cont(expect(end));
       }
+
       return function (type, value) {
         if (type == end || value == end) return cont();
         return pass(what, proceed);
       };
     }
+
     function contCommasep(what, end, info) {
       for (var i = 3; i < arguments.length; i++) cx.cc.push(arguments[i]);
       return cont(pushlex(end, info), commasep(what, end), poplex);
     }
+
     function block(type) {
       if (type == '}') return cont();
       return pass(statement, block);
     }
+
     function maybetype(type, value) {
       if (isTS) {
         if (type == ':') return cont(typeexpr);
         if (value == '?') return cont(maybetype);
       }
     }
+
     function mayberettype(type) {
       if (isTS && type == ':') {
         if (cx.stream.match(/^\s*\w+\s+is\b/, false)) return cont(expression, isKW, typeexpr);
         else return cont(typeexpr);
       }
     }
+
     function isKW(_, value) {
       if (value == 'is') {
         cx.marked = 'keyword';
         return cont();
       }
     }
+
     function typeexpr(type, value) {
       if (value == 'keyof' || value == 'typeof') {
         cx.marked = 'keyword';
@@ -770,9 +814,11 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (type == '(') return cont(commasep(typearg, ')'), maybeReturnType);
       if (type == '<') return cont(commasep(typeexpr, '>'), typeexpr);
     }
+
     function maybeReturnType(type) {
       if (type == '=>') return cont(typeexpr);
     }
+
     function typeprop(type, value) {
       if (type == 'variable' || cx.style == 'keyword') {
         cx.marked = 'property';
@@ -787,11 +833,13 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         return cont(pushlex(')'), commasep(funarg, ')'), poplex, typeprop);
       }
     }
+
     function typearg(type, value) {
       if ((type == 'variable' && cx.stream.match(/^\s*[?:]/, false)) || value == '?') return cont(typearg);
       if (type == ':') return cont(typeexpr);
       return pass(typeexpr);
     }
+
     function afterType(type, value) {
       if (value == '<') return cont(pushlex('>'), commasep(typeexpr, '>'), poplex, afterType);
       if (value == '|' || type == '.' || value == '&') return cont(typeexpr);
@@ -801,15 +849,19 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         return cont(typeexpr);
       }
     }
+
     function maybeTypeArgs(_, value) {
       if (value == '<') return cont(pushlex('>'), commasep(typeexpr, '>'), poplex, afterType);
     }
+
     function typeparam() {
       return pass(typeexpr, maybeTypeDefault);
     }
+
     function maybeTypeDefault(_, value) {
       if (value == '=') return cont(typeexpr);
     }
+
     function vardef(_, value) {
       if (value == 'enum') {
         cx.marked = 'keyword';
@@ -817,6 +869,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       }
       return pass(pattern, maybetype, maybeAssign, vardefCont);
     }
+
     function pattern(type, value) {
       if (isTS && isModifier(value)) {
         cx.marked = 'keyword';
@@ -830,6 +883,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (type == '[') return contCommasep(eltpattern, ']');
       if (type == '{') return contCommasep(proppattern, '}');
     }
+
     function proppattern(type, value) {
       if (type == 'variable' && !cx.stream.match(/^\s*:/, false)) {
         register(value);
@@ -841,28 +895,35 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (type == '[') return cont(expression, expect(']'), expect(':'), proppattern);
       return cont(expect(':'), pattern, maybeAssign);
     }
+
     function eltpattern() {
       return pass(pattern, maybeAssign);
     }
+
     function maybeAssign(_type, value) {
       if (value == '=') return cont(expressionNoComma);
     }
+
     function vardefCont(type) {
       if (type == ',') return cont(vardef);
     }
+
     function maybeelse(type, value) {
       if (type == 'keyword b' && value == 'else') return cont(pushlex('form', 'else'), statement, poplex);
     }
+
     function forspec(type, value) {
       if (value == 'await') return cont(forspec);
       if (type == '(') return cont(pushlex(')'), forspec1, expect(')'), poplex);
     }
+
     function forspec1(type) {
       if (type == 'var') return cont(vardef, expect(';'), forspec2);
       if (type == ';') return cont(forspec2);
       if (type == 'variable') return cont(formaybeinof);
       return pass(expression, expect(';'), forspec2);
     }
+
     function formaybeinof(_type, value) {
       if (value == 'in' || value == 'of') {
         cx.marked = 'keyword';
@@ -870,6 +931,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       }
       return cont(maybeoperatorComma, forspec2);
     }
+
     function forspec2(type, value) {
       if (type == ';') return cont(forspec3);
       if (value == 'in' || value == 'of') {
@@ -878,9 +940,11 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       }
       return pass(expression, expect(';'), forspec3);
     }
+
     function forspec3(type) {
       if (type != ')') cont(expression);
     }
+
     function functiondef(type, value) {
       if (value == '*') {
         cx.marked = 'keyword';
@@ -902,6 +966,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         );
       if (isTS && value == '<') return cont(pushlex('>'), commasep(typeparam, '>'), poplex, functiondef);
     }
+
     function functiondecl(type, value) {
       if (value == '*') {
         cx.marked = 'keyword';
@@ -915,6 +980,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         return cont(pushcontext, pushlex(')'), commasep(funarg, ')'), poplex, mayberettype, popcontext);
       if (isTS && value == '<') return cont(pushlex('>'), commasep(typeparam, '>'), poplex, functiondecl);
     }
+
     function funarg(type, value) {
       if (value == '@') cont(expression, funarg);
       if (type == 'spread') return cont(funarg);
@@ -924,17 +990,20 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       }
       return pass(pattern, maybetype, maybeAssign);
     }
+
     function classExpression(type, value) {
       // Class expressions may have an optional name.
       if (type == 'variable') return className(type, value);
       return classNameAfter(type, value);
     }
+
     function className(type, value) {
       if (type == 'variable') {
         register(value);
         return cont(classNameAfter);
       }
     }
+
     function classNameAfter(type, value) {
       if (value == '<') return cont(pushlex('>'), commasep(typeparam, '>'), poplex, classNameAfter);
       if (value == 'extends' || value == 'implements' || (isTS && type == ',')) {
@@ -943,6 +1012,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       }
       if (type == '{') return cont(pushlex('}'), classBody, poplex);
     }
+
     function classBody(type, value) {
       if (
         type == 'async' ||
@@ -967,6 +1037,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (type == '}') return cont();
       if (value == '@') return cont(expression, classBody);
     }
+
     function classfield(type, value) {
       if (value == '?') return cont(classfield);
       if (type == ':') return cont(typeexpr, maybeAssign);
@@ -975,6 +1046,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         isInterface = context && context.info == 'interface';
       return pass(isInterface ? functiondecl : functiondef);
     }
+
     function afterExport(type, value) {
       if (value == '*') {
         cx.marked = 'keyword';
@@ -987,6 +1059,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       if (type == '{') return cont(commasep(exportField, '}'), maybeFrom, expect(';'));
       return pass(statement);
     }
+
     function exportField(type, value) {
       if (value == 'as') {
         cx.marked = 'keyword';
@@ -994,36 +1067,43 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
       }
       if (type == 'variable') return pass(expressionNoComma, exportField);
     }
+
     function afterImport(type) {
       if (type == 'string') return cont();
       if (type == '(') return pass(expression);
       return pass(importSpec, maybeMoreImports, maybeFrom);
     }
+
     function importSpec(type, value) {
       if (type == '{') return contCommasep(importSpec, '}');
       if (type == 'variable') register(value);
       if (value == '*') cx.marked = 'keyword';
       return cont(maybeAs);
     }
+
     function maybeMoreImports(type) {
       if (type == ',') return cont(importSpec, maybeMoreImports);
     }
+
     function maybeAs(_type, value) {
       if (value == 'as') {
         cx.marked = 'keyword';
         return cont(importSpec);
       }
     }
+
     function maybeFrom(_type, value) {
       if (value == 'from') {
         cx.marked = 'keyword';
         return cont(expression);
       }
     }
+
     function arrayLiteral(type) {
       if (type == ']') return cont();
       return pass(commasep(expressionNoComma, ']'));
     }
+
     function enumdef() {
       return pass(
         pushlex('form'),
@@ -1035,6 +1115,7 @@ var p5VariableKeywords = p5_javascript_template.p5VariableKeywords;
         poplex
       );
     }
+
     function enummember() {
       return pass(pattern, maybeAssign);
     }

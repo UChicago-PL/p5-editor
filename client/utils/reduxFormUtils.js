@@ -1,5 +1,6 @@
 /* eslint-disable */
 import i18n from 'i18next';
+
 export const domOnlyProps = ({
   initialValue,
   autofill,
@@ -94,6 +95,7 @@ export function validateSignup(formProps) {
 
   return errors;
 }
+
 export function validateResetPassword(formProps) {
   const errors = {};
   if (!formProps.email) {

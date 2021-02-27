@@ -1,17 +1,17 @@
-@mixin themify ($themes: $themes) {
+@mixin themify($themes: $themes) {
   @each $theme, $map in $themes {
     .#{$theme} & {
       // Define theme color
-      $theme-map : (
+      $theme-map: (
       ) !global;
-      
+
       @each $key, $submap in $map {
         $value: map-fetch($themes, $theme '#{$key}');
         $theme-map: map-merge($theme-map, ($key: $value)) !global;
-      } 
-      
+      }
+
       @content;
-      
+
       // reset theme color to null
       $theme-map: null !global;
     }
@@ -27,6 +27,7 @@
     }
     &:hover {
       color: getThemifyVariable('icon-hover-color');
+
       & g, & polygon, & path {
         opacity: 1;
         fill: getThemifyVariable('icon-hover-color');

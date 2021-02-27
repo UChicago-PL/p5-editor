@@ -4,7 +4,7 @@
   flex: 1;
   overflow: hidden;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
 }
 
 .collection {
@@ -74,7 +74,7 @@
   text-align: left;
 }
 
-.collection-metadata__description .editable-input--has-value .editable-input__label  {
+.collection-metadata__description .editable-input--has-value .editable-input__label {
   @include themify() {
     color: getThemifyVariable('primary-text-color');
   }
@@ -144,8 +144,8 @@
 
 .collection-row__remove-button {
   display: inline-block;
-  width:#{35 / $base-font-size}rem;
-  height:#{35 / $base-font-size}rem;
+  width: #{35 / $base-font-size}rem;
+  height: #{35 / $base-font-size}rem;
   @include icon();
   @include themify() {
     // icon graphic
@@ -159,8 +159,8 @@
     }
 
     & svg {
-      width:#{35 / $base-font-size}rem;
-      height:#{35 / $base-font-size}rem;
+      width: #{35 / $base-font-size}rem;
+      height: #{35 / $base-font-size}rem;
     }
 
     &:hover,

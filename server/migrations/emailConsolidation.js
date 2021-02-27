@@ -27,30 +27,30 @@ const agg = [
   {
     $project: {
       email: {
-        $toLower: ['$email'],
-      },
-    },
+        $toLower: ['$email']
+      }
+    }
   },
   {
     $group: {
       _id: '$email',
       total: {
-        $sum: 1,
-      },
-    },
+        $sum: 1
+      }
+    }
   },
   {
     $match: {
       total: {
-        $gt: 1,
-      },
-    },
+        $gt: 1
+      }
+    }
   },
   {
     $sort: {
-      total: -1,
-    },
-  },
+      total: -1
+    }
+  }
 ];
 
 // steps to make this work
@@ -98,7 +98,7 @@ async function consolidateAccount(email) {
       duplicates = duplicates.map((dup) => dup._id);
       console.log('Duplicates: ', duplicates);
       return Project.find({
-        user: { $in: duplicates },
+        user: { $in: duplicates }
       }).exec();
     })
     .then((sketches) => {
@@ -149,7 +149,7 @@ async function consolidateAccount(email) {
       console.log('Moved and updated all sketches.');
       return Collection.updateMany(
         { owner: { $in: duplicates } },
-        { $set: { owner: ObjectId(currentUser.id) } },
+        { $set: { owner: ObjectId(currentUser.id) } }
       );
     })
     .then(() => {

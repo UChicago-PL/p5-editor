@@ -47,6 +47,7 @@
   }
 
   var attrRegexpCache = {};
+
   function getAttrRegexp(attr) {
     var regexp = attrRegexpCache[attr];
     if (regexp) return regexp;

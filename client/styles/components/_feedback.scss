@@ -9,6 +9,7 @@
 
 .feedback__content-pane {
   flex: 1;
+
   & + & {
     margin-left: #{20 / $base-font-size}rem;
   }

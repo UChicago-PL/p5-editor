@@ -1,10 +1,10 @@
 {
-	"extends": [
+  "extends": [
     "plugin:react/recommended",
     "airbnb"
   ],
-	"parser": "babel-eslint",
-	"env": {
+  "parser": "babel-eslint",
+  "env": {
     "browser": true,
     "node": true,
     "jest": true
@@ -18,31 +18,73 @@
     "import/namespace": 0,
     "import/no-unresolved": 0,
     "import/no-named-as-default": 2,
-    "comma-dangle": 0,  // not sure why airbnb turned this on. gross!
-    "indent": [2, 2, {"SwitchCase": 1}],
+    "comma-dangle": 0,
+    // not sure why airbnb turned this on. gross!
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
     "no-console": 0,
     "no-alert": 0,
     "no-underscore-dangle": 0,
-    "max-len": [1, 120, 2, {"ignoreComments": true, "ignoreTemplateLiterals": true, "ignoreStrings": true}],
-    "quote-props":"off",
-    "no-unused-vars": [1, {"vars": "local", "args": "none"}],
-    "consistent-return":"off",
-    "no-param-reassign": [2, { "props": false }],
-    "react/self-closing-comp": ["error", {
-      "component": true,
-      "html": false
-    }],
-    "arrow-body-style":"off",
+    "max-len": [
+      1,
+      120,
+      2,
+      {
+        "ignoreComments": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreStrings": true
+      }
+    ],
+    "quote-props": "off",
+    "no-unused-vars": [
+      1,
+      {
+        "vars": "local",
+        "args": "none"
+      }
+    ],
+    "consistent-return": "off",
+    "no-param-reassign": [
+      2,
+      {
+        "props": false
+      }
+    ],
+    "react/self-closing-comp": [
+      "error",
+      {
+        "component": true,
+        "html": false
+      }
+    ],
+    "arrow-body-style": "off",
     "arrow-parens": "off",
     "object-curly-newline": 0,
     "newline-per-chained-call": 0,
-    "react/prefer-stateless-function": [2,
-      { "ignorePureComponents": true
-    }],
+    "react/prefer-stateless-function": [
+      2,
+      {
+        "ignorePureComponents": true
+      }
+    ],
     "class-methods-use-this": 0,
     "function-paren-newline": 0,
-    "react/jsx-no-bind": [2, {"allowBind": true, "allowArrowFunctions": true}],
-    "no-return-assign": [2, "except-parens"],
+    "react/jsx-no-bind": [
+      2,
+      {
+        "allowBind": true,
+        "allowArrowFunctions": true
+      }
+    ],
+    "no-return-assign": [
+      2,
+      "except-parens"
+    ],
     "jsx-a11y/anchor-is-valid": [
       "error",
       {
@@ -70,12 +112,16 @@
     ]
   },
   "plugins": [
-    "react", "jsx-a11y", "import"
+    "react",
+    "jsx-a11y",
+    "import"
   ],
   "settings": {
     "import/parser": "babel-eslint",
     "import/resolve": {
-      "moduleDirectory": ["node_modules"]
+      "moduleDirectory": [
+        "node_modules"
+      ]
     }
   },
   "globals": {
@@ -87,7 +133,9 @@
   },
   "overrides": [
     {
-      "files": ["*.stories.jsx"],
+      "files": [
+        "*.stories.jsx"
+      ],
       "rules": {
         "import/no-extraneous-dependencies": "off"
       }

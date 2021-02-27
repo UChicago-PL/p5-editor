@@ -4,7 +4,7 @@
   flex: 1;
   overflow: hidden;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
 }
 
 .dashboard-header__header {
@@ -28,7 +28,7 @@
 .dashboard-header__tabs {
   display: flex;
   padding-top: #{24 / $base-font-size}rem;
-  
+
   @include themify() {
     border-bottom: 1px solid getThemifyVariable('inactive-text-color');
   }
@@ -45,7 +45,7 @@
     &:hover, &:focus, &.dashboard-header__tab--selected {
       color: getThemifyVariable('primary-text-color');
       border-bottom-color: getThemifyVariable('nav-hover-color');
-      cursor: pointer; 
+      cursor: pointer;
     }
   }
 

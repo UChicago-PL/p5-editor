@@ -21,13 +21,15 @@ describe('domain-objects/Project', () => {
     });
 
     it('ignores nested html', () => {
-      expect(containsRootHtmlFile({
-        examples: {
-          files: {
-            'index.html': {}
+      expect(
+        containsRootHtmlFile({
+          examples: {
+            files: {
+              'index.html': {}
+            }
           }
-        }
-      })).toBe(false);
+        })
+      ).toBe(false);
     });
   });
 
@@ -131,18 +133,20 @@ describe('transformFiles', () => {
   it('creates an empty root with no data', () => {
     const tree = {};
 
-    expect(transformFiles(tree)).toEqual([{
-      _id: '0',
-      fileType: 'folder',
-      name: 'root',
-      children: []
-    }]);
+    expect(transformFiles(tree)).toEqual([
+      {
+        _id: '0',
+        fileType: 'folder',
+        name: 'root',
+        children: []
+      }
+    ]);
   });
 
   it('converts tree-shaped files into list', () => {
     const tree = {
       'index.html': {
-        content: 'some contents',
+        content: 'some contents'
       }
     };
 
@@ -189,7 +193,7 @@ describe('transformFiles', () => {
     const tree = {
       'a-folder': {
         files: {}
-      },
+      }
     };
 
     expect(transformFiles(tree)).toEqual([
@@ -211,7 +215,7 @@ describe('transformFiles', () => {
   it('walks the tree processing files', () => {
     const tree = {
       'index.html': {
-        content: 'some contents',
+        content: 'some contents'
       },
       'a-folder': {
         files: {
@@ -222,7 +226,7 @@ describe('transformFiles', () => {
             content: 'blah blah'
           }
         }
-      },
+      }
     };
 
     expect(transformFiles(tree)).toEqual([
@@ -275,7 +279,7 @@ describe('transformFiles', () => {
             }
           }
         }
-      },
+      }
     };
 
     expect(transformFiles(tree)).toEqual([
@@ -312,19 +316,18 @@ describe('transformFiles', () => {
     ]);
   });
 
-
   it('allows duplicate names in different folder', () => {
     const tree = {
       'index.html': {
-        content: 'some contents',
+        content: 'some contents'
       },
-      'data': {
+      data: {
         files: {
           'index.html': {
             content: 'different file'
           }
         }
-      },
+      }
     };
 
     expect(transformFiles(tree)).toEqual([
@@ -377,8 +380,8 @@ describe('transformFiles', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(FileValidationError);
       expect(err.files).toEqual([
-        { name: 'index.html', message: 'missing \'url\' or \'content\'' },
-        { name: 'something.js', message: 'missing \'url\' or \'content\'' }
+        { name: 'index.html', message: "missing 'url' or 'content'" },
+        { name: 'something.js', message: "missing 'url' or 'content'" }
       ]);
     }
   });

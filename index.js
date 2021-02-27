@@ -4,7 +4,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   let parsed = require('dotenv').config();
   require('@babel/register')({
-    presets: ["@babel/preset-env"]
+    presets: ['@babel/preset-env']
   });
   require('@babel/polyfill');
   //// in development, let .env values override those in the environment already (i.e. in docker-compose.yml)

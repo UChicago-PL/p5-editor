@@ -96,6 +96,5 @@ describe('models/project', () => {
     });
   });
 
-  describe('fileSchema', () => {
-  });
+  describe('fileSchema', () => {});
 });

@@ -3,7 +3,7 @@
   response if an incoming request's Content-Type
   header does not match `type`
 */
-const requestsOfType = type => (req, res, next) => {
+const requestsOfType = (type) => (req, res, next) => {
   const hasContentType = req.get('content-type') !== undefined && req.get('content-type') !== null;
   const isCorrectType = req.is(type) === null || req.is(type) === type;
 

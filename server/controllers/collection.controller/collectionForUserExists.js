@@ -22,8 +22,5 @@ export default function collectionForUserExists(username, collectionId, callback
     return Collection.findOne({ _id: collectionId, owner });
   }
 
-  return findUser()
-    .then(findCollection)
-    .then(sendSuccess)
-    .catch(sendFailure);
+  return findUser().then(findCollection).then(sendSuccess).catch(sendFailure);
 }

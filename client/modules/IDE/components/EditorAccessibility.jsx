@@ -4,6 +4,7 @@ import { withTranslation } from 'react-i18next';
 
 class EditorAccessibility extends React.Component {
   componentDidMount() {}
+
   render() {
     const messages = [];
     if (this.props.lintMessages.length > 0) {

@@ -15,6 +15,10 @@ router.delete('/collections/:id', isAuthenticated, CollectionController.removeCo
 
 // Add and remove projects to collection
 router.post('/collections/:id/:projectId', isAuthenticated, CollectionController.addProjectToCollection);
-router.delete('/collections/:id/:projectId', isAuthenticated, CollectionController.removeProjectFromCollection);
+router.delete(
+  '/collections/:id/:projectId',
+  isAuthenticated,
+  CollectionController.removeProjectFromCollection
+);
 
 export default router;

@@ -6,9 +6,10 @@
 
 .sketches-table {
   width: 100%;
-  
+
   max-height: 100%;
   border-spacing: 0;
+
   & .sketch-list__dropdown-column {
     width: #{60 / $base-font-size}rem;
     position: relative;
@@ -55,7 +56,7 @@
   }
 }
 
-.sketches-table thead th:nth-child(1){
+.sketches-table thead th:nth-child(1) {
   padding-left: #{12 / $base-font-size}rem;
 }
 
@@ -102,12 +103,12 @@
 
 
 .sketch-list__dropdown-button {
-  width:#{25 / $base-font-size}rem;
-  height:#{25 / $base-font-size}rem;
+  width: #{25 / $base-font-size}rem;
+  height: #{25 / $base-font-size}rem;
   @include themify() {
-      & polygon, & path {
-        fill: getThemifyVariable('inactive-text-color');
-      }
+    & polygon, & path {
+      fill: getThemifyVariable('inactive-text-color');
+    }
   }
 }
 

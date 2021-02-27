@@ -13,23 +13,16 @@ export default function createProject(req, res) {
   }
 
   function populateUserData(newProject) {
-    return Project.populate(
-      newProject,
-      { path: 'user', select: 'username' },
-      (err, newProjectWithUser) => {
-        if (err) {
-          sendFailure();
-          return;
-        }
-        res.json(newProjectWithUser);
+    return Project.populate(newProject, { path: 'user', select: 'username' }, (err, newProjectWithUser) => {
+      if (err) {
+        sendFailure();
+        return;
       }
-    );
+      res.json(newProjectWithUser);
+    });
   }
 
-
-  return Project.create(projectValues)
-    .then(populateUserData)
-    .catch(sendFailure);
+  return Project.create(projectValues).then(populateUserData).catch(sendFailure);
 }
 
 // TODO: What happens if you don't supply any files?
@@ -40,7 +33,7 @@ export function apiCreateProject(req, res) {
     res.status(code).json({
       message: `${type} Validation Failed`,
       detail: err.message,
-      errors: err.files,
+      errors: err.files
     });
   }
 
@@ -62,7 +55,9 @@ export function apiCreateProject(req, res) {
   function checkUserHasPermission() {
     if (req.user.username !== req.params.username) {
       console.log('no permission');
-      const error = new ProjectValidationError(`'${req.user.username}' does not have permission to create for '${req.params.username}'`);
+      const error = new ProjectValidationError(
+        `'${req.user.username}' does not have permission to create for '${req.params.username}'`
+      );
       error.code = 401;
 
       throw error;
@@ -74,16 +69,18 @@ export function apiCreateProject(req, res) {
 
     const model = toModel(params);
 
-    return model.isSlugUnique()
+    return model
+      .isSlugUnique()
       .then(({ isUnique, conflictingIds }) => {
         if (isUnique) {
-          return model.save()
-            .then((newProject) => {
-              res.status(201).json({ id: newProject.id });
-            });
+          return model.save().then((newProject) => {
+            res.status(201).json({ id: newProject.id });
+          });
         }
 
-        const error = new ProjectValidationError(`Slug "${model.slug}" is not unique. Check ${conflictingIds.join(', ')}`);
+        const error = new ProjectValidationError(
+          `Slug "${model.slug}" is not unique. Check ${conflictingIds.join(', ')}`
+        );
         error.code = 409;
 
         throw error;

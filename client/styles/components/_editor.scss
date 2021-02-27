@@ -4,12 +4,12 @@
 }
 
 .CodeMirror-linenumbers {
-	padding-right: #{10 / $base-font-size}rem;
+  padding-right: #{10 / $base-font-size}rem;
 
 }
 
 .CodeMirror-linenumber {
-	width: #{32 / $base-font-size}rem;
+  width: #{32 / $base-font-size}rem;
   left: #{-3 / $base-font-size}rem !important;
   @include themify() {
     color: getThemifyVariable('inactive-text-color');
@@ -21,7 +21,7 @@
 }
 
 pre.CodeMirror-line {
-	padding-left: #{5 / $base-font-size}rem;
+  padding-left: #{5 / $base-font-size}rem;
 }
 
 .CodeMirror-gutter-wrapper {
@@ -134,15 +134,18 @@ pre.CodeMirror-line {
 .CodeMirror-find-controls {
   display: flex;
 }
+
 .CodeMirror-search-inputs {
   width: 30%;
   margin-left: 10px;
 }
+
 .CodeMirror-replace-div {
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
+
 .CodeMirror-search-controls {
   width: 60%;
   display: flex;
@@ -150,6 +153,7 @@ pre.CodeMirror-line {
   justify-content: flex-start;
   align-items: flex-end;
 }
+
 .CodeMirror-replace-controls {
   display: flex;
   margin-left: #{10 / $base-font-size}rem;
@@ -162,6 +166,7 @@ pre.CodeMirror-line {
   justify-content: center;
   align-items: center;
 }
+
 .CodeMirror-replace-options button {
   width: #{200 / $base-font-size}rem;
 }
@@ -272,7 +277,7 @@ pre.CodeMirror-line {
 /*
   Close button
 */
-  .CodeMirror-close-button-container {
+.CodeMirror-close-button-container {
   display: flex;
   align-items: center;
 }
@@ -289,9 +294,11 @@ pre.CodeMirror-line {
   cursor: pointer;
   opacity: 0.75;
 }
+
 .CodeMirror-foldgutter {
   width: 2.7em;
 }
+
 .CodeMirror-foldgutter-open,
 .CodeMirror-foldgutter-folded {
   cursor: pointer;
@@ -299,9 +306,11 @@ pre.CodeMirror-line {
   text-align: right;
   line-height: 1.0;
 }
+
 .CodeMirror-foldgutter-open:after {
   content: "\25BE";
 }
+
 .CodeMirror-foldgutter-folded:after {
   content: "\25B8";
 }
@@ -363,6 +372,7 @@ pre.CodeMirror-line {
   @include themify() {
     border: 1px solid getThemifyVariable('ide-border-color');
   }
+
   &.editor-holder--hidden .CodeMirror {
     display: none;
   }
@@ -392,6 +402,7 @@ pre.CodeMirror-line {
     background-color: getThemifyVariable('modal-background-color');
     box-shadow: 0 0 18px getThemifyVariable('shadow-color');
   }
+
   .editor--options & {
     display: block;
   }

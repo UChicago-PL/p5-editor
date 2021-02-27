@@ -9,16 +9,16 @@ const projectSnapshotSchema = new Schema(
   {
     // Project._id is a String for some reason
     project: { type: String, ref: 'Project' },
-    files: { type: [fileSchema] },
+    files: { type: [fileSchema] }
   },
-  { timestamps: true, _id: true, usePushEach: true },
+  { timestamps: true, _id: true, usePushEach: true }
 );
 
 const logItemSchema = new Schema(
   {
     logType: {
       type: String,
-      enum: ['snapshot', 'run-auto', 'run-manual', 'submission'],
+      enum: ['snapshot', 'run-auto', 'run-manual', 'submission']
     },
     userAgent: {
       type: String

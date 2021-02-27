@@ -160,7 +160,8 @@ const files = (state, action) => {
       return [...action.files];
     case ActionTypes.RESET_PROJECT:
       return initialState();
-    case ActionTypes.CREATE_FILE: { // eslint-disable-line
+    case ActionTypes.CREATE_FILE: {
+      // eslint-disable-line
       const newState = [
         ...updateParent(state, action),
         {

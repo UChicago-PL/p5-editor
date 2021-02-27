@@ -43,10 +43,7 @@ describe('project.controller', () => {
       request.setParams({ username: 'abc123' });
       const response = new Response();
 
-      UserMock
-        .expects('findOne')
-        .withArgs({ username: 'abc123' })
-        .yields(null, null);
+      UserMock.expects('findOne').withArgs({ username: 'abc123' }).yields(null, null);
 
       const promise = getProjectsForUser(request, response);
 
@@ -65,10 +62,7 @@ describe('project.controller', () => {
       request.setParams({ username: 'abc123' });
       const response = new Response();
 
-      UserMock
-        .expects('findOne')
-        .withArgs({ username: 'abc123' })
-        .yields(new Error(), null);
+      UserMock.expects('findOne').withArgs({ username: 'abc123' }).yields(new Error(), null);
 
       const promise = getProjectsForUser(request, response);
 
@@ -103,16 +97,12 @@ describe('project.controller', () => {
       promise.then(expectations, expectations).catch(expectations);
     });
 
-
     it('returns 404 if user does not exist', (done) => {
       const request = new Request();
       request.setParams({ username: 'abc123' });
       const response = new Response();
 
-      UserMock
-        .expects('findOne')
-        .withArgs({ username: 'abc123' })
-        .yields(null, null);
+      UserMock.expects('findOne').withArgs({ username: 'abc123' }).yields(null, null);
 
       const promise = apiGetProjectsForUser(request, response);
 
@@ -131,10 +121,7 @@ describe('project.controller', () => {
       request.setParams({ username: 'abc123' });
       const response = new Response();
 
-      UserMock
-        .expects('findOne')
-        .withArgs({ username: 'abc123' })
-        .yields(new Error(), null);
+      UserMock.expects('findOne').withArgs({ username: 'abc123' }).yields(new Error(), null);
 
       const promise = apiGetProjectsForUser(request, response);
 

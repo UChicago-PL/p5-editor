@@ -71,7 +71,9 @@ export function resolveScripts(sketchDoc, files, projectId) {
           script.innerHTML = resolvedFile.content;
         }
       }
-    } else if (!(script.getAttribute('src') && script.getAttribute('src').match(EXTERNAL_LINK_REGEX) !== null)) {
+    } else if (
+      !(script.getAttribute('src') && script.getAttribute('src').match(EXTERNAL_LINK_REGEX) !== null)
+    ) {
       script.innerHTML = resolveLinksInString(script.innerHTML, files, projectId);
     }
   });

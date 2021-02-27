@@ -9,6 +9,7 @@ import { validateAndLoginUser } from '../actions';
 
 function LoginForm(props) {
   const dispatch = useDispatch();
+
   function onSubmit(formProps) {
     return dispatch(validateAndLoginUser(formProps));
   }

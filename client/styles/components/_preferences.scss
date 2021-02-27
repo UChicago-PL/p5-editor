@@ -11,11 +11,13 @@
   outline: none;
   height: calc(80vh - #{65 / $base-font-size}rem);
   max-height: #{460 / $base-font-size}rem;
+
   & .react-tabs {
     max-height: 100%;
     display: flex;
     flex-direction: column;
   }
+
   & .react-tabs__tab-panel {
     overflow-y: scroll;
   }
@@ -64,6 +66,7 @@
   display: flex;
   flex-wrap: wrap;
   padding-bottom: #{12 / $base-font-size}rem;
+
   & + & {
     @include themify() {
       border-top: 1px dashed getThemifyVariable("button-border-color");
@@ -89,8 +92,7 @@
 
 .preference__value {
   @include themify() {
-    border: #{1 / $base-font-size}rem solid
-      getThemifyVariable("button-border-color");
+    border: #{1 / $base-font-size}rem solid getThemifyVariable("button-border-color");
     // background-color: getThemifyVariable("button-background-color");
     color: getThemifyVariable("input-text-color");
     background-color: getThemifyVariable('input-background-color');
@@ -120,8 +122,7 @@
 
 .react-tabs__tab--selected {
   @include themify() {
-    border-bottom: #{4 / $base-font-size}rem solid
-      getThemifyVariable("button-background-hover-color");
+    border-bottom: #{4 / $base-font-size}rem solid getThemifyVariable("button-background-hover-color");
   }
 }
 
@@ -137,6 +138,7 @@
   display: flex;
   align-items: center;
   border-bottom: #{4 / $base-font-size}rem solid transparent;
+
   & + & {
     margin-left: #{45 / $base-font-size}rem;
   }
@@ -249,6 +251,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .serve-secure__icon {
   @include icon();
+
   & svg {
     height: #{24 / $base-font-size}rem;
     width: #{24 / $base-font-size}rem;

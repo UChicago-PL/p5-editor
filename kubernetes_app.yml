@@ -21,8 +21,8 @@ spec:
   # type: LoadBalancer
   type: NodePort
   ports:
-  - port: 8000
-    targetPort: 8000
+    - port: 8000
+      targetPort: 8000
   selector:
     app: web-editor
 ---
@@ -41,26 +41,26 @@ spec:
         app: web-editor
     spec:
       containers:
-      - name: web-editor-app
-        image: index.docker.io/catarak/p5.js-web-editor:latest
-        # temp, just to test kubernetes
-        # envFrom:
-        # - configMapRef:
-        #     name: web-editor-env
-        envFrom:
-        - secretRef:
-            name: web-editor-credentials 
-        imagePullPolicy: Always
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        ports:
-        - containerPort: 8000
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
+        - name: web-editor-app
+          image: index.docker.io/catarak/p5.js-web-editor:latest
+          # temp, just to test kubernetes
+          # envFrom:
+          # - configMapRef:
+          #     name: web-editor-env
+          envFrom:
+            - secretRef:
+                name: web-editor-credentials
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -151,8 +151,8 @@ spec:
   # type: LoadBalancer
   type: NodePort
   ports:
-  - port: 8001
-    targetPort: 8000
+    - port: 8001
+      targetPort: 8000
   selector:
     app: web-editor
 ---
@@ -172,23 +172,23 @@ spec:
         app: web-editor
     spec:
       containers:
-      - name: web-editor-app
-        image: index.docker.io/catarak/p5.js-web-editor-staging:latest
-        # temp, just to test kubernetes
-        # envFrom:
-        # - configMapRef:
-        #     name: web-editor-env
-        envFrom:
-        - secretRef:
-            name: web-editor-credentials 
-        imagePullPolicy: Always
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        ports:
-        - containerPort: 8000
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
+        - name: web-editor-app
+          image: index.docker.io/catarak/p5.js-web-editor-staging:latest
+          # temp, just to test kubernetes
+          # envFrom:
+          # - configMapRef:
+          #     name: web-editor-env
+          envFrom:
+            - secretRef:
+                name: web-editor-credentials
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000

@@ -1,6 +1,5 @@
 import Collection from '../../models/collection';
 
-
 export default function createCollection(req, res) {
   const { id: collectionId } = req.params;
   const owner = req.user._id;
@@ -27,8 +26,5 @@ export default function createCollection(req, res) {
     return Collection.findOne({ _id: collectionId, owner });
   }
 
-  return findCollection()
-    .then(removeCollection)
-    .then(sendSuccess)
-    .catch(sendFailure);
+  return findCollection().then(removeCollection).then(sendSuccess).catch(sendFailure);
 }

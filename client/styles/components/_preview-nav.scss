@@ -3,8 +3,9 @@
     width: #{22 / $base-font-size}rem;
     height: #{22 / $base-font-size}rem;
     @include themify() {
-        fill: getThemifyVariable('button-nav-inactive-color');
+      fill: getThemifyVariable('button-nav-inactive-color');
     }
+
     &:hover {
       @include themify() {
         fill: getThemifyVariable('button-background-hover-color');

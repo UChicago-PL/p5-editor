@@ -150,11 +150,13 @@ class IDEView extends React.Component {
       this.props.router.setRouteLeaveHook(this.props.route, () => warnIfUnsavedChanges(this.props));
     }
   }
+
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleGlobalKeydown, false);
     clearTimeout(this.autosaveInterval);
     this.autosaveInterval = null;
   }
+
   handleGlobalKeydown(e) {
     // 83 === s
     if (e.keyCode === 83 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {

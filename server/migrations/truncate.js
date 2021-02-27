@@ -17,20 +17,27 @@ mongoose.connection.on('error', () => {
   process.exit(1);
 });
 
-Project.find({}, {}, {
-  timeout: true
-}).cursor().eachAsync((project) => {
-  console.log(project.name);
-  if (project.name.length < 256) {
-    console.log('Project name is okay.');
-    return Promise.resolve();
+Project.find(
+  {},
+  {},
+  {
+    timeout: true
   }
-  project.name = project.name.substr(0, 255);
-  project.slug = slugify(project.name, '_');
-  return project.save().then(() => {
-    console.log('Updated sketch slug to: ' + project.slug);
+)
+  .cursor()
+  .eachAsync((project) => {
+    console.log(project.name);
+    if (project.name.length < 256) {
+      console.log('Project name is okay.');
+      return Promise.resolve();
+    }
+    project.name = project.name.substr(0, 255);
+    project.slug = slugify(project.name, '_');
+    return project.save().then(() => {
+      console.log('Updated sketch slug to: ' + project.slug);
+    });
+  })
+  .then(() => {
+    console.log('Done iterating over every sketch.');
+    process.exit(0);
   });
-}).then(() => {
-  console.log('Done iterating over every sketch.');
-  process.exit(0);
-});

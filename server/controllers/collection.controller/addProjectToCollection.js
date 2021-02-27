@@ -32,7 +32,7 @@ export default function addProjectToCollection(req, res) {
       return null;
     }
 
-    const projectInCollection = collection.items.find(p => p.projectId === project._id);
+    const projectInCollection = collection.items.find((p) => p.projectId === project._id);
 
     if (projectInCollection) {
       sendFailure(404, 'Project already in collection');
@@ -51,19 +51,17 @@ export default function addProjectToCollection(req, res) {
   }
 
   function populateReferences(collection) {
-    return Collection.populate(
-      collection,
-      [
-        { path: 'owner', select: ['id', 'username'] },
-        {
-          path: 'items.project',
-          select: ['id', 'name', 'slug'],
-          populate: {
-            path: 'user', select: ['username']
-          }
+    return Collection.populate(collection, [
+      { path: 'owner', select: ['id', 'username'] },
+      {
+        path: 'items.project',
+        select: ['id', 'name', 'slug'],
+        populate: {
+          path: 'user',
+          select: ['username']
         }
-      ]
-    );
+      }
+    ]);
   }
 
   return Promise.all([collectionPromise, projectPromise])

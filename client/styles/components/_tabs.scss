@@ -10,13 +10,13 @@
 .tabs__title {
   @include themify() {
     color: getThemifyVariable('inactive-text-color');
-    &:hover, &:focus{
+    &:hover, &:focus {
       color: getThemifyVariable('primary-text-color');
-      cursor: pointer; 
+      cursor: pointer;
     }
-    &:focus  {
+    &:focus {
       color: getThemifyVariable('primary-text-color');
-      cursor: pointer; 
+      cursor: pointer;
     }
   }
   font-size: #{12 / $base-font-size}rem;
@@ -44,6 +44,7 @@
   display: flex;
   align-items: center;
   border-bottom: #{4 / $base-font-size}rem solid transparent;
+
   & + & {
     margin-left: #{45 / $base-font-size}rem;
   }
@@ -52,13 +53,13 @@
 .tabs__title {
   @include themify() {
     color: getThemifyVariable('inactive-text-color');
-    &:hover, &:focus{
+    &:hover, &:focus {
       color: getThemifyVariable('primary-text-color');
-      cursor: pointer; 
+      cursor: pointer;
     }
-    &:focus  {
+    &:focus {
       color: getThemifyVariable('primary-text-color');
-      cursor: pointer; 
+      cursor: pointer;
     }
   }
   font-size: #{12 / $base-font-size}rem;

@@ -32,23 +32,24 @@ export default function createCollection(req, res) {
 
   async function findAndUpdateCollection() {
     // Only update if owner matches current user
-    return Collection.findOneAndUpdate(
-      { _id: collectionId, owner },
-      values,
-      { new: true, runValidators: true, setDefaultsOnInsert: true }
-    ).populate([
-      { path: 'owner', select: ['id', 'username'] },
-      {
-        path: 'items.project',
-        select: ['id', 'name', 'slug'],
-        populate: {
-          path: 'user', select: ['username']
+    return Collection.findOneAndUpdate({ _id: collectionId, owner }, values, {
+      new: true,
+      runValidators: true,
+      setDefaultsOnInsert: true
+    })
+      .populate([
+        { path: 'owner', select: ['id', 'username'] },
+        {
+          path: 'items.project',
+          select: ['id', 'name', 'slug'],
+          populate: {
+            path: 'user',
+            select: ['username']
+          }
         }
-      }
-    ]).exec();
+      ])
+      .exec();
   }
 
-  return findAndUpdateCollection()
-    .then(sendSuccess)
-    .catch(sendFailure);
+  return findAndUpdateCollection().then(sendSuccess).catch(sendFailure);
 }

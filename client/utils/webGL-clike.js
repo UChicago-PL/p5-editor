@@ -114,11 +114,13 @@
       this.align = align;
       this.prev = prev;
     }
+
     function pushContext(state, col, type) {
       var indent = state.indented;
       if (state.context && state.context.type == 'statement') indent = state.context.indented;
       return (state.context = new Context(indent, col, type, null, state.context));
     }
+
     function popContext(state) {
       var t = state.context.type;
       if (t == ')' || t == ']' || t == '}') state.indented = state.context.indented;
@@ -196,6 +198,7 @@
     for (var i = 0; i < words.length; ++i) obj[words[i]] = true;
     return obj;
   }
+
   var cKeywords =
     'auto if break int case long char register continue return default short do sizeof ' +
     'double static else struct entry switch extern typedef float union for unsigned ' +
@@ -269,9 +272,11 @@
   function def(mimes, mode) {
     if (typeof mimes == 'string') mimes = [mimes];
     var words = [];
+
     function add(obj) {
       if (obj) for (var prop in obj) if (obj.hasOwnProperty(prop)) words.push(prop);
     }
+
     add(mode.keywords);
     add(mode.builtin);
     add(mode.atoms);

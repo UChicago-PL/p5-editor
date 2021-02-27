@@ -220,8 +220,8 @@ Button.propTypes = {
    */
   children: PropTypes.element,
   /**
-    If the button can be activated or not
-  */
+   If the button can be activated or not
+   */
   disabled: PropTypes.bool,
   /**
    * SVG icon to place after child content

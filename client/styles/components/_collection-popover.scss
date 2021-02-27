@@ -1,16 +1,16 @@
 .collection-popover {
   position: absolute;
-	height: auto;
+  height: auto;
   width: #{400 / $base-font-size}rem;
   top: 63%;
   right: calc(100% - 26px);
 
   z-index: 9999;
-  
+
   display: flex;
   flex-direction: column;
-  
-	border-radius: #{6 / $base-font-size}rem;
+
+  border-radius: #{6 / $base-font-size}rem;
 
   @include themify() {
     background-color: map-get($theme-map, 'modal-background-color');
@@ -18,8 +18,8 @@
     box-shadow: 0 0 18px 0 getThemifyVariable('shadow-color');
     color: getThemifyVariable('primary-text-color');
   }
-  
-	text-align: left;
+
+  text-align: left;
 }
 
 .collection-popover__header {

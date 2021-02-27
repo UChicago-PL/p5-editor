@@ -139,6 +139,7 @@ function SubmitForm(props) {
     </Form>
   );
 }
+
 SubmitForm.propTypes = {
   repos: PropTypes.arrayOf(PropTypes.object).isRequired,
   project: PropTypes.shape({

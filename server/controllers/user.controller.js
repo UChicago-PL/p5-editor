@@ -387,6 +387,7 @@ export function getFileContent(id) {
     });
   });
 }
+
 function prepPR(data, prefix) {
   const idsToFiles = data.files.reduce((acc, file) => {
     acc[file.id] = file;
@@ -407,6 +408,7 @@ function prepPR(data, prefix) {
     }
     return `${getName(parentid)}/${thisFile.name}`;
   }
+
   const idsToNames = Object.keys(idsToFiles).reduce((acc, id) => {
     acc[id] = getName(id).slice(1);
     return acc;
@@ -421,6 +423,7 @@ function prepPR(data, prefix) {
 
   return namesToFiles;
 }
+
 export function submitGHRepo(req, res) {
   if (!req.user || !req.user.github || !req.user.githubToken) {
     res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });

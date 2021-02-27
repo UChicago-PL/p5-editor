@@ -65,7 +65,7 @@
       color: getThemifyVariable('nav-hover-color');
     }
   }
-  
+
   & g, & path {
     @include themify() {
       fill: getThemifyVariable('nav-hover-color');
@@ -84,6 +84,7 @@
   @include themify() {
     color: getThemifyVariable('nav-hover-color');
   }
+
   & g, & path {
     @include themify() {
       fill: getThemifyVariable('nav-hover-color');
@@ -92,22 +93,23 @@
 }
 
 .nav__item-header-triangle {
-	margin-left: #{5 / $base-font-size}rem;
+  margin-left: #{5 / $base-font-size}rem;
 }
 
 .nav__dropdown {
   @include themify() {
-      color: getThemifyVariable('nav-hover-color');
-    }
+    color: getThemifyVariable('nav-hover-color');
+  }
 }
 
 .nav__item-header-triangle {
-	margin-left: #{5 / $base-font-size}rem;
+  margin-left: #{5 / $base-font-size}rem;
 }
 
 .nav__dropdown {
   @extend %dropdown-open-left;
   display: none;
+
   .nav__item--open & {
     display: flex;
   }
@@ -177,11 +179,13 @@
     position: absolute;
   }
 }
+
 .svg__logo g > path {
   @include themify() {
     fill: getThemifyVariable('logo-color');
   }
 }
+
 .svg__logo g g:first-of-type path {
   fill: none;
 }
@@ -214,6 +218,7 @@
       fill: getThemifyVariable('inactive-text-color');
     }
   }
+
   margin-right: #{5 / $base-font-size}rem;
 }
 

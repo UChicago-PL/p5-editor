@@ -33,12 +33,14 @@ div.searchbar__button {
 
 .searchbar__icon {
   display: inline-block;
+
   & svg {
     width: #{22 / $base-font-size}rem;
     height: #{27 / $base-font-size}rem;
     transform: scaleX(-1);
     padding-top: #{3 / $base-font-size}rem;
   }
+
   & path {
     @include themify() {
       fill: getThemifyVariable('input-text-color');

@@ -13,9 +13,11 @@
 
 .keyboard-shortcut-item {
   display: flex;
+
   & + & {
     margin-top: #{10 / $base-font-size}rem;
   }
+
   align-items: baseline;
 }
 
