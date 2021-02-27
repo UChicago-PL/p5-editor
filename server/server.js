@@ -28,8 +28,6 @@ import { get404Sketch } from './views/404Page';
 
 import { dist } from '../webpack/constants';
 
-import './utils/stubUserAllowlist';
-
 const app = new Express();
 const MongoStore = connectMongo(session);
 

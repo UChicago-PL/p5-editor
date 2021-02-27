@@ -13,8 +13,6 @@ function LoginView({ location }) {
   const { t } = useTranslation();
 
   const queryParams = parse(location.search);
-  const showError = !!queryParams.error;
-  const errorType = queryParams.error;
 
   return (
     <div className="login">
@@ -29,7 +27,7 @@ function LoginView({ location }) {
             <SocialAuthButton service={SocialAuthButton.services.github} />
           </div>
 
-          {showError && (
+          {queryParams.error && (
             <Overlay
               title={t('ErrorModal.LinkTitle')}
               ariaLabel={t('ErrorModal.LinkTitle')}
@@ -37,7 +35,7 @@ function LoginView({ location }) {
                 browserHistory.push(location.pathname);
               }}
             >
-              <ErrorModal type="oauthError" service={errorType} />
+              <ErrorModal type="oauthError" service={queryParams.error} />
             </Overlay>
           )}
         </div>
