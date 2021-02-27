@@ -408,24 +408,42 @@ export function deleteProject(id) {
 }
 
 export function logRun(type) {
+  const makeRequest = (projectId, logParams) => apiClient.post(`/projects/${projectId}/log`, logParams);
+
+  const saveLog = (projectId, logParams) => {
+    const offlineLogKey = `${projectId}-offline-logs`;
+
+    makeRequest(projectId, logParams)
+      .then(() => {
+        // if the request succeeds, try saving the stored logs
+        const offlineLogs = JSON.parse(localStorage.getItem(offlineLogKey)) || [];
+        Promise.all(offlineLogs.map((log) => makeRequest(projectId, log))).then(() => {
+          // then, if they're successfully saved, clear the stored logs
+          localStorage.setItem(offlineLogKey, JSON.stringify([]));
+        });
+      })
+      .catch(() => {
+        const offlineLogs = JSON.parse(localStorage.getItem(offlineLogKey)) || [];
+        localStorage.setItem(offlineLogKey, JSON.stringify([...offlineLogs, logParams]));
+      });
+  };
+
   return (dispatch, getState) => {
     const state = getState();
 
-    const formParams = {
+    const logParams = {
       type,
       files: [...state.files]
     };
 
-    const makeRequest = (projectId) => apiClient.post(`/projects/${projectId}/log`, formParams);
-
     if (state.project.id) {
-      makeRequest(state.project.id);
+      saveLog(state.project.id, logParams);
     } else {
       // in this case, saveProject will invoke the createProject function on the backend,
       // so a snapshot log won't be automatically created
       dispatch(saveProject()).then(() => {
         const newState = getState();
-        makeRequest(newState.project.id);
+        saveLog(newState.project.id, logParams);
       });
     }
   };
