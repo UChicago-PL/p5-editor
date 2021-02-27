@@ -49,7 +49,13 @@ export function updateProject(req, res) {
         isPartOfStudy(req.user.github, (e, studyParticipant) => {
           if (studyParticipant) {
             // eslint-disable-next-line no-use-before-define
-            createLogItem('snapshot', updatedProject._id, updatedProject.files, () => {});
+            createLogItem(
+              'snapshot',
+              updatedProject._id,
+              updatedProject.files,
+              req.headers['user-agent'],
+              () => {}
+            );
           }
         });
 
@@ -278,10 +284,11 @@ export function downloadProjectAsZip(req, res) {
   });
 }
 
-export function createLogItem(logType, projectId, projectFiles, callback) {
+export function createLogItem(logType, projectId, projectFiles, userAgent, callback) {
   LogItem.create(
     {
       logType,
+      userAgent,
       projectSnapshot: {
         project: projectId,
         files: projectFiles
@@ -312,6 +319,7 @@ export function logRun(req, res) {
           req.body.type === 'auto' ? 'run-auto' : 'run-manual',
           req.params.project_id,
           req.body.files,
+          req.headers['user-agent'],
           (err, logItem) => {
             if (err) {
               res.status(400).json({ success: false });

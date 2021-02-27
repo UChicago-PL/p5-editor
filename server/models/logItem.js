@@ -20,9 +20,12 @@ const logItemSchema = new Schema(
       type: String,
       enum: ['snapshot', 'run-auto', 'run-manual', 'submission'],
     },
-    projectSnapshot: { type: projectSnapshotSchema },
+    userAgent: {
+      type: String
+    },
+    projectSnapshot: { type: projectSnapshotSchema }
   },
-  { timestamps: true, _id: true, usePushEach: true },
+  { timestamps: true, _id: true, usePushEach: true }
 );
 
 export default mongoose.model('LogItem', logItemSchema);
