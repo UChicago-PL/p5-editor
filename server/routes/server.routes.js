@@ -16,6 +16,10 @@ router.get('/', (req, res) => {
   res.send(renderIndex());
 });
 
+router.get('/load', (req, res) => {
+  res.send(renderIndex());
+});
+
 router.get('/signup', (req, res) => {
   if (req.user) {
     return res.redirect('/');
