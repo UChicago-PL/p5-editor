@@ -18,7 +18,7 @@ const logItemSchema = new Schema(
   {
     logType: {
       type: String,
-      enum: ['snapshot', 'run-auto', 'run-manual', 'submission'],
+      enum: ['snapshot', 'run-auto', 'run-manual', 'tidy', 'submission']
     },
     userAgent: {
       type: String

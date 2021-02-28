@@ -311,7 +311,7 @@ export function logRun(req, res) {
       res.status(403).json({ success: false, message: 'User is not part of study.' });
     } else {
       createLogItem(
-        req.body.type === 'auto' ? 'run-auto' : 'run-manual',
+        req.body.type,
         req.params.project_id,
         req.body.files,
         req.headers['user-agent'],
