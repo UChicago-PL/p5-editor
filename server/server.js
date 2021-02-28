@@ -17,6 +17,7 @@ import projects from './routes/project.routes';
 import files from './routes/file.routes';
 import collections from './routes/collection.routes';
 import aws from './routes/aws.routes';
+import previewRoutes from './routes/preview.routes';
 import serverRoutes from './routes/server.routes';
 import embedRoutes from './routes/embed.routes';
 import assetRoutes from './routes/asset.routes';
@@ -122,6 +123,7 @@ app.use(assetRoutes);
 
 app.use('/', embedRoutes);
 app.use('/', passportRoutes);
+app.use('/', previewRoutes);
 
 // configure passport
 require('./config/passport');
