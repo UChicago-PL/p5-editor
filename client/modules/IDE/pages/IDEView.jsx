@@ -6,6 +6,7 @@ import { withRouter } from 'react-router';
 import { withTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import SplitPane from 'react-split-pane';
+import { JSONUncrush } from 'jsoncrush';
 import Editor from '../components/Editor';
 import Sidebar from '../components/Sidebar';
 import PreviewFrame from '../components/PreviewFrame';
@@ -77,7 +78,7 @@ class IDEView extends React.Component {
     // changing it seems very complicated
     const queryParams = new URLSearchParams(window.location.search);
     if (queryParams.get('code')) {
-      const decodedCode = atob(queryParams.get('code'));
+      const decodedCode = JSONUncrush(queryParams.get('code'));
       // cool gotcha: the initial state for the project doesn't include any files, so trying to
       // run saveProject with specific code (and thus setting `fileSelected` to not equal null) throws
       // this does not work: this.props.saveProject(queryParams.get('code'))
