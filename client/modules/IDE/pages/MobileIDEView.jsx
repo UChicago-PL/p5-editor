@@ -72,20 +72,21 @@ const NavItem = styled.li`
 
 const getNavOptions = (username = undefined, logoutUser = () => {}, toggleForceDesktop = () => {}) => {
   const { t } = useTranslation();
-  return username
-    ? [
-        { icon: PreferencesIcon, title: t('MobileIDEView.Preferences'), href: '/preferences' },
-        { icon: PreferencesIcon, title: t('MobileIDEView.MyStuff'), href: `/${username}/sketches` },
-        { icon: PreferencesIcon, title: t('MobileIDEView.Examples'), href: '/p5/sketches' },
-        { icon: PreferencesIcon, title: t('MobileIDEView.OriginalEditor'), action: toggleForceDesktop },
-        { icon: PreferencesIcon, title: t('MobileIDEView.Logout'), action: logoutUser }
-      ]
-    : [
-        { icon: PreferencesIcon, title: t('MobileIDEView.Preferences'), href: '/preferences' },
-        { icon: PreferencesIcon, title: t('MobileIDEView.Examples'), href: '/p5/sketches' },
-        { icon: PreferencesIcon, title: t('MobileIDEView.OriginalEditor'), action: toggleForceDesktop },
-        { icon: PreferencesIcon, title: t('MobileIDEView.Login'), href: '/login' }
-      ];
+  if (username) {
+    return [
+      { icon: PreferencesIcon, title: t('MobileIDEView.Preferences'), href: '/preferences' },
+      { icon: PreferencesIcon, title: t('MobileIDEView.MyStuff'), href: `/${username}/sketches` },
+      { icon: PreferencesIcon, title: t('MobileIDEView.Examples'), href: '/p5/sketches' },
+      { icon: PreferencesIcon, title: t('MobileIDEView.OriginalEditor'), action: toggleForceDesktop },
+      { icon: PreferencesIcon, title: t('MobileIDEView.Logout'), action: logoutUser }
+    ];
+  }
+  return [
+    { icon: PreferencesIcon, title: t('MobileIDEView.Preferences'), href: '/preferences' },
+    { icon: PreferencesIcon, title: t('MobileIDEView.Examples'), href: '/p5/sketches' },
+    { icon: PreferencesIcon, title: t('MobileIDEView.OriginalEditor'), action: toggleForceDesktop },
+    { icon: PreferencesIcon, title: t('MobileIDEView.Login'), href: '/login' }
+  ];
 };
 
 const canSaveProject = (isUserOwner, project, user) => isUserOwner || (user.authenticated && !project.owner);
@@ -162,7 +163,7 @@ const handleGlobalKeydown = (props, cmController) => (e) => {
 };
 
 const autosave = (autosaveInterval, setAutosaveInterval) => (props, prevProps) => {
-  const { autosaveProject, preferences, ide, selectedFile: file, project, isUserOwner } = props;
+  const { autosaveProject, preferences, ide, selectedFile: file, project } = props;
 
   const { selectedFile: oldFile } = prevProps;
 

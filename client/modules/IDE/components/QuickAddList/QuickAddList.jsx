@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+// TODO (AMC) delete file
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
@@ -11,7 +14,6 @@ const Item = ({ isAdded, onSelect, name, url, t }) => {
     : t('QuickAddList.ButtonAddToCollectionARIA');
   return (
     <li className="quick-add__item" onClick={onSelect}>
-      {' '}
       {/* eslint-disable-line */}
       <button className="quick-add__item-toggle" onClick={onSelect} aria-label={buttonLabel}>
         <Icons isAdded={isAdded} />

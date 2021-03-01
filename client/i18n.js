@@ -1,6 +1,5 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 import { enUS, es, ja } from 'date-fns/locale';
 
@@ -20,7 +19,7 @@ export function languageKeyToDateLocale(lang) {
   const languageMap = {
     'en-US': enUS,
     'es-419': es,
-    ja: ja
+    ja
   };
   return languageMap[lang];
 }
@@ -55,7 +54,10 @@ i18n
       escapeValue: false // react already safes from xss
     },
     saveMissing: false, // if a key is not found AND this flag is set to true, i18next will call the handler missingKeyHandler
-    missingKeyHandler: false // function(lng, ns, key, fallbackValue) { }  custom logic about how to handle the missing keys
+    missingKeyHandler: false, // function(lng, ns, key, fallbackValue) { }  custom logic about how to handle the missing keys
+    react: {
+      useSuspense: false
+    }
   });
 
 export default i18n;

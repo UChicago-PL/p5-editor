@@ -327,7 +327,8 @@ export function updateSettings(req, res) {
         saveUser(res, user);
       });
     } else if (user.email !== req.body.email) {
-      const EMAIL_VERIFY_TOKEN_EXPIRY_TIME = Date.now() + 3600000 * 24; // 24 hours
+      const ONE_DAY = 3600000 * 24; // 24 hours
+      const EMAIL_VERIFY_TOKEN_EXPIRY_TIME = Date.now() + ONE_DAY;
       user.verified = User.EmailConfirmation.Sent;
 
       user.email = req.body.email;

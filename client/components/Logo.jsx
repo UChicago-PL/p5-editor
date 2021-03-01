@@ -6,13 +6,7 @@ export default function Logo() {
   const { t } = useTranslation();
   return (
     <a href="/" className="svg__logo_link">
-      <LogoIcon
-        role="img"
-        aria-label={t('Common.p5logoARIA')}
-        focusable="false"
-        className="svg__logo"
-      />
+      <LogoIcon role="img" aria-label={t('Common.p5logoARIA')} focusable="false" className="svg__logo" />
     </a>
   );
 }
-

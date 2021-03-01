@@ -24,6 +24,8 @@ const renderComponent = (extraProps = {}) => {
       saveProject: jest.fn(),
       currentUser: 'me',
       originalProjectName: 'testname',
+      openSubmitModal: jest.fn(),
+      closeSubmitModal: jest.fn(),
 
       owner: {
         username: 'me'
@@ -32,6 +34,11 @@ const renderComponent = (extraProps = {}) => {
         name: 'testname',
         isEditingName: false,
         id: 'id'
+      },
+      user: {
+        authenticated: true,
+        username: 'me',
+        id: 'XXX'
       },
       t: jest.fn()
     },

@@ -13,11 +13,17 @@ exports[`Nav renders correctly 1`] = `
         <li
           class="nav__item-logo"
         >
-          <test-file-stub
-            classname="svg__logo"
-            focusable="false"
-            role="img"
-          />
+          <a
+            class="svg__logo_link"
+            href="/"
+          >
+            <test-file-stub
+              aria-label="Common.p5logoARIA"
+              classname="svg__logo"
+              focusable="false"
+              role="img"
+            />
+          </a>
         </li>
         <li
           class="nav__item"
