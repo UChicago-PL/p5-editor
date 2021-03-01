@@ -2,6 +2,7 @@ import { browserHistory } from 'react-router';
 import objectID from 'bson-objectid';
 import each from 'async/each';
 import isEqual from 'lodash/isEqual';
+import { zip } from 'lodash';
 import apiClient from '../../../utils/apiClient';
 import getConfig from '../../../utils/getConfig';
 import * as ActionTypes from '../../../constants';
@@ -417,9 +418,12 @@ export function logRun(type) {
       .then(() => {
         // if the request succeeds, try saving the stored logs
         const offlineLogs = JSON.parse(localStorage.getItem(offlineLogKey)) || [];
-        Promise.all(offlineLogs.map((log) => makeRequest(projectId, log))).then(() => {
-          // then, if they're successfully saved, clear the stored logs
-          localStorage.setItem(offlineLogKey, JSON.stringify([]));
+        Promise.allSettled(offlineLogs.map((log) => makeRequest(projectId, log))).then((results) => {
+          // filter out the logs whose save request did not go through
+          const failedLogs = zip(offlineLogs, results)
+            .filter(([log, result]) => result.status === 'rejected')
+            .map(([log, result]) => result);
+          localStorage.setItem(offlineLogKey, JSON.stringify(failedLogs));
         });
       })
       .catch(() => {
