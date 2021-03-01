@@ -39,10 +39,10 @@ const onRouteChange = (store) => {
 const routes = (store) => (
   <div>
     <Route
-      path="/load"
+      path="/load/:code"
       // for some reason the `render` prop doesn't work
-      component={({ location }) => {
-        return <LoadInitialCodeRedirect location={location} store={store} />;
+      component={({ params }) => {
+        return <LoadInitialCodeRedirect store={store} code={params.code} />;
       }}
     />
     <Route

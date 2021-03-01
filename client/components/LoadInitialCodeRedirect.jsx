@@ -4,11 +4,10 @@ import { JSONUncrush } from 'jsoncrush';
 import { browserHistory } from 'react-router';
 import { updateFileContent } from '../modules/IDE/actions/files';
 
-function LoadInitialCodeRedirect({ store, location }) {
-  const queryParams = new URLSearchParams(location.search);
-  if (queryParams.get('code')) {
+function LoadInitialCodeRedirect({ store, code }) {
+  if (code) {
     useEffect(() => {
-      const decodedCode = JSONUncrush(queryParams.get('code'));
+      const decodedCode = JSONUncrush(code);
       const scriptFile = store.getState().files.find((file) => file.name === 'sketch.js');
 
       // cool gotcha: the initial state for the project doesn't include any files, so trying to
@@ -28,9 +27,7 @@ LoadInitialCodeRedirect.propTypes = {
     dispatch: PropTypes.func.isRequired,
     getState: PropTypes.func.isRequired
   }).isRequired,
-  location: PropTypes.shape({
-    search: PropTypes.string.isRequired
-  }).isRequired
+  code: PropTypes.string.isRequired
 };
 
 export default LoadInitialCodeRedirect;

@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
   res.send(renderIndex());
 });
 
-router.get('/load', (req, res) => {
+router.get('/load/:code', (req, res) => {
   res.send(renderIndex());
 });
 
