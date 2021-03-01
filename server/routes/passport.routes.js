@@ -8,7 +8,7 @@ router.get('/auth/github/callback', (req, res, next) => {
   passport.authenticate('github', { failureRedirect: '/login' }, (err, user) => {
     if (err) {
       // use query string param to show error;
-      res.redirect('/account?error=github');
+      res.redirect('/login?error=github');
       return;
     }
 
