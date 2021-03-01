@@ -48,13 +48,12 @@ export function updateProject(req, res) {
         }
         if (req.user.github && isPartOfStudy(req.user.username)) {
           // eslint-disable-next-line no-use-before-define
-          createLogItem(
-            'snapshot',
-            updatedProject._id,
-            updatedProject.files,
-            req.headers['user-agent'],
-            () => {}
-          );
+          createLogItem({
+            logType: 'snapshot',
+            projectId: updatedProject._id,
+            projectFiles: updatedProject.files,
+            userAgent: req.headers['user-agent']
+          });
         }
 
         if (req.body.files && updatedProject.files.length !== req.body.files.length) {
@@ -282,7 +281,9 @@ export function downloadProjectAsZip(req, res) {
   });
 }
 
-export function createLogItem(logType, projectId, projectFiles, userAgent, callback) {
+export function createLogItem(props) {
+  const { logType, projectId, projectFiles, userAgent, callback = () => {} } = props;
+
   LogItem.create(
     {
       logType,
@@ -310,19 +311,19 @@ export function logRun(req, res) {
     } else if (!req.user.github || !isPartOfStudy(req.user.username)) {
       res.status(403).json({ success: false, message: 'User is not part of study.' });
     } else {
-      createLogItem(
-        req.body.type,
-        req.params.project_id,
-        req.body.files,
-        req.headers['user-agent'],
-        (err, logItem) => {
+      createLogItem({
+        logType: req.body.type,
+        projectId: req.params.project_id,
+        projectFiles: req.body.files,
+        userAgent: req.headers['user-agent'],
+        callback: (err, logItem) => {
           if (err) {
             res.status(400).json({ success: false });
           } else {
             res.json(logItem);
           }
         }
-      );
+      });
     }
   });
 }
