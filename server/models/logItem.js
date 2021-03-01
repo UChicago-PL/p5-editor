@@ -23,9 +23,12 @@ const logItemSchema = new Schema(
     userAgent: {
       type: String
     },
+    createdAt: {
+      type: Number
+    },
     projectSnapshot: { type: projectSnapshotSchema }
   },
-  { timestamps: true, _id: true, usePushEach: true }
+  { timestamps: false, _id: true, usePushEach: true }
 );
 
 export default mongoose.model('LogItem', logItemSchema);

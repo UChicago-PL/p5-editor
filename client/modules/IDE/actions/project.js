@@ -433,7 +433,8 @@ export function logRun(type) {
 
     const logParams = {
       type,
-      files: [...state.files]
+      files: [...state.files],
+      timestamp: Date.now()
     };
 
     if (state.project.id) {

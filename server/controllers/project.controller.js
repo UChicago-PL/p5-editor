@@ -52,6 +52,7 @@ export function updateProject(req, res) {
             logType: 'snapshot',
             projectId: updatedProject._id,
             projectFiles: updatedProject.files,
+            timestamp: Date.now(),
             userAgent: req.headers['user-agent']
           });
         }
@@ -282,7 +283,7 @@ export function downloadProjectAsZip(req, res) {
 }
 
 export function createLogItem(props) {
-  const { logType, projectId, projectFiles, userAgent, callback = () => {} } = props;
+  const { logType, projectId, projectFiles, userAgent, timestamp, callback = () => {} } = props;
 
   LogItem.create(
     {
@@ -291,7 +292,10 @@ export function createLogItem(props) {
       projectSnapshot: {
         project: projectId,
         files: projectFiles
-      }
+      },
+      // https://mongoosejs.com/docs/guide.html#timestamps
+      // Make Mongoose use Unix time (seconds since Jan 1, 1970)
+      createdAt: Math.floor(timestamp / 1000)
     },
     (createLogItemErr, logItem) => {
       if (createLogItemErr) {
@@ -316,6 +320,7 @@ export function logRun(req, res) {
         projectId: req.params.project_id,
         projectFiles: req.body.files,
         userAgent: req.headers['user-agent'],
+        timestamp: req.body.timestamp,
         callback: (err, logItem) => {
           if (err) {
             res.status(400).json({ success: false });
