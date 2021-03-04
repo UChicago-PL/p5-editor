@@ -2,6 +2,7 @@ import { browserHistory } from 'react-router';
 import objectID from 'bson-objectid';
 import each from 'async/each';
 import isEqual from 'lodash/isEqual';
+import { zip } from 'lodash';
 import apiClient from '../../../utils/apiClient';
 import getConfig from '../../../utils/getConfig';
 import * as ActionTypes from '../../../constants';
@@ -408,24 +409,46 @@ export function deleteProject(id) {
 }
 
 export function logRun(type) {
+  const makeRequest = (projectId, logParams) => apiClient.post(`/projects/${projectId}/log`, logParams);
+
+  const saveLog = (projectId, logParams) => {
+    const offlineLogKey = `${projectId}-offline-logs`;
+
+    makeRequest(projectId, logParams)
+      .then(() => {
+        // if the request succeeds, try saving the stored logs
+        const offlineLogs = JSON.parse(localStorage.getItem(offlineLogKey)) || [];
+        Promise.allSettled(offlineLogs.map((log) => makeRequest(projectId, log))).then((results) => {
+          // filter out the logs whose save request did not go through
+          const failedLogs = zip(offlineLogs, results)
+            .filter(([log, result]) => result.status === 'rejected')
+            .map(([log, result]) => result);
+          localStorage.setItem(offlineLogKey, JSON.stringify(failedLogs));
+        });
+      })
+      .catch(() => {
+        const offlineLogs = JSON.parse(localStorage.getItem(offlineLogKey)) || [];
+        localStorage.setItem(offlineLogKey, JSON.stringify([...offlineLogs, logParams]));
+      });
+  };
+
   return (dispatch, getState) => {
     const state = getState();
 
-    const formParams = {
+    const logParams = {
       type,
-      files: [...state.files]
+      files: [...state.files],
+      timestamp: Date.now()
     };
 
-    const makeRequest = (projectId) => apiClient.post(`/projects/${projectId}/log`, formParams);
-
     if (state.project.id) {
-      makeRequest(state.project.id);
+      saveLog(state.project.id, logParams);
     } else {
       // in this case, saveProject will invoke the createProject function on the backend,
       // so a snapshot log won't be automatically created
       dispatch(saveProject()).then(() => {
         const newState = getState();
-        makeRequest(newState.project.id);
+        saveLog(newState.project.id, logParams);
       });
     }
   };

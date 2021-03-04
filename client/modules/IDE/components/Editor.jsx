@@ -71,6 +71,9 @@ class Editor extends React.Component {
   constructor(props) {
     super(props);
     this.tidyCode = this.tidyCode.bind(this);
+    // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
+    // on the 'onChange' event of the code being tidied
+    this.justTidied = false;
 
     this.updateLintingMessageAccessibility = debounce((annotations) => {
       this.props.clearLintMessage();
@@ -152,10 +155,11 @@ class Editor extends React.Component {
       debounce(() => {
         this.props.setUnsavedChanges(true);
         this.props.updateFileContent(this.props.file.id, this._cm.getValue());
-        if (this.props.autorefresh && this.props.isPlaying) {
+        if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
           this.props.clearConsole();
           this.props.startAutoRefreshSketch();
         }
+        this.justTidied = false;
       }, 1000)
     );
 
@@ -302,6 +306,8 @@ class Editor extends React.Component {
   }
 
   tidyCode() {
+    this.justTidied = true;
+    this.props.logRun('tidy');
     const beautifyOptions = {
       indent_size: INDENTATION_AMOUNT,
       indent_with_tabs: IS_TAB_INDENT
@@ -450,6 +456,7 @@ Editor.propTypes = {
   hideRuntimeErrorWarning: PropTypes.func.isRequired,
   runtimeErrorWarningVisible: PropTypes.bool.isRequired,
   provideController: PropTypes.func.isRequired,
+  logRun: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired
 };
 

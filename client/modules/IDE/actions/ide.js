@@ -269,7 +269,7 @@ export function startSketch() {
     dispatch(clearConsole());
     dispatch(startVisualSketch());
     dispatch(startRefreshSketch());
-    dispatch(logRun('manual'));
+    dispatch(logRun('run-manual'));
   });
 }
 
@@ -279,14 +279,14 @@ export function startAccessibleSketch() {
     dispatch(startAccessibleOutput());
     dispatch(startVisualSketch());
     dispatch(startRefreshSketch());
-    dispatch(logRun('manual'));
+    dispatch(logRun('run-manual'));
   });
 }
 
 export function startAutoRefreshSketch() {
   return checkLoggedIn((dispatch) => {
     dispatch(startRefreshSketch());
-    dispatch(logRun('auto'));
+    dispatch(logRun('run-auto'));
   });
 }
 
