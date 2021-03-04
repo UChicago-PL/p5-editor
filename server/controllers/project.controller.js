@@ -42,7 +42,7 @@ export function updateProject(req, res) {
       .populate('user', 'username')
       .exec((updateProjectErr, updatedProject) => {
         if (updateProjectErr) {
-          console.log(updateProjectErr);
+          console.log('updateProjectErr', updateProjectErr);
           res.status(400).json({ success: false });
           return;
         }
@@ -50,7 +50,9 @@ export function updateProject(req, res) {
           // eslint-disable-next-line no-use-before-define
           createLogItem({
             logType: 'snapshot',
+            username: req.user.username,
             projectId: updatedProject._id,
+            projectName: updatedProject.name,
             projectFiles: updatedProject.files,
             timestamp: Date.now(),
             userAgent: req.headers['user-agent']
@@ -66,7 +68,7 @@ export function updateProject(req, res) {
           });
           updatedProject.save((innerErr, savedProject) => {
             if (innerErr) {
-              console.log(innerErr);
+              console.log('updateProject error save', innerErr);
               res.status(400).json({ success: false });
               return;
             }
@@ -88,10 +90,10 @@ export function getProject(req, res) {
     }
     Project.findOne({ user: user._id, $or: [{ _id: projectId }, { slug: projectId }] })
       .populate('user', 'username')
-      .exec((err, project) => {
+      .exec((e, project) => {
         // eslint-disable-line
-        if (err) {
-          console.log(err);
+        if (e) {
+          console.log('getProject error', e);
           return res.status(404).send({ message: 'Project with that id does not exist' });
         }
         return res.json(project);
@@ -106,7 +108,7 @@ export function getProjectsForUserId(userId) {
       .select('name files id createdAt updatedAt')
       .exec((err, projects) => {
         if (err) {
-          console.log(err);
+          console.log('getProjectsForUserId error', err);
         }
         resolve(projects);
       });
@@ -200,7 +202,7 @@ function bundleExternalLibs(project, zip, callback) {
 
     request({ method: 'GET', url: src, encoding: null }, (err, response, body) => {
       if (err) {
-        console.log(err);
+        console.log('resolveScriptTagSrc', err);
       } else {
         zip.append(body, { name: filename });
         scriptTag.src = filename;
@@ -283,14 +285,16 @@ export function downloadProjectAsZip(req, res) {
 }
 
 export function createLogItem(props) {
-  const { logType, projectId, projectFiles, userAgent, timestamp, callback = () => {} } = props;
+  const { logType, projectId, projectFiles, projectName, userAgent, timestamp, username, callback = () => {} } = props;
 
   LogItem.create(
     {
       logType,
+      username,
       userAgent,
       projectSnapshot: {
         project: projectId,
+        projectName,
         files: projectFiles
       },
       // https://mongoosejs.com/docs/guide.html#timestamps
@@ -299,7 +303,7 @@ export function createLogItem(props) {
     },
     (createLogItemErr, logItem) => {
       if (createLogItemErr) {
-        console.log(createLogItemErr);
+        console.log('createLogItemErr', createLogItemErr);
         console.log(logItem);
       }
       callback(createLogItemErr, logItem);
@@ -309,7 +313,6 @@ export function createLogItem(props) {
 
 export function logRun(req, res) {
   Project.findById(req.params.project_id, (findProjectErr, project) => {
-    console.log('req.user', req.user);
     if (!project.user.equals(req.user._id)) {
       res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
     } else if (!req.user.github || !isPartOfStudy(req.user.username)) {
@@ -317,7 +320,9 @@ export function logRun(req, res) {
     } else {
       createLogItem({
         logType: req.body.type,
-        projectId: req.params.project_id,
+        username: req.user.username,
+        projectId: project._id,
+        projectName: project.name,
         projectFiles: req.body.files,
         userAgent: req.headers['user-agent'],
         timestamp: req.body.timestamp,

@@ -144,7 +144,7 @@ class Editor extends React.Component {
       [`${metaKey}-F`]: 'findPersistent',
       [`${metaKey}-G`]: 'findNext',
       [`Shift-${metaKey}-G`]: 'findPrev',
-      replaceCommand: 'replace'
+      [replaceCommand]: 'replace'
     });
 
     this.initializeDocuments(this.props.files);
@@ -393,7 +393,7 @@ class Editor extends React.Component {
             this.codemirrorContainer = element;
           }}
           className={editorHolderClass}
-        ></article>
+        />
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
     );

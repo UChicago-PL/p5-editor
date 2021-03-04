@@ -292,7 +292,6 @@ export function updateSettings(formValues) {
           resolve();
         })
         .catch((error) => {
-          const { response } = error;
           resolve({ error });
         })
     );
