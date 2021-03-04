@@ -404,7 +404,7 @@
     "LogIn": "log in",
     "SavedDifferentWindow": "The project you have attempted to save has been saved from another window.\n        Please refresh the page to see the latest version.",
     "LinkTitle": "Error Linking Account",
-    "LinkMessage": "There was a problem linking your {{serviceauth}} account to your p5.js Web Editor account. Your {{serviceauth}} account has already been linked to another p5.js Web Editor account."
+    "LinkMessage": "There was a problem linking your {{serviceauth}} account to your p5.js Web Editor account. Make sure that you are using a Github account that has been given permission to access this site."
   },
   "ShareModal": {
     "Embed": "Embed",
