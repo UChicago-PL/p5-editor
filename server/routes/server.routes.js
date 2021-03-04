@@ -14,6 +14,10 @@ router.get('/', (req, res) => {
   res.send(renderIndex());
 });
 
+router.get('/load/:code', (req, res) => {
+  res.send(renderIndex());
+});
+
 router.get('/signup', (req, res) => {
   if (req.user) {
     return res.redirect('/');
