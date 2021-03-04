@@ -5,15 +5,12 @@ import { bindActionCreators } from 'redux';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Helmet } from 'react-helmet';
 import { withTranslation } from 'react-i18next';
-import { withRouter, browserHistory } from 'react-router';
-import { parse } from 'query-string';
+import { withRouter } from 'react-router';
 import { createApiKey, removeApiKey } from '../actions';
 import AccountForm from '../components/AccountForm';
 import SocialAuthButton from '../components/SocialAuthButton';
 import APIKeyForm from '../components/APIKeyForm';
 import Nav from '../../../components/Nav';
-import ErrorModal from '../../IDE/components/ErrorModal';
-import Overlay from '../../App/components/Overlay';
 import Toast from '../../IDE/components/Toast';
 
 function SocialLoginPanel(props) {
