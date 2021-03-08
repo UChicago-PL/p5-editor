@@ -114,19 +114,16 @@ class Editor extends React.Component {
       styleSelectedText: true,
       lint: {
         onUpdateLinting: (annotations) => {
-          this.props.hideRuntimeErrorWarning();
           this.updateLintingMessageAccessibility(annotations);
         },
         options: {
           asi: true,
-          eqeqeq: false,
+          eqeqeq: true,
           '-W041': false,
           esversion: 7
         }
       }
     });
-
-    delete this._cm.options.lint.options.errors;
 
     const replaceCommand = metaKey === 'Ctrl' ? `${metaKey}-H` : `${metaKey}-Option-F`;
     this._cm.setOption('extraKeys', {
@@ -453,7 +450,6 @@ Editor.propTypes = {
   isUserOwner: PropTypes.bool.isRequired,
   clearConsole: PropTypes.func.isRequired,
   showRuntimeErrorWarning: PropTypes.func.isRequired,
-  hideRuntimeErrorWarning: PropTypes.func.isRequired,
   runtimeErrorWarningVisible: PropTypes.bool.isRequired,
   provideController: PropTypes.func.isRequired,
   logRun: PropTypes.func.isRequired,
