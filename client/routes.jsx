@@ -70,7 +70,6 @@ const routes = (store) => (
 
       <Route path="/sketches" component={createRedirectWithUsername('/:username/sketches')} />
       {/* <Route path="/assets" component={createRedirectWithUsername('/:username/assets')} /> */}
-      {/* <Route path="/account" component={userIsAuthenticated(AccountView)} /> */}
       <Route path="/about" component={IDEView} />
 
       {/* Mobile-only Routes */}

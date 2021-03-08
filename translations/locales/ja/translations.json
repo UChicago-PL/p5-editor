@@ -260,14 +260,6 @@
     "EmailARIA": "メールアドレス",
     "Submit": "パスワードリセットのメールを送信する"
   },
-  "ResetPasswordView": {
-    "Title": "p5.js Web Editor | パスワードリセット",
-    "Reset": "パスワードをリセットする",
-    "Submitted": "パスワードリセットのメールを送信しました。もし、見当たらない場合は\n            迷惑メールフォルダに入っている可能性がありますので、確認してください。",
-    "Login": "ログイン",
-    "LoginOr": "もしくは",
-    "SignUp": "アカウントを作成する"
-  },
   "ReduxFormUtils": {
     "errorInvalidEmail": "無効なメールアドレスを入力してください",
     "errorEmptyEmail": "メールアドレスを入力してください",
@@ -279,14 +271,6 @@
     "errorEmptyUsername": "ユーザー名を入力してください。",
     "errorLongUsername": "ユーザー名は20文字以内にしてください。",
     "errorValidUsername": "ユーザー名は、英数字、ピリオド(.)、ダッシュ(-)、アンダースコア(_)のみで構成されている必要があります。"
-  },
-  "NewPasswordView": {
-    "Title": "p5.js Web Editor | 新しいパスワード",
-    "Description": "新しいパスワードの設定",
-    "TokenInvalidOrExpired": "パスワードリセットトークンが無効か、有効期限が切れています。",
-    "EmptyPassword": "パスワードを入力してください",
-    "PasswordConfirmation": "確認用のパスワードを入力してください",
-    "PasswordMismatch": "パスワードは一致している必要があります"
   },
   "AccountForm": {
     "Email": "メールアドレス",
@@ -301,14 +285,6 @@
     "NewPassword": "新しいパスワード",
     "NewPasswordARIA": "新しいパスワード",
     "SubmitSaveAllSettings": "すべての設定を保存"
-  },
-  "AccountView": {
-    "SocialLogin": "ソーシャルログイン",
-    "SocialLoginDescription": "GitHubやGoogleアカウントを使って、p5.js Web Editorにログインできます。",
-    "Title": "p5.js Web Editor | アカウント設定",
-    "Settings": "アカウント設定",
-    "AccountTab": "アカウント",
-    "AccessTokensTab": "アクセストークン"
   },
   "APIKeyForm": {
     "ConfirmDelete": "本当に{{key_label}}を削除しますか?",
@@ -347,21 +323,6 @@
     "ConfirmPassword": "確認用パスワード",
     "ConfirmPasswordARIA": "確認用パスワード",
     "SubmitSignup": "アカウント作成"
-  },
-  "SignupView": {
-    "Title": "p5.js Web Editor | ユーザー登録",
-    "Description": "ユーザー登録",
-    "Or": "もしくは",
-    "AlreadyHave": "既にアカウントをお持ちですか？",
-    "Login": "ログイン"
-  },
-  "EmailVerificationView": {
-    "Title": "p5.js Web Editor | メールアドレス認証",
-    "Verify": "メールアドレスを確認してください",
-    "InvalidTokenNull": "そのリンクは無効です。",
-    "Checking": "トークンを検証中です、お待ちください...",
-    "Verified": "すべて完了しました、あなたのメールアドレスは確認されました。",
-    "InvalidState": "何か問題が発生しました。"
   },
   "AssetList": {
     "Title": "p5.js Web Editor | マイアセット",

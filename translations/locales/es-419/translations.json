@@ -260,14 +260,6 @@
     "EmailARIA": "correo electrónico",
     "Submit": "Enviar correo para regenerar contraseña"
   },
-  "ResetPasswordView": {
-    "Title": "Editor Web p5.js | Regenerar Contraseña",
-    "Reset": "Regenerar Contraseña",
-    "Submitted": "Tu correo para regenerar la contraseña debe llegar pronto. Si no lo ves, revisa\n tu carpeta de spam puesto que algunas veces puede terminar ahí.",
-    "Login": "Ingresa",
-    "LoginOr": "o",
-    "SignUp": "Registráte"
-  },
   "ReduxFormUtils": {
     "errorInvalidEmail": "Por favor introduce un correo electrónico válido",
     "errorEmptyEmail": "Por favor introduce un correo electrónico",
@@ -279,14 +271,6 @@
     "errorEmptyUsername": "Por favor introduce tu identificación",
     "errorLongUsername": "La identificación debe ser menor a 20 caracteres.",
     "errorValidUsername": "La identificación debe consistir solamente de números, letras, puntos, guiones y guiones bajos."
-  },
-  "NewPasswordView": {
-    "Title": "Editor Web p5.js | Nueva Contraseña",
-    "Description": "Define una nueva contraseña",
-    "TokenInvalidOrExpired": "El token para regenerar la contraseña es inválido o ha expirado.",
-    "EmptyPassword": "Por favor introduce una contraseña",
-    "PasswordConfirmation": "Por favor confirma la contraseña",
-    "PasswordMismatch": "Las contraseña deben coincidir"
   },
   "AccountForm": {
     "Email": "Correo Electrónico",
@@ -301,14 +285,6 @@
     "NewPassword": "Nueva Contraseña",
     "NewPasswordARIA": "Nueva Contraseña",
     "SubmitSaveAllSettings": "Guardar Todas Las Configuraciones"
-  },
-  "AccountView": {
-    "SocialLogin": "Identificacion usando redes sociales",
-    "SocialLoginDescription": "Usa tu cuenta de GitHub o Google para acceder al Editor Web de p5.js .",
-    "Title": "Editor Web p5.js | Configuración Cuenta",
-    "Settings": "Configuración de la Cuenta",
-    "AccountTab": "Cuenta",
-    "AccessTokensTab": "Tokens de acceso"
   },
   "APIKeyForm": {
     "ConfirmDelete": "¿Estás seguro que quieres borrar {{key_label}}?",
@@ -347,21 +323,6 @@
     "ConfirmPassword": "Confirma tu contraseña",
     "ConfirmPasswordARIA": "Confirma tu contraseña",
     "SubmitSignup": "Registráte"
-  },
-  "SignupView": {
-    "Title": " Editor Web p5.js | Registráte",
-    "Description": "Registráte",
-    "Or": "o",
-    "AlreadyHave": "¿Ya tienes cuenta? ",
-    "Login": "Ingresa"
-  },
-  "EmailVerificationView": {
-    "Title": "Editor Web p5.js | Correo de Verificación",
-    "Verify": "Verica tu correo",
-    "InvalidTokenNull": "La liga es inválida.",
-    "Checking": "Validando token, por favor espera...",
-    "Verified": "Concluido, tu correo electrónico ha sido verificado.",
-    "InvalidState": "Algo salió mal."
   },
   "AssetList": {
     "Title": "Editor Web p5.js | Mis recursos",
