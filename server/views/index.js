@@ -25,6 +25,7 @@ export function renderIndex() {
           window.process.env = {};
         }
         window.process.env.API_URL = '${process.env.API_URL}';
+        window.process.env.BRANCH_NAME = '${process.env.BRANCH_NAME}';
         window.process.env.NODE_ENV = '${process.env.NODE_ENV}';
         window.process.env.S3_BUCKET = '${process.env.S3_BUCKET}';
         window.process.env.S3_BUCKET_URL_BASE = ${
