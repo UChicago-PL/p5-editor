@@ -34,13 +34,6 @@ export function authenticateUser(user) {
   };
 }
 
-export function loginUserFailure(error) {
-  return {
-    type: ActionTypes.AUTH_ERROR,
-    error
-  };
-}
-
 export function setPreferences(preferences) {
   return {
     type: ActionTypes.SET_PREFERENCES,
@@ -81,6 +74,7 @@ export function validateAndSignUpUser(formValues) {
         })
         .catch((error) => {
           const { response } = error;
+          console.log('a');
           dispatch(authError(response.data.error));
           resolve({ error });
         });
@@ -128,6 +122,7 @@ export function getUser() {
       .catch((error) => {
         const { response } = error;
         const message = response.message || response.data.error;
+        console.log('b', error);
         dispatch(authError(message));
       });
   };
