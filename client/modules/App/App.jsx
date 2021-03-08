@@ -1,19 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import getConfig from '../../utils/getConfig';
-import DevTools from './components/DevTools';
 import { setPreviousPath } from '../IDE/actions/ide';
 import { setLanguage } from '../IDE/actions/preferences';
 
 class App extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = { isMounted: false };
-  }
-
   componentDidMount() {
-    this.setState({ isMounted: true }); // eslint-disable-line react/no-did-mount-set-state
     document.body.className = this.props.theme;
   }
 
@@ -38,16 +30,7 @@ class App extends React.Component {
   }
 
   render() {
-    return (
-      <div className="app">
-        {/* TODO remove */}
-        {this.state.isMounted &&
-          !window.devToolsExtension &&
-          false &&
-          getConfig('NODE_ENV') === 'development' && <DevTools />}
-        {this.props.children}
-      </div>
-    );
+    return <div className="app">{this.props.children}</div>;
   }
 }
 
