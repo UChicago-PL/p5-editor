@@ -12,10 +12,6 @@ class ErrorModal extends React.Component {
           {' '}
           {this.props.t('ErrorModal.Login')}
         </Link>
-        {this.props.t('ErrorModal.LoginOr')}
-        <Link to="/signup" onClick={this.props.closeModal}>
-          {this.props.t('ErrorModal.SignUp')}
-        </Link>
         .
       </p>
     );

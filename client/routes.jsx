@@ -8,18 +8,12 @@ import IDEView from './modules/IDE/pages/IDEView';
 // import MobilePreferences from './modules/Mobile/MobilePreferences';
 import FullView from './modules/IDE/pages/FullView';
 import LoginView from './modules/User/pages/LoginView';
-// import SignupView from './modules/User/pages/SignupView';
-// import ResetPasswordView from './modules/User/pages/ResetPasswordView';
-// import EmailVerificationView from './modules/User/pages/EmailVerificationView';
-// import NewPasswordView from './modules/User/pages/NewPasswordView';
-// import AccountView from './modules/User/pages/AccountView';
 import CollectionView from './modules/User/pages/CollectionView';
 import DashboardView from './modules/User/pages/DashboardView';
 import createRedirectWithUsername from './components/createRedirectWithUsername';
-// import MobileDashboardView from './modules/Mobile/MobileDashboardView';
 import { getUser } from './modules/User/actions';
 import { stopSketch } from './modules/IDE/actions/ide';
-import { userIsAuthenticated, userIsNotAuthenticated, userIsAuthorized } from './utils/auth';
+import { userIsNotAuthenticated } from './utils/auth';
 import { mobileFirst, responsiveForm } from './utils/responsive';
 
 import LoadInitialCodeRedirect from './components/LoadInitialCodeRedirect';
@@ -58,13 +52,6 @@ const routes = (store) => (
         path="/login"
         component={userIsNotAuthenticated(mobileFirst(responsiveForm(LoginView), LoginView))}
       />
-      {/* <Route
-        path="/signup"
-        component={userIsNotAuthenticated(mobileFirst(responsiveForm(SignupView), SignupView))}
-      /> */}
-      {/* <Route path="/reset-password" component={userIsNotAuthenticated(ResetPasswordView)} /> */}
-      {/* <Route path="/verify" component={EmailVerificationView} /> */}
-      {/* <Route path="/reset-password/:reset_password_token" component={NewPasswordView} /> */}
       <Route path="/projects/:project_id" component={IDEView} />
       <Route path="/:username/full/:project_id" component={FullView} />
       {/* <Route path="/full/:project_id" component={FullView} /> */}

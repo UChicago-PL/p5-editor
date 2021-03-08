@@ -74,7 +74,6 @@ export function validateAndSignUpUser(formValues) {
         })
         .catch((error) => {
           const { response } = error;
-          console.log('a');
           dispatch(authError(response.data.error));
           resolve({ error });
         });
@@ -122,7 +121,6 @@ export function getUser() {
       .catch((error) => {
         const { response } = error;
         const message = response.message || response.data.error;
-        console.log('b', error);
         dispatch(authError(message));
       });
   };
