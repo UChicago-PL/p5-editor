@@ -13,7 +13,7 @@ import DashboardView from './modules/User/pages/DashboardView';
 import createRedirectWithUsername from './components/createRedirectWithUsername';
 import { getUser } from './modules/User/actions';
 import { stopSketch } from './modules/IDE/actions/ide';
-import { userIsNotAuthenticated } from './utils/auth';
+import { userIsAuthorized, userIsNotAuthenticated } from './utils/auth';
 import { mobileFirst, responsiveForm } from './utils/responsive';
 
 import LoadInitialCodeRedirect from './components/LoadInitialCodeRedirect';
@@ -53,20 +53,20 @@ const routes = (store) => (
         component={userIsNotAuthenticated(mobileFirst(responsiveForm(LoginView), LoginView))}
       />
       <Route path="/projects/:project_id" component={IDEView} />
-      <Route path="/:username/full/:project_id" component={FullView} />
+      <Route path="/:username/full/:project_id" component={userIsAuthorized(FullView)} />
       {/* <Route path="/full/:project_id" component={FullView} /> */}
 
       {/* <Route
         path="/:username/assets"
         component={userIsAuthenticated(userIsAuthorized(mobileFirst(MobileDashboardView, DashboardView)))}
       /> */}
-      <Route path="/:username/sketches" component={DashboardView} />
+      <Route path="/:username/sketches" component={userIsAuthorized(DashboardView)} />
       <Route path="/:username/sketches/:project_id" component={IDEView} />
-      <Route path="/:username/sketches/:project_id/add-to-collection" component={IDEView} />
-      <Route path="/:username/collections" component={DashboardView} />
+      <Route path="/:username/sketches/:project_id/add-to-collection" component={userIsAuthorized(IDEView)} />
+      <Route path="/:username/collections" component={userIsAuthorized(DashboardView)} />
 
-      <Route path="/:username/collections/create" component={DashboardView} />
-      <Route path="/:username/collections/:collection_id" component={CollectionView} />
+      <Route path="/:username/collections/create" component={userIsAuthorized(DashboardView)} />
+      <Route path="/:username/collections/:collection_id" component={userIsAuthorized(CollectionView)} />
 
       <Route path="/sketches" component={createRedirectWithUsername('/:username/sketches')} />
       {/* <Route path="/assets" component={createRedirectWithUsername('/:username/assets')} /> */}

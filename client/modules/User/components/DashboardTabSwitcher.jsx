@@ -34,6 +34,9 @@ const DashboardTabSwitcher = ({ currentTab, isOwner, username, t }) => (
       <Tab to={`/${username}/sketches`} isSelected={currentTab === TabKey.sketches}>
         {t('DashboardTabSwitcher.Sketches')}
       </Tab>
+      <Tab to={`/${username}/collections`} isSelected={currentTab === TabKey.collections}>
+        {t('DashboardTabSwitcher.Collections')}
+      </Tab>
     </div>
   </ul>
 );

@@ -64,7 +64,6 @@ passport.use(
             return;
           }
           const emails = getVerifiedEmails(profile.emails);
-          console.log('emails', profile);
           const primaryEmail = getPrimaryEmail(profile.emails);
 
           // otherwise, if the user exists in the database but is missing a github assocation,
@@ -100,7 +99,9 @@ passport.use(
                     user.name = profile.displayName;
                     user.verified = User.EmailConfirmation.Verified;
                     user.save((saveErr) => {
-                      console.log(`Error creating user ${profile.username}`, saveErr);
+                      if (saveErr) {
+                        console.log(`Error creating user ${profile.username}`, saveErr);
+                      }
                       return done(null, user);
                     });
                   }
