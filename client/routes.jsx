@@ -13,8 +13,6 @@ import { stopSketch } from './modules/IDE/actions/ide';
 import { userIsAuthorized, userIsNotAuthenticated } from './utils/auth';
 import { mobileFirst, responsiveForm } from './utils/responsive';
 
-// MobileViewContent
-
 import LoadInitialCodeRedirect from './components/LoadInitialCodeRedirect';
 
 const checkAuth = (store) => {
@@ -53,12 +51,7 @@ const routes = (store) => (
       />
       <Route path="/projects/:project_id" component={IDEView} />
       <Route path="/:username/full/:project_id" component={userIsAuthorized(FullView)} />
-      {/* <Route path="/full/:project_id" component={FullView} /> */}
 
-      {/* <Route
-        path="/:username/assets"
-        component={userIsAuthenticated(userIsAuthorized(DashboardView))}
-      /> */}
       <Route path="/:username/sketches" component={userIsAuthorized(DashboardView)} />
       <Route path="/:username/sketches/:project_id" component={IDEView} />
       <Route path="/:username/sketches/:project_id/add-to-collection" component={userIsAuthorized(IDEView)} />
@@ -68,7 +61,6 @@ const routes = (store) => (
       <Route path="/:username/collections/:collection_id" component={userIsAuthorized(CollectionView)} />
 
       <Route path="/sketches" component={createRedirectWithUsername('/:username/sketches')} />
-      {/* <Route path="/assets" component={createRedirectWithUsername('/:username/assets')} /> */}
       <Route path="/about" component={IDEView} />
     </Route>
   </div>
