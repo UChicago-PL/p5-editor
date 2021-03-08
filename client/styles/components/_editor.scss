@@ -30,17 +30,10 @@ pre.CodeMirror-line {
   bottom: 0;
 }
 
-.CodeMirror-lint-marker-warning, .CodeMirror-lint-marker-error, .CodeMirror-lint-marker-multiple {
-  background-image: none;
-  width: #{49 / $base-font-size}rem;
-  position: absolute;
-  height: 100%;
-  right: 100%;
-}
 
 .CodeMirror-lint-message-error, .CodeMirror-lint-message-warning {
-  background-image: none;
-  padding-left: inherit;
+  // padding-left: inherit;
+  padding-left: 20px;
 }
 
 .CodeMirror-lint-marker-warning {

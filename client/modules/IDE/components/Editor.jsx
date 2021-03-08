@@ -76,7 +76,7 @@ class Editor extends React.Component {
     this.justTidied = false;
 
     this.updateLintingMessageAccessibility = debounce((annotations) => {
-      this.props.clearLintMessage();
+      console.log(annotations);
       annotations.forEach((x) => {
         if (x.from.line > -1) {
           this.props.updateLintMessage(x.severity, x.from.line + 1, x.message);
@@ -113,13 +113,9 @@ class Editor extends React.Component {
       autoCloseBrackets: this.props.autocloseBracketsQuotes,
       styleSelectedText: true,
       lint: {
-        onUpdateLinting: (annotations) => {
-          this.props.hideRuntimeErrorWarning();
-          this.updateLintingMessageAccessibility(annotations);
-        },
         options: {
-          asi: true,
-          eqeqeq: false,
+          // asi: true,
+          eqeqeq: true,
           '-W041': false,
           esversion: 7
         }
