@@ -31,7 +31,6 @@ _Note_: The installation steps assume you are using a Unix-like shell. If you ar
 10. `$ npm start`
 11. Navigate to [http://localhost:8000](http://localhost:8000) in your browser
 12. Install the [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
-13. Open and close the Redux DevTools using `ctrl+h`, and move them with `ctrl+w`
 
 ## Docker Installation
 
