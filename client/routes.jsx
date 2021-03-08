@@ -3,9 +3,6 @@ import React from 'react';
 
 import App from './modules/App/App';
 import IDEView from './modules/IDE/pages/IDEView';
-// import MobileIDEView from './modules/IDE/pages/MobileIDEView';
-// import MobileSketchView from './modules/Mobile/MobileSketchView';
-// import MobilePreferences from './modules/Mobile/MobilePreferences';
 import FullView from './modules/IDE/pages/FullView';
 import LoginView from './modules/User/pages/LoginView';
 import CollectionView from './modules/User/pages/CollectionView';
@@ -15,6 +12,8 @@ import { getUser } from './modules/User/actions';
 import { stopSketch } from './modules/IDE/actions/ide';
 import { userIsAuthorized, userIsNotAuthenticated } from './utils/auth';
 import { mobileFirst, responsiveForm } from './utils/responsive';
+
+// MobileViewContent
 
 import LoadInitialCodeRedirect from './components/LoadInitialCodeRedirect';
 
@@ -58,7 +57,7 @@ const routes = (store) => (
 
       {/* <Route
         path="/:username/assets"
-        component={userIsAuthenticated(userIsAuthorized(mobileFirst(MobileDashboardView, DashboardView)))}
+        component={userIsAuthenticated(userIsAuthorized(DashboardView))}
       /> */}
       <Route path="/:username/sketches" component={userIsAuthorized(DashboardView)} />
       <Route path="/:username/sketches/:project_id" component={IDEView} />
@@ -71,11 +70,6 @@ const routes = (store) => (
       <Route path="/sketches" component={createRedirectWithUsername('/:username/sketches')} />
       {/* <Route path="/assets" component={createRedirectWithUsername('/:username/assets')} /> */}
       <Route path="/about" component={IDEView} />
-
-      {/* Mobile-only Routes */}
-      {/* TODO delete */}
-      {/* <Route path="/preview" component={MobileSketchView} />
-      <Route path="/preferences" component={MobilePreferences} /> */}
     </Route>
   </div>
 );
