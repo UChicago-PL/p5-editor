@@ -265,24 +265,9 @@ export function startRefreshSketch() {
 }
 
 export function startSketch() {
-  // if (!window.runOnce) {
-  //   return (dispatch) => {
-
-  //     console.log('here!!');
-  //     dispatch(clearConsole());
-  //     dispatch(startVisualSketch());
-  //     dispatch(startRefreshSketch());
-  //     dispatch(logRun('run-manual'));
-  //     window.runOnce = true;
-  //   };
-  // }
-  return checkLoggedIn((dispatch) => {
-    if (!window.runOnce) {
-      setTimeout(() => {
-        console.log('here?');
-        dispatch(startVisualSketch());
-      }, 1000);
-      window.runOnce = true;
+  return checkLoggedIn((dispatch, getState) => {
+    if (!getState().project.id) {
+      setTimeout(() => dispatch(startVisualSketch()), 1000);
     }
     dispatch(clearConsole());
     dispatch(startVisualSketch());
