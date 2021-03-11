@@ -265,7 +265,10 @@ export function startRefreshSketch() {
 }
 
 export function startSketch() {
-  return checkLoggedIn((dispatch) => {
+  return checkLoggedIn((dispatch, getState) => {
+    if (!getState().project.id) {
+      setTimeout(() => dispatch(startVisualSketch()), 1000);
+    }
     dispatch(clearConsole());
     dispatch(startVisualSketch());
     dispatch(startRefreshSketch());
