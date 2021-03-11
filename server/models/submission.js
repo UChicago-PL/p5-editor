@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import { fileSchema } from './project';
 
 const { Schema } = mongoose;
-// import assignment from './assignment';
 
 const submissionSchema = new Schema(
   {

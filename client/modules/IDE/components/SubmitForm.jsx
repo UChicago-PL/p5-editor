@@ -25,7 +25,6 @@ function SubmitForm(props) {
     console.log({ repo });
     return dispatch(submitToGH({ repo, project }))
       .then((result) => {
-        console.log('???', result);
         setSubmitState(result.data);
       })
       .catch((e) => {
