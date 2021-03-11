@@ -15,81 +15,45 @@ function SubmitForm(props) {
   function validate(formProps) {
     const errors = {};
     if (!formProps.repo || formProps.repo.trim().length === 0) {
-      errors.repo = 'please select a repo';
-    }
-    if (formProps.toSubFolder.includes('yes')) {
-      if (!formProps.name) {
-        errors.name = 'NewFolderModal.EnterName';
-      } else if (formProps.name.trim().length === 0) {
-        errors.name = 'NewFolderModal.EmptyName';
-      } else if (formProps.name.match(/\.+/i)) {
-        errors.name = 'NewFolderModal.InvalidExtension';
-      }
+      errors.repo = 'please select an assignment';
     }
     return errors;
   }
 
   function onSubmit(formProps) {
-    return dispatch(
-      submitToGH({
-        ...formProps,
-        repo: repos.find(({ fullName }) => fullName === formProps.repo),
-        project
-      })
-    ).then((result) => {
+    const repo = repos.find(({ urlName }) => urlName === formProps.repo);
+    console.log({ repo });
+    // TODO add crash state
+    return dispatch(submitToGH({ repo, project })).then((result) => {
       setSubmitState(result.data);
     });
   }
 
   return (
-    <Form
-      fields={['name', 'repo', 'toSubFolder']}
-      validate={validate}
-      onSubmit={onSubmit}
-      initialValues={{ toSubFolder: 'no' }}
-    >
+    <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
         const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
-        const currRepo = repos.find(({ fullName }) => fullName === values.repo);
-        const showNameInput = values.toSubFolder.includes('yes');
+        const currRepo = repos.find(({ urlName }) => urlName === values.repo);
         return (
           <form className="submit-repo-form" onSubmit={handleSubmit}>
             <div className="submit-repo-form__input-wrapper flex-down">
               <div className="flex-down">
-                <label htmlFor="repo">Target Repo</label>
                 <Field name="repo" component="select">
                   <option key="empty" />
-                  {repos.map((repo, idx) => (
-                    <option value={repo.fullName} key={repo.fullName}>
-                      {repo.fullName}
-                    </option>
-                  ))}
+                  {repos
+                    .filter((repo) => repo.released)
+                    .map((repo, idx) => {
+                      return (
+                        <option value={repo.urlName} key={repo.urlName}>
+                          {repo.humanReadableName}
+                        </option>
+                      );
+                    })}
                 </Field>
-                {currRepo && (
-                  <div>
-                    <a href={currRepo.link} target="_blank" rel="noreferrer">
-                      {currRepo.repoName}
-                    </a>{' '}
-                    <span>{' by '}</span>{' '}
-                    <a href={`https://github.com/${currRepo.ownerName}`} target="_blank" rel="noreferrer">
-                      {currRepo.ownerName}
-                    </a>
-                  </div>
-                )}
               </div>
               {touched.repo && errors.repo && <span className="form-error">{errors.repo}</span>}
-              <div>
-                <label htmlFor="toSubFolder">Send Pr to Subfolder</label>
-                <div className="flex">
-                  <label>
-                    <Field name="toSubFolder" component="input" type="radio" value="yes" /> Yes
-                  </label>
-                  <label>
-                    <Field name="toSubFolder" component="input" type="radio" value="no" /> No
-                  </label>
-                </div>
-              </div>
-              {showNameInput && (
+              {/* maybe gonna use this for adding pr comments */}
+              {/* {false && (
                 <div>
                   <Field name="name">
                     {(field) => (
@@ -110,7 +74,7 @@ function SubmitForm(props) {
                   </Field>
                   {touched.name && errors.name && <span className="form-error">{errors.name}</span>}
                 </div>
-              )}
+              )} */}
               <Button type="submit" disabled={invalid || submitting}>
                 Submit
               </Button>

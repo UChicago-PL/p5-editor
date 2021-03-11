@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { fileSchema } from './project';
 
 const { Schema } = mongoose;
+// import assignment from './assignment';
 
 const submissionSchema = new Schema(
   {
@@ -10,7 +11,8 @@ const submissionSchema = new Schema(
     username: { type: String },
     project: { type: String },
     submissionId: { type: String },
-    projectName: { type: String, ref: 'Project' }
+    projectName: { type: String, ref: 'Project' },
+    assignment: { type: Schema.Types.ObjectId, ref: 'Assignment' }
   },
   { timestamps: true, _id: true, usePushEach: true }
 );

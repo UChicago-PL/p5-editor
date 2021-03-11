@@ -45,7 +45,7 @@ class SubmitalModal extends React.Component {
       >
         <div className="modal-content">
           <div className="modal__header">
-            <h2 className="modal__title">Submit current sketch</h2>
+            <h2 className="modal__title">Submit current sketch for which assignment?</h2>
             <button
               className="modal__exit-button"
               onClick={this.props.closeSubmitModal}
