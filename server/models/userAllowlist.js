@@ -17,7 +17,7 @@ const userAllowlistSchema = new Schema(
 const UserAllowlist = mongoose.model('UserAllowlist', userAllowlistSchema);
 
 if (process.env.NODE_ENV === 'development') {
-  const users = ['mcnuttandrew', 'mcnuttamdrew', 'outkine', 'ravichugh'];
+  const users = ['mcnuttandrew', 'mcnuttandrew-test', 'outkine', 'ravichugh'];
 
   users.forEach((user) => {
     UserAllowlist.create({ github: user, type: 'user', studyParticipant: true }, (e) => {

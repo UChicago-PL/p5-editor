@@ -260,14 +260,6 @@
     "EmailARIA": "email",
     "Submit": "Send Password Reset Email"
   },
-  "ResetPasswordView": {
-    "Title": "p5.js Web Editor | Reset Password",
-    "Reset": "Reset Your Password",
-    "Submitted": "Your password reset email should arrive shortly. If you don't see it, check\n            in your spam folder as sometimes it can end up there.",
-    "Login": "Log In",
-    "LoginOr": "or",
-    "SignUp": "Sign Up"
-  },
   "ReduxFormUtils": {
     "errorInvalidEmail": "Please enter a valid email address",
     "errorEmptyEmail": "Please enter an email",
@@ -279,14 +271,6 @@
     "errorEmptyUsername": "Please enter a username.",
     "errorLongUsername": "Username must be less than 20 characters.",
     "errorValidUsername": "Username must only consist of numbers, letters, periods, dashes, and underscores."
-  },
-  "NewPasswordView": {
-    "Title": "p5.js Web Editor | New Password",
-    "Description": "Set a New Password",
-    "TokenInvalidOrExpired": "The password reset token is invalid or has expired.",
-    "EmptyPassword": "Please enter a password",
-    "PasswordConfirmation": "Please enter a password confirmation",
-    "PasswordMismatch": "Passwords must match"
   },
   "AccountForm": {
     "Email": "Email",
@@ -301,14 +285,6 @@
     "NewPassword": "New Password",
     "NewPasswordARIA": "New Password",
     "SubmitSaveAllSettings": "Save All Settings"
-  },
-  "AccountView": {
-    "SocialLogin": "Social Login",
-    "SocialLoginDescription": "Use your GitHub or Google account to log into the p5.js Web Editor.",
-    "Title": "p5.js Web Editor | Account Settings",
-    "Settings": "Account Settings",
-    "AccountTab": "Account",
-    "AccessTokensTab": "Access Tokens"
   },
   "APIKeyForm": {
     "ConfirmDelete": "Are you sure you want to delete {{key_label}}?",
@@ -347,21 +323,6 @@
     "ConfirmPassword": "Confirm Password",
     "ConfirmPasswordARIA": "Confirm password",
     "SubmitSignup": "Sign Up"
-  },
-  "SignupView": {
-    "Title": "p5.js Web Editor | Signup",
-    "Description": "Sign Up",
-    "Or": "Or",
-    "AlreadyHave": "Already have an account?",
-    "Login": "Log In"
-  },
-  "EmailVerificationView": {
-    "Title": "p5.js Web Editor | Email Verification",
-    "Verify": "Verify your email",
-    "InvalidTokenNull": "That link is invalid.",
-    "Checking": "Validating token, please wait...",
-    "Verified": "All done, your email address has been verified.",
-    "InvalidState": "Something went wrong."
   },
   "AssetList": {
     "Title": "p5.js Web Editor | My assets",
@@ -563,44 +524,9 @@
     "EditSketchARIA": "Edit Sketch",
     "ByUser": "by"
   },
-  "MobilePreferences": {
-    "Settings": "Settings",
-    "GeneralSettings": "General settings",
-    "Accessibility": "Accessibility",
-    "AccessibleOutput": "Accessible Output",
-    "Theme": "Theme",
-    "LightTheme": "Light",
-    "DarkTheme": "Dark",
-    "HighContrastTheme": "High Contrast",
-    "Autosave": "Autosave",
-    "WordWrap": "Word Wrap",
-    "LineNumbers": "Line numbers",
-    "LintWarningSound": "Lint warning sound",
-    "UsedScreenReader": "Used with screen reader",
-    "PlainText": "Plain-text",
-    "TableText": "Table-text",
-    "Sound": "Sound"
-  },
   "PreferenceCreators": {
     "On": "On",
     "Off": "Off"
-  },
-  "MobileIDEView": {
-    "Preferences": "Preferences",
-    "MyStuff": "My Stuff",
-    "Examples": "Examples",
-    "OriginalEditor": "Original Editor",
-    "Login": "Login",
-    "Logout": "Logout"
-  },
-  "MobileDashboardView": {
-    "Examples": "Examples",
-    "Sketches": "Sketches",
-    "Collections": "Collections",
-    "Assets": "Assets",
-    "MyStuff": "My Stuff",
-    "CreateSketch": "Create Sketch",
-    "CreateCollection": "Create Collection"
   },
   "Explorer": {
     "Files": "Files"

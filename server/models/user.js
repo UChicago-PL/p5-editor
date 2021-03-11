@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt-nodejs');
 const EmailConfirmationStates = {
   Verified: 'verified',
   Sent: 'sent',
-  Resent: 'resent',
+  Resent: 'resent'
 };
 
 const { Schema } = mongoose;
@@ -14,9 +14,9 @@ const apiKeySchema = new Schema(
   {
     label: { type: String, default: 'API Key' },
     lastUsedAt: { type: Date },
-    hashedKey: { type: String, required: true },
+    hashedKey: { type: String, required: true }
   },
-  { timestamps: true, _id: true },
+  { timestamps: true, _id: true }
 );
 
 apiKeySchema.virtual('id').get(function getApiKeyId() {
@@ -33,24 +33,24 @@ function apiKeyMetadata(doc, ret, options) {
     id: doc.id,
     label: doc.label,
     lastUsedAt: doc.lastUsedAt,
-    createdAt: doc.createdAt,
+    createdAt: doc.createdAt
   };
 }
 
 apiKeySchema.set('toObject', {
-  transform: apiKeyMetadata,
+  transform: apiKeyMetadata
 });
 
 apiKeySchema.set('toJSON', {
   virtuals: true,
-  transform: apiKeyMetadata,
+  transform: apiKeyMetadata
 });
 
 const userSchema = new Schema(
   {
     apiKeys: { type: [apiKeySchema] },
-    email: { type: String, unique: true },
-    github: { type: String },
+    email: { type: String },
+    github: { type: String, unique: true },
     githubToken: { type: String },
     google: { type: String },
     name: { type: String, default: '' },
@@ -69,7 +69,7 @@ const userSchema = new Schema(
       lintWarning: { type: Boolean, default: false },
       soundOutput: { type: Boolean, default: false },
       textOutput: { type: Boolean, default: false },
-      theme: { type: String, default: 'light' },
+      theme: { type: String, default: 'light' }
     },
     resetPasswordExpires: Date,
     resetPasswordToken: String,
@@ -77,9 +77,9 @@ const userSchema = new Schema(
     username: { type: String, required: true, unique: true },
     verified: { type: String },
     verifiedToken: String,
-    verifiedTokenExpires: Date,
+    verifiedTokenExpires: Date
   },
-  { timestamps: true, usePushEach: true },
+  { timestamps: true, usePushEach: true }
 );
 
 /**
@@ -142,7 +142,7 @@ userSchema.virtual('id').get(function idToString() {
 });
 
 userSchema.set('toJSON', {
-  virtuals: true,
+  virtuals: true
 });
 
 /**
@@ -181,11 +181,11 @@ userSchema.statics.findByEmail = function findByEmail(email, cb) {
   let query;
   if (Array.isArray(email)) {
     query = {
-      email: { $in: email },
+      email: { $in: email }
     };
   } else {
     query = {
-      email,
+      email
     };
   }
   // Email addresses should be case-insensitive unique
@@ -205,7 +205,7 @@ userSchema.statics.findByEmail = function findByEmail(email, cb) {
  */
 userSchema.statics.findByUsername = function findByUsername(username, options, cb) {
   const query = {
-    username,
+    username
   };
   if (
     (arguments.length === 3 && options.caseInsensitive) ||
@@ -266,7 +266,7 @@ userSchema.statics.findByEmailOrUsername = function findByEmailOrUsername(value,
  */
 userSchema.statics.findByEmailAndUsername = function findByEmailAndUsername(email, username, cb) {
   const query = {
-    $or: [{ email }, { username }],
+    $or: [{ email }, { username }]
   };
   return this.findOne(query).collation({ locale: 'en', strength: 2 }).exec(cb);
 };

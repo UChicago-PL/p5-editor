@@ -7,8 +7,6 @@ import { withTranslation } from 'react-i18next';
 import Button from '../../../common/Button';
 import Nav from '../../../components/Nav';
 import Overlay from '../../App/components/Overlay';
-import AssetList from '../../IDE/components/AssetList';
-import AssetSize from '../../IDE/components/AssetSize';
 import CollectionList from '../../IDE/components/CollectionList';
 import SketchList from '../../IDE/components/SketchList';
 import { CollectionSearchbar, SketchSearchbar } from '../../IDE/components/Searchbar';
@@ -74,8 +72,6 @@ class DashboardView extends React.Component {
 
   renderActionButton(tabKey, username, t) {
     switch (tabKey) {
-      case TabKey.assets:
-        return this.isOwner() && <AssetSize />;
       case TabKey.collections:
         return (
           this.isOwner() && (
@@ -98,8 +94,6 @@ class DashboardView extends React.Component {
 
   renderContent(tabKey, username) {
     switch (tabKey) {
-      case TabKey.assets:
-        return <AssetList key={username} username={username} />;
       case TabKey.collections:
         return <CollectionList key={username} username={username} />;
       case TabKey.sketches:
@@ -113,7 +107,9 @@ class DashboardView extends React.Component {
     const isOwner = this.isOwner();
     const { username } = this.props.params;
     const actions = this.renderActionButton(currentTab, username, this.props.t);
-
+    if (!isOwner) {
+      return <div>BROWSING OTHERS WORK IS NOT ALLOWED</div>;
+    }
     return (
       <div className="dashboard">
         <Nav layout="dashboard" />

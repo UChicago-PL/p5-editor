@@ -34,13 +34,6 @@ export function authenticateUser(user) {
   };
 }
 
-export function loginUserFailure(error) {
-  return {
-    type: ActionTypes.AUTH_ERROR,
-    error
-  };
-}
-
 export function setPreferences(preferences) {
   return {
     type: ActionTypes.SET_PREFERENCES,

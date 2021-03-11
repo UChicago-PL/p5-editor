@@ -287,6 +287,20 @@ class Nav extends React.PureComponent {
                 </button>
               </li>
             )}
+            <li className="nav__dropdown-item">
+              <button onClick={this.handleRun} onFocus={this.handleFocusForSketch} onBlur={this.handleBlur}>
+                {this.props.t('Nav.Sketch.Run')}
+                <span className="nav__keyboard-shortcut">{metaKeyName}+Enter</span>
+              </button>
+            </li>
+            <li className="nav__dropdown-item">
+              <button onClick={this.handleStop} onFocus={this.handleFocusForSketch} onBlur={this.handleBlur}>
+                {this.props.t('Nav.Sketch.Stop')}
+                <span className="nav__keyboard-shortcut">
+                  {'\u21E7'}+{metaKeyName}+Enter
+                </span>
+              </button>
+            </li>
             {this.props.project.id && this.props.user.authenticated && (
               <li className="nav__dropdown-item">
                 <button
@@ -295,13 +309,6 @@ class Nav extends React.PureComponent {
                   onBlur={this.handleBlur}
                 >
                   {this.props.t('Nav.File.Duplicate')}
-                </button>
-              </li>
-            )}
-            {this.props.project.id && (
-              <li className="nav__dropdown-item">
-                <button onClick={this.handleShare} onFocus={this.handleFocusForFile} onBlur={this.handleBlur}>
-                  {this.props.t('Nav.File.Share')}
                 </button>
               </li>
             )}
@@ -325,30 +332,6 @@ class Nav extends React.PureComponent {
                   onClick={this.setDropdownForNone}
                 >
                   {this.props.t('Nav.File.Open')}
-                </Link>
-              </li>
-            )}
-            {/* {getConfig('UI_COLLECTIONS_ENABLED') && this.props.user.authenticated && this.props.project.id && (
-              <li className="nav__dropdown-item">
-                <Link
-                  to={`/${this.props.user.username}/sketches/${this.props.project.id}/add-to-collection`}
-                  onFocus={this.handleFocusForFile}
-                  onBlur={this.handleBlur}
-                  onClick={this.setDropdownForNone}
-                >
-                  {this.props.t('Nav.File.AddToCollection')}
-                </Link>
-              </li>
-            )} */}
-            {getConfig('EXAMPLES_ENABLED') && (
-              <li className="nav__dropdown-item">
-                <Link
-                  to="/p5/sketches"
-                  onFocus={this.handleFocusForFile}
-                  onBlur={this.handleBlur}
-                  onClick={this.setDropdownForNone}
-                >
-                  {this.props.t('Nav.File.Examples')}
                 </Link>
               </li>
             )}
@@ -418,75 +401,7 @@ class Nav extends React.PureComponent {
             </li>
           </ul>
         </li>
-        <li className={navDropdownState.sketch}>
-          <button
-            onClick={this.toggleDropdownForSketch}
-            onBlur={this.handleBlur}
-            onFocus={this.clearHideTimeout}
-            onMouseOver={() => {
-              if (this.state.dropdownOpen !== 'none') {
-                this.setDropdown('sketch');
-              }
-            }}
-          >
-            <span className="nav__item-header">{this.props.t('Nav.Sketch.Title')}</span>
-            <TriangleIcon className="nav__item-header-triangle" focusable="false" aria-hidden="true" />
-          </button>
-          <ul className="nav__dropdown">
-            <li className="nav__dropdown-item">
-              <button
-                onClick={this.handleAddFile}
-                onFocus={this.handleFocusForSketch}
-                onBlur={this.handleBlur}
-              >
-                {this.props.t('Nav.Sketch.AddFile')}
-              </button>
-            </li>
-            <li className="nav__dropdown-item">
-              <button
-                onClick={this.handleAddFolder}
-                onFocus={this.handleFocusForSketch}
-                onBlur={this.handleBlur}
-              >
-                {this.props.t('Nav.Sketch.AddFolder')}
-              </button>
-            </li>
-            <li className="nav__dropdown-item">
-              <button onClick={this.handleRun} onFocus={this.handleFocusForSketch} onBlur={this.handleBlur}>
-                {this.props.t('Nav.Sketch.Run')}
-                <span className="nav__keyboard-shortcut">{metaKeyName}+Enter</span>
-              </button>
-            </li>
-            <li className="nav__dropdown-item">
-              <button onClick={this.handleStop} onFocus={this.handleFocusForSketch} onBlur={this.handleBlur}>
-                {this.props.t('Nav.Sketch.Stop')}
-                <span className="nav__keyboard-shortcut">
-                  {'\u21E7'}+{metaKeyName}+Enter
-                </span>
-              </button>
-            </li>
-            {/* <li className="nav__dropdown-item">
-              <button
-                onClick={this.handleStartAccessible}
-                onFocus={this.handleFocusForSketch}
-                onBlur={this.handleBlur}
-              >
-                Start Accessible
-                <span className="nav__keyboard-shortcut">{'\u21E7'}+{metaKeyName}+1</span>
-              </button>
-            </li>
-            <li className="nav__dropdown-item">
-              <button
-                onClick={this.handleStopAccessible}
-                onFocus={this.handleFocusForSketch}
-                onBlur={this.handleBlur}
-              >
-                Stop Accessible
-                <span className="nav__keyboard-shortcut">{'\u21E7'}+{metaKeyName}+2</span>
-              </button>
-            </li> */}
-          </ul>
-        </li>
+
         <li className={navDropdownState.help}>
           <button
             onClick={this.toggleDropdownForHelp}
@@ -522,16 +437,6 @@ class Nav extends React.PureComponent {
               >
                 {this.props.t('Nav.Help.Reference')}
               </a>
-            </li>
-            <li className="nav__dropdown-item">
-              <Link
-                to="/about"
-                onFocus={this.handleFocusForHelp}
-                onBlur={this.handleBlur}
-                onClick={this.setDropdownForNone}
-              >
-                {this.props.t('Nav.Help.About')}
-              </Link>
             </li>
           </ul>
         </li>
@@ -634,38 +539,6 @@ class Nav extends React.PureComponent {
                 {this.props.t('Nav.Auth.MySketches')}
               </Link>
             </li>
-            {/* {getConfig('UI_COLLECTIONS_ENABLED') && (
-              <li className="nav__dropdown-item">
-                <Link
-                  to={`/${this.props.user.username}/collections`}
-                  onFocus={this.handleFocusForAccount}
-                  onBlur={this.handleBlur}
-                  onClick={this.setDropdownForNone}
-                >
-                  {this.props.t('Nav.Auth.MyCollections')}
-                </Link>
-              </li>
-            )} */}
-            {/* <li className="nav__dropdown-item">
-              <Link
-                to={`/${this.props.user.username}/assets`}
-                onFocus={this.handleFocusForAccount}
-                onBlur={this.handleBlur}
-                onClick={this.setDropdownForNone}
-              >
-                {this.props.t('Nav.Auth.MyAssets')}
-              </Link>
-            </li> */}
-            {/* <li className="nav__dropdown-item">
-              <Link
-                to="/account"
-                onFocus={this.handleFocusForAccount}
-                onBlur={this.handleBlur}
-                onClick={this.setDropdownForNone}
-              >
-                {this.props.t('Preferences.Settings')}
-              </Link>
-            </li> */}
             <li className="nav__dropdown-item">
               <button
                 onClick={this.handleLogout}
