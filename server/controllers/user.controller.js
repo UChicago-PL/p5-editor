@@ -508,8 +508,8 @@ export function submitGHRepo(req, res) {
         });
       })
       .catch((err) => {
-        console.log('failed', err);
-        res.status(300);
+        console.log('pr creation fail', err);
+        res.json({ success: false, err: err.message }).status(300);
       });
   });
 }

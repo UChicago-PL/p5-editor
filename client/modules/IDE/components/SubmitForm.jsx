@@ -23,17 +23,20 @@ function SubmitForm(props) {
   function onSubmit(formProps) {
     const repo = repos.find(({ urlName }) => urlName === formProps.repo);
     console.log({ repo });
-    // TODO add crash state
-    return dispatch(submitToGH({ repo, project })).then((result) => {
-      setSubmitState(result.data);
-    });
+    return dispatch(submitToGH({ repo, project }))
+      .then((result) => {
+        console.log('???', result);
+        setSubmitState(result.data);
+      })
+      .catch((e) => {
+        console.log('eggs??', e);
+      });
   }
 
   return (
     <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
         const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
-        const currRepo = repos.find(({ urlName }) => urlName === values.repo);
         return (
           <form className="submit-repo-form" onSubmit={handleSubmit}>
             <div className="submit-repo-form__input-wrapper flex-down">
@@ -52,29 +55,6 @@ function SubmitForm(props) {
                 </Field>
               </div>
               {touched.repo && errors.repo && <span className="form-error">{errors.repo}</span>}
-              {/* maybe gonna use this for adding pr comments */}
-              {/* {false && (
-                <div>
-                  <Field name="name">
-                    {(field) => (
-                      <React.Fragment>
-                        <label className="new-folder-form__name-label" htmlFor="name">
-                          Name:
-                        </label>
-                        <input
-                          className="new-folder-form__name-input"
-                          id="name"
-                          type="text"
-                          maxLength="128"
-                          placeholder="SPECIFY NAME OF WHATEVER"
-                          {...field.input}
-                        />
-                      </React.Fragment>
-                    )}
-                  </Field>
-                  {touched.name && errors.name && <span className="form-error">{errors.name}</span>}
-                </div>
-              )} */}
               <Button type="submit" disabled={invalid || submitting}>
                 Submit
               </Button>
@@ -94,7 +74,9 @@ function SubmitForm(props) {
                 </div>
               )}
               {!submitting && submitState && !submitState.success && (
-                <div>Failure! {JSON.stringify(submitState)}</div>
+                <div className="flex-down">
+                  <b>Failure!</b> <div>{JSON.stringify(submitState)}</div>
+                </div>
               )}
             </div>
           </form>
