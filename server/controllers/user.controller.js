@@ -519,7 +519,7 @@ export function getGHRepos(req, res) {
     res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
     return;
   }
-  Assignment.find({}, function (err, assignments) {
+  Assignment.find({}, (err, assignments) => {
     if (err) {
       console.log(err);
       res.status(300);

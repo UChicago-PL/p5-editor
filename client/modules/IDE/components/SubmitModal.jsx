@@ -60,7 +60,7 @@ class SubmitalModal extends React.Component {
           {!isAuthed && <div>You must be logged into to use this feature</div>}
           <br />
           <div>
-            If you are having difficulty submitting please ensure that you've accepted the assignment for
+            If you are having difficulty submitting please ensure that you have accepted the assignment for
             course <a href="https://www.google.com/">found here</a>
           </div>
         </div>

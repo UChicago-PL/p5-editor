@@ -29,14 +29,14 @@ function SubmitForm(props) {
         setSubmitState(result.data);
       })
       .catch((e) => {
-        console.log('eggs??', e);
+        console.log('submit error', e);
       });
   }
 
   return (
     <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
-        const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
+        const { handleSubmit, invalid, submitting, touched, errors } = formProps;
         return (
           <form className="submit-repo-form" onSubmit={handleSubmit}>
             <div className="submit-repo-form__input-wrapper flex-down">
