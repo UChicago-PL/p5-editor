@@ -35,7 +35,9 @@ function SubmitForm(props) {
   return (
     <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
-        const { handleSubmit, invalid, submitting, touched, errors } = formProps;
+        const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
+        const currRepo = repos.find(({ urlName }) => urlName === values.repo);
+        const currAssignmentDueDate = currRepo && currRepo.dueDate && new Date(currRepo.dueDate);
         return (
           <form className="submit-repo-form" onSubmit={handleSubmit}>
             <div className="submit-repo-form__input-wrapper flex-down">
@@ -54,6 +56,29 @@ function SubmitForm(props) {
                 </Field>
               </div>
               {touched.repo && errors.repo && <span className="form-error">{errors.repo}</span>}
+
+              <div className="flex-down">
+                {currRepo && currRepo.assignmentLink && (
+                  <div>
+                    <a href={currRepo.assignmentLink}>Click here</a>
+                    <span> for more info about this assignment</span>
+                  </div>
+                )}
+                {currAssignmentDueDate && currAssignmentDueDate.getTime() < new Date().getTime() && (
+                  <div style={{ color: 'red' }}>
+                    {`The due date ${currAssignmentDueDate.toString()} for this assignment is passed.`}
+                  </div>
+                )}
+                {currAssignmentDueDate && currAssignmentDueDate.getTime() > new Date().getTime() && (
+                  <div>{`This assignment is due at ${currAssignmentDueDate.toString()}.`}</div>
+                )}
+              </div>
+              <br />
+              <div>
+                If you are having difficulty submitting please ensure that you have accepted the assignment
+                for course <a href="https://www.google.com/">found here</a>
+              </div>
+              <br />
               <Button type="submit" disabled={invalid || submitting}>
                 Submit
               </Button>

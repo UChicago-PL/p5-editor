@@ -7,7 +7,8 @@ const assignmentSchema = new Schema(
     humanReadableName: { type: String },
     urlName: { type: String, unique: true },
     released: { type: Boolean },
-    dueDate: { type: Date }
+    dueDate: { type: Date },
+    assignmentLink: { type: String }
   },
   { timestamps: true, _id: true, usePushEach: true }
 );
