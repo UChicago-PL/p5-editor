@@ -60,7 +60,9 @@ function SubmitForm(props) {
               <div className="flex-down">
                 {currRepo && currRepo.assignmentLink && (
                   <div>
-                    <a href={currRepo.assignmentLink}>Click here</a>
+                    <a href={currRepo.assignmentLink} target="_blank" rel="noreferrer">
+                      Click here
+                    </a>
                     <span> for more info about this assignment</span>
                   </div>
                 )}
