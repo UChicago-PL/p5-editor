@@ -22,7 +22,6 @@ function SubmitForm(props) {
 
   function onSubmit(formProps) {
     const repo = repos.find(({ urlName }) => urlName === formProps.repo);
-    console.log({ repo });
     return dispatch(submitToGH({ repo, project }))
       .then((result) => {
         setSubmitState(result.data);
