@@ -86,18 +86,7 @@ export function getGHRepos() {
     dispatch({ type: ActionTypes.LOADING_GH_REPOS });
     apiClient
       .get('/gh-repos')
-      .then((response) => {
-        const classRepos = response.data
-          .filter((x) => x.fullName.includes('UChicago-PL/'))
-          .sort((a, b) => a.fullName.localeCompare(b.fullName));
-        const ownRepos = response.data
-          .filter((x) => !x.fullName.includes('UChicago-PL/'))
-          .sort((a, b) => a.fullName.localeCompare(b.fullName));
-        dispatch({
-          type: ActionTypes.RECEIVE_GH_REPOS,
-          payload: classRepos.concat(ownRepos)
-        });
-      })
+      .then(({ data }) => dispatch({ type: ActionTypes.RECEIVE_GH_REPOS, payload: data }))
       .catch((error) => {
         console.log('ERROR', error);
         dispatch({ type: ActionTypes.RECEIVE_GH_REPOS_ERROR });

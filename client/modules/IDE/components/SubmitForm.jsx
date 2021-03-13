@@ -15,102 +15,71 @@ function SubmitForm(props) {
   function validate(formProps) {
     const errors = {};
     if (!formProps.repo || formProps.repo.trim().length === 0) {
-      errors.repo = 'please select a repo';
-    }
-    if (formProps.toSubFolder.includes('yes')) {
-      if (!formProps.name) {
-        errors.name = 'NewFolderModal.EnterName';
-      } else if (formProps.name.trim().length === 0) {
-        errors.name = 'NewFolderModal.EmptyName';
-      } else if (formProps.name.match(/\.+/i)) {
-        errors.name = 'NewFolderModal.InvalidExtension';
-      }
+      errors.repo = 'please select an assignment';
     }
     return errors;
   }
 
   function onSubmit(formProps) {
-    return dispatch(
-      submitToGH({
-        ...formProps,
-        repo: repos.find(({ fullName }) => fullName === formProps.repo),
-        project
+    const repo = repos.find(({ urlName }) => urlName === formProps.repo);
+    return dispatch(submitToGH({ repo, project }))
+      .then((result) => {
+        setSubmitState(result.data);
       })
-    ).then((result) => {
-      setSubmitState(result.data);
-    });
+      .catch((e) => {
+        console.log('submit error', e);
+      });
   }
 
   return (
-    <Form
-      fields={['name', 'repo', 'toSubFolder']}
-      validate={validate}
-      onSubmit={onSubmit}
-      initialValues={{ toSubFolder: 'no' }}
-    >
+    <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
         const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
-        const currRepo = repos.find(({ fullName }) => fullName === values.repo);
-        const showNameInput = values.toSubFolder.includes('yes');
+        const currRepo = repos.find(({ urlName }) => urlName === values.repo);
+        const currAssignmentDueDate = currRepo && currRepo.dueDate && new Date(currRepo.dueDate);
         return (
           <form className="submit-repo-form" onSubmit={handleSubmit}>
             <div className="submit-repo-form__input-wrapper flex-down">
               <div className="flex-down">
-                <label htmlFor="repo">Target Repo</label>
                 <Field name="repo" component="select">
                   <option key="empty" />
-                  {repos.map((repo, idx) => (
-                    <option value={repo.fullName} key={repo.fullName}>
-                      {repo.fullName}
-                    </option>
-                  ))}
+                  {repos
+                    .filter((repo) => repo.released)
+                    .map((repo, idx) => {
+                      return (
+                        <option value={repo.urlName} key={repo.urlName}>
+                          {repo.humanReadableName}
+                        </option>
+                      );
+                    })}
                 </Field>
-                {currRepo && (
-                  <div>
-                    <a href={currRepo.link} target="_blank" rel="noreferrer">
-                      {currRepo.repoName}
-                    </a>{' '}
-                    <span>{' by '}</span>{' '}
-                    <a href={`https://github.com/${currRepo.ownerName}`} target="_blank" rel="noreferrer">
-                      {currRepo.ownerName}
-                    </a>
-                  </div>
-                )}
               </div>
               {touched.repo && errors.repo && <span className="form-error">{errors.repo}</span>}
-              <div>
-                <label htmlFor="toSubFolder">Send Pr to Subfolder</label>
-                <div className="flex">
-                  <label>
-                    <Field name="toSubFolder" component="input" type="radio" value="yes" /> Yes
-                  </label>
-                  <label>
-                    <Field name="toSubFolder" component="input" type="radio" value="no" /> No
-                  </label>
-                </div>
+
+              <div className="flex-down">
+                {currRepo && currRepo.assignmentLink && (
+                  <div>
+                    <a href={currRepo.assignmentLink} target="_blank" rel="noreferrer">
+                      Click here
+                    </a>
+                    <span> for more info about this assignment</span>
+                  </div>
+                )}
+                {currAssignmentDueDate && currAssignmentDueDate.getTime() < new Date().getTime() && (
+                  <div style={{ color: 'red' }}>
+                    {`The due date ${currAssignmentDueDate.toString()} for this assignment is passed.`}
+                  </div>
+                )}
+                {currAssignmentDueDate && currAssignmentDueDate.getTime() > new Date().getTime() && (
+                  <div>{`This assignment is due at ${currAssignmentDueDate.toString()}.`}</div>
+                )}
               </div>
-              {showNameInput && (
-                <div>
-                  <Field name="name">
-                    {(field) => (
-                      <React.Fragment>
-                        <label className="new-folder-form__name-label" htmlFor="name">
-                          Name:
-                        </label>
-                        <input
-                          className="new-folder-form__name-input"
-                          id="name"
-                          type="text"
-                          maxLength="128"
-                          placeholder="SPECIFY NAME OF WHATEVER"
-                          {...field.input}
-                        />
-                      </React.Fragment>
-                    )}
-                  </Field>
-                  {touched.name && errors.name && <span className="form-error">{errors.name}</span>}
-                </div>
-              )}
+              <br />
+              <div>
+                If you are having difficulty submitting please ensure that you have accepted the assignment
+                for course <a href="https://www.google.com/">found here</a>
+              </div>
+              <br />
               <Button type="submit" disabled={invalid || submitting}>
                 Submit
               </Button>
@@ -130,7 +99,9 @@ function SubmitForm(props) {
                 </div>
               )}
               {!submitting && submitState && !submitState.success && (
-                <div>Failure! {JSON.stringify(submitState)}</div>
+                <div className="flex-down">
+                  <b>Failure!</b> <div>{JSON.stringify(submitState)}</div>
+                </div>
               )}
             </div>
           </form>

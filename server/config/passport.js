@@ -92,7 +92,6 @@ passport.use(
                   (findByUsernameErr, existingUsernameUser) => {
                     const user = new User();
                     user.email = primaryEmail;
-                    console.log('email problem', primaryEmail);
                     user.github = profile.username;
                     user.username = profile.username;
                     user.githubToken = accessToken;
