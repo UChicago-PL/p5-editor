@@ -16,7 +16,6 @@ function LoadInitialCodeRedirect({ store, code }) {
         console.log('error', e);
         parsedCode = decodedCode;
       }
-      console.log('here', typeof parsedCode, parsedCode);
       if (typeof parsedCode === 'string') {
         const scriptFile = store.getState().files.find((file) => file.name === 'sketch.js');
 
