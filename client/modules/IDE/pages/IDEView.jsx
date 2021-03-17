@@ -201,8 +201,6 @@ class IDEView extends React.Component {
     } else if (e.keyCode === 27) {
       if (this.props.ide.newFolderModalVisible) {
         this.props.closeNewFolderModal();
-      } else if (this.props.ide.uploadFileModalVisible) {
-        this.props.closeUploadFileModal();
       } else if (this.props.ide.modalIsVisible) {
         this.props.closeNewFileModal();
       } else if (this.props.ide.submitModalVisible) {
@@ -283,8 +281,6 @@ class IDEView extends React.Component {
               newFolder={this.props.newFolder}
               user={this.props.user}
               owner={this.props.project.owner}
-              openUploadFileModal={this.props.openUploadFileModal}
-              closeUploadFileModal={this.props.closeUploadFileModal}
             />
             <SplitPane
               split="vertical"
@@ -350,9 +346,6 @@ class IDEView extends React.Component {
           />
         )}
         {this.props.ide.submitModalVisible && <SubmitModal />}
-        {this.props.ide.uploadFileModalVisible && (
-          <UploadFileModal closeModal={this.props.closeUploadFileModal} />
-        )}
         {this.props.location.pathname === '/about' && (
           <Overlay
             title={this.props.t('About.Title')}
@@ -433,7 +426,6 @@ IDEView.propTypes = {
   closeProjectOptions: PropTypes.func.isRequired,
   closeShareModal: PropTypes.func.isRequired,
   closeSubmitModal: PropTypes.func.isRequired,
-  closeUploadFileModal: PropTypes.func.isRequired,
   collapseConsole: PropTypes.func.isRequired,
   collapseSidebar: PropTypes.func.isRequired,
   createFolder: PropTypes.func.isRequired,
@@ -483,7 +475,6 @@ IDEView.propTypes = {
   newFile: PropTypes.func.isRequired,
   newFolder: PropTypes.func.isRequired,
   openProjectOptions: PropTypes.func.isRequired,
-  openUploadFileModal: PropTypes.func.isRequired,
   params: PropTypes.shape({
     project_id: PropTypes.string,
     username: PropTypes.string,
