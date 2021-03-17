@@ -116,7 +116,8 @@ class Sidebar extends React.Component {
                   {this.props.t('Sidebar.AddFile')}
                 </button>
               </li>
-              {this.props.user.authenticated && (
+              {/* uploads are disabled */}
+              {/* {this.props.user.authenticated && (
                 <li>
                   <button
                     aria-label={this.props.t('Sidebar.UploadFileARIA')}
@@ -130,7 +131,7 @@ class Sidebar extends React.Component {
                     {this.props.t('Sidebar.UploadFile')}
                   </button>
                 </li>
-              )}
+              )} */}
             </ul>
           </div>
         </header>
