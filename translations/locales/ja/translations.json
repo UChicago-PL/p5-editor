@@ -298,14 +298,6 @@
     "NewTokenInfo": "新しいパーソナルアクセストークンをコピーしてください。\n                  トークンをもう1度と見ることはできません!",
     "ExistingTokensTitle": "既存のトークン"
   },
-  "APIKeyList": {
-    "Name": "名前",
-    "Created": "作成日時",
-    "LastUsed": "最後に使用した日時",
-    "Actions": "アクション",
-    "Never": "一度も使用されていません",
-    "DeleteARIA": "APIキーを削除"
-  },
   "NewPasswordForm": {
     "Title": "パスワード",
     "TitleARIA": "パスワード",
@@ -366,12 +358,6 @@
     "SavedDifferentWindow": "保存しようとしたプロジェクトが別のウィンドウから保存されました。\n        最新版をご覧になるにはページを更新してください。",
     "LinkTitle": "アカウント接続エラー",
     "LinkMessage": "あなたの {{serviceauth}} アカウントとp5.js Web Editorアカウントの接続に問題がありました。 あなたの {{serviceauth}} アカウントは、すでに別のp5.js Web Editorアカウントに接続されています。"
-  },
-  "ShareModal": {
-    "Embed": "埋め込み",
-    "Present": "プレゼンモード",
-    "Fullscreen": "フルスクリーン",
-    "Edit": "共同編集"
   },
   "CollectionView": {
     "TitleCreate": "コレクション作成",
@@ -510,10 +496,6 @@
   "AddRemoveButton": {
     "AltAddARIA": "コレクションへ追加",
     "AltRemoveARIA": "コレクションから削除"
-  },
-  "CopyableInput": {
-    "CopiedARIA": "クリップボードへコピーしました！",
-    "OpenViewTabARIA": "新しいタブで {{label}} ビューを開く"
   },
   "EditableInput": {
     "EditValue": "{{display}} 値を編集",

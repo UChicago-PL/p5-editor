@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -7,8 +7,6 @@ import { bindActionCreators } from 'redux';
 import { withTranslation } from 'react-i18next';
 import classNames from 'classnames';
 
-import Button from '../../../common/Button';
-import { DropdownArrowIcon } from '../../../common/icons';
 import * as ProjectActions from '../../IDE/actions/project';
 import * as ProjectsActions from '../../IDE/actions/projects';
 import * as CollectionsActions from '../../IDE/actions/collections';
@@ -20,55 +18,12 @@ import Loader from '../../App/components/loader';
 import EditableInput from '../../IDE/components/EditableInput';
 import Overlay from '../../App/components/Overlay';
 import AddToCollectionSketchList from '../../IDE/components/AddToCollectionSketchList';
-import CopyableInput from '../../IDE/components/CopyableInput';
 import { SketchSearchbar } from '../../IDE/components/Searchbar';
 import dates from '../../../utils/formatDate';
 
 import ArrowUpIcon from '../../../images/sort-arrow-up.svg';
 import ArrowDownIcon from '../../../images/sort-arrow-down.svg';
 import RemoveIcon from '../../../images/close.svg';
-
-const ShareURL = ({ value, t }) => {
-  const [showURL, setShowURL] = useState(false);
-  const node = useRef();
-
-  const handleClickOutside = (e) => {
-    if (node.current.contains(e.target)) {
-      return;
-    }
-    setShowURL(false);
-  };
-
-  useEffect(() => {
-    if (showURL) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showURL]);
-
-  return (
-    <div className="collection-share" ref={node}>
-      <Button onClick={() => setShowURL(!showURL)} iconAfter={<DropdownArrowIcon />}>
-        {t('Collection.Share')}
-      </Button>
-      {showURL && (
-        <div className="collection__share-dropdown">
-          <CopyableInput value={value} label={t('Collection.URLLink')} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-ShareURL.propTypes = {
-  value: PropTypes.string.isRequired,
-  t: PropTypes.func.isRequired
-};
 
 const CollectionItemRowBase = ({ collection, item, isOwner, removeFromCollection, t }) => {
   const projectIsDeleted = item.isDeleted;
@@ -203,8 +158,6 @@ class Collection extends React.Component {
     const hostname = window.location.origin;
     const { username } = this.props;
 
-    const baseURL = `${hostname}/${username}/collections/`;
-
     const handleEditCollectionName = (value) => {
       if (value === name) {
         return;
@@ -220,17 +173,6 @@ class Collection extends React.Component {
 
       this.props.editCollection(id, { description: value });
     };
-
-    //
-    // TODO: Implement UI for editing slug
-    //
-    // const handleEditCollectionSlug = (value) => {
-    //   if (value === slug) {
-    //     return;
-    //   }
-    //
-    //   this.props.editCollection(id, { slug: value });
-    // };
 
     return (
       <header className={`collection-metadata ${this.isOwner() ? 'collection-metadata--is-owner' : ''}`}>
@@ -269,15 +211,6 @@ class Collection extends React.Component {
             <p className="collection-metadata__user">
               {this.props.t('Collection.NumSketches', { count: items.length })}
             </p>
-          </div>
-
-          <div className="collection-metadata__column--right">
-            <p className="collection-metadata__share">
-              <ShareURL value={`${baseURL}${id}`} t={this.props.t} />
-            </p>
-            {this.isOwner() && (
-              <Button onClick={this.showAddSketches}>{this.props.t('Collection.AddSketch')}</Button>
-            )}
           </div>
         </div>
       </header>

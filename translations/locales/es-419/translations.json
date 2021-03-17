@@ -298,14 +298,6 @@
     "NewTokenInfo": "Asegurate de copiar tu token ahora mismo.\n ¡No podras verlo de nuevo!",
     "ExistingTokensTitle": "Tokens existentes"
   },
-  "APIKeyList": {
-    "Name": "Nombre",
-    "Created": "Creado en",
-    "LastUsed": "Usado por última vez",
-    "Actions": "Acciones",
-    "Never": "Nunca",
-    "DeleteARIA": "Borrar clave de API"
-  },
   "NewPasswordForm": {
     "Title": "Contraseña",
     "TitleARIA": "Contraseña",
@@ -366,12 +358,6 @@
     "SavedDifferentWindow": " El proyecto que has intentado guardar ha sido guardado desde otra ventana.\n  Por favor refresca la página para ver la versión más actual.",
     "LinkTitle": "Error Vinculando Cuenta",
     "LinkMessage": "Hubo un problema vinculando tu cuenta de {{serviceauth}} con tu cuenta del Editor Web p5.js. Tu cuenta de {{serviceauth}} había sido vinculada previamente con otra cuenta del Editor Web p5.js."
-  },
-  "ShareModal": {
-    "Embed": "Incrustar",
-    "Present": "Presentar",
-    "Fullscreen": "Pantalla Completa",
-    "Edit": "Editar"
   },
   "CollectionView": {
     "TitleCreate": "Crear colección",
@@ -510,10 +496,6 @@
   "AddRemoveButton": {
     "AltAddARIA": "Agregar a colección",
     "AltRemoveARIA": "Remover de colección"
-  },
-  "CopyableInput": {
-    "CopiedARIA": "¡Copiado en el portapapeles!",
-    "OpenViewTabARIA": "Abrir la vista {{label}} en nueva pestaña"
   },
   "EditableInput": {
     "EditValue": "Editar valor de {{display}}",

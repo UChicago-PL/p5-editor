@@ -10,10 +10,6 @@ const initialState = {
   projectOptionsVisible: false,
   newFolderModalVisible: false,
   uploadFileModalVisible: false,
-  shareModalVisible: false,
-  shareModalProjectId: 'abcd',
-  shareModalProjectName: 'My Cute Sketch',
-  shareModalProjectUsername: 'p5_user',
   submitModalVisible: false,
   editorOptionsVisible: false,
   keyboardShortcutVisible: false,
@@ -74,15 +70,6 @@ const ide = (state = initialState, action) => {
       });
     case ActionTypes.CLOSE_NEW_FOLDER_MODAL:
       return Object.assign({}, state, { newFolderModalVisible: false });
-    case ActionTypes.SHOW_SHARE_MODAL:
-      return Object.assign({}, state, {
-        shareModalVisible: true,
-        shareModalProjectId: action.payload.shareModalProjectId,
-        shareModalProjectName: action.payload.shareModalProjectName,
-        shareModalProjectUsername: action.payload.shareModalProjectUsername
-      });
-    case ActionTypes.CLOSE_SHARE_MODAL:
-      return Object.assign({}, state, { shareModalVisible: false });
     case ActionTypes.SHOW_EDITOR_OPTIONS:
       return Object.assign({}, state, { editorOptionsVisible: true });
     case ActionTypes.CLOSE_EDITOR_OPTIONS:

@@ -150,26 +150,6 @@ export function closeNewFolderModal() {
   };
 }
 
-export function showShareModal(projectId, projectName, ownerUsername) {
-  return (dispatch, getState) => {
-    const { project, user } = getState();
-    dispatch({
-      type: ActionTypes.SHOW_SHARE_MODAL,
-      payload: {
-        shareModalProjectId: projectId || project.id,
-        shareModalProjectName: projectName || project.name,
-        shareModalProjectUsername: ownerUsername || user.username
-      }
-    });
-  };
-}
-
-export function closeShareModal() {
-  return {
-    type: ActionTypes.CLOSE_SHARE_MODAL
-  };
-}
-
 export function showEditorOptions() {
   return {
     type: ActionTypes.SHOW_EDITOR_OPTIONS

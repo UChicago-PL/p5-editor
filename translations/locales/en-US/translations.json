@@ -298,14 +298,6 @@
     "NewTokenInfo": "Make sure to copy your new personal access token now.\n                  You won’t be able to see it again!",
     "ExistingTokensTitle": "Existing tokens"
   },
-  "APIKeyList": {
-    "Name": "Name",
-    "Created": "Created on",
-    "LastUsed": "Last used",
-    "Actions": "Actions",
-    "Never": "Never",
-    "DeleteARIA": "Delete API Key"
-  },
   "NewPasswordForm": {
     "Title": "Password",
     "TitleARIA": "Password",
@@ -366,12 +358,6 @@
     "SavedDifferentWindow": "The project you have attempted to save has been saved from another window.\n        Please refresh the page to see the latest version.",
     "LinkTitle": "Error Linking Account",
     "LinkMessage": "There was a problem linking your {{serviceauth}} account to your p5.js Web Editor account. Make sure that you are using a Github account that has been given permission to access this site."
-  },
-  "ShareModal": {
-    "Embed": "Embed",
-    "Present": "Present",
-    "Fullscreen": "Fullscreen",
-    "Edit": "Edit"
   },
   "CollectionView": {
     "TitleCreate": "Create collection",
@@ -511,10 +497,6 @@
   "AddRemoveButton": {
     "AltAddARIA": "Add to collection",
     "AltRemoveARIA": "Remove from collection"
-  },
-  "CopyableInput": {
-    "CopiedARIA": "Copied to Clipboard!",
-    "OpenViewTabARIA": "Open {{label}} view in new tab"
   },
   "EditableInput": {
     "EditValue": "Edit {{display}} value",

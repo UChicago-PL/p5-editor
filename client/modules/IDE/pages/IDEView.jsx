@@ -14,7 +14,6 @@ import Preferences from '../components/Preferences/index';
 import NewFileModal from '../components/NewFileModal';
 import NewFolderModal from '../components/NewFolderModal';
 import UploadFileModal from '../components/UploadFileModal';
-import ShareModal from '../components/ShareModal';
 import SubmitModal from '../components/SubmitModal';
 import KeyboardShortcutModal from '../components/KeyboardShortcutModal';
 import ErrorModal from '../components/ErrorModal';
@@ -386,19 +385,6 @@ class IDEView extends React.Component {
             />
           </Overlay>
         )}
-        {this.props.ide.shareModalVisible && (
-          <Overlay
-            title={this.props.t('IDEView.ShareTitle')}
-            ariaLabel={this.props.t('IDEView.ShareARIA')}
-            closeOverlay={this.props.closeShareModal}
-          >
-            <ShareModal
-              projectId={this.props.ide.shareModalProjectId}
-              projectName={this.props.ide.shareModalProjectName}
-              ownerUsername={this.props.ide.shareModalProjectUsername}
-            />
-          </Overlay>
-        )}
         {this.props.ide.keyboardShortcutVisible && (
           <Overlay
             title={this.props.t('KeyboardShortcuts.Title')}
@@ -431,7 +417,6 @@ IDEView.propTypes = {
   closeNewFolderModal: PropTypes.func.isRequired,
   closePreferences: PropTypes.func.isRequired,
   closeProjectOptions: PropTypes.func.isRequired,
-  closeShareModal: PropTypes.func.isRequired,
   closeSubmitModal: PropTypes.func.isRequired,
   closeUploadFileModal: PropTypes.func.isRequired,
   collapseConsole: PropTypes.func.isRequired,
@@ -469,10 +454,6 @@ IDEView.propTypes = {
     previewIsRefreshing: PropTypes.bool.isRequired,
     previousPath: PropTypes.string.isRequired,
     projectOptionsVisible: PropTypes.bool.isRequired,
-    shareModalProjectId: PropTypes.string.isRequired,
-    shareModalProjectName: PropTypes.string.isRequired,
-    shareModalProjectUsername: PropTypes.string.isRequired,
-    shareModalVisible: PropTypes.bool.isRequired,
     sidebarIsExpanded: PropTypes.bool.isRequired,
     submitModalVisible: PropTypes.bool.isRequired,
     unsavedChanges: PropTypes.bool.isRequired,
