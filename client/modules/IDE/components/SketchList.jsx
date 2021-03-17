@@ -144,11 +144,6 @@ class SketchListRowBase extends React.Component {
     this.props.cloneProject(this.props.sketch);
   };
 
-  handleSketchShare = () => {
-    this.closeAll();
-    this.props.showShareModal(this.props.sketch.id, this.props.sketch.name, this.props.username);
-  };
-
   handleSketchDelete = () => {
     this.closeAll();
     if (window.confirm(this.props.t('Common.DeleteConfirmation', { name: this.props.sketch.name }))) {
@@ -228,16 +223,6 @@ class SketchListRowBase extends React.Component {
                 </button>
               </li>
             )}
-            {/* <li>
-              <button
-                className="sketch-list__action-option"
-                onClick={this.handleSketchShare}
-                onBlur={this.onBlurComponent}
-                onFocus={this.onFocusComponent}
-              >
-                Share
-              </button>
-            </li> */}
             {userIsOwner && (
               <li>
                 <button
@@ -312,7 +297,6 @@ SketchListRowBase.propTypes = {
     authenticated: PropTypes.bool.isRequired
   }).isRequired,
   deleteProject: PropTypes.func.isRequired,
-  showShareModal: PropTypes.func.isRequired,
   cloneProject: PropTypes.func.isRequired,
   exportProjectAsZip: PropTypes.func.isRequired,
   changeProjectName: PropTypes.func.isRequired,

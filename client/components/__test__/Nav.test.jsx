@@ -25,7 +25,6 @@ describe('Nav', () => {
     logoutUser: jest.fn(),
     newFile: jest.fn(),
     newFolder: jest.fn(),
-    showShareModal: jest.fn(),
     showErrorModal: jest.fn(),
     unsavedChanges: false,
     warnIfUnsavedChanges: jest.fn(),

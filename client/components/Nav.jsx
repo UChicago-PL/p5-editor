@@ -36,7 +36,6 @@ class Nav extends React.PureComponent {
     this.handleSave = this.handleSave.bind(this);
     this.handleNew = this.handleNew.bind(this);
     this.handleDuplicate = this.handleDuplicate.bind(this);
-    this.handleShare = this.handleShare.bind(this);
     this.handleDownload = this.handleDownload.bind(this);
     this.handleFind = this.handleFind.bind(this);
     this.handleAddFile = this.handleAddFile.bind(this);
@@ -193,12 +192,6 @@ class Nav extends React.PureComponent {
 
   handleDuplicate() {
     this.props.cloneProject();
-    this.setDropdown('none');
-  }
-
-  handleShare() {
-    const { username } = this.props.params;
-    this.props.showShareModal(this.props.project.id, this.props.project.name, username);
     this.setDropdown('none');
   }
 
@@ -642,7 +635,6 @@ Nav.propTypes = {
     })
   }),
   logoutUser: PropTypes.func.isRequired,
-  showShareModal: PropTypes.func.isRequired,
   unsavedChanges: PropTypes.bool.isRequired,
   warnIfUnsavedChanges: PropTypes.func,
   showKeyboardShortcutModal: PropTypes.func.isRequired,
