@@ -13,7 +13,6 @@ import Toolbar from '../components/Toolbar';
 import Preferences from '../components/Preferences/index';
 import NewFileModal from '../components/NewFileModal';
 import NewFolderModal from '../components/NewFolderModal';
-import UploadFileModal from '../components/UploadFileModal';
 import ShareModal from '../components/ShareModal';
 import SubmitModal from '../components/SubmitModal';
 import KeyboardShortcutModal from '../components/KeyboardShortcutModal';
@@ -467,8 +466,7 @@ IDEView.propTypes = {
     shareModalVisible: PropTypes.bool.isRequired,
     sidebarIsExpanded: PropTypes.bool.isRequired,
     submitModalVisible: PropTypes.bool.isRequired,
-    unsavedChanges: PropTypes.bool.isRequired,
-    uploadFileModalVisible: PropTypes.bool.isRequired
+    unsavedChanges: PropTypes.bool.isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,

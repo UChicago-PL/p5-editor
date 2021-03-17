@@ -348,11 +348,6 @@
     "SearchCollection": "コレクションを検索...",
     "ClearTerm": "clear"
   },
-  "UploadFileModal": {
-    "Title": "アップロードファイル",
-    "CloseButtonARIA": "アップロードファイルモーダルを閉じる",
-    "SizeLimitError": "エラー: これ以上ファイルをアップロードすることはできません。{{sizeLimit}}の合計サイズの上限に達しました。\n                もっとアップロードしたい場合は、もう使っていないものを削除してください。 "
-  },
   "FileUploader": {
     "DictDefaultMessage": "ここにファイルをドロップするか、クリックしてファイルブラウザを使用してください"
   },
