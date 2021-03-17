@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -157,8 +157,6 @@ class Collection extends React.Component {
 
     const hostname = window.location.origin;
     const { username } = this.props;
-
-    const baseURL = `${hostname}/${username}/collections/`;
 
     const handleEditCollectionName = (value) => {
       if (value === name) {
