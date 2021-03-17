@@ -287,7 +287,16 @@ export function downloadProjectAsZip(req, res) {
 }
 
 export function createLogItem(props) {
-  const { logType, projectId, projectFiles, projectName, userAgent, timestamp, username, callback = () => {} } = props;
+  const {
+    logType,
+    projectId,
+    projectFiles,
+    projectName,
+    userAgent,
+    timestamp,
+    username,
+    callback = () => {}
+  } = props;
 
   LogItem.create(
     {
@@ -299,9 +308,8 @@ export function createLogItem(props) {
         projectName,
         files: projectFiles
       },
-      // https://mongoosejs.com/docs/guide.html#timestamps
-      // Make Mongoose use Unix time (seconds since Jan 1, 1970)
-      createdAt: Math.floor(timestamp / 1000)
+      createdAt: new Date(timestamp),
+      updatedAt: new Date(timestamp)
     },
     (createLogItemErr, logItem) => {
       if (createLogItemErr) {

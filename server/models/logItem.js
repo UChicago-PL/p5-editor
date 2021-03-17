@@ -28,7 +28,7 @@ const logItemSchema = new Schema(
       type: String
     },
     createdAt: {
-      type: Number
+      type: Date
     },
     projectSnapshot: { type: projectSnapshotSchema }
   },
