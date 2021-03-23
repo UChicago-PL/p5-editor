@@ -35,14 +35,12 @@ function SubmitForm(props) {
     acc[row.assignmentType || 'other'] = (acc[row.assignmentType] || []).concat(row);
     return acc;
   }, {});
-  console.log(repoGroups);
   return (
     <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
         const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
         const currRepo = repos.find(({ urlName }) => urlName === values.repo);
         const currAssignmentDueDate = currRepo && currRepo.dueDate && new Date(currRepo.dueDate);
-        console.log(currRepo);
         return (
           <form className="submit-repo-form" onSubmit={handleSubmit}>
             <div className="submit-repo-form__input-wrapper flex-down">
