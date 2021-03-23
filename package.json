@@ -175,7 +175,7 @@
     "loop-protect": "github:catarak/loop-protect",
     "mime-types": "^2.1.26",
     "mjml": "^3.3.2",
-    "mockingoose": "^2.13.2",
+    "mockingoose": "2.13.2",
     "mongoose": "^5.9.2",
     "node-uuid": "^1.4.7",
     "nodemailer": "^2.6.4",
