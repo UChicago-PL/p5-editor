@@ -479,7 +479,7 @@ export function submitGHRepo(req, res) {
     return;
   }
   getFileContent(id).then((contents) => {
-    const omniRepoName = 'test-2';
+    const omniRepoName = 'cs-11111';
     const O = Octokit.plugin(createPullRequest);
     const submissionId = `${Math.floor(Math.random() * 1000000000000000000000)}`;
     new O({ auth: req.user.githubToken })
@@ -519,7 +519,7 @@ export function getGHRepos(req, res) {
     res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
     return;
   }
-  Assignment.find({}, (err, assignments) => {
+  Assignment.find({ released: true }, (err, assignments) => {
     if (err) {
       console.log(err);
       res.status(300);

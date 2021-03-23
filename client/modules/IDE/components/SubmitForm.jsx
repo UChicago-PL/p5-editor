@@ -31,6 +31,10 @@ function SubmitForm(props) {
       });
   }
 
+  const repoGroups = repos.reduce((acc, row) => {
+    acc[row.assignmentType || 'other'] = (acc[row.assignmentType] || []).concat(row);
+    return acc;
+  }, {});
   return (
     <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
@@ -43,15 +47,15 @@ function SubmitForm(props) {
               <div className="flex-down">
                 <Field name="repo" component="select">
                   <option key="empty" />
-                  {repos
-                    .filter((repo) => repo.released)
-                    .map((repo, idx) => {
-                      return (
+                  {Object.entries(repoGroups).map(([groupName, groupOptions]) => (
+                    <optgroup label={groupName} key={groupName}>
+                      {groupOptions.map((repo) => (
                         <option value={repo.urlName} key={repo.urlName}>
                           {repo.humanReadableName}
                         </option>
-                      );
-                    })}
+                      ))}
+                    </optgroup>
+                  ))}
                 </Field>
               </div>
               {touched.repo && errors.repo && <span className="form-error">{errors.repo}</span>}
@@ -77,7 +81,7 @@ function SubmitForm(props) {
               <br />
               <div>
                 If you are having difficulty submitting please ensure that you have accepted the assignment
-                for course <a href="https://www.google.com/">found here</a>
+                for course <a href="https://classroom.github.com/a/C0DfSFZG">found here</a>
               </div>
               <br />
               <Button type="submit" disabled={invalid || submitting}>

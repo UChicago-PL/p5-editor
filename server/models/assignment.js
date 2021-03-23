@@ -8,7 +8,11 @@ const assignmentSchema = new Schema(
     urlName: { type: String, unique: true },
     released: { type: Boolean },
     dueDate: { type: Date },
-    assignmentLink: { type: String }
+    assignmentLink: { type: String },
+    assignmentType: {
+      type: String,
+      enum: ['homework', 'exercise', 'project']
+    }
   },
   { timestamps: true, _id: true, usePushEach: true }
 );
@@ -21,7 +25,8 @@ if (process.env.NODE_ENV === 'development') {
       humanReadableName: 'An Example Assignment for development purposes',
       urlName: 'example-assignment',
       released: false,
-      dueDate: new Date('April 1 2100')
+      dueDate: new Date('April 1 2100'),
+      assignmentType: 'homework'
     }
   ];
 
