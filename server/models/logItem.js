@@ -19,7 +19,15 @@ const logItemSchema = new Schema(
   {
     logType: {
       type: String,
-      enum: ['snapshot', 'run-auto', 'run-manual', 'tidy', 'submission']
+      enum: [
+        'snapshot',
+        'run-auto',
+        'run-manual',
+        'tidy',
+        'submission',
+        'structure-update-replace',
+        'structure-update-replace-all'
+      ]
     },
     username: {
       type: String

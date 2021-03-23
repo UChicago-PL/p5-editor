@@ -184,6 +184,12 @@ class Editor extends React.Component {
       showReplace: this.showReplace,
       getContent: this.getContent
     });
+
+    // this very very hacky function gets called in codemirror-search
+    // which allows us to log using the replaceAll stuff
+    window.replaceSnooper = (isReplaceAll) => {
+      this.props.logRun(`structure-update-replace${isReplaceAll ? '-all' : ''}`);
+    };
   }
 
   componentWillUpdate(nextProps) {
