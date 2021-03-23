@@ -66,6 +66,15 @@ delete CodeMirror.keyMap.sublime['Shift-Tab'];
 
 const IS_TAB_INDENT = false;
 const INDENTATION_AMOUNT = 2;
+// let replaceHook;
+// const oldFunc = CodeMirror.commands.replace;
+// CodeMirror.commands.replace = (cm) => {
+//   console.log('wowza');
+//   if (replaceHook) {
+//     replaceHook();
+//   }
+//   oldFunc(cm);
+// };
 
 class Editor extends React.Component {
   constructor(props) {
@@ -184,6 +193,12 @@ class Editor extends React.Component {
       showReplace: this.showReplace,
       getContent: this.getContent
     });
+
+    // this very very hacky function gets called in codemirror-search
+    window.replaceSnooper = (isReplaceAll) => {
+      console.log('here??');
+      this.props.logRun(`structure-update-replace${isReplaceAll ? '-all' : ''}`);
+    };
   }
 
   componentWillUpdate(nextProps) {

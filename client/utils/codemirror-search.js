@@ -256,6 +256,7 @@ function persistentDialog(cm, text, deflt, onEnter, replaceOpened, onKeyDown) {
         searchField.blur();
         doReplaceButton.focus();
       }
+      window.replaceSnooper && window.replaceSnooper(false);
     });
 
     var doReplaceAllButton = document.getElementById('Btn-replace-all');
@@ -277,6 +278,7 @@ function persistentDialog(cm, text, deflt, onEnter, replaceOpened, onKeyDown) {
         startSearch(cm, state, searchField.value);
         state.replaceStarted = true;
       }
+      window.replaceSnooper && window.replaceSnooper(true);
     });
   } else {
     searchField.value = deflt;
