@@ -31,27 +31,33 @@ function SubmitForm(props) {
       });
   }
 
+  const repoGroups = repos.reduce((acc, row) => {
+    acc[row.assignmentType || 'other'] = (acc[row.assignmentType] || []).concat(row);
+    return acc;
+  }, {});
+  console.log(repoGroups);
   return (
     <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
         const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
         const currRepo = repos.find(({ urlName }) => urlName === values.repo);
         const currAssignmentDueDate = currRepo && currRepo.dueDate && new Date(currRepo.dueDate);
+        console.log(currRepo);
         return (
           <form className="submit-repo-form" onSubmit={handleSubmit}>
             <div className="submit-repo-form__input-wrapper flex-down">
               <div className="flex-down">
                 <Field name="repo" component="select">
                   <option key="empty" />
-                  {repos
-                    .filter((repo) => repo.released)
-                    .map((repo, idx) => {
-                      return (
+                  {Object.entries(repoGroups).map(([groupName, groupOptions]) => (
+                    <optgroup label={groupName} key={groupName}>
+                      {groupOptions.map((repo) => (
                         <option value={repo.urlName} key={repo.urlName}>
                           {repo.humanReadableName}
                         </option>
-                      );
-                    })}
+                      ))}
+                    </optgroup>
+                  ))}
                 </Field>
               </div>
               {touched.repo && errors.repo && <span className="form-error">{errors.repo}</span>}
@@ -77,7 +83,7 @@ function SubmitForm(props) {
               <br />
               <div>
                 If you are having difficulty submitting please ensure that you have accepted the assignment
-                for course <a href="https://www.google.com/">found here</a>
+                for course <a href="https://classroom.github.com/a/C0DfSFZG">found here</a>
               </div>
               <br />
               <Button type="submit" disabled={invalid || submitting}>

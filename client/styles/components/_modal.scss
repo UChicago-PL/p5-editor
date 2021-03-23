@@ -36,6 +36,20 @@
   display: flex;
 }
 
+.light .submit-repo-form__input-wrapper a {
+  color: steelblue;
+}
+
+.contrast .submit-repo-form__input-wrapper a{
+  color: #F5DC23;
+}
+
+.dark .submit-repo-form__input-wrapper a {
+  color: #ed225d;
+}
+
+
+
 .new-file-form__name-label, .new-folder-form__name-label, .submit-repo-form__name-label {
   @extend %hidden-element;
 }
