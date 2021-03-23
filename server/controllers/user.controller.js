@@ -479,7 +479,8 @@ export function submitGHRepo(req, res) {
     return;
   }
   getFileContent(id).then((contents) => {
-    const omniRepoName = 'cs-11111';
+    const omniRepoName = 'test-2';
+    // const omniRepoName = 'cs-11111';
     const O = Octokit.plugin(createPullRequest);
     const submissionId = `${Math.floor(Math.random() * 1000000000000000000000)}`;
     new O({ auth: req.user.githubToken })
