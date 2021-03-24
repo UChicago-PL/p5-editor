@@ -20,6 +20,7 @@ import ErrorModal from '../components/ErrorModal';
 import Nav from '../../../components/Nav';
 import Console from '../components/Console';
 import Toast from '../components/Toast';
+import RequestLogin from '../components/RequestLogin';
 import * as FileActions from '../actions/files';
 import * as IDEActions from '../actions/ide';
 import * as ProjectActions from '../actions/project';
@@ -227,6 +228,7 @@ class IDEView extends React.Component {
         <Helmet>
           <title>{getTitle(this.props)}</title>
         </Helmet>
+        {this.props.user.authenticated ? <div id="fine"></div> : <RequestLogin />}
         {this.props.toast.isVisible && <Toast />}
         <Nav warnIfUnsavedChanges={this.handleUnsavedChanges} cmController={this.cmController} />
         <Toolbar key={this.props.project.id} cmController={this.cmController} />
