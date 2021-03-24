@@ -17,12 +17,20 @@ exports[`Nav renders correctly 1`] = `
             class="svg__logo_link"
             href="/"
           >
-            <test-file-stub
+            <div
               aria-label="Common.p5logoARIA"
-              classname="svg__logo"
               focusable="false"
-              role="img"
-            />
+              style="font-weight: 900;"
+            >
+              p5*
+            </div>
+            <div
+              aria-label="Common.p5logoARIA"
+              focusable="false"
+              style="font-weight: 100; margin-left: 7px;"
+            >
+               @CS111
+            </div>
           </a>
         </li>
         <li

@@ -40,7 +40,7 @@ import { autosaveEvery } from '../../../constants';
 
 function getTitle(props) {
   const { id } = props.project;
-  return id ? `CMSC11111 Editor | ${props.project.name}` : 'CMSC11111 Editor';
+  return id ? `CS 111 Editor | ${props.project.name}` : 'CMSC11111 Editor';
 }
 
 function warnIfUnsavedChanges(props, nextLocation) {
