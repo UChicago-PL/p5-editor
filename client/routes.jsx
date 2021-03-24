@@ -1,4 +1,4 @@
-import { Route, IndexRoute, Redirect } from 'react-router';
+import { Route, IndexRoute } from 'react-router';
 import React from 'react';
 
 import App from './modules/App/App';
@@ -49,9 +49,6 @@ const routes = (store) => (
         path="/login"
         component={userIsNotAuthenticated(mobileFirst(responsiveForm(LoginView), LoginView))}
       />
-      {/* <Route exact path="/login">
-        <Redirect to="/" />
-      </Route> */}
       <Route path="/projects/:project_id" component={IDEView} />
       <Route path="/:username/full/:project_id" component={userIsAuthorized(FullView)} />
 
