@@ -88,7 +88,7 @@ class Preferences extends React.Component {
     return (
       <section className="preferences">
         <Helmet>
-          <title>CMSC11111 Editor | Preferences</title>
+          <title>CS 111 Editor | Preferences</title>
         </Helmet>
         <Tabs>
           <TabList>

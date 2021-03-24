@@ -90,7 +90,7 @@
   },
   "About": {
     "Title": "ウェブエディタについて",
-    "TitleHelmet": "CMSC11111 Editor | ウェブエディタについて",
+    "TitleHelmet": "CS 111 Editor | ウェブエディタについて",
     "Contribute": "コントリビュート",
     "NewP5": "p5.jsは初めてですか?",
     "Report": "バグレポート",

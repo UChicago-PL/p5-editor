@@ -171,25 +171,43 @@
 .nav__item-logo {
   position: relative;
   height: #{42 / $base-font-size}rem;
-  width: #{120 / $base-font-size}rem;
+  // width: #{120 / $base-font-size}rem;
 
   & span {
     position: absolute;
   }
 }
-.svg__logo g > path {
-  @include themify() {
-    fill: getThemifyVariable('logo-color');
-  }
-}
-.svg__logo g g:first-of-type path {
-  fill: none;
+// .svg__logo g > path {
+//   @include themify() {
+//     fill: getThemifyVariable('logo-color');
+//   }
+// }
+// .svg__logo g g:first-of-type path {
+//   fill: none;
+// }
+
+// .svg__logo g g:first-of-type use {
+//   @include themify() {
+//     fill: getThemifyVariable('logo-background-color');
+//   }
+// }
+.svg__logo_link {
+    font-size: 20px;
+    text-decoration: none;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
 }
 
-.svg__logo g g:first-of-type use {
-  @include themify() {
-    fill: getThemifyVariable('logo-background-color');
-  }
+.light .svg__logo_link, .dark .svg__logo_link {
+  background: #ed225d;
+  color: white;
+}
+.contrast .svg__logo_link {
+  background: #f5dc23;
+  color: #333;
 }
 
 .nav__keyboard-shortcut {
