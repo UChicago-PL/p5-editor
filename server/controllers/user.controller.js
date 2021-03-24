@@ -380,7 +380,7 @@ export function unlinkGoogle(req, res) {
 }
 
 export function createSubmission(props) {
-  const { files, project, username, submissionId, assignment } = props;
+  const { files, project, username, submissionId, assignment, prNumber } = props;
   return new Promise((resolve, reject) => {
     Submission.create(
       {
@@ -389,7 +389,8 @@ export function createSubmission(props) {
         project: project._id,
         projectName: project.name,
         submissionId,
-        assignment: assignment._id
+        assignment: assignment._id,
+        prNumber
       },
       (err, item) => {
         if (err) {
@@ -504,7 +505,8 @@ export function submitGHRepo(req, res) {
           files: contents.files,
           project,
           submissionId,
-          assignment: repo
+          assignment: repo,
+          prNumber: result.data.number
         });
       })
       .catch((err) => {
