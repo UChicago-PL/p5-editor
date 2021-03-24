@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import LogoIcon from '../images/p5js-logo-small.svg';
 
 export default function Logo() {
   const { t } = useTranslation();

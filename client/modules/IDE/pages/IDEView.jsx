@@ -40,7 +40,7 @@ import { autosaveEvery } from '../../../constants';
 
 function getTitle(props) {
   const { id } = props.project;
-  return id ? `CS 111 Editor | ${props.project.name}` : 'CS 111 Editor';
+  return id ? `CS 111 Editor | ${props.project.name}` : 'CMSC11111 Editor';
 }
 
 function warnIfUnsavedChanges(props, nextLocation) {
@@ -421,7 +421,7 @@ IDEView.propTypes = {
   closeUploadFileModal: PropTypes.func.isRequired,
   collapseConsole: PropTypes.func.isRequired,
   collapseSidebar: PropTypes.func.isRequired,
-  createFolder: PropTypes.func,
+  createFolder: PropTypes.func.isRequired,
   deleteFile: PropTypes.func.isRequired,
   editorAccessibility: PropTypes.shape({ lintMessages: PropTypes.objectOf(PropTypes.shape()).isRequired })
     .isRequired,
