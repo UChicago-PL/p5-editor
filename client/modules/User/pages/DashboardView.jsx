@@ -9,6 +9,7 @@ import Nav from '../../../components/Nav';
 import Overlay from '../../App/components/Overlay';
 import CollectionList from '../../IDE/components/CollectionList';
 import SketchList from '../../IDE/components/SketchList';
+import SubmissionList from '../../IDE/components/SubmissionList';
 import { CollectionSearchbar, SketchSearchbar } from '../../IDE/components/Searchbar';
 
 import CollectionCreate from '../components/CollectionCreate';
@@ -44,6 +45,8 @@ class DashboardView extends React.Component {
       return TabKey.assets;
     } else if (/collections/.test(path)) {
       return TabKey.collections;
+    } else if (/submissions/.test(path)) {
+      return TabKey.submissions;
     }
 
     return TabKey.sketches;
@@ -81,6 +84,8 @@ class DashboardView extends React.Component {
             </React.Fragment>
           )
         );
+      case TabKey.submissions:
+        return this.isOwner() && <React.Fragment> </React.Fragment>;
       case TabKey.sketches:
       default:
         return (
@@ -94,6 +99,8 @@ class DashboardView extends React.Component {
 
   renderContent(tabKey, username) {
     switch (tabKey) {
+      case TabKey.submissions:
+        return <SubmissionList />;
       case TabKey.collections:
         return <CollectionList key={username} username={username} />;
       case TabKey.sketches:
@@ -104,6 +111,7 @@ class DashboardView extends React.Component {
 
   render() {
     const currentTab = this.selectedTabKey();
+    console.log({ currentTab });
     const isOwner = this.isOwner();
     const { username } = this.props.params;
     const actions = this.renderActionButton(currentTab, username, this.props.t);

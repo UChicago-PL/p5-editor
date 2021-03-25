@@ -7,7 +7,8 @@ const TabKey = {
   assets: 'assets',
   collections: 'collections',
   sketches: 'sketches',
-  gists: 'gists'
+  gists: 'gists',
+  submissions: 'submissions'
 };
 
 const Tab = ({ children, isSelected, to }) => {
@@ -36,6 +37,9 @@ const DashboardTabSwitcher = ({ currentTab, isOwner, username, t }) => (
       </Tab>
       <Tab to={`/${username}/collections`} isSelected={currentTab === TabKey.collections}>
         {t('DashboardTabSwitcher.Collections')}
+      </Tab>
+      <Tab to={`/${username}/submissions`} isSelected={currentTab === TabKey.submissions}>
+        Submissions
       </Tab>
     </div>
   </ul>

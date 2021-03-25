@@ -14,6 +14,7 @@ import sorting from './modules/IDE/reducers/sorting';
 import repos from './modules/IDE/reducers/repos';
 import toast from './modules/IDE/reducers/toast';
 import user from './modules/User/reducers';
+import submissions from './modules/IDE/reducers/submissions';
 
 const rootReducer = combineReducers({
   assets,
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   search,
   sketches,
   sorting,
+  submissions,
   toast,
   user
 });
