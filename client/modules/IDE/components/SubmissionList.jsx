@@ -23,12 +23,20 @@ function SubmissionGroup(props) {
       <h5>Submitted: {`${new Date(submittedAssignment.createdAt)}`}</h5>
       <div className="submission-details">
         <a
+          target="_blank"
+          rel="noreferrer"
           href={`https://github.com/UChicago-PL/cs-11111-${submissions[0].username}/${submittedAssignment.prNumber}/pulls`}
         >
           Link to Pull Request
         </a>
         <span>{', '}</span>
-        <a href={`http://editor.cs111.org/preview/${submittedAssignment.submissionId}`}>Link to Preview</a>
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href={`http://editor.cs111.org/preview/${submittedAssignment.submissionId}`}
+        >
+          Link to Preview
+        </a>
       </div>
     </div>
   );
