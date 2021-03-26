@@ -72,7 +72,7 @@
     "Submit": "Log In"
   },
   "LoginView": {
-    "Title": "p5.js Web Editor | Login",
+    "Title": "CS111 | Login",
     "Login": "Log In",
     "LoginOr": "or",
     "SignUp": "Sign Up",
@@ -317,7 +317,7 @@
     "SubmitSignup": "Sign Up"
   },
   "AssetList": {
-    "Title": "p5.js Web Editor | My assets",
+    "Title": "CS111 | My assets",
     "ToggleOpenCloseARIA": "Toggle Open/Close Asset Options",
     "Delete": "Delete",
     "OpenNewTab": "Open in New Tab",
@@ -327,7 +327,7 @@
     "HeaderSketch": "Sketch"
   },
   "Feedback": {
-    "Title": "p5.js Web Editor | Feedback",
+    "Title": "CS111 | Feedback",
     "ViaGithubHeader": "Via Github Issues",
     "ViaGithubDescription": "If you're familiar with Github, this is our preferred method for receiving bug reports and feedback.",
     "GoToGithub": "Go to Github",
@@ -357,15 +357,15 @@
     "LogIn": "log in",
     "SavedDifferentWindow": "The project you have attempted to save has been saved from another window.\n        Please refresh the page to see the latest version.",
     "LinkTitle": "Error Linking Account",
-    "LinkMessage": "There was a problem linking your {{serviceauth}} account to your p5.js Web Editor account. Make sure that you are using a Github account that has been given permission to access this site."
+    "LinkMessage": "There was a problem linking your {{serviceauth}} account to your CS111 account. Make sure that you are using a Github account that has been given permission to access this site."
   },
   "CollectionView": {
     "TitleCreate": "Create collection",
     "TitleDefault": "collection"
   },
   "Collection": {
-    "Title": "p5.js Web Editor | My collections",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}}'s collections",
+    "Title": "CS111 | My collections",
+    "AnothersTitle": "CS111 | {{anotheruser}}'s collections",
     "Share": "Share",
     "URLLink": "Link to Collection",
     "AddSketch": "Add Sketch",
@@ -388,12 +388,12 @@
     "ButtonLabelDescendingARIA": "Sort by {{displayName}} descending."
   },
   "AddToCollectionList": {
-    "Title": "p5.js Web Editor | My collections",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}}'s collections",
+    "Title": "CS111 | My collections",
+    "AnothersTitle": "CS111 | {{anotheruser}}'s collections",
     "Empty": "No collections"
   },
   "CollectionCreate": {
-    "Title": "p5.js Web Editor | Create collection",
+    "Title": "CS111 | Create collection",
     "FormError": "Couldn't create collection",
     "FormLabel": "Collection name",
     "FormLabelARIA": "name",
@@ -415,8 +415,8 @@
     "Gists": "Gists"
   },
   "CollectionList": {
-    "Title": "p5.js Web Editor | My collections",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}}'s collections",
+    "Title": "CS111 | My collections",
+    "AnothersTitle": "CS111 | {{anotheruser}}'s collections",
     "NoCollections": "No collections.",
     "TableSummary": "table containing all collections",
     "HeaderName": "Name",
@@ -448,8 +448,8 @@
   },
   "SketchList": {
     "View": "View",
-    "Title": "p5.js Web Editor | My sketches",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}}'s sketches",
+    "Title": "CS111 | My sketches",
+    "AnothersTitle": "CS111 | {{anotheruser}}'s sketches",
     "ToggleLabelARIA": "Toggle Open/Close Sketch Options",
     "DropdownRename": "Rename",
     "DropdownDownload": "Download",
@@ -470,8 +470,8 @@
     "NoSketches": "No sketches."
   },
   "AddToCollectionSketchList": {
-    "Title": "p5.js Web Editor | My sketches",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}}'s sketches",
+    "Title": "CS111 | My sketches",
+    "AnothersTitle": "CS111 | {{anotheruser}}'s sketches",
     "NoCollections": "No collections."
   },
   "Editor": {

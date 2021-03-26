@@ -85,7 +85,14 @@ class DashboardView extends React.Component {
           )
         );
       case TabKey.submissions:
-        return this.isOwner() && <React.Fragment> </React.Fragment>;
+        return (
+          this.isOwner() && (
+            <React.Fragment>
+              <div>Submission List</div>
+              <div>A list of the most current version of your submissions</div>
+            </React.Fragment>
+          )
+        );
       case TabKey.sketches:
       default:
         return (

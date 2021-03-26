@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
+import React, { useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Loader from '../../App/components/loader';
@@ -7,40 +8,28 @@ import * as SubmissionActions from '../actions/submissions';
 
 function SubmissionGroup(props) {
   const { submissions } = props;
-  const orderedSubs = [...submissions].reverse();
+  const orderedSubs = [...submissions].sort((a, b) => {
+    return new Date(a).getTime() - new Date(b).getTime();
+  });
   console.log(submissions);
   const assignment = submissions[0].assign[0];
   console.log(assignment);
+  const submittedAssignment = orderedSubs[0];
   return (
-    <div className="flex-down">
-      <h3>Assignment: {assignment.humanReadableName}</h3>
-      <h5>Due: </h5>
-      {/* <div className="flex"> */}
-      <div className="flex-down">
-        {orderedSubs.map((sub, idx) => {
-          return (
-            <div key={sub.submissionId} className="flex-down">
-              <div>{sub.projectName}</div>
-              <div>
-                <div>Submitted at: {sub.createdAt}</div>
-                <a
-                  href={`https://github.com/UChicago-PL/cs-11111-${submissions[0].username}/${sub.prNumber}/pulls`}
-                >
-                  Link to Pull Request
-                </a>
-              </div>
-            </div>
-          );
-        })}
+    <div className="flex-down dashboard-submission">
+      <h3>{assignment.urlName}</h3>
+      <h4>Assignment: {assignment.humanReadableName}</h4>
+      <h5>Due: {`${new Date(assignment.dueDate)}`}</h5>
+      <h5>Submitted: {`${new Date(submittedAssignment.createdAt)}`}</h5>
+      <div className="submission-details">
+        <a
+          href={`https://github.com/UChicago-PL/cs-11111-${submissions[0].username}/${submittedAssignment.prNumber}/pulls`}
+        >
+          Link to Pull Request
+        </a>
+        <span>{', '}</span>
+        <a href={`http://editor.cs111.org/preview/${submittedAssignment.submissionId}`}>Link to Preview</a>
       </div>
-      {/* <iframe
-          id="inlineFrameExample"
-          title="Inline Frame Example"
-          width="300"
-          height="200"
-          src={`/preview/${submissions[0].submissionId}`}
-        /> */}
-      {/* </div> */}
     </div>
   );
 }
@@ -60,8 +49,10 @@ function SubmissionList(props) {
   }, {});
   console.log({ groupedSubmissions });
   return (
-    <div>
-      <h1>Submission List</h1>
+    <div className="dashboard-submission-list">
+      <Helmet>
+        <title>Submitted Assignments</title>
+      </Helmet>
       {loading && <Loader />}
       {!loading &&
         Object.values(groupedSubmissions).map((submissionGroup) => {

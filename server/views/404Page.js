@@ -3,14 +3,15 @@ import Project from '../models/project';
 
 function insertErrorMessage(htmlFile) {
   const html = htmlFile.split('</head>');
-  const metaDescription = 'A web editor for p5.js, a JavaScript library with the goal of making coding accessible to artists, designers, educators, and beginners.'; // eslint-disable-line
+  const metaDescription =
+    'A web editor for p5.js, a JavaScript library with the goal of making coding accessible to artists, designers, educators, and beginners.'; // eslint-disable-line
   html[0] = `
     ${html[0]}
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="p5.js, p5.js web editor, web editor, processing, code editor" />
+    <meta name="keywords" content="p5.js, CS111 web editor, web editor, processing, code editor" />
     <meta name="description" content="${metaDescription}" />
-    <title>404 Page Not Found - p5.js Web Editor</title>
+    <title>404 Page Not Found - CS111 Editor</title>
     <style>
       .header {
         position: fixed;
@@ -68,37 +69,42 @@ function insertErrorMessage(htmlFile) {
 }
 
 export function get404Sketch(callback) {
-  User.findOne({ username: 'p5' }, (userErr, user) => { // Find p5 user
+  User.findOne({ username: 'p5' }, (userErr, user) => {
+    // Find p5 user
     if (userErr) {
       throw userErr;
     } else if (user) {
-      Project.find({ user: user._id }, (projErr, projects) => { // Find example projects
+      Project.find({ user: user._id }, (projErr, projects) => {
+        // Find example projects
         // Choose a random sketch
         const randomIndex = Math.floor(Math.random() * projects.length);
         const sketch = projects[randomIndex];
         let instanceMode = false;
 
         // Get sketch files
-        let htmlFile = sketch.files.filter(file => file.name.match(/.*\.html$/i))[0].content;
-        const jsFiles = sketch.files.filter(file => file.name.match(/.*\.js$/i));
-        const cssFiles = sketch.files.filter(file => file.name.match(/.*\.css$/i));
-        const linkedFiles = sketch.files.filter(file => file.url);
+        let htmlFile = sketch.files.filter((file) => file.name.match(/.*\.html$/i))[0].content;
+        const jsFiles = sketch.files.filter((file) => file.name.match(/.*\.js$/i));
+        const cssFiles = sketch.files.filter((file) => file.name.match(/.*\.css$/i));
+        const linkedFiles = sketch.files.filter((file) => file.url);
 
-        instanceMode = jsFiles.find(file => file.name === 'sketch.js').content.includes('Instance Mode');
+        instanceMode = jsFiles.find((file) => file.name === 'sketch.js').content.includes('Instance Mode');
 
-        jsFiles.forEach((file) => { // Add js files as script tags
+        jsFiles.forEach((file) => {
+          // Add js files as script tags
           const html = htmlFile.split('</body>');
           html[0] = `${html[0]}<script>${file.content}</script>`;
           htmlFile = html.join('</body>');
         });
 
-        cssFiles.forEach((file) => { // Add css files as style tags
+        cssFiles.forEach((file) => {
+          // Add css files as style tags
           const html = htmlFile.split('</head>');
           html[0] = `${html[0]}<style>${file.content}</style>`;
           htmlFile = html.join('</head>');
         });
 
-        linkedFiles.forEach((file) => { // Add linked files as link tags
+        linkedFiles.forEach((file) => {
+          // Add linked files as link tags
           const html = htmlFile.split('<head>');
           html[1] = `<link href=${file.url}>${html[1]}`;
           htmlFile = html.join('<head>');
@@ -118,22 +124,26 @@ export function get404Sketch(callback) {
         );
 
         // Change canvas size
-        htmlFile = htmlFile.replace(/createCanvas\(\d+, ?\d+/g, instanceMode ?
-          'createCanvas(p.windowWidth, p.windowHeight'
-          :
-          'createCanvas(windowWidth, windowHeight');
+        htmlFile = htmlFile.replace(
+          /createCanvas\(\d+, ?\d+/g,
+          instanceMode
+            ? 'createCanvas(p.windowWidth, p.windowHeight'
+            : 'createCanvas(windowWidth, windowHeight'
+        );
 
         callback(htmlFile);
       });
     } else {
-      callback(insertErrorMessage(`<!DOCTYPE html>
+      callback(
+        insertErrorMessage(`<!DOCTYPE html>
         <html lang="en">
           <head>
             <meta charset="utf-8" />
           </head>
           <body>
           </body>
-        </html>`));
+        </html>`)
+      );
     }
   });
 }

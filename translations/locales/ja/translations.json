@@ -317,7 +317,7 @@
     "SubmitSignup": "アカウント作成"
   },
   "AssetList": {
-    "Title": "p5.js Web Editor | マイアセット",
+    "Title": "CS111 | マイアセット",
     "ToggleOpenCloseARIA": "アセットオプションの開閉を切り替え",
     "Delete": "削除",
     "OpenNewTab": "新しいタブで開く",
@@ -327,7 +327,7 @@
     "HeaderSketch": "スケッチ"
   },
   "Feedback": {
-    "Title": "p5.js Web Editor | フィードバック",
+    "Title": "CS111 | フィードバック",
     "ViaGithubHeader": "Github Issuesを利用",
     "ViaGithubDescription": "Githubに詳しい方は、バグレポートやフィードバックのために、こちらからお願いします。",
     "GoToGithub": "Githubへアクセスする",
@@ -357,15 +357,15 @@
     "LogIn": "ログイン",
     "SavedDifferentWindow": "保存しようとしたプロジェクトが別のウィンドウから保存されました。\n        最新版をご覧になるにはページを更新してください。",
     "LinkTitle": "アカウント接続エラー",
-    "LinkMessage": "あなたの {{serviceauth}} アカウントとp5.js Web Editorアカウントの接続に問題がありました。 あなたの {{serviceauth}} アカウントは、すでに別のp5.js Web Editorアカウントに接続されています。"
+    "LinkMessage": "あなたの {{serviceauth}} アカウントとCS111アカウントの接続に問題がありました。 あなたの {{serviceauth}} アカウントは、すでに別のCS111アカウントに接続されています。"
   },
   "CollectionView": {
     "TitleCreate": "コレクション作成",
     "TitleDefault": "コレクション"
   },
   "Collection": {
-    "Title": "p5.js Web Editor | マイコレクション",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}} のコレクション",
+    "Title": "CS111 | マイコレクション",
+    "AnothersTitle": "CS111 | {{anotheruser}} のコレクション",
     "Share": "共有",
     "URLLink": "コレクションのリンク",
     "AddSketch": "スケッチを追加する",
@@ -388,12 +388,12 @@
     "ButtonLabelDescendingARIA": "降順に{{displayName}}で並び替えます。"
   },
   "AddToCollectionList": {
-    "Title": "p5.js Web Editor | マイコレクション",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}}のコレクション",
+    "Title": "CS111 | マイコレクション",
+    "AnothersTitle": "CS111 | {{anotheruser}}のコレクション",
     "Empty": "コレクションは空です"
   },
   "CollectionCreate": {
-    "Title": "p5.js Web Editor | コレクション作成",
+    "Title": "CS111 | コレクション作成",
     "FormError": "コレクションを作成することが出来ませんでした",
     "FormLabel": "コレクション名",
     "FormLabelARIA": "名前",
@@ -414,8 +414,8 @@
     "Assets": "アセット"
   },
   "CollectionList": {
-    "Title": "p5.js Web Editor | マイコレクション",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}}のコレクション",
+    "Title": "CS111 | マイコレクション",
+    "AnothersTitle": "CS111 | {{anotheruser}}のコレクション",
     "NoCollections": "コレクションがありません。",
     "TableSummary": "全コレクションのテーブル",
     "HeaderName": "名前",
@@ -447,8 +447,8 @@
   },
   "SketchList": {
     "View": "表示",
-    "Title": "p5.js Web Editor | マイスケッチ",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}} のスケッチ",
+    "Title": "CS111 | マイスケッチ",
+    "AnothersTitle": "CS111 | {{anotheruser}} のスケッチ",
     "ToggleLabelARIA": "開く/閉じるスケッチ オプションの切り替え",
     "DropdownRename": "名前変更",
     "DropdownDownload": "ダウンロード",
@@ -469,8 +469,8 @@
     "NoSketches": "スケッチがありません"
   },
   "AddToCollectionSketchList": {
-    "Title": "p5.js Web Editor | マイスケッチ",
-    "AnothersTitle": "p5.js Web Editor | {{anotheruser}} のスケッチ",
+    "Title": "CS111 | マイスケッチ",
+    "AnothersTitle": "CS111 | {{anotheruser}} のスケッチ",
     "NoCollections": "コレクションがありません。"
   },
   "Editor": {
