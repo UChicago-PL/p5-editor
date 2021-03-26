@@ -14,6 +14,7 @@ import api from './routes/api.routes';
 import users from './routes/user.routes';
 import sessions from './routes/session.routes';
 import projects from './routes/project.routes';
+import submissions from './routes/submission.routes';
 import files from './routes/file.routes';
 import collections from './routes/collection.routes';
 import aws from './routes/aws.routes';
@@ -114,6 +115,7 @@ app.use('/editor', requestsOfTypeJSON(), files);
 app.use('/editor', requestsOfTypeJSON(), projects);
 app.use('/editor', requestsOfTypeJSON(), aws);
 app.use('/editor', requestsOfTypeJSON(), collections);
+app.use('/editor', requestsOfTypeJSON(), submissions);
 
 // this is supposed to be TEMPORARY -- until i figure out
 // isomorphic rendering

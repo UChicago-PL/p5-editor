@@ -52,6 +52,8 @@ const routes = (store) => (
       <Route path="/projects/:project_id" component={IDEView} />
       <Route path="/:username/full/:project_id" component={userIsAuthorized(FullView)} />
 
+      <Route path="/:username/submissions" component={userIsAuthorized(DashboardView)} />
+
       <Route path="/:username/sketches" component={userIsAuthorized(DashboardView)} />
       <Route path="/:username/sketches/:project_id" component={IDEView} />
       <Route path="/:username/sketches/:project_id/add-to-collection" component={userIsAuthorized(IDEView)} />

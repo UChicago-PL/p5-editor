@@ -8,9 +8,9 @@ function insertErrorMessage(htmlFile) {
     ${html[0]}
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="p5.js, p5.js web editor, web editor, processing, code editor" />
+    <meta name="keywords" content="p5.js, CS111 web editor, web editor, processing, code editor" />
     <meta name="description" content="${metaDescription}" />
-    <title>404 Page Not Found - p5.js Web Editor</title>
+    <title>404 Page Not Found - CS111 Editor</title>
     <style>
       .header {
         position: fixed;
