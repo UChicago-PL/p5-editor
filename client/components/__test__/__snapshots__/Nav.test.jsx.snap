@@ -22,14 +22,14 @@ exports[`Nav renders correctly 1`] = `
               focusable="false"
               style="font-weight: 900;"
             >
-              p5*
+              p5
             </div>
             <div
               aria-label="Common.p5logoARIA"
               focusable="false"
               style="font-weight: 100; margin-left: 7px;"
             >
-               @CS111
+               * cs111
             </div>
           </a>
         </li>

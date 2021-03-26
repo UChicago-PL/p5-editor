@@ -6,11 +6,6 @@ import Submission from '../models/submission';
 import Project from '../models/project';
 import User from '../models/user';
 import Assignment from '../models/assignment';
-// import mail from '../utils/mail';
-// import {
-//   // renderEmailConfirmation,
-//   // renderResetPassword
-// } from '../views/mail';
 
 export * from './user.controller/apiKey';
 
@@ -76,22 +71,7 @@ export function createUser(req, res, next) {
         req.logIn(user, (loginErr) => {
           if (loginErr) {
             next(loginErr);
-            // return;
           }
-          // return;
-          // const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-          // const mailOptions = renderEmailConfirmation({
-          //   body: {
-          //     domain: `${protocol}://${req.headers.host}`,
-          //     link: `${protocol}://${req.headers.host}/verify?t=${token}`,
-          //   },
-          //   to: req.user.email,
-          // });
-
-          // mail.send(mailOptions, (mailErr, result) => {
-          //   // eslint-disable-line no-unused-vars
-          //   res.json(userResponse(req.user));
-          // });
         });
       });
     });

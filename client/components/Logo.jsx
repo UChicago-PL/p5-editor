@@ -6,14 +6,14 @@ export default function Logo() {
   return (
     <a href="/" className="svg__logo_link">
       <div aria-label={t('Common.p5logoARIA')} focusable="false" style={{ fontWeight: 900 }}>
-        p5*
+        p5
       </div>
       <div
         aria-label={t('Common.p5logoARIA')}
         focusable="false"
         style={{ fontWeight: 100, marginLeft: '7px' }}
       >
-        {' @CS111'}
+        {' * cs111'}
       </div>
     </a>
   );
