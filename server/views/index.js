@@ -64,6 +64,11 @@ export function renderIndex() {
         if (!location.href.includes('localhost') && location.protocol !== 'https:') {
            location.replace('https:' + location.href.substring(location.protocol.length));
         }
+
+        if (location.href.includes('cmsc-11111-editor.herokuapp')) {
+          const prodSite = 'https://editor.cs111.org/'
+          location.replace(prodSite + location.href.substring(prodSite.length));
+        }
       </script>
     </body>
   </html>
