@@ -43,7 +43,7 @@ const ide = (state = initialState, action) => {
         newFolderModalVisible: false
       });
     case ActionTypes.HIDE_MODAL:
-      return Object.assign({}, state, { modalIsVisible: false });
+      return Object.assign({}, state, { modalIsVisible: false, uploadFileModalVisible: false });
     case ActionTypes.COLLAPSE_SIDEBAR:
       return Object.assign({}, state, { sidebarIsExpanded: false });
     case ActionTypes.EXPAND_SIDEBAR:
@@ -100,11 +100,10 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, { errorType: undefined });
     case ActionTypes.SHOW_RUNTIME_ERROR_WARNING:
       return Object.assign({}, state, { runtimeErrorWarningVisible: true });
-    // uploads disabled
-    // case ActionTypes.OPEN_UPLOAD_FILE_MODAL:
-    //   return Object.assign({}, state, { uploadFileModalVisible: true, parentId: action.parentId });
-    // case ActionTypes.CLOSE_UPLOAD_FILE_MODAL:
-    //   return Object.assign({}, state, { uploadFileModalVisible: false });
+    case ActionTypes.OPEN_UPLOAD_FILE_MODAL:
+      return Object.assign({}, state, { uploadFileModalVisible: true, parentId: action.parentId });
+    case ActionTypes.CLOSE_UPLOAD_FILE_MODAL:
+      return Object.assign({}, state, { uploadFileModalVisible: false });
     case ActionTypes.OPEN_SUBMIT_MODEL:
       return Object.assign({}, state, { submitModalVisible: true });
     case ActionTypes.CLOSE_SUBMIT_MODEL:
