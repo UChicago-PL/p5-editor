@@ -161,7 +161,6 @@ const files = (state, action) => {
     case ActionTypes.RESET_PROJECT:
       return initialState();
     case ActionTypes.CREATE_FILE: {
-      // eslint-disable-line
       const newState = [
         ...updateParent(state, action),
         {
@@ -176,7 +175,6 @@ const files = (state, action) => {
       ];
       return newState.map((file) => {
         if (file.id === action.parentId) {
-          console.log(file);
           file.children = sortedChildrenId(newState, file.children);
         }
         return file;

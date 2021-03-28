@@ -1,11 +1,8 @@
 import apiClient from '../../../utils/apiClient';
 import getConfig from '../../../utils/getConfig';
-import { createFile, handleCreateFile } from './files';
+import { handleCreateFile } from './files';
 import { TEXT_FILE_REGEX } from '../../../../server/utils/fileUtils';
 
-// const s3BucketHttps =
-//   getConfig('S3_BUCKET_URL_BASE') ||
-//   `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
 const s3BucketHttps = `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
 const MAX_LOCAL_FILE_SIZE = 80000; // bytes, aka 80 KB
 
@@ -119,18 +116,13 @@ export function dropzoneCompleteCallback(file) {
         name: file.name,
         url: `${s3BucketHttps}${file.postData.key}`
       };
-      // console.log(createFile, formParams, createFile(formParams));
       handleCreateFile(formParams)(dispatch, getState);
-      // createFile(formParams)(dispatch, getState);
-      // dispatch(createFile(formParams));
     } else if (file.content !== undefined) {
       const formParams = {
         name: file.name,
         content: file.content
       };
-      // dispatch(createFile(formParams));
       handleCreateFile(formParams)(dispatch, getState);
-      // createFile(formParams)(dispatch, getState);
     }
   };
 }
