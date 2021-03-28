@@ -116,8 +116,7 @@ class Sidebar extends React.Component {
                   {this.props.t('Sidebar.AddFile')}
                 </button>
               </li>
-              {/* uploads are disabled */}
-              {/* {this.props.user.authenticated && (
+              {this.props.user.authenticated && (
                 <li>
                   <button
                     aria-label={this.props.t('Sidebar.UploadFileARIA')}
@@ -131,7 +130,7 @@ class Sidebar extends React.Component {
                     {this.props.t('Sidebar.UploadFile')}
                   </button>
                 </li>
-              )} */}
+              )}
             </ul>
           </div>
         </header>
@@ -155,7 +154,7 @@ Sidebar.propTypes = {
   openProjectOptions: PropTypes.func.isRequired,
   closeProjectOptions: PropTypes.func.isRequired,
   newFolder: PropTypes.func.isRequired,
-  // openUploadFileModal: PropTypes.func.isRequired,
+  openUploadFileModal: PropTypes.func.isRequired,
   owner: PropTypes.shape({
     id: PropTypes.string
   }),

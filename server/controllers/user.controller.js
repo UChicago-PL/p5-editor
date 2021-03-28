@@ -402,7 +402,7 @@ export function getFileContent(id) {
  * @param {string} prefix - optional prefix for subfiles
  * @param {boolean} justContent - optional flag indicating if the result should just be content
  */
-export function prepPR(data, prefix, justContent) {
+function prepPR(data, prefix, justContent) {
   const idsToFiles = data.files.reduce((acc, file) => {
     acc[file.id] = file;
     return acc;

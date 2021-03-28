@@ -1,11 +1,9 @@
 import apiClient from '../../../utils/apiClient';
 import getConfig from '../../../utils/getConfig';
-import { createFile } from './files';
+import { handleCreateFile } from './files';
 import { TEXT_FILE_REGEX } from '../../../../server/utils/fileUtils';
 
-const s3BucketHttps =
-  getConfig('S3_BUCKET_URL_BASE') ||
-  `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
+const s3BucketHttps = `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
 const MAX_LOCAL_FILE_SIZE = 80000; // bytes, aka 80 KB
 
 function localIntercept(file, options = {}) {
@@ -98,32 +96,27 @@ export function dropzoneSendingCallback(file, xhr, formData) {
 
 export function dropzoneCompleteCallback(file) {
   return (dispatch, getState) => {
-    // eslint-disable-line
     if ((!file.name.match(TEXT_FILE_REGEX) || file.size >= MAX_LOCAL_FILE_SIZE) && file.status !== 'error') {
-      let inputHidden = '<input type="hidden" name="attachments[]" value="';
       const json = {
         url: `${s3BucketHttps}${file.postData.key}`,
         originalFilename: file.name
       };
-
-      let jsonStr = JSON.stringify(json);
-
       // convert the json string to binary data so that btoa can encode it
-      jsonStr = toBinary(jsonStr);
-      inputHidden += `${window.btoa(jsonStr)}" />`;
+      const jsonStr = window.btoa(toBinary(JSON.stringify(json)));
+      const inputHidden = `<input type="hidden" name="attachments[]" value="${jsonStr}" />`;
       document.getElementById('uploader').innerHTML += inputHidden;
 
       const formParams = {
         name: file.name,
         url: `${s3BucketHttps}${file.postData.key}`
       };
-      createFile(formParams)(dispatch, getState);
+      handleCreateFile(formParams)(dispatch, getState);
     } else if (file.content !== undefined) {
       const formParams = {
         name: file.name,
         content: file.content
       };
-      createFile(formParams)(dispatch, getState);
+      handleCreateFile(formParams)(dispatch, getState);
     }
   };
 }

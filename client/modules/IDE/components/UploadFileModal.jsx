@@ -13,12 +13,6 @@ const limit = getConfig('UPLOAD_LIMIT') || 250000000;
 const limitText = prettyBytes(limit);
 
 class UploadFileModal extends React.Component {
-  propTypes = {
-    reachedTotalSizeLimit: PropTypes.bool.isRequired,
-    closeModal: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired
-  };
-
   componentDidMount() {
     this.focusOnModal();
   }
@@ -65,6 +59,12 @@ class UploadFileModal extends React.Component {
     );
   }
 }
+
+UploadFileModal.propTypes = {
+  reachedTotalSizeLimit: PropTypes.bool.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired
+};
 
 function mapStateToProps(state) {
   return {

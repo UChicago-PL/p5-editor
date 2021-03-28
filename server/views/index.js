@@ -66,7 +66,7 @@ export function renderIndex() {
         }
 
         if (location.href.includes('cmsc-11111-editor.herokuapp')) {
-          location.replace(https://editor.cs111.org/);
+          location.replace('https://editor.cs111.org/');
         }
       </script>
     </body>
