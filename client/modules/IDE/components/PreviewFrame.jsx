@@ -344,6 +344,7 @@ class PreviewFrame extends React.Component {
   renderSketch() {
     const doc = this.iframeElement;
     const localFiles = this.injectLocalFiles();
+    console.log(localFiles);
     if (this.props.isPlaying) {
       this.props.clearConsole();
       srcDoc.set(doc, localFiles);
