@@ -57,7 +57,7 @@ class SubmitalModal extends React.Component {
           {isAuthed && <SubmitForm repos={repos} project={project} />}
           {repoLoadState === 'loading' && <div>LOADING REPOS</div>}
           {repoLoadState === 'error' && <div>ERROR LOADING REPOS</div>}
-          {!isAuthed && <div>You must be logged into to use this feature</div>}
+          {!isAuthed && <div>You must be logged in to use this feature</div>}
         </div>
       </section>
     );

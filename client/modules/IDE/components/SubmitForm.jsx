@@ -32,7 +32,7 @@ function SubmitForm(props) {
   }
 
   const repoGroups = repos.reduce((acc, row) => {
-    acc[row.assignmentType || 'other'] = (acc[row.assignmentType] || []).concat(row);
+    acc[row.assignmentType || 'other'] = (acc[row.assignmentType || 'other'] || []).concat(row);
     return acc;
   }, {});
   return (
