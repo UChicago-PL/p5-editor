@@ -37,8 +37,9 @@ pre.CodeMirror-line {
   right: 100%;
 }
 
-.CodeMirror-lint-message-error, .CodeMirror-lint-message-warning {
-  padding-left: inherit;
+
+div.CodeMirror-lint-message.CodeMirror-lint-message-error, div.CodeMirror-lint-message.CodeMirror-lint-message-warning {
+  padding-left: 20px;
 }
 
 .CodeMirror-lint-marker-warning {
