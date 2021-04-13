@@ -152,3 +152,5 @@ export const autosaveEvery = 60000; // 1 minute
 export const RECEIVE_GH_REPOS = 'RECEIVE_GH_REPOS';
 export const LOADING_GH_REPOS = 'LOADING_GH_REPOS';
 export const RECEIVE_GH_REPOS_ERROR = 'RECEIVE_GH_REPOS_ERROR';
+
+export const SET_PARENT_ID = 'SET_PARENT_ID';

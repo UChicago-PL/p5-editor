@@ -77,6 +77,13 @@ export function closeUploadFileModal() {
   };
 }
 
+export function setParentId(parentId) {
+  return {
+    type: ActionTypes.SET_PARENT_ID,
+    parentId
+  };
+}
+
 export function expandSidebar() {
   return {
     type: ActionTypes.EXPAND_SIDEBAR

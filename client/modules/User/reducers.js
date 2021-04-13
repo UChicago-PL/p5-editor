@@ -1,7 +1,6 @@
 import * as ActionTypes from '../../constants';
 
 const user = (state = { authenticated: false }, action) => {
-  console.log(action.type);
   switch (action.type) {
     case ActionTypes.AUTH_USER:
       return { ...action.user, authenticated: true };

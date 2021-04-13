@@ -25,6 +25,7 @@ const initialState = {
 };
 
 const ide = (state = initialState, action) => {
+  console.log(action.type);
   switch (action.type) {
     case ActionTypes.START_SKETCH:
       return Object.assign({}, state, { isPlaying: true });
@@ -102,6 +103,8 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, { runtimeErrorWarningVisible: true });
     case ActionTypes.OPEN_UPLOAD_FILE_MODAL:
       return Object.assign({}, state, { uploadFileModalVisible: true, parentId: action.parentId });
+    case ActionTypes.SET_PARENT_ID:
+      return Object.assign({}, state, { parentId: action.parentId });
     case ActionTypes.CLOSE_UPLOAD_FILE_MODAL:
       return Object.assign({}, state, { uploadFileModalVisible: false });
     case ActionTypes.OPEN_SUBMIT_MODEL:
