@@ -2,22 +2,35 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { JSONUncrush } from 'jsoncrush';
 import { browserHistory } from 'react-router';
-import {
-  updateFileContent,
-  handleCreateFile
-  // deleteFile
-} from '../modules/IDE/actions/files';
-import { setParentId } from '../modules/IDE/actions/ide';
+import { updateFileContent, handleCreateFile, deleteFile } from '../modules/IDE/actions/files';
+import { setParentId, setSelectedFile } from '../modules/IDE/actions/ide';
 import { setProjectName } from '../modules/IDE/actions/project';
 
-// function computeFilesToDelete(oldFiles, newFiles) {
-//   const newFileNames = newFiles.reduce((acc, { name }) => acc.add(name), new Set());
-//   const filesToDelete = oldFiles.reduce(
-//     (acc, { name }) => (!newFileNames.has(name) ? acc.add(name) : acc),
-//     new Set([])
-//   );
-//   return Array.from(filesToDelete).filter((x) => x !== 'root');
-// }
+function computeFilesToDelete(oldFiles, newFiles) {
+  const newFileNames = newFiles.reduce((acc, { name }) => acc.add(name), new Set());
+  const filesToDelete = oldFiles.reduce(
+    (acc, { name }) => (!newFileNames.has(name) ? acc.add(name) : acc),
+    new Set([])
+  );
+  const hasHTML = Array.from(newFileNames).some((x) => x.toLowerCase().endsWith('.html'));
+  const hasJS = Array.from(newFileNames).some((x) => x.toLowerCase().endsWith('.js'));
+  const hasCSS = Array.from(newFileNames).some((x) => x.toLowerCase().endsWith('.css'));
+
+  return Array.from(filesToDelete).filter((fileName) => {
+    // dont filter the root itll break stuff
+    if (fileName === 'root') {
+      return false;
+    }
+    if (
+      (fileName.endsWith('html') && !hasHTML) ||
+      (fileName.endsWith('js') && !hasJS) ||
+      (fileName.endsWith('css') && !hasCSS)
+    ) {
+      return false;
+    }
+    return true;
+  });
+}
 
 function getParsedCode(code) {
   const decodedCode = JSONUncrush(code);
@@ -69,22 +82,32 @@ function LoadInitialCodeRedirect({ store, code }) {
         console.log('overwrote');
         store.dispatch(updateFileContent(oldFile.id, newFile.content));
       } else {
-        const formParams = {
-          name: newFile.name,
-          content: newFile.content
-        };
+        const formParams = { name: newFile.name, content: newFile.content };
         store.dispatch(handleCreateFile(formParams));
       }
     });
 
     // delete files
-    // WIP
-    // const filesToDelete = computeFilesToDelete(files, parsedCode.files);
-    // filesToDelete.forEach((fileName) => {
-    //   const targetFile = files.find(({ name }) => name === fileName);
-    //   store.dispatch(deleteFile(targetFile.id, rootId));
-    // });
+    const filesToDelete = computeFilesToDelete(files, parsedCode.files);
+    filesToDelete.forEach((fileName) => {
+      const targetFile = files.find(({ name }) => name === fileName);
+      store.dispatch(deleteFile(targetFile.id, rootId));
+    });
     store.dispatch(setProjectName(parsedCode.projectName));
+
+    if (!parsedCode.defaultFile) {
+      browserHistory.replace('/');
+      return;
+    }
+    setTimeout(() => {
+      const updatedFiles = store.getState().files;
+      const targetFile = updatedFiles.find(({ name }) => name === parsedCode.defaultFile);
+      if (targetFile) {
+        store.dispatch(setSelectedFile(targetFile.id));
+      }
+      browserHistory.replace('/');
+    }, 200);
+
     browserHistory.replace('/');
   }, [code]);
   return (
