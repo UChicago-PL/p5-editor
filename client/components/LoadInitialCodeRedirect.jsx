@@ -2,18 +2,22 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { JSONUncrush } from 'jsoncrush';
 import { browserHistory } from 'react-router';
-import { updateFileContent, handleCreateFile, deleteFile } from '../modules/IDE/actions/files';
+import {
+  updateFileContent,
+  handleCreateFile
+  // deleteFile
+} from '../modules/IDE/actions/files';
 import { setParentId } from '../modules/IDE/actions/ide';
 import { setProjectName } from '../modules/IDE/actions/project';
 
-function computeFilesToDelete(oldFiles, newFiles) {
-  const newFileNames = newFiles.reduce((acc, { name }) => acc.add(name), new Set());
-  const filesToDelete = oldFiles.reduce(
-    (acc, { name }) => (!newFileNames.has(name) ? acc.add(name) : acc),
-    new Set([])
-  );
-  return Array.from(filesToDelete).filter((x) => x !== 'root');
-}
+// function computeFilesToDelete(oldFiles, newFiles) {
+//   const newFileNames = newFiles.reduce((acc, { name }) => acc.add(name), new Set());
+//   const filesToDelete = oldFiles.reduce(
+//     (acc, { name }) => (!newFileNames.has(name) ? acc.add(name) : acc),
+//     new Set([])
+//   );
+//   return Array.from(filesToDelete).filter((x) => x !== 'root');
+// }
 
 function getParsedCode(code) {
   const decodedCode = JSONUncrush(code);
@@ -74,11 +78,12 @@ function LoadInitialCodeRedirect({ store, code }) {
     });
 
     // delete files
-    const filesToDelete = computeFilesToDelete(files, parsedCode.files);
-    filesToDelete.forEach((fileName) => {
-      const targetFile = files.find(({ name }) => name === fileName);
-      store.dispatch(deleteFile(targetFile.id, rootId));
-    });
+    // WIP
+    // const filesToDelete = computeFilesToDelete(files, parsedCode.files);
+    // filesToDelete.forEach((fileName) => {
+    //   const targetFile = files.find(({ name }) => name === fileName);
+    //   store.dispatch(deleteFile(targetFile.id, rootId));
+    // });
     store.dispatch(setProjectName(parsedCode.projectName));
     browserHistory.replace('/');
   }, [code]);
