@@ -12,6 +12,7 @@ import { getUser } from './modules/User/actions';
 import { stopSketch } from './modules/IDE/actions/ide';
 import { userIsAuthorized, userIsNotAuthenticated } from './utils/auth';
 import { mobileFirst, responsiveForm } from './utils/responsive';
+import AccountView from './modules/User/pages/AccountView';
 
 import LoadInitialCodeRedirect from './components/LoadInitialCodeRedirect';
 
@@ -64,6 +65,7 @@ const routes = (store) => (
 
       <Route path="/sketches" component={createRedirectWithUsername('/:username/sketches')} />
       <Route path="/about" component={IDEView} />
+      <Route path="/account" component={AccountView} />
     </Route>
   </div>
 );

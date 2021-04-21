@@ -51,6 +51,7 @@ export function createUser(req, res, next) {
       verifiedToken: token,
       verifiedTokenExpires: EMAIL_VERIFY_TOKEN_EXPIRY_TIME
     });
+    console.log('HERE???????');
 
     User.findByEmailAndUsername(email, username, (err, existingUser) => {
       if (err) {
@@ -338,25 +339,17 @@ export function updateSettings(req, res) {
   });
 }
 
+// 02c6e72adcedf98bb39073e169970b84c306451c
 export function unlinkGithub(req, res) {
   if (req.user) {
+    console.log(JSON.stringify(req.user));
     req.user.github = undefined;
-    req.user.tokens = req.user.tokens.filter((token) => token.kind !== 'github');
+    req.user.githubToken = undefined;
+    // req.user.tokens = req.user.tokens.filter((token) => token.kind !== 'github');
     saveUser(res, req.user);
-    return;
+  } else {
+    res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
   }
-  res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
-}
-
-// todo remove
-export function unlinkGoogle(req, res) {
-  if (req.user) {
-    req.user.google = undefined;
-    req.user.tokens = req.user.tokens.filter((token) => token.kind !== 'google');
-    saveUser(res, req.user);
-    return;
-  }
-  res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
 }
 
 export function createSubmission(props) {

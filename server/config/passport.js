@@ -65,7 +65,6 @@ passport.use(
           }
           const emails = getVerifiedEmails(profile.emails);
           const primaryEmail = getPrimaryEmail(profile.emails);
-
           // otherwise, if the user exists in the database but is missing a github assocation,
           // populate the github field
           if (req.user) {
@@ -73,41 +72,53 @@ passport.use(
             req.user.githubToken = accessToken;
             req.user.verified = User.EmailConfirmation.Verified;
             req.user.save((saveErr) => done(null, req.user));
-          } else {
-            // otherwise, the user does not exist in the database. Attempt to find the user
-            // by email, and then by username
-            User.findByEmail(emails, (findByEmailErr, existingEmailUser) => {
-              if (existingEmailUser) {
-                existingEmailUser.email = existingEmailUser.email || primaryEmail;
-                existingEmailUser.github = profile.username;
-                existingEmailUser.username = existingEmailUser.username || profile.username;
-                existingEmailUser.githubToken = accessToken;
-                existingEmailUser.name = existingEmailUser.name || profile.displayName;
-                existingEmailUser.verified = User.EmailConfirmation.Verified;
-                existingEmailUser.save((saveErr) => done(null, existingEmailUser));
-              } else {
-                User.findByUsername(
-                  profile.username,
-                  { caseInsensitive: true },
-                  (findByUsernameErr, existingUsernameUser) => {
-                    const user = new User();
-                    user.email = primaryEmail;
-                    user.github = profile.username;
-                    user.username = profile.username;
-                    user.githubToken = accessToken;
-                    user.name = profile.displayName;
-                    user.verified = User.EmailConfirmation.Verified;
-                    user.save((saveErr) => {
-                      if (saveErr) {
-                        console.log(`Error creating user ${profile.username}`, saveErr);
-                      }
-                      return done(null, user);
-                    });
-                  }
-                );
-              }
-            });
+            return;
           }
+          // otherwise, the user does not exist in the database. Attempt to find the user
+          // by email, and then by username
+          User.findByEmail(emails, (findByEmailErr, existingEmailUser) => {
+            if (existingEmailUser) {
+              existingEmailUser.email = existingEmailUser.email || primaryEmail;
+              existingEmailUser.github = profile.username;
+              existingEmailUser.username = existingEmailUser.username || profile.username;
+              existingEmailUser.githubToken = accessToken;
+              existingEmailUser.name = existingEmailUser.name || profile.displayName;
+              existingEmailUser.verified = User.EmailConfirmation.Verified;
+              existingEmailUser.save((saveErr) => done(null, existingEmailUser));
+              return;
+            }
+            User.findByUsername(
+              profile.username,
+              { caseInsensitive: true },
+              (findByUsernameErr, existingUsernameUser) => {
+                if (existingUsernameUser) {
+                  existingUsernameUser.verified = User.EmailConfirmation.Verified;
+                  existingUsernameUser.githubToken = accessToken;
+                  existingUsernameUser.username = profile.username;
+                  existingUsernameUser.save((saveErr) => {
+                    if (saveErr) {
+                      console.log(`Error updating user ${profile.username}`, saveErr);
+                    }
+                    return done(null, existingUsernameUser);
+                  });
+                  return;
+                }
+                const user = new User();
+                user.email = primaryEmail;
+                user.github = profile.username;
+                user.username = profile.username;
+                user.githubToken = accessToken;
+                user.name = profile.displayName;
+                user.verified = User.EmailConfirmation.Verified;
+                user.save((saveErr) => {
+                  if (saveErr) {
+                    console.log(`Error creating user ${profile.username}`, saveErr);
+                  }
+                  return done(null, user);
+                });
+              }
+            );
+          });
         });
       });
     }
