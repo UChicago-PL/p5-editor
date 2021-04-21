@@ -342,7 +342,6 @@ export function updateSettings(req, res) {
 
 export function unlinkGithub(req, res) {
   if (req.user) {
-    console.log(JSON.stringify(req.user));
     req.user.github = undefined;
     req.user.githubToken = undefined;
     saveUser(res, req.user);
