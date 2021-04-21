@@ -38,7 +38,6 @@ class AccountView extends React.Component {
     const queryParams = parse(this.props.location.search);
     const showError = !!queryParams.error;
     const errorType = queryParams.error;
-    console.log('??? here');
     return (
       <div className="account-settings__container">
         <Helmet>
