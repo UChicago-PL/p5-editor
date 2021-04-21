@@ -346,6 +346,7 @@ export function unlinkGithub(req, res) {
     req.user.github = undefined;
     req.user.githubToken = undefined;
     saveUser(res, req.user);
+    return;
   }
   res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
 }
