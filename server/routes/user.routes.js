@@ -8,29 +8,28 @@ router.post('/submit-gh-repo', UserController.submitGHRepo);
 router.get('/gh-repos', UserController.getGHRepos);
 
 // todo delete most of these routes
-router.post('/signup', UserController.createUser);
+// router.post('/signup', UserController.createUser);
 
-router.get('/signup/duplicate_check', UserController.duplicateUserCheck);
+// router.get('/signup/duplicate_check', UserController.duplicateUserCheck);
 
 router.put('/preferences', isAuthenticated, UserController.updatePreferences);
 
-router.post('/reset-password', UserController.resetPasswordInitiate);
+// router.post('/reset-password', UserController.resetPasswordInitiate);
 
-router.get('/reset-password/:token', UserController.validateResetPasswordToken);
+// router.get('/reset-password/:token', UserController.validateResetPasswordToken);
 
-router.post('/reset-password/:token', UserController.updatePassword);
+// router.post('/reset-password/:token', UserController.updatePassword);
 
 router.put('/account', isAuthenticated, UserController.updateSettings);
 
-router.post('/account/api-keys', isAuthenticated, UserController.createApiKey);
+// router.post('/account/api-keys', isAuthenticated, UserController.createApiKey);
 
-router.delete('/account/api-keys/:keyId', isAuthenticated, UserController.removeApiKey);
+// router.delete('/account/api-keys/:keyId', isAuthenticated, UserController.removeApiKey);
 
-router.post('/verify/send', UserController.emailVerificationInitiate);
+// router.post('/verify/send', UserController.emailVerificationInitiate);
 
-router.get('/verify', UserController.verifyEmail);
+// router.get('/verify', UserController.verifyEmail);
 
 router.delete('/auth/github', UserController.unlinkGithub);
-router.delete('/auth/google', UserController.unlinkGoogle);
 
 export default router;

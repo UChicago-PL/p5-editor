@@ -22,23 +22,4 @@ router.get('/auth/github/callback', (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/auth/google', passport.authenticate('google'));
-router.get('/auth/google/callback', (req, res, next) => {
-  passport.authenticate('google', { failureRedirect: '/login' }, (err, user) => {
-    if (err) {
-      // use query string param to show error;
-      res.redirect('/account?error=google');
-      return;
-    }
-
-    req.logIn(user, (loginErr) => {
-      if (loginErr) {
-        next(loginErr);
-        return;
-      }
-      res.redirect('/');
-    });
-  })(req, res, next);
-});
-
 export default router;
