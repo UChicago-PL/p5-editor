@@ -2,15 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Helmet } from 'react-helmet';
 import { withTranslation } from 'react-i18next';
 import { withRouter, browserHistory } from 'react-router';
 import { parse } from 'query-string';
-import { createApiKey, removeApiKey } from '../actions';
-// import AccountForm from '../components/AccountForm';
 import SocialAuthButton from '../components/SocialAuthButton';
-// import APIKeyForm from '../components/APIKeyForm';
 import Nav from '../../../components/Nav';
 import ErrorModal from '../../IDE/components/ErrorModal';
 import Overlay from '../../App/components/Overlay';
@@ -20,10 +16,7 @@ function SocialLoginPanel(props) {
   const { user, t } = props;
   return (
     <React.Fragment>
-      <p className="account__social-text">
-        {/* eslint-disable-next-line react/prop-types */}
-        {t('AccountView.SocialLoginDescription')}
-      </p>
+      <p className="account__social-text">{t('AccountView.SocialLoginDescription')}</p>
       <div className="account__social-stack">
         <SocialAuthButton service={SocialAuthButton.services.github} linkStyle isConnected={!!user.github} />
       </div>
@@ -32,10 +25,7 @@ function SocialLoginPanel(props) {
 }
 
 SocialLoginPanel.propTypes = {
-  user: PropTypes.shape({
-    github: PropTypes.string,
-    google: PropTypes.string
-  }).isRequired,
+  user: PropTypes.shape({ github: PropTypes.string }).isRequired,
   t: PropTypes.func.isRequired
 };
 
@@ -92,16 +82,6 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      createApiKey,
-      removeApiKey
-    },
-    dispatch
-  );
-}
-
 AccountView.propTypes = {
   previousPath: PropTypes.string.isRequired,
   theme: PropTypes.string.isRequired,
@@ -115,4 +95,4 @@ AccountView.propTypes = {
   }).isRequired
 };
 
-export default withTranslation()(withRouter(connect(mapStateToProps, mapDispatchToProps)(AccountView)));
+export default withTranslation()(withRouter(connect(mapStateToProps)(AccountView)));

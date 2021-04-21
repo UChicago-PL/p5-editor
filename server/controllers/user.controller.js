@@ -339,17 +339,14 @@ export function updateSettings(req, res) {
   });
 }
 
-// 02c6e72adcedf98bb39073e169970b84c306451c
 export function unlinkGithub(req, res) {
   if (req.user) {
     console.log(JSON.stringify(req.user));
     req.user.github = undefined;
     req.user.githubToken = undefined;
-    // req.user.tokens = req.user.tokens.filter((token) => token.kind !== 'github');
     saveUser(res, req.user);
-  } else {
-    res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
   }
+  res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
 }
 
 export function createSubmission(props) {
