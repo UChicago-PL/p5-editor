@@ -36,48 +36,49 @@ export function findUserByUsername(username, cb) {
   });
 }
 
-export function createUser(req, res, next) {
-  const { username, email } = req.body;
-  const { password } = req.body;
-  const emailLowerCase = email.toLowerCase();
-  // eslint-disable-next-line no-mixed-operators
-  const EMAIL_VERIFY_TOKEN_EXPIRY_TIME = Date.now() + 3600000 * 24; // 24 hours
-  random((tokenError, token) => {
-    const user = new User({
-      username,
-      email: emailLowerCase,
-      password,
-      verified: User.EmailConfirmation.Sent,
-      verifiedToken: token,
-      verifiedTokenExpires: EMAIL_VERIFY_TOKEN_EXPIRY_TIME
-    });
-    console.log('HERE???????');
+// TODO: delete
+// export function createUser(req, res, next) {
+//   const { username, email } = req.body;
+//   const { password } = req.body;
+//   const emailLowerCase = email.toLowerCase();
+//   // eslint-disable-next-line no-mixed-operators
+//   const EMAIL_VERIFY_TOKEN_EXPIRY_TIME = Date.now() + 3600000 * 24; // 24 hours
+//   random((tokenError, token) => {
+//     const user = new User({
+//       username,
+//       email: emailLowerCase,
+//       password,
+//       verified: User.EmailConfirmation.Sent,
+//       verifiedToken: token,
+//       verifiedTokenExpires: EMAIL_VERIFY_TOKEN_EXPIRY_TIME
+//     });
+//     console.log('HERE???????');
 
-    User.findByEmailAndUsername(email, username, (err, existingUser) => {
-      if (err) {
-        res.status(404).send({ error: err });
-        return;
-      }
+//     User.findByEmailAndUsername(email, username, (err, existingUser) => {
+//       if (err) {
+//         res.status(404).send({ error: err });
+//         return;
+//       }
 
-      if (existingUser) {
-        const fieldInUse = existingUser.email.toLowerCase() === emailLowerCase ? 'Email' : 'Username';
-        res.status(422).send({ error: `${fieldInUse} is in use` });
-        return;
-      }
-      user.save((saveErr) => {
-        if (saveErr) {
-          next(saveErr);
-          return;
-        }
-        req.logIn(user, (loginErr) => {
-          if (loginErr) {
-            next(loginErr);
-          }
-        });
-      });
-    });
-  });
-}
+//       if (existingUser) {
+//         const fieldInUse = existingUser.email.toLowerCase() === emailLowerCase ? 'Email' : 'Username';
+//         res.status(422).send({ error: `${fieldInUse} is in use` });
+//         return;
+//       }
+//       user.save((saveErr) => {
+//         if (saveErr) {
+//           next(saveErr);
+//           return;
+//         }
+//         req.logIn(user, (loginErr) => {
+//           if (loginErr) {
+//             next(loginErr);
+//           }
+//         });
+//       });
+//     });
+//   });
+// }
 
 export function duplicateUserCheck(req, res) {
   const checkType = req.query.check_type;
