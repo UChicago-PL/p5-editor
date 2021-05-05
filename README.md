@@ -1,7 +1,7 @@
 # [p5.js Web Editor](https://editor.p5js.org)
 
 
-Documentation is also available in the following languages:
+Documentation is also available in the following languages
 
 [한국어](https://github.com/processing/p5.js-web-editor/blob/develop/translations/ko)
 
