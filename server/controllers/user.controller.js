@@ -202,30 +202,6 @@ export function emailVerificationInitiate(req, res) {
           res.status(409).json({ error: 'Email already verified' });
           // return;
         }
-
-        // const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-        // const mailOptions = renderEmailConfirmation({
-        //   body: {
-        //     domain: `${protocol}://${req.headers.host}`,
-        //     link: `${protocol}://${req.headers.host}/verify?t=${token}`,
-        //   },
-        //   to: user.email,
-        // });
-
-        // mail.send(mailOptions, (mailErr, result) => {
-        //   // eslint-disable-line no-unused-vars
-        //   if (mailErr != null) {
-        //     res.status(500).send({ error: 'Error sending mail' });
-        //   } else {
-        //     const EMAIL_VERIFY_TOKEN_EXPIRY_TIME = Date.now() + 3600000 * 24; // 24 hours
-        //     user.verified = User.EmailConfirmation.Resent;
-        //     user.verifiedToken = token;
-        //     user.verifiedTokenExpires = EMAIL_VERIFY_TOKEN_EXPIRY_TIME; // 24 hours
-        //     user.save();
-
-        //     res.json(userResponse(req.user));
-        //   }
-        // });
       });
     }
   ]);
