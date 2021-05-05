@@ -312,10 +312,6 @@ class Editor extends React.Component {
   tidyCode() {
     this.justTidied = true;
     this.props.logRun('tidy');
-    // const beautifyOptions = {
-    // indent_size: INDENTATION_AMOUNT,
-    // indent_with_tabs: IS_TAB_INDENT
-    // };
     const mode = this._cm.getOption('mode');
     const currentPosition = this._cm.doc.getCursor();
     const parserMap = { javascript: 'babel', css: 'css', htmlmixed: 'html' };
@@ -323,19 +319,6 @@ class Editor extends React.Component {
       const parser = parserMap[mode];
       this._cm.doc.setValue(prettier.format(this._cm.doc.getValue(), { parser, plugins: prettierPlugins }));
     }
-    // if (mode === 'javascript') {
-    //   const result = prettier.format(code, {
-    //     parser: 'babel',
-    //     plugins: prettierPlugins
-    //   });
-    //   this._cm.doc.setValue(result);
-    // } else if (mode === 'css') {
-    //   const result = prettier.format(code, { parser: 'css', plugins: prettierPlugins });
-    //   this._cm.doc.setValue(result);
-    // } else if (mode === 'htmlmixed') {
-    //   const result = prettier.format(code, { parser: 'html', plugins: prettierPlugins });
-    //   this._cm.doc.setValue(result);
-    // }
     this._cm.focus();
     this._cm.doc.setCursor({ line: currentPosition.line, ch: currentPosition.ch + INDENTATION_AMOUNT });
   }
