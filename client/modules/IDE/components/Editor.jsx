@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import CodeMirror from 'codemirror';
-import beautifyJS from 'js-beautify';
+import prettier from 'prettier/esm/standalone.mjs';
+import parserBabel from 'prettier/esm/parser-babel.mjs';
+import parserHtml from 'prettier/esm/parser-html.mjs';
+import parserCSS from 'prettier/esm/parser-postcss.mjs';
+
 import { withTranslation } from 'react-i18next';
 import 'codemirror/mode/css/css';
 import 'codemirror/addon/selection/active-line';
@@ -56,16 +60,13 @@ import * as UserActions from '../../User/actions';
 import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
 
-const beautifyCSS = beautifyJS.css;
-const beautifyHTML = beautifyJS.html;
-
 window.JSHINT = JSHINT;
 window.CSSLint = CSSLint;
 window.HTMLHint = HTMLHint;
 delete CodeMirror.keyMap.sublime['Shift-Tab'];
 
-const IS_TAB_INDENT = false;
 const INDENTATION_AMOUNT = 2;
+const prettierPlugins = [parserBabel, parserHtml, parserCSS];
 
 class Editor extends React.Component {
   constructor(props) {
@@ -311,18 +312,12 @@ class Editor extends React.Component {
   tidyCode() {
     this.justTidied = true;
     this.props.logRun('tidy');
-    const beautifyOptions = {
-      indent_size: INDENTATION_AMOUNT,
-      indent_with_tabs: IS_TAB_INDENT
-    };
     const mode = this._cm.getOption('mode');
     const currentPosition = this._cm.doc.getCursor();
-    if (mode === 'javascript') {
-      this._cm.doc.setValue(beautifyJS(this._cm.doc.getValue(), beautifyOptions));
-    } else if (mode === 'css') {
-      this._cm.doc.setValue(beautifyCSS(this._cm.doc.getValue(), beautifyOptions));
-    } else if (mode === 'htmlmixed') {
-      this._cm.doc.setValue(beautifyHTML(this._cm.doc.getValue(), beautifyOptions));
+    const parserMap = { javascript: 'babel', css: 'css', htmlmixed: 'html' };
+    if (new Set(['javascript', 'css', 'htmlmixed']).has(mode)) {
+      const parser = parserMap[mode];
+      this._cm.doc.setValue(prettier.format(this._cm.doc.getValue(), { parser, plugins: prettierPlugins }));
     }
     this._cm.focus();
     this._cm.doc.setCursor({ line: currentPosition.line, ch: currentPosition.ch + INDENTATION_AMOUNT });
