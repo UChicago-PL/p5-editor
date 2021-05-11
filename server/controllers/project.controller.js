@@ -282,7 +282,11 @@ function buildZip(project, req, res) {
 export function downloadProjectAsZip(req, res) {
   Project.findById(req.params.project_id, (err, project) => {
     // save project to some path
-    buildZip(project, req, res);
+    try {
+      buildZip(project, req, res);
+    } catch {
+      res.status(300).send({ message: 'Session does not match owner of project.' });
+    }
   });
 }
 
