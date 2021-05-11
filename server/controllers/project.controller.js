@@ -284,8 +284,9 @@ export function downloadProjectAsZip(req, res) {
     // save project to some path
     try {
       buildZip(project, req, res);
-    } catch {
-      res.status(300).send({ message: 'Session does not match owner of project.' });
+    } catch (e) {
+      console.log('build zip error', req, e);
+      res.status(300);
     }
   });
 }
