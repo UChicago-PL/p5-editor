@@ -233,6 +233,7 @@ function bundleExternalLibs(project, zip, callback) {
 }
 
 function buildZip(project, req, res) {
+  console.log('starting to build zip');
   const zip = archiver('zip');
   const rootFile = project.files.find((file) => file.name === 'root');
   const numFiles = project.files.filter((file) => file.fileType !== 'folder').length;
@@ -327,32 +328,35 @@ export function createLogItem(props) {
 }
 
 export function logRun(req, res) {
+  console.log(`Log ${(req.params && req.params.project_id) || 'project undefined'}`);
   Project.findById(req.params.project_id, (findProjectErr, project) => {
     if (!project.user.equals(req.user._id)) {
       res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
-    } else {
-      isPartOfStudy(req.user.github, (e, studyParticipant) => {
-        if (!studyParticipant) {
-          res.status(403).json({ success: false, message: 'User is not part of study.' });
-          return;
-        }
-        createLogItem({
-          logType: req.body.type,
-          username: req.user.username,
-          projectId: project._id,
-          projectName: project.name,
-          projectFiles: req.body.files,
-          userAgent: req.headers['user-agent'],
-          timestamp: req.body.timestamp,
-          callback: (err, logItem) => {
-            if (err) {
-              res.status(400).json({ success: false });
-            } else {
-              res.json(logItem);
-            }
-          }
-        });
-      });
+      return;
     }
+    isPartOfStudy(req.user.github, (e, studyParticipant) => {
+      if (!studyParticipant) {
+        res.status(403).json({ success: false, message: 'User is not part of study.' });
+        return;
+      }
+      createLogItem({
+        logType: req.body.type,
+        username: req.user.username,
+        projectId: project._id,
+        projectName: project.name,
+        projectFiles: req.body.files,
+        userAgent: req.headers['user-agent'],
+        timestamp: req.body.timestamp,
+        callback: (err, logItem) => {
+          if (err) {
+            res.status(400).json({ success: false });
+          } else {
+            res.json(logItem);
+          }
+        }
+      });
+    });
+  }).catch((e) => {
+    console.log('error while logging run', e);
   });
 }
