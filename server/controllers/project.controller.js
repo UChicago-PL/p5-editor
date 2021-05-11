@@ -217,19 +217,22 @@ function bundleExternalLibs(project, zip, callback) {
       }
     });
   }
-
-  jsdom.env(indexHtml.content, (innerErr, window) => {
-    const indexHtmlDoc = window.document;
-    const scriptTags = indexHtmlDoc.getElementsByTagName('script');
-    numScriptTags = scriptTags.length;
-    for (let i = 0; i < numScriptTags; i += 1) {
-      resolveScriptTagSrc(scriptTags[i], indexHtmlDoc);
-    }
-    if (numScriptTags === 0) {
-      indexHtml.content = serializeDocument(document);
-      callback();
-    }
-  });
+  try {
+    jsdom.env(indexHtml.content, (innerErr, window) => {
+      const indexHtmlDoc = window.document;
+      const scriptTags = indexHtmlDoc.getElementsByTagName('script');
+      numScriptTags = scriptTags.length;
+      for (let i = 0; i < numScriptTags; i += 1) {
+        resolveScriptTagSrc(scriptTags[i], indexHtmlDoc);
+      }
+      if (numScriptTags === 0) {
+        indexHtml.content = serializeDocument(document);
+        callback();
+      }
+    });
+  } catch (e) {
+    console.log('jsdom error while creating zip', e);
+  }
 }
 
 function buildZip(project, req, res) {
