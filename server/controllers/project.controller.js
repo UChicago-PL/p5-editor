@@ -184,10 +184,11 @@ export function projectForUserExists(username, projectId, callback) {
 }
 
 function bundleExternalLibs(project, zip, callback) {
+  console.log('a');
   const indexHtml = project.files.find((file) => file.name.match(/\.html$/));
   let numScriptsResolved = 0;
   let numScriptTags = 0;
-
+  console.log('b');
   function resolveScriptTagSrc(scriptTag, document) {
     const path = scriptTag.src.split('/');
     const filename = path[path.length - 1];
@@ -217,10 +218,13 @@ function bundleExternalLibs(project, zip, callback) {
       }
     });
   }
+
   try {
     jsdom.env(indexHtml.content, (innerErr, window) => {
+      console.log('c');
       const indexHtmlDoc = window.document;
       const scriptTags = indexHtmlDoc.getElementsByTagName('script');
+      console.log('d');
       numScriptTags = scriptTags.length;
       for (let i = 0; i < numScriptTags; i += 1) {
         resolveScriptTagSrc(scriptTags[i], indexHtmlDoc);
