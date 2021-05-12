@@ -229,9 +229,11 @@ function bundleExternalLibs(project, zip, callback) {
     try {
       const indexHtmlDoc = window.document;
       const scriptTags = indexHtmlDoc.getElementsByTagName('script');
-      console.log('d');
       numScriptTags = scriptTags.length;
+      console.log('d');
+      console.log({ indexHtmlDoc });
       for (let i = 0; i < numScriptTags; i += 1) {
+        console.log('d', i);
         resolveScriptTagSrc(scriptTags[i], indexHtmlDoc);
       }
       if (numScriptTags === 0) {
@@ -240,6 +242,7 @@ function bundleExternalLibs(project, zip, callback) {
       }
     } catch (e) {
       console.log('jsdom error while creating zip', e);
+      callback();
     }
   });
 }
