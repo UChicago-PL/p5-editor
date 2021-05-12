@@ -246,13 +246,16 @@ function buildZip(project, req, res) {
   zip.on('error', (err) => {
     res.status(500).send({ error: err.message });
   });
-
+  console.log('1');
   const currentTime = format(new Date(), 'yyyy_MM_dd_HH_mm_ss');
   project.slug = slugify(project.name, '_');
+  console.log('2');
   res.attachment(`${generateFileSystemSafeName(project.slug)}_${currentTime}.zip`);
   zip.pipe(res);
+  console.log('3');
 
   function addFileToZip(file, path) {
+    console.log('N', path);
     if (file.fileType === 'folder') {
       const newPath = file.name === 'root' ? path : `${path}${file.name}/`;
       file.children.forEach((fileId) => {
@@ -279,6 +282,7 @@ function buildZip(project, req, res) {
   }
 
   bundleExternalLibs(project, zip, () => {
+    console.log('4');
     addFileToZip(rootFile, '/');
   });
 }
