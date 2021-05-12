@@ -184,14 +184,11 @@ export function projectForUserExists(username, projectId, callback) {
 }
 
 function bundleExternalLibs(project, zip, callback) {
-  console.log('a');
   const indexHtml = project.files.find((file) => file.name.match(/\.html$/));
   console.log('indexHtml', indexHtml);
   let numScriptsResolved = 0;
   let numScriptTags = 0;
-  console.log('b');
   function resolveScriptTagSrc(scriptTag, document) {
-    console.log('e');
     const path = scriptTag.src.split('/');
     const filename = path[path.length - 1];
     const { src } = scriptTag;
@@ -204,18 +201,14 @@ function bundleExternalLibs(project, zip, callback) {
       }
       return;
     }
-    console.log('f');
 
     request({ method: 'GET', url: src, encoding: null }, (err, response, body) => {
-      console.log('g');
       if (err) {
         console.log('resolveScriptTagSrc', err);
-        console.log('g - alt');
       } else {
         zip.append(body, { name: filename });
         scriptTag.src = filename;
       }
-      console.log('h');
       numScriptsResolved += 1;
       if (numScriptsResolved === numScriptTags) {
         indexHtml.content = serializeDocument(document);
@@ -225,15 +218,12 @@ function bundleExternalLibs(project, zip, callback) {
   }
 
   jsdom.env(indexHtml.content, (innerErr, window) => {
-    console.log('c');
     try {
       const indexHtmlDoc = window.document;
       const scriptTags = indexHtmlDoc.getElementsByTagName('script');
       numScriptTags = scriptTags.length;
-      console.log('d');
       console.log({ indexHtmlDoc });
       for (let i = 0; i < numScriptTags; i += 1) {
-        console.log('d', i);
         resolveScriptTagSrc(scriptTags[i], indexHtmlDoc);
       }
       if (numScriptTags === 0) {
@@ -258,16 +248,12 @@ function buildZip(project, req, res) {
   zip.on('error', (err) => {
     res.status(500).send({ error: err.message });
   });
-  console.log('1');
   const currentTime = format(new Date(), 'yyyy_MM_dd_HH_mm_ss');
   project.slug = slugify(project.name, '_');
-  console.log('2');
   res.attachment(`${generateFileSystemSafeName(project.slug)}_${currentTime}.zip`);
   zip.pipe(res);
-  console.log('3');
 
   function addFileToZip(file, path) {
-    console.log('N', path);
     if (file.fileType === 'folder') {
       const newPath = file.name === 'root' ? path : `${path}${file.name}/`;
       file.children.forEach((fileId) => {
@@ -294,7 +280,6 @@ function buildZip(project, req, res) {
   }
 
   bundleExternalLibs(project, zip, () => {
-    console.log('4');
     addFileToZip(rootFile, '/');
   });
 }
@@ -347,7 +332,9 @@ export function createLogItem(props) {
 }
 
 export function logRun(req, res) {
-  console.log(`Log ${(req.params && req.params.project_id) || 'project undefined'}`);
+  console.log(
+    `Log ${(req.params && req.params.project_id) || 'project undefined'} by ${req.user || 'undefined user'}`
+  );
   Project.findById(req.params.project_id, (findProjectErr, project) => {
     if (!project.user.equals(req.user._id)) {
       res.status(403).send({ success: false, message: 'Session does not match owner of project.' });
