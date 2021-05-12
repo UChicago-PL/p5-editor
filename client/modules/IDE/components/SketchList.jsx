@@ -186,8 +186,7 @@ class SketchListRowBase extends React.Component {
                 </button>
               </li>
             )}
-            {/* TODO UNBREAK DOWNLOAD FUNCTIONALITY */}
-            {/* <li>
+            <li>
               <button
                 className="sketch-list__action-option"
                 onClick={this.handleSketchDownload}
@@ -196,7 +195,7 @@ class SketchListRowBase extends React.Component {
               >
                 {this.props.t('SketchList.DropdownDownload')}
               </button>
-            </li> */}
+            </li>
             {this.props.user.authenticated && (
               <li>
                 <button

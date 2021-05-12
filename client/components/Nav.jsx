@@ -305,8 +305,7 @@ class Nav extends React.PureComponent {
                 </button>
               </li>
             )}
-            {/* TODO UNBREAK DOWNLOAD FUNCTIONALITY */}
-            {/* {this.props.project.id && (
+            {this.props.project.id && (
               <li className="nav__dropdown-item">
                 <button
                   onClick={this.handleDownload}
@@ -316,7 +315,7 @@ class Nav extends React.PureComponent {
                   {this.props.t('Nav.File.Download')}
                 </button>
               </li>
-            )} */}
+            )}
             {this.props.user.authenticated && (
               <li className="nav__dropdown-item">
                 <Link
