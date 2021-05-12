@@ -190,6 +190,7 @@ function bundleExternalLibs(project, zip, callback) {
   let numScriptTags = 0;
   console.log('b');
   function resolveScriptTagSrc(scriptTag, document) {
+    console.log('e');
     const path = scriptTag.src.split('/');
     const filename = path[path.length - 1];
     const { src } = scriptTag;
@@ -202,15 +203,18 @@ function bundleExternalLibs(project, zip, callback) {
       }
       return;
     }
+    console.log('f');
 
     request({ method: 'GET', url: src, encoding: null }, (err, response, body) => {
+      console.log('g');
       if (err) {
         console.log('resolveScriptTagSrc', err);
+        console.log('g - alt');
       } else {
         zip.append(body, { name: filename });
         scriptTag.src = filename;
       }
-
+      console.log('h');
       numScriptsResolved += 1;
       if (numScriptsResolved === numScriptTags) {
         indexHtml.content = serializeDocument(document);
