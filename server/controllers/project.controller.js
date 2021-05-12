@@ -186,6 +186,7 @@ export function projectForUserExists(username, projectId, callback) {
 function bundleExternalLibs(project, zip, callback) {
   console.log('a');
   const indexHtml = project.files.find((file) => file.name.match(/\.html$/));
+  console.log('indexHtml', indexHtml);
   let numScriptsResolved = 0;
   let numScriptTags = 0;
   console.log('b');
@@ -223,9 +224,9 @@ function bundleExternalLibs(project, zip, callback) {
     });
   }
 
-  try {
-    jsdom.env(indexHtml.content, (innerErr, window) => {
-      console.log('c');
+  jsdom.env(indexHtml.content, (innerErr, window) => {
+    console.log('c');
+    try {
       const indexHtmlDoc = window.document;
       const scriptTags = indexHtmlDoc.getElementsByTagName('script');
       console.log('d');
@@ -237,10 +238,10 @@ function bundleExternalLibs(project, zip, callback) {
         indexHtml.content = serializeDocument(document);
         callback();
       }
-    });
-  } catch (e) {
-    console.log('jsdom error while creating zip', e);
-  }
+    } catch (e) {
+      console.log('jsdom error while creating zip', e);
+    }
+  });
 }
 
 function buildZip(project, req, res) {
