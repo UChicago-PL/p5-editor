@@ -185,9 +185,9 @@ export function projectForUserExists(username, projectId, callback) {
 
 function bundleExternalLibs(project, zip, callback) {
   const indexHtml = project.files.find((file) => file.name.match(/\.html$/));
-  console.log('indexHtml', indexHtml);
   let numScriptsResolved = 0;
   let numScriptTags = 0;
+
   function resolveScriptTagSrc(scriptTag, document) {
     const path = scriptTag.src.split('/');
     const filename = path[path.length - 1];
@@ -209,6 +209,7 @@ function bundleExternalLibs(project, zip, callback) {
         zip.append(body, { name: filename });
         scriptTag.src = filename;
       }
+
       numScriptsResolved += 1;
       if (numScriptsResolved === numScriptTags) {
         indexHtml.content = serializeDocument(document);
@@ -222,7 +223,7 @@ function bundleExternalLibs(project, zip, callback) {
       const indexHtmlDoc = window.document;
       const scriptTags = indexHtmlDoc.getElementsByTagName('script');
       numScriptTags = scriptTags.length;
-      console.log({ indexHtmlDoc });
+
       for (let i = 0; i < numScriptTags; i += 1) {
         resolveScriptTagSrc(scriptTags[i], indexHtmlDoc);
       }
