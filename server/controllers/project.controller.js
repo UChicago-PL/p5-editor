@@ -334,7 +334,9 @@ export function createLogItem(props) {
 
 export function logRun(req, res) {
   console.log(
-    `Log ${(req.params && req.params.project_id) || 'project undefined'} by ${req.user || 'undefined user'}`
+    `Log ${(req.params && req.params.project_id) || 'project undefined'} by ${
+      (req.user && req.user.github) || 'undefined user'
+    }`
   );
   Project.findById(req.params.project_id, (findProjectErr, project) => {
     if (!project.user.equals(req.user._id)) {
