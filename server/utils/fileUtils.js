@@ -1,22 +1,63 @@
-
-
-export const fileExtensionsArray = ['gif', 'jpg', 'jpeg', 'png', 'bmp', 'wav', 'flac', 'ogg',
-  'oga', 'mp4', 'm4p', 'mp3', 'm4a', 'aiff', 'aif', 'm4v', 'aac', 'webm', 'mpg', 'mp2',
-  'mpeg', 'mpe', 'mpv', 'js', 'jsx', 'html', 'htm', 'css', 'json', 'csv', 'tsv', 'obj', 'svg',
-  'otf', 'ttf', 'txt', 'mov', 'vert', 'frag', 'bin'];
+export const fileExtensionsArray = [
+  'aac',
+  'aif',
+  'aiff',
+  'bin',
+  'bmp',
+  'css',
+  'csv',
+  'flac',
+  'frag',
+  'gif',
+  'htm',
+  'html',
+  'jpeg',
+  'jpg',
+  'js',
+  'json',
+  'jsx',
+  'm4a',
+  'm4p',
+  'm4v',
+  'md',
+  'mov',
+  'mp2',
+  'mp3',
+  'mp4',
+  'mpe',
+  'mpeg',
+  'mpg',
+  'mpv',
+  'obj',
+  'oga',
+  'ogg',
+  'otf',
+  'png',
+  'svg',
+  'tsv',
+  'ttf',
+  'txt',
+  'vert',
+  'wav',
+  'webm'
+];
 
 export const mimeTypes = `image/*,audio/*,text/javascript,text/html,text/css,
 application/json,application/x-font-ttf,application/x-font-truetype,text/plain,
 text/csv,.obj,video/webm,video/ogg,video/quicktime,video/mp4`;
 
-export const fileExtensions = fileExtensionsArray.map(ext => `.${ext}`).join(',');
+export const fileExtensions = fileExtensionsArray.map((ext) => `.${ext}`).join(',');
 export const fileExtensionsAndMimeTypes = `${fileExtensions},${mimeTypes}`;
 
-export const MEDIA_FILE_REGEX =
-  new RegExp(`^(?!(http:\\/\\/|https:\\/\\/)).*\\.(${fileExtensionsArray.join('|')})$`, 'i');
+export const MEDIA_FILE_REGEX = new RegExp(
+  `^(?!(http:\\/\\/|https:\\/\\/)).*\\.(${fileExtensionsArray.join('|')})$`,
+  'i'
+);
 
-export const MEDIA_FILE_QUOTED_REGEX =
-  new RegExp(`^('|")(?!(http:\\/\\/|https:\\/\\/)).*\\.(${fileExtensionsArray.join('|')})('|")$`, 'i');
+export const MEDIA_FILE_QUOTED_REGEX = new RegExp(
+  `^('|")(?!(http:\\/\\/|https:\\/\\/)).*\\.(${fileExtensionsArray.join('|')})('|")$`,
+  'i'
+);
 
 export const STRING_REGEX = /(['"])((\\\1|.)*?)\1/gm;
 // these are files that have to be linked to with a blob url
@@ -26,4 +67,4 @@ export const TEXT_FILE_REGEX = /.+\.(json|txt|csv|tsv|vert|frag|js|css|html|htm|
 export const NOT_EXTERNAL_LINK_REGEX = /^(?!(http:\/\/|https:\/\/))/;
 export const EXTERNAL_LINK_REGEX = /^(http:\/\/|https:\/\/)/;
 
-export const CREATE_FILE_REGEX = /.+\.(json|txt|csv|tsv|js|css|frag|vert)$/i;
+export const CREATE_FILE_REGEX = /.+\.(json|txt|csv|tsv|js|css|frag|vert|html|md)$/i;
