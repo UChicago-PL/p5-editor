@@ -413,13 +413,9 @@ async function prepPR(data, prefix) {
     if (file.url) {
       // eslint-disable-next-line no-await-in-loop
       const res = await promiseRequest(file.url);
-      // might be wrong here
-      file.content = res.toString('base64'); //.toString('binary');
+      file.content = res.toString('base64');
       file.fileType = 'asset';
       delete file.url;
-      // console.log(res.toString('binary'));
-      // file.content = res.toString('base64');
-      // console.log(res.toString('base64'));
     }
     files.push(file);
   }
