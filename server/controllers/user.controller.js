@@ -2,8 +2,9 @@ import crypto from 'crypto';
 import async from 'async';
 import { Octokit } from '@octokit/rest';
 import { createPullRequest } from 'octokit-plugin-create-pull-request';
-import Submission from '../models/submission';
 import request from 'request';
+
+import Submission from '../models/submission';
 import Project from '../models/project';
 import User from '../models/user';
 import Assignment from '../models/assignment';
