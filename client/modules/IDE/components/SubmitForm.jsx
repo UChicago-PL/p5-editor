@@ -50,8 +50,6 @@ function SubmitForm(props) {
     <Form fields={['repo', 'sure']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
         const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
-        // const currRepo = repos.find(({ urlName }) => urlName === values.repo);
-        // const currAssignmentDueDate = currRepo && currRepo.dueDate && new Date(currRepo.dueDate);
         const dueDate = getCurrentDueDate(values.repo);
         const passedDue = dueDate && dueDate < new Date().getTime();
         const notPassedDue = dueDate && dueDate > new Date().getTime();
