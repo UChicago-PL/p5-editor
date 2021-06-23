@@ -29,7 +29,7 @@ users.forEach((user) => {
     // ignore the uniqueness error
   };
   UserAllowlist.create({ github: user, type: 'user', studyParticipant: true, edition: 'csp21' }, cb);
-  UserAllowlist.create({ github: user, type: 'user', studyParticipant: true, edition: 'imm21' }, cb);
+  // UserAllowlist.create({ github: user, type: 'user', studyParticipant: true, edition: 'imm21' }, cb);
 });
 // }
 

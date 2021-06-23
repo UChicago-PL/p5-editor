@@ -7,6 +7,7 @@ import request from 'request';
 import Submission from '../models/submission';
 import Project from '../models/project';
 import User from '../models/user';
+import UserAllowlist from '../models/userAllowlist';
 import Assignment from '../models/assignment';
 
 export * from './user.controller/apiKey';
@@ -82,24 +83,24 @@ export function findUserByUsername(username, cb) {
 //   });
 // }
 
-export function duplicateUserCheck(req, res) {
-  const checkType = req.query.check_type;
-  const value = req.query[checkType];
-  const options = { caseInsensitive: true, valueType: checkType };
-  User.findByEmailOrUsername(value, options, (err, user) => {
-    if (user) {
-      return res.json({
-        exists: true,
-        message: `This ${checkType} is already taken.`,
-        type: checkType
-      });
-    }
-    return res.json({
-      exists: false,
-      type: checkType
-    });
-  });
-}
+// export function duplicateUserCheck(req, res) {
+//   const checkType = req.query.check_type;
+//   const value = req.query[checkType];
+//   const options = { caseInsensitive: true, valueType: checkType };
+//   User.findByEmailOrUsername(value, options, (err, user) => {
+//     if (user) {
+//       return res.json({
+//         exists: true,
+//         message: `This ${checkType} is already taken.`,
+//         type: checkType
+//       });
+//     }
+//     return res.json({
+//       exists: false,
+//       type: checkType
+//     });
+//   });
+// }
 
 export function updatePreferences(req, res) {
   User.findById(req.user.id, (err, user) => {
@@ -527,11 +528,14 @@ export function getGHRepos(req, res) {
     res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
     return;
   }
-  Assignment.find({ released: true }, (err, assignments) => {
-    if (err) {
-      console.log(err);
-      res.status(300);
-    }
-    res.status(200).json(assignments);
+
+  UserAllowlist.findOne({ github: req.user.github }).then((user) => {
+    Assignment.find({ released: true, edition: user.edition }, (err, assignments) => {
+      if (err) {
+        console.log(err);
+        res.status(300);
+      }
+      res.status(200).json(assignments);
+    });
   });
 }
