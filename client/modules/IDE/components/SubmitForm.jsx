@@ -12,10 +12,21 @@ function SubmitForm(props) {
 
   const dispatch = useDispatch();
 
+  function getCurrentDueDate(repo) {
+    const currRepo = repos.find(({ urlName }) => urlName === repo);
+    const currAssignmentDueDate = currRepo && currRepo.dueDate && new Date(currRepo.dueDate);
+    return currAssignmentDueDate && currAssignmentDueDate.getTime();
+  }
+
   function validate(formProps) {
     const errors = {};
     if (!formProps.repo || formProps.repo.trim().length === 0) {
       errors.repo = 'please select an assignment';
+    }
+    const dueDate = getCurrentDueDate(formProps.repo);
+    const passedDue = dueDate && dueDate < new Date().getTime();
+    if (passedDue && !formProps.sure) {
+      errors.sure = 'please indicate that you are sure this is the assignment you mean to submit to.';
     }
     return errors;
   }
@@ -36,11 +47,14 @@ function SubmitForm(props) {
     return acc;
   }, {});
   return (
-    <Form fields={['repo']} validate={validate} onSubmit={onSubmit}>
+    <Form fields={['repo', 'sure']} validate={validate} onSubmit={onSubmit}>
       {(formProps) => {
         const { handleSubmit, invalid, submitting, touched, errors, values } = formProps;
-        const currRepo = repos.find(({ urlName }) => urlName === values.repo);
-        const currAssignmentDueDate = currRepo && currRepo.dueDate && new Date(currRepo.dueDate);
+        // const currRepo = repos.find(({ urlName }) => urlName === values.repo);
+        // const currAssignmentDueDate = currRepo && currRepo.dueDate && new Date(currRepo.dueDate);
+        const dueDate = getCurrentDueDate(values.repo);
+        const passedDue = dueDate && dueDate < new Date().getTime();
+        const notPassedDue = dueDate && dueDate > new Date().getTime();
         return (
           <form className="submit-repo-form" onSubmit={handleSubmit}>
             <div className="submit-repo-form__input-wrapper flex-down">
@@ -61,22 +75,21 @@ function SubmitForm(props) {
               {touched.repo && errors.repo && <span className="form-error">{errors.repo}</span>}
 
               <div className="flex-down">
-                {currRepo && currRepo.assignmentLink && (
-                  <div>
-                    <a href={currRepo.assignmentLink} target="_blank" rel="noreferrer">
-                      Click here
-                    </a>
-                    <span> for more info about this assignment</span>
-                  </div>
-                )}
-                {currAssignmentDueDate && currAssignmentDueDate.getTime() < new Date().getTime() && (
+                {passedDue && (
                   <div style={{ color: 'red' }}>
-                    {`The due date ${currAssignmentDueDate.toString()} for this assignment is passed.`}
+                    {`The due date ${new Date(dueDate).toString()} for this assignment is passed.`}
                   </div>
                 )}
-                {currAssignmentDueDate && currAssignmentDueDate.getTime() > new Date().getTime() && (
-                  <div>{`This assignment is due at ${currAssignmentDueDate.toString()}.`}</div>
+                {passedDue && (
+                  <div className="flex-down">
+                    <div>Are you sure this is the assignment you meant to submit this for?</div>
+                    <div className="flex">
+                      <div>Yes, I am sure!</div>
+                      <Field name="sure" component="input" type="checkbox" />
+                    </div>
+                  </div>
                 )}
+                {notPassedDue && <div>{`This assignment is due at ${dueDate.toString()}.`}</div>}
               </div>
               <br />
               <div>
