@@ -77,7 +77,7 @@ function SubmitForm(props) {
               <div className="flex-down">
                 {passedDue && (
                   <div style={{ color: 'red' }}>
-                    {`The due date ${new Date(dueDate).toString()} for this assignment is passed.`}
+                    {`The due date (${new Date(dueDate).toString()}) for this assignment is passed.`}
                   </div>
                 )}
                 {passedDue && (
@@ -89,7 +89,7 @@ function SubmitForm(props) {
                     </div>
                   </div>
                 )}
-                {notPassedDue && <div>{`This assignment is due at ${dueDate.toString()}.`}</div>}
+                {notPassedDue && <div>{`This assignment is due at (${new Date(dueDate).toString()}).`}</div>}
               </div>
               <br />
               <div>
