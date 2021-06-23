@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const assignmentSchema = new Schema(
   {
     humanReadableName: { type: String },
-    urlName: { type: String, unique: true },
+    urlName: { type: String },
     released: { type: Boolean },
     dueDate: { type: Date },
     assignmentLink: { type: String },
@@ -18,6 +18,7 @@ const assignmentSchema = new Schema(
   },
   { timestamps: true, _id: true, usePushEach: true }
 );
+assignmentSchema.index({ urlName: 1, edition: 1 }, { unique: true });
 
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 
