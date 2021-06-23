@@ -13,42 +13,41 @@ const assignmentSchema = new Schema(
       type: String,
       enum: ['homework', 'exercise', 'project']
     },
-    edition: {
-      type: String
-    }
+    edition: { type: String },
+    optional: { type: Boolean, default: false }
   },
   { timestamps: true, _id: true, usePushEach: true }
 );
 
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 
-if (process.env.NODE_ENV === 'development') {
-  const assignments = [
-    {
-      humanReadableName: 'An Example Assignment for development purposes',
-      urlName: 'example-assignment',
-      released: false,
-      dueDate: new Date('April 1 2100'),
-      assignmentType: 'homework',
-      edition: 'csp21'
-    },
-    {
-      humanReadableName: 'An Example Assignment for development purposes',
-      urlName: 'example-assignment',
-      released: false,
-      dueDate: new Date('April 1 2100'),
-      assignmentType: 'homework',
-      edition: 'imm21'
-    }
-  ];
+// if (process.env.NODE_ENV === 'development') {
+const assignments = [
+  {
+    humanReadableName: 'An Example Assignment for development purposes',
+    urlName: 'example-assignment',
+    released: false,
+    dueDate: new Date('April 1 2100'),
+    assignmentType: 'homework',
+    edition: 'csp21'
+  },
+  {
+    humanReadableName: 'An Example Assignment for development purposes',
+    urlName: 'example-assignment',
+    released: false,
+    dueDate: new Date('April 1 2100'),
+    assignmentType: 'homework',
+    edition: 'imm21'
+  }
+];
 
-  assignments.forEach((assignment) => {
-    Assignment.create(assignment, (e) => {
-      if (e) {
-        console.log('assignment creation error', assignment);
-      }
-    });
+assignments.forEach((assignment) => {
+  Assignment.create(assignment, (e) => {
+    if (e) {
+      console.log('assignment creation error', assignment);
+    }
   });
-}
+});
+// }
 
 export default Assignment;
