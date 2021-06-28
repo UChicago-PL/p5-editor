@@ -360,7 +360,7 @@ export function createSubmission(props) {
       {
         files,
         username,
-        project: project._id,
+        project: project.id,
         projectName: project.name,
         submissionId,
         assignment: assignment._id,
