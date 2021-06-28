@@ -92,7 +92,7 @@ function SubmitForm(props) {
               <br />
               <div>
                 If you are having difficulty submitting please ensure that you have accepted the assignment
-                for course <a href="https://classroom.github.com/a/C0DfSFZG">found here</a>
+                for course.
               </div>
               <br />
               <Button type="submit" disabled={invalid || submitting}>
