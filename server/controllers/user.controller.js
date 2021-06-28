@@ -355,12 +355,13 @@ export function unlinkGithub(req, res) {
 
 export function createSubmission(props) {
   const { files, project, username, submissionId, assignment, prNumber } = props;
+  console.log('asd', project.id);
   return new Promise((resolve, reject) => {
     Submission.create(
       {
         files,
         username,
-        project: project._id,
+        project: project.id,
         projectName: project.name,
         submissionId,
         assignment: assignment._id,
