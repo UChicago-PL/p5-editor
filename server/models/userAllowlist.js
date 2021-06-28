@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const userAllowlistSchema = new Schema(
   {
-    github: { type: String },
+    github: { type: String, unique: true },
     type: {
       type: String,
       enum: ['user', 'professor']
@@ -16,7 +16,6 @@ const userAllowlistSchema = new Schema(
   },
   { timestamps: true, _id: true, usePushEach: true }
 );
-userAllowlistSchema.index({ github: 1, edition: 1 }, { unique: true });
 
 const UserAllowlist = mongoose.model('UserAllowlist', userAllowlistSchema);
 
@@ -24,12 +23,10 @@ const UserAllowlist = mongoose.model('UserAllowlist', userAllowlistSchema);
 const users = ['mcnuttandrew', 'mcnuttandrew-test', 'brianhempel', 'ravichugh'];
 
 users.forEach((user) => {
-  const cb = (e) => {
+  UserAllowlist.create({ github: user, type: 'user', studyParticipant: true, edition: 'csp21' }, (e) => {
     // there is a uniqueness constraint on usernames, so no duplicates will be created
     // ignore the uniqueness error
-  };
-  UserAllowlist.create({ github: user, type: 'user', studyParticipant: true, edition: 'csp21' }, cb);
-  // UserAllowlist.create({ github: user, type: 'user', studyParticipant: true, edition: 'imm21' }, cb);
+  });
 });
 // }
 
