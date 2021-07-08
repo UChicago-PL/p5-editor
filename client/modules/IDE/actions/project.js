@@ -446,8 +446,7 @@ export function logRun(type) {
     } else {
       // in this case, saveProject will invoke the createProject function on the backend,
       // so a snapshot log won't be automatically created
-      console.log(saveProject);
-      dispatch(saveProject).then(() => {
+      dispatch(saveProject()).then(() => {
         const newState = getState();
         saveLog(newState.project.id, logParams);
       });
