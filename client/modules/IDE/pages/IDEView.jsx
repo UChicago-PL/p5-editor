@@ -7,6 +7,7 @@ import { withTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import SplitPane from 'react-split-pane';
 import Editor from '../components/Editor';
+import ImgPreview from '../components/ImgPreview';
 import Sidebar from '../components/Sidebar';
 import PreviewFrame from '../components/PreviewFrame';
 import Toolbar from '../components/Toolbar';
@@ -317,6 +318,7 @@ class IDEView extends React.Component {
                     this.cmController = ctl;
                   }}
                 />
+                <ImgPreview />
                 <Console />
               </SplitPane>
               <section className="preview-frame-holder">
