@@ -1,10 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import CodeMirror from 'codemirror';
-import prettier from 'prettier/esm/standalone.mjs';
-import parserBabel from 'prettier/esm/parser-babel.mjs';
-import parserHtml from 'prettier/esm/parser-html.mjs';
-import parserCSS from 'prettier/esm/parser-postcss.mjs';
 
 import { withTranslation } from 'react-i18next';
 import 'codemirror/mode/css/css';
@@ -40,11 +35,8 @@ import '../../../utils/p5-javascript';
 import '../../../utils/webGL-clike';
 import Timer from '../components/Timer';
 import EditorAccessibility from '../components/EditorAccessibility';
-import { metaKey } from '../../../utils/metaKey';
 
 import '../../../utils/codemirror-search';
-
-import beepUrl from '../../../sounds/audioAlert.mp3';
 import UnsavedChangesDotIcon from '../../../images/unsaved-changes-dot.svg';
 import RightArrowIcon from '../../../images/right-arrow.svg';
 import LeftArrowIcon from '../../../images/left-arrow.svg';
@@ -59,6 +51,8 @@ import * as PreferencesActions from '../actions/preferences';
 import * as UserActions from '../../User/actions';
 import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
+
+import JeuceEditor from '../../../../../jeuce/src/components/App.tsx';
 
 window.JSHINT = JSHINT;
 window.CSSLint = CSSLint;
@@ -75,6 +69,7 @@ class Editor extends React.Component {
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
     this.justTidied = false;
+    this.doc = { code: '', lang: '' };
 
     // this.updateLintingMessageAccessibility = debounce((annotations) => {
     //   this.props.clearLintMessage();
@@ -92,39 +87,40 @@ class Editor extends React.Component {
     // this.findPrev = this.findPrev.bind(this);
     // this.showReplace = this.showReplace.bind(this);
     this.getContent = this.getContent.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
     // this.beep = new Audio(beepUrl);
     // this.widgets = [];
-    this._cm = CodeMirror(this.codemirrorContainer, {
-      // eslint-disable-line
-      theme: `p5-${this.props.theme}`,
-      lineNumbers: this.props.lineNumbers,
-      styleActiveLine: true,
-      inputStyle: 'contenteditable',
-      lineWrapping: this.props.linewrap,
-      fixedGutter: false,
-      foldGutter: true,
-      foldOptions: { widget: '\u2026' },
-      gutters: ['CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-      keyMap: 'sublime',
-      highlightSelectionMatches: true, // highlight current search match
-      matchBrackets: true,
-      autoCloseBrackets: this.props.autocloseBracketsQuotes,
-      styleSelectedText: true
-      // lint: {
-      //   onUpdateLinting: (annotations) => {
-      //     this.updateLintingMessageAccessibility(annotations);
-      //   },
-      //   options: {
-      //     asi: true,
-      //     eqeqeq: true,
-      //     '-W041': false,
-      //     esversion: 7
-      //   }
-      // }
-    });
+    // this._cm = CodeMirror(this.codemirrorContainer, {
+    //   // eslint-disable-line
+    //   theme: `p5-${this.props.theme}`,
+    //   lineNumbers: this.props.lineNumbers,
+    //   styleActiveLine: true,
+    //   inputStyle: 'contenteditable',
+    //   lineWrapping: this.props.linewrap,
+    //   fixedGutter: false,
+    //   foldGutter: true,
+    //   foldOptions: { widget: '\u2026' },
+    //   gutters: ['CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+    //   keyMap: 'sublime',
+    //   highlightSelectionMatches: true, // highlight current search match
+    //   matchBrackets: true,
+    //   autoCloseBrackets: this.props.autocloseBracketsQuotes,
+    //   styleSelectedText: true
+    //   // lint: {
+    //   //   onUpdateLinting: (annotations) => {
+    //   //     this.updateLintingMessageAccessibility(annotations);
+    //   //   },
+    //   //   options: {
+    //   //     asi: true,
+    //   //     eqeqeq: true,
+    //   //     '-W041': false,
+    //   //     esversion: 7
+    //   //   }
+    //   // }
+    // });
 
     // const replaceCommand = metaKey === 'Ctrl' ? `${metaKey}-H` : `${metaKey}-Option-F`;
     // this._cm.setOption('extraKeys', {
@@ -146,20 +142,8 @@ class Editor extends React.Component {
     // });
 
     this.initializeDocuments(this.props.files);
-    this._cm.swapDoc(this._docs[this.props.file.id]);
-
-    this._cm.on(
-      'change',
-      debounce(() => {
-        this.props.setUnsavedChanges(true);
-        this.props.updateFileContent(this.props.file.id, this._cm.getValue());
-        if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
-          this.props.clearConsole();
-          this.props.startAutoRefreshSketch();
-        }
-        this.justTidied = false;
-      }, 1000)
-    );
+    // this._cm.swapDoc(this._docs[this.props.file.id]);
+    this.doc = this._docs[this.props.file.id];
 
     // this._cm.on('keyup', () => {
     //   const temp = this.props.t('Editor.KeyUpLineNumber', {
@@ -208,13 +192,9 @@ class Editor extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      this.props.file.content !== prevProps.file.content &&
-      this.props.file.content !== this._cm.getValue()
-    ) {
-      const oldDoc = this._cm.swapDoc(this._docs[this.props.file.id]);
-      this._docs[prevProps.file.id] = oldDoc;
-      this._cm.focus();
+    if (this.props.file.content !== prevProps.file.content && this.props.file.content !== this.doc.code) {
+      this._docs[prevProps.file.id] = this.doc;
+      this.doc = this._docs[this.props.file.id];
       if (!prevProps.unsavedChanges) {
         setTimeout(() => this.props.setUnsavedChanges(false), 400);
       }
@@ -266,8 +246,20 @@ class Editor extends React.Component {
   }
 
   componentWillUnmount() {
-    this._cm = null;
     this.props.provideController(null);
+  }
+
+  onChange(newCode) {
+    this.doc.code = newCode;
+    debounce(() => {
+      this.props.setUnsavedChanges(true);
+      this.props.updateFileContent(this.props.file.id, newCode);
+      if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
+        this.props.clearConsole();
+        this.props.startAutoRefreshSketch();
+      }
+      this.justTidied = false;
+    }, 1000);
   }
 
   getFileMode(fileName) {
@@ -289,10 +281,9 @@ class Editor extends React.Component {
   }
 
   getContent() {
-    const content = this._cm.getValue();
-    const updatedFile = Object.assign({}, this.props.file, { content });
-    return updatedFile;
+    return Object.assign({}, this.props.file, { content: this.doc.code });
   }
+
   //
   // findPrev() {
   //   this._cm.focus();
@@ -330,7 +321,7 @@ class Editor extends React.Component {
     this._docs = {};
     files.forEach((file) => {
       if (file.name !== 'root') {
-        this._docs[file.id] = CodeMirror.Doc(file.content, this.getFileMode(file.name)); // eslint-disable-line
+        this._docs[file.id] = { code: file.content, lang: this.getFileMode(file.name) };
       }
     });
   }
@@ -389,12 +380,7 @@ class Editor extends React.Component {
             <Timer projectSavedTime={this.props.projectSavedTime} isUserOwner={this.props.isUserOwner} />
           </div>
         </header>
-        <article
-          ref={(element) => {
-            this.codemirrorContainer = element;
-          }}
-          className={editorHolderClass}
-        />
+        <JeuceEditor code={this.doc.code} lang={this.doc.lang} onChange={this.onChange} />
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
     );
