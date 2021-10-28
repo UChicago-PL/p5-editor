@@ -63,40 +63,40 @@ import * as ConsoleActions from '../actions/console';
 window.JSHINT = JSHINT;
 window.CSSLint = CSSLint;
 window.HTMLHint = HTMLHint;
-delete CodeMirror.keyMap.sublime['Shift-Tab'];
+// delete CodeMirror.keyMap.sublime['Shift-Tab'];
 
-const INDENTATION_AMOUNT = 2;
-const prettierPlugins = [parserBabel, parserHtml, parserCSS];
+// const INDENTATION_AMOUNT = 2;
+// const prettierPlugins = [parserBabel, parserHtml, parserCSS];
 
 class Editor extends React.Component {
   constructor(props) {
     super(props);
-    this.tidyCode = this.tidyCode.bind(this);
+    // this.tidyCode = this.tidyCode.bind(this);
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
     this.justTidied = false;
 
-    this.updateLintingMessageAccessibility = debounce((annotations) => {
-      this.props.clearLintMessage();
-      annotations.forEach((x) => {
-        if (x.from.line > -1) {
-          this.props.updateLintMessage(x.severity, x.from.line + 1, x.message);
-        }
-      });
-      if (this.props.lintMessages.length > 0 && this.props.lintWarning) {
-        this.beep.play();
-      }
-    }, 2000);
-    this.showFind = this.showFind.bind(this);
-    this.findNext = this.findNext.bind(this);
-    this.findPrev = this.findPrev.bind(this);
-    this.showReplace = this.showReplace.bind(this);
+    // this.updateLintingMessageAccessibility = debounce((annotations) => {
+    //   this.props.clearLintMessage();
+    //   annotations.forEach((x) => {
+    //     if (x.from.line > -1) {
+    //       this.props.updateLintMessage(x.severity, x.from.line + 1, x.message);
+    //     }
+    //   });
+    //   if (this.props.lintMessages.length > 0 && this.props.lintWarning) {
+    //     this.beep.play();
+    //   }
+    // }, 2000);
+    // this.showFind = this.showFind.bind(this);
+    // this.findNext = this.findNext.bind(this);
+    // this.findPrev = this.findPrev.bind(this);
+    // this.showReplace = this.showReplace.bind(this);
     this.getContent = this.getContent.bind(this);
   }
 
   componentDidMount() {
-    this.beep = new Audio(beepUrl);
-    this.widgets = [];
+    // this.beep = new Audio(beepUrl);
+    // this.widgets = [];
     this._cm = CodeMirror(this.codemirrorContainer, {
       // eslint-disable-line
       theme: `p5-${this.props.theme}`,
@@ -112,38 +112,38 @@ class Editor extends React.Component {
       highlightSelectionMatches: true, // highlight current search match
       matchBrackets: true,
       autoCloseBrackets: this.props.autocloseBracketsQuotes,
-      styleSelectedText: true,
-      lint: {
-        onUpdateLinting: (annotations) => {
-          this.updateLintingMessageAccessibility(annotations);
-        },
-        options: {
-          asi: true,
-          eqeqeq: true,
-          '-W041': false,
-          esversion: 7
-        }
-      }
+      styleSelectedText: true
+      // lint: {
+      //   onUpdateLinting: (annotations) => {
+      //     this.updateLintingMessageAccessibility(annotations);
+      //   },
+      //   options: {
+      //     asi: true,
+      //     eqeqeq: true,
+      //     '-W041': false,
+      //     esversion: 7
+      //   }
+      // }
     });
 
-    const replaceCommand = metaKey === 'Ctrl' ? `${metaKey}-H` : `${metaKey}-Option-F`;
-    this._cm.setOption('extraKeys', {
-      Tab: (cm) => {
-        // might need to specify and indent more?
-        const selection = cm.doc.getSelection();
-        if (selection.length > 0) {
-          cm.execCommand('indentMore');
-        } else {
-          cm.replaceSelection(' '.repeat(INDENTATION_AMOUNT));
-        }
-      },
-      [`${metaKey}-Enter`]: () => null,
-      [`Shift-${metaKey}-Enter`]: () => null,
-      [`${metaKey}-F`]: 'findPersistent',
-      [`${metaKey}-G`]: 'findNext',
-      [`Shift-${metaKey}-G`]: 'findPrev',
-      [replaceCommand]: 'replace'
-    });
+    // const replaceCommand = metaKey === 'Ctrl' ? `${metaKey}-H` : `${metaKey}-Option-F`;
+    // this._cm.setOption('extraKeys', {
+    //   Tab: (cm) => {
+    //     // might need to specify and indent more?
+    //     const selection = cm.doc.getSelection();
+    //     if (selection.length > 0) {
+    //       cm.execCommand('indentMore');
+    //     } else {
+    //       cm.replaceSelection(' '.repeat(INDENTATION_AMOUNT));
+    //     }
+    //   },
+    //   [`${metaKey}-Enter`]: () => null,
+    //   [`Shift-${metaKey}-Enter`]: () => null,
+    //   [`${metaKey}-F`]: 'findPersistent',
+    //   [`${metaKey}-G`]: 'findNext',
+    //   [`Shift-${metaKey}-G`]: 'findPrev',
+    //   [replaceCommand]: 'replace'
+    // });
 
     this.initializeDocuments(this.props.files);
     this._cm.swapDoc(this._docs[this.props.file.id]);
@@ -161,36 +161,39 @@ class Editor extends React.Component {
       }, 1000)
     );
 
-    this._cm.on('keyup', () => {
-      const temp = this.props.t('Editor.KeyUpLineNumber', {
-        lineNumber: parseInt(this._cm.getCursor().line + 1, 10)
-      });
-      document.getElementById('current-line').innerHTML = temp;
-    });
+    // this._cm.on('keyup', () => {
+    //   const temp = this.props.t('Editor.KeyUpLineNumber', {
+    //     lineNumber: parseInt(this._cm.getCursor().line + 1, 10)
+    //   });
+    //   document.getElementById('current-line').innerHTML = temp;
+    // });
 
-    this._cm.on('keydown', (_cm, e) => {
-      // 9 === Tab
-      if (e.keyCode === 9 && e.shiftKey) {
-        this.tidyCode();
-      }
-    });
+    // this._cm.on('keydown', (_cm, e) => {
+    //   // 9 === Tab
+    //   if (e.keyCode === 9 && e.shiftKey) {
+    //     this.tidyCode();
+    //   }
+    // });
+    //
+    // this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
 
-    this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
-
+    // this.props.provideController({
+    //   tidyCode: this.tidyCode,
+    //   showFind: this.showFind,
+    //   findNext: this.findNext,
+    //   findPrev: this.findPrev,
+    //   showReplace: this.showReplace,
+    //   getContent: this.getContent
+    // });
     this.props.provideController({
-      tidyCode: this.tidyCode,
-      showFind: this.showFind,
-      findNext: this.findNext,
-      findPrev: this.findPrev,
-      showReplace: this.showReplace,
       getContent: this.getContent
     });
 
     // this very very hacky function gets called in codemirror-search
     // which allows us to log using the replaceAll stuff
-    window.replaceSnooper = (isReplaceAll) => {
-      this.props.logRun(`structure-update-replace${isReplaceAll ? '-all' : ''}`);
-    };
+    // window.replaceSnooper = (isReplaceAll) => {
+    //   this.props.logRun(`structure-update-replace${isReplaceAll ? '-all' : ''}`);
+    // };
   }
 
   componentWillUpdate(nextProps) {
@@ -216,50 +219,50 @@ class Editor extends React.Component {
         setTimeout(() => this.props.setUnsavedChanges(false), 400);
       }
     }
-    if (this.props.fontSize !== prevProps.fontSize) {
-      this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
-    }
-    if (this.props.linewrap !== prevProps.linewrap) {
-      this._cm.setOption('lineWrapping', this.props.linewrap);
-    }
-    if (this.props.theme !== prevProps.theme) {
-      this._cm.setOption('theme', `p5-${this.props.theme}`);
-    }
-    if (this.props.lineNumbers !== prevProps.lineNumbers) {
-      this._cm.setOption('lineNumbers', this.props.lineNumbers);
-    }
-    if (this.props.autocloseBracketsQuotes !== prevProps.autocloseBracketsQuotes) {
-      this._cm.setOption('autoCloseBrackets', this.props.autocloseBracketsQuotes);
-    }
+    // if (this.props.fontSize !== prevProps.fontSize) {
+    //   this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
+    // }
+    // if (this.props.linewrap !== prevProps.linewrap) {
+    //   this._cm.setOption('lineWrapping', this.props.linewrap);
+    // }
+    // if (this.props.theme !== prevProps.theme) {
+    //   this._cm.setOption('theme', `p5-${this.props.theme}`);
+    // }
+    // if (this.props.lineNumbers !== prevProps.lineNumbers) {
+    //   this._cm.setOption('lineNumbers', this.props.lineNumbers);
+    // }
+    // if (this.props.autocloseBracketsQuotes !== prevProps.autocloseBracketsQuotes) {
+    //   this._cm.setOption('autoCloseBrackets', this.props.autocloseBracketsQuotes);
+    // }
 
-    if (prevProps.consoleEvents !== this.props.consoleEvents) {
-      this.props.showRuntimeErrorWarning();
-    }
-    for (let i = 0; i < this._cm.lineCount(); i += 1) {
-      this._cm.removeLineClass(i, 'background', 'line-runtime-error');
-    }
-    if (this.props.runtimeErrorWarningVisible) {
-      this.props.consoleEvents.forEach((consoleEvent) => {
-        if (consoleEvent.method === 'error') {
-          if (
-            consoleEvent.data &&
-            consoleEvent.data[0] &&
-            consoleEvent.data[0].indexOf &&
-            consoleEvent.data[0].indexOf(')') > -1
-          ) {
-            const n = consoleEvent.data[0].replace(')', '').split(' ');
-            const lineNumber = parseInt(n[n.length - 1], 10) - 1;
-            const { source } = consoleEvent;
-            const fileName = this.props.file.name;
-            const errorFromJavaScriptFile = `${source}.js` === fileName;
-            const errorFromIndexHTML = source === fileName && fileName === 'index.html';
-            if (!Number.isNaN(lineNumber) && (errorFromJavaScriptFile || errorFromIndexHTML)) {
-              this._cm.addLineClass(lineNumber, 'background', 'line-runtime-error');
-            }
-          }
-        }
-      });
-    }
+    // if (prevProps.consoleEvents !== this.props.consoleEvents) {
+    //   this.props.showRuntimeErrorWarning();
+    // }
+    // for (let i = 0; i < this._cm.lineCount(); i += 1) {
+    //   this._cm.removeLineClass(i, 'background', 'line-runtime-error');
+    // }
+    // if (this.props.runtimeErrorWarningVisible) {
+    //   this.props.consoleEvents.forEach((consoleEvent) => {
+    //     if (consoleEvent.method === 'error') {
+    //       if (
+    //         consoleEvent.data &&
+    //         consoleEvent.data[0] &&
+    //         consoleEvent.data[0].indexOf &&
+    //         consoleEvent.data[0].indexOf(')') > -1
+    //       ) {
+    //         const n = consoleEvent.data[0].replace(')', '').split(' ');
+    //         const lineNumber = parseInt(n[n.length - 1], 10) - 1;
+    //         const { source } = consoleEvent;
+    //         const fileName = this.props.file.name;
+    //         const errorFromJavaScriptFile = `${source}.js` === fileName;
+    //         const errorFromIndexHTML = source === fileName && fileName === 'index.html';
+    //         if (!Number.isNaN(lineNumber) && (errorFromJavaScriptFile || errorFromIndexHTML)) {
+    //           this._cm.addLineClass(lineNumber, 'background', 'line-runtime-error');
+    //         }
+    //       }
+    //     }
+    //   });
+    // }
   }
 
   componentWillUnmount() {
@@ -290,39 +293,39 @@ class Editor extends React.Component {
     const updatedFile = Object.assign({}, this.props.file, { content });
     return updatedFile;
   }
-
-  findPrev() {
-    this._cm.focus();
-    this._cm.execCommand('findPrev');
-  }
-
-  findNext() {
-    this._cm.focus();
-    this._cm.execCommand('findNext');
-  }
-
-  showFind() {
-    this._cm.execCommand('findPersistent');
-  }
-
-  showReplace() {
-    this._cm.execCommand('replace');
-  }
-
-  tidyCode() {
-    this.justTidied = true;
-    this.props.logRun('tidy');
-    const mode = this._cm.getOption('mode');
-    const currentPosition = this._cm.doc.getCursor();
-    const parserMap = { javascript: 'babel', css: 'css', htmlmixed: 'html' };
-    if (new Set(['javascript', 'css', 'htmlmixed']).has(mode)) {
-      const parser = parserMap[mode];
-      this._cm.doc.setValue(prettier.format(this._cm.doc.getValue(), { parser, plugins: prettierPlugins }));
-    }
-    this._cm.focus();
-    this._cm.doc.setCursor({ line: currentPosition.line, ch: currentPosition.ch + INDENTATION_AMOUNT });
-  }
-
+  //
+  // findPrev() {
+  //   this._cm.focus();
+  //   this._cm.execCommand('findPrev');
+  // }
+  //
+  // findNext() {
+  //   this._cm.focus();
+  //   this._cm.execCommand('findNext');
+  // }
+  //
+  // showFind() {
+  //   this._cm.execCommand('findPersistent');
+  // }
+  //
+  // showReplace() {
+  //   this._cm.execCommand('replace');
+  // }
+  //
+  // tidyCode() {
+  //   this.justTidied = true;
+  //   this.props.logRun('tidy');
+  //   const mode = this._cm.getOption('mode');
+  //   const currentPosition = this._cm.doc.getCursor();
+  //   const parserMap = { javascript: 'babel', css: 'css', htmlmixed: 'html' };
+  //   if (new Set(['javascript', 'css', 'htmlmixed']).has(mode)) {
+  //     const parser = parserMap[mode];
+  //     this._cm.doc.setValue(prettier.format(this._cm.doc.getValue(), { parser, plugins: prettierPlugins }));
+  //   }
+  //   this._cm.focus();
+  //   this._cm.doc.setCursor({ line: currentPosition.line, ch: currentPosition.ch + INDENTATION_AMOUNT });
+  // }
+  //
   initializeDocuments(files) {
     this._docs = {};
     files.forEach((file) => {
@@ -332,15 +335,15 @@ class Editor extends React.Component {
     });
   }
 
-  toggleEditorOptions() {
-    if (this.props.editorOptionsVisible) {
-      this.props.closeEditorOptions();
-    } else {
-      this.optionsButton.focus();
-      this.props.showEditorOptions();
-    }
-  }
-
+  // toggleEditorOptions() {
+  //   if (this.props.editorOptionsVisible) {
+  //     this.props.closeEditorOptions();
+  //   } else {
+  //     this.optionsButton.focus();
+  //     this.props.showEditorOptions();
+  //   }
+  // }
+  //
   render() {
     const editorSectionClass = classNames({
       editor: true,
