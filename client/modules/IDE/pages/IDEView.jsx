@@ -38,6 +38,7 @@ import { CollectionSearchbar } from '../components/Searchbar';
 import { getIsUserOwner } from '../selectors/users';
 
 import { autosaveEvery } from '../../../constants';
+import ShapeToolboxOverlay from '../components/ShapeToolboxOverlay';
 
 function getTitle(props) {
   const { id } = props.project;
@@ -338,6 +339,7 @@ class IDEView extends React.Component {
                       this.props.ide.isAccessibleOutputPlaying}
                   </div>
                   <PreviewFrame cmController={this.cmController} />
+                  <ShapeToolboxOverlay />
                 </div>
               </section>
             </SplitPane>
