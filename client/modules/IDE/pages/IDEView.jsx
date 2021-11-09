@@ -339,7 +339,9 @@ class IDEView extends React.Component {
                       this.props.ide.isAccessibleOutputPlaying}
                   </div>
                   <PreviewFrame cmController={this.cmController} />
-                  <ShapeToolboxOverlay />
+                  {this.props.ide.showingShapeToolbox && (
+                    <ShapeToolboxOverlay closeCb={(lines) => this.props.closeShapeToolbox(lines)} />
+                  )}
                 </div>
               </section>
             </SplitPane>
@@ -461,7 +463,8 @@ IDEView.propTypes = {
     sidebarIsExpanded: PropTypes.bool.isRequired,
     submitModalVisible: PropTypes.bool.isRequired,
     unsavedChanges: PropTypes.bool.isRequired,
-    uploadFileModalVisible: PropTypes.bool.isRequired
+    uploadFileModalVisible: PropTypes.bool.isRequired,
+    showingShapeToolbox: PropTypes.bool.isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
@@ -525,7 +528,8 @@ IDEView.propTypes = {
     authenticated: PropTypes.bool.isRequired,
     id: PropTypes.string,
     username: PropTypes.string
-  }).isRequired
+  }).isRequired,
+  closeShapeToolbox: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {

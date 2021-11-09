@@ -69,7 +69,6 @@ class Editor extends React.Component {
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
     this.justTidied = false;
-    this.doc = { code: '', lang: '' };
 
     // this.updateLintingMessageAccessibility = debounce((annotations) => {
     //   this.props.clearLintMessage();
@@ -141,10 +140,6 @@ class Editor extends React.Component {
     //   [replaceCommand]: 'replace'
     // });
 
-    this.initializeDocuments(this.props.files);
-    // this._cm.swapDoc(this._docs[this.props.file.id]);
-    this.doc = this._docs[this.props.file.id];
-
     // this._cm.on('keyup', () => {
     //   const temp = this.props.t('Editor.KeyUpLineNumber', {
     //     lineNumber: parseInt(this._cm.getCursor().line + 1, 10)
@@ -180,21 +175,8 @@ class Editor extends React.Component {
     // };
   }
 
-  componentWillUpdate(nextProps) {
-    // check if files have changed
-    if (this.props.files[0].id !== nextProps.files[0].id) {
-      // then need to make CodeMirror documents
-      this.initializeDocuments(nextProps.files);
-    }
-    if (this.props.files.length !== nextProps.files.length) {
-      this.initializeDocuments(nextProps.files);
-    }
-  }
-
   componentDidUpdate(prevProps) {
-    if (this.props.file.content !== prevProps.file.content && this.props.file.content !== this.doc.code) {
-      this._docs[prevProps.file.id] = this.doc;
-      this.doc = this._docs[this.props.file.id];
+    if (this.props.file.content !== prevProps.file.content) {
       if (!prevProps.unsavedChanges) {
         setTimeout(() => this.props.setUnsavedChanges(false), 400);
       }
@@ -250,10 +232,10 @@ class Editor extends React.Component {
   }
 
   onChange(newCode) {
-    this.doc.code = newCode;
+    console.log(newCode);
+    this.props.updateFileContent(this.props.file.id, newCode);
     debounce(() => {
       this.props.setUnsavedChanges(true);
-      this.props.updateFileContent(this.props.file.id, newCode);
       if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
         this.props.clearConsole();
         this.props.startAutoRefreshSketch();
@@ -281,7 +263,7 @@ class Editor extends React.Component {
   }
 
   getContent() {
-    return Object.assign({}, this.props.file, { content: this.doc.code });
+    return this.props.file;
   }
 
   //
@@ -317,14 +299,6 @@ class Editor extends React.Component {
   //   this._cm.doc.setCursor({ line: currentPosition.line, ch: currentPosition.ch + INDENTATION_AMOUNT });
   // }
   //
-  initializeDocuments(files) {
-    this._docs = {};
-    files.forEach((file) => {
-      if (file.name !== 'root') {
-        this._docs[file.id] = { code: file.content, lang: this.getFileMode(file.name) };
-      }
-    });
-  }
 
   // toggleEditorOptions() {
   //   if (this.props.editorOptionsVisible) {
@@ -380,7 +354,12 @@ class Editor extends React.Component {
             <Timer projectSavedTime={this.props.projectSavedTime} isUserOwner={this.props.isUserOwner} />
           </div>
         </header>
-        <JeuceEditor code={this.doc.code} lang={this.doc.lang} onChange={this.onChange} />
+        <JeuceEditor
+          code={this.props.file.content}
+          lang={this.getFileMode(this.props.file.name)}
+          onChange={this.onChange}
+          shapeToolboxCb={this.props.openShapeToolbox}
+        />
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
     );
@@ -443,7 +422,8 @@ Editor.propTypes = {
   runtimeErrorWarningVisible: PropTypes.bool.isRequired,
   provideController: PropTypes.func.isRequired,
   logRun: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
+  openShapeToolbox: PropTypes.func.isRequired
 };
 
 Editor.defaultProps = {

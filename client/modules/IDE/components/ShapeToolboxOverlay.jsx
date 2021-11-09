@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 
-export default function ShapeToolbox() {
+export default function ShapeToolbox({ closeCb }) {
   const el = useRef(null);
 
   const [canvas, setCanvas] = useState(null);
@@ -37,15 +37,15 @@ export default function ShapeToolbox() {
       .map((o) => {
         switch (o.type) {
           case 'rect':
-            return ['rect', o.left, o.top, o.width, o.height];
+            return ['rect', o.left, o.top, o.width * o.scaleX, o.height * o.scaleY];
           default:
             return null;
         }
       })
       .filter(Boolean)
       .map(generateFuncString);
-    console.log(lines);
     canvas.clear();
+    closeCb(lines);
   };
 
   return (

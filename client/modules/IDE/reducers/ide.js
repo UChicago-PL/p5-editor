@@ -21,10 +21,12 @@ const initialState = {
   previousPath: '/',
   errorType: undefined,
   runtimeErrorWarningVisible: true,
-  parentId: undefined
+  parentId: undefined,
+  showingShapeToolbox: false,
+  shapeToolboxCodeLoc: null
 };
 
-const ide = (state = initialState, action) => {
+const ide = (state = initialState, action, parentState) => {
   console.log(action.type);
   switch (action.type) {
     case ActionTypes.START_SKETCH:
@@ -109,6 +111,10 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, { uploadFileModalVisible: false });
     case ActionTypes.OPEN_SUBMIT_MODEL:
       return Object.assign({}, state, { submitModalVisible: true });
+    case ActionTypes.OPEN_SHAPE_TOOLBOX:
+      return Object.assign({}, state, { showingShapeToolbox: true, shapeToolboxCodeLoc: action.loc });
+    case ActionTypes.CLOSE_SHAPE_TOOLBOX:
+      return Object.assign({}, state, { showingShapeToolbox: false, shapeToolboxCodeLoc: null });
     case ActionTypes.CLOSE_SUBMIT_MODEL:
       return Object.assign({}, state, { submitModalVisible: false });
     default:

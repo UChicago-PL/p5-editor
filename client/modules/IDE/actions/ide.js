@@ -1,7 +1,7 @@
 import * as ActionTypes from '../../../constants';
 import { clearConsole } from './console';
 
-import { logRun, checkLoggedIn } from './project';
+import { checkLoggedIn, logRun } from './project';
 
 export function startVisualSketch() {
   return {
@@ -285,5 +285,42 @@ export function createError(error) {
   return {
     type: ActionTypes.ERROR,
     error
+  };
+}
+
+export function openShapeToolbox(loc) {
+  return {
+    type: ActionTypes.OPEN_SHAPE_TOOLBOX,
+    loc
+  };
+}
+
+const SHAPE_TOOLBOX_CALL = 'shapeToolbox()';
+
+function applyShapeToolbox(code, lines, from) {
+  const body = lines.map((line) => `${line};`).join('\n');
+  return code.substring(0, from) + body + code.substring(from + SHAPE_TOOLBOX_CALL.length);
+}
+
+export function closeShapeToolbox(lines) {
+  return (dispatch, getState) => {
+    if (lines.length) {
+      const state = getState();
+      const file = state.files.find((f) => f.isSelectedFile);
+      if (!file || file.name.split('.')[1] !== 'js') {
+        throw new Error('Could not find active JS file');
+      }
+      if (!state.ide.shapeToolboxCodeLoc) {
+        throw new Error('Could not find shape toolbox code location');
+      }
+      dispatch({
+        type: ActionTypes.UPDATE_FILE_CONTENT,
+        id: file.id,
+        content: applyShapeToolbox(file.content, lines, state.ide.shapeToolboxCodeLoc)
+      });
+    }
+    dispatch({
+      type: ActionTypes.CLOSE_SHAPE_TOOLBOX
+    });
   };
 }
