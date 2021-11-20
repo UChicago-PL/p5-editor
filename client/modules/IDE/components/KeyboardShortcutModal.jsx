@@ -21,7 +21,7 @@ function KeyboardShortcutModal() {
       </p>
       <ul className="keyboard-shortcuts__list">
         <li className="keyboard-shortcut-item">
-          <span className="keyboard-shortcut__command">{'\u21E7'} + Tab</span>
+          <span className="keyboard-shortcut__command">{metaKeyName} + M</span>
           <span>{t('KeyboardShortcuts.CodeEditing.Tidy')}</span>
         </li>
         <li className="keyboard-shortcut-item">

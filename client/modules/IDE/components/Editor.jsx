@@ -46,6 +46,8 @@ import LeftArrowIcon from '../../../images/left-arrow.svg';
 import { getHTMLFile } from '../reducers/files';
 import { getIsUserOwner } from '../selectors/users';
 
+import { metaKey } from '../../../utils/metaKey';
+
 import * as FileActions from '../actions/files';
 import * as IDEActions from '../actions/ide';
 import * as ProjectActions from '../actions/project';
@@ -72,6 +74,12 @@ class Editor extends React.Component {
   constructor(props) {
     super(props);
     this.tidyCode = this.tidyCode.bind(this);
+    this.keyBindings = [
+      {
+        key: `${metaKey}-m`,
+        run: () => this.tidyCode()
+      }
+    ];
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
     this.justTidied = false;
@@ -358,6 +366,7 @@ class Editor extends React.Component {
           onChange={this.onChange}
           shapeToolboxCb={this.props.openShapeToolbox}
           provideView={(view) => (this.cmView = view)}
+          keyBindings={this.keyBindings}
         />
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
