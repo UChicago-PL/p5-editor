@@ -1,5 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import prettier from 'prettier/esm/standalone.mjs';
+import parserBabel from 'prettier/esm/parser-babel.mjs';
+import parserHtml from 'prettier/esm/parser-html.mjs';
+import parserCSS from 'prettier/esm/parser-postcss.mjs';
 
 import { withTranslation } from 'react-i18next';
 import 'codemirror/mode/css/css';
@@ -27,7 +31,6 @@ import { JSHINT } from 'jshint';
 import { CSSLint } from 'csslint';
 import { HTMLHint } from 'htmlhint';
 import classNames from 'classnames';
-import { debounce } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import '../../../utils/htmlmixed';
@@ -59,19 +62,20 @@ window.CSSLint = CSSLint;
 window.HTMLHint = HTMLHint;
 // delete CodeMirror.keyMap.sublime['Shift-Tab'];
 
-// const INDENTATION_AMOUNT = 2;
-// const prettierPlugins = [parserBabel, parserHtml, parserCSS];
+const INDENTATION_AMOUNT = 2;
+const prettierPlugins = [parserBabel, parserHtml, parserCSS];
 
 const REFRESH_DELAY = 2000;
 
 class Editor extends React.Component {
   constructor(props) {
     super(props);
-    // this.tidyCode = this.tidyCode.bind(this);
+    this.tidyCode = this.tidyCode.bind(this);
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
     this.justTidied = false;
     this.lastChange = 0;
+    this.cmView = null;
 
     // this.updateLintingMessageAccessibility = debounce((annotations) => {
     //   this.props.clearLintMessage();
@@ -159,15 +163,12 @@ class Editor extends React.Component {
     //
     // this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
 
-    // this.props.provideController({
-    //   tidyCode: this.tidyCode,
-    //   showFind: this.showFind,
-    //   findNext: this.findNext,
-    //   findPrev: this.findPrev,
-    //   showReplace: this.showReplace,
-    //   getContent: this.getContent
-    // });
     this.props.provideController({
+      tidyCode: this.tidyCode,
+      // showFind: this.showFind,
+      // findNext: this.findNext,
+      // findPrev: this.findPrev,
+      // showReplace: this.showReplace,
       getContent: this.getContent
     });
 
@@ -290,20 +291,19 @@ class Editor extends React.Component {
   //   this._cm.execCommand('replace');
   // }
   //
-  // tidyCode() {
-  //   this.justTidied = true;
-  //   this.props.logRun('tidy');
-  //   const mode = this._cm.getOption('mode');
-  //   const currentPosition = this._cm.doc.getCursor();
-  //   const parserMap = { javascript: 'babel', css: 'css', htmlmixed: 'html' };
-  //   if (new Set(['javascript', 'css', 'htmlmixed']).has(mode)) {
-  //     const parser = parserMap[mode];
-  //     this._cm.doc.setValue(prettier.format(this._cm.doc.getValue(), { parser, plugins: prettierPlugins }));
-  //   }
-  //   this._cm.focus();
-  //   this._cm.doc.setCursor({ line: currentPosition.line, ch: currentPosition.ch + INDENTATION_AMOUNT });
-  // }
-  //
+
+  tidyCode() {
+    this.justTidied = true;
+    this.props.logRun('tidy');
+    const mode = this.getFileMode(this.props.file.name);
+    const parserMap = { javascript: 'babel', css: 'css', htmlmixed: 'html' };
+    if (new Set(['javascript', 'css', 'htmlmixed']).has(mode)) {
+      const parser = parserMap[mode];
+      const newCode = prettier.format(this.props.file.content, { parser, plugins: prettierPlugins });
+      this.props.updateFileContent(this.props.file.id, newCode);
+    }
+    this.cmView.focus();
+  }
 
   // toggleEditorOptions() {
   //   if (this.props.editorOptionsVisible) {
@@ -364,6 +364,7 @@ class Editor extends React.Component {
           lang={this.getFileMode(this.props.file.name)}
           onChange={this.onChange}
           shapeToolboxCb={this.props.openShapeToolbox}
+          provideView={(view) => (this.cmView = view)}
         />
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
