@@ -62,6 +62,8 @@ window.HTMLHint = HTMLHint;
 // const INDENTATION_AMOUNT = 2;
 // const prettierPlugins = [parserBabel, parserHtml, parserCSS];
 
+const REFRESH_DELAY = 2000;
+
 class Editor extends React.Component {
   constructor(props) {
     super(props);
@@ -69,6 +71,7 @@ class Editor extends React.Component {
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
     this.justTidied = false;
+    this.lastChange = 0;
 
     // this.updateLintingMessageAccessibility = debounce((annotations) => {
     //   this.props.clearLintMessage();
@@ -232,16 +235,18 @@ class Editor extends React.Component {
   }
 
   onChange(newCode) {
-    console.log(newCode);
     this.props.updateFileContent(this.props.file.id, newCode);
-    debounce(() => {
-      this.props.setUnsavedChanges(true);
-      if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
-        this.props.clearConsole();
-        this.props.startAutoRefreshSketch();
+    this.lastChange = Date.now();
+    setTimeout(() => {
+      if (Date.now() - this.lastChange >= REFRESH_DELAY) {
+        this.props.setUnsavedChanges(true);
+        if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
+          this.props.clearConsole();
+          this.props.startAutoRefreshSketch();
+        }
+        this.justTidied = false;
       }
-      this.justTidied = false;
-    }, 1000);
+    }, REFRESH_DELAY);
   }
 
   getFileMode(fileName) {
