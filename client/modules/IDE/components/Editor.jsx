@@ -56,11 +56,12 @@ import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
 
 import JeuceEditor from '../../../../../jeuce/src/components/App.tsx';
+import * as cmSearch from '../../../../../jeuce/node_modules/@codemirror/search';
 
 window.JSHINT = JSHINT;
 window.CSSLint = CSSLint;
 window.HTMLHint = HTMLHint;
-// delete CodeMirror.keyMap.sublime['Shift-Tab'];
+// delete CodeMirror.keyMap.sublime['Shift-Tab];
 
 const INDENTATION_AMOUNT = 2;
 const prettierPlugins = [parserBabel, parserHtml, parserCSS];
@@ -88,10 +89,9 @@ class Editor extends React.Component {
     //     this.beep.play();
     //   }
     // }, 2000);
-    // this.showFind = this.showFind.bind(this);
-    // this.findNext = this.findNext.bind(this);
-    // this.findPrev = this.findPrev.bind(this);
-    // this.showReplace = this.showReplace.bind(this);
+    this.showFind = this.showFind.bind(this);
+    this.findNext = this.findNext.bind(this);
+    this.findPrev = this.findPrev.bind(this);
     this.getContent = this.getContent.bind(this);
     this.onChange = this.onChange.bind(this);
   }
@@ -165,10 +165,9 @@ class Editor extends React.Component {
 
     this.props.provideController({
       tidyCode: this.tidyCode,
-      // showFind: this.showFind,
-      // findNext: this.findNext,
-      // findPrev: this.findPrev,
-      // showReplace: this.showReplace,
+      showFind: this.showFind,
+      findNext: this.findNext,
+      findPrev: this.findPrev,
       getContent: this.getContent
     });
 
@@ -272,25 +271,19 @@ class Editor extends React.Component {
     return this.props.file;
   }
 
-  //
-  // findPrev() {
-  //   this._cm.focus();
-  //   this._cm.execCommand('findPrev');
-  // }
-  //
-  // findNext() {
-  //   this._cm.focus();
-  //   this._cm.execCommand('findNext');
-  // }
-  //
-  // showFind() {
-  //   this._cm.execCommand('findPersistent');
-  // }
-  //
-  // showReplace() {
-  //   this._cm.execCommand('replace');
-  // }
-  //
+  findPrev() {
+    this.cmView.focus();
+    cmSearch.findPrevious(this.cmView);
+  }
+
+  findNext() {
+    this.cmView.focus();
+    cmSearch.findNext(this.cmView);
+  }
+
+  showFind() {
+    cmSearch.openSearchPanel(this.cmView);
+  }
 
   tidyCode() {
     this.justTidied = true;

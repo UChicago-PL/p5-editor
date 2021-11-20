@@ -43,7 +43,7 @@ class Nav extends React.PureComponent {
     this.handleFindNext = this.handleFindNext.bind(this);
     this.handleRun = this.handleRun.bind(this);
     this.handleFindPrevious = this.handleFindPrevious.bind(this);
-    this.handleReplace = this.handleReplace.bind(this);
+    // this.handleReplace = this.handleReplace.bind(this);
     this.handleStop = this.handleStop.bind(this);
     this.handleStartAccessible = this.handleStartAccessible.bind(this);
     this.handleStopAccessible = this.handleStopAccessible.bind(this);
@@ -132,10 +132,10 @@ class Nav extends React.PureComponent {
     this.setDropdown('none');
   }
 
-  handleReplace() {
-    this.props.cmController.showReplace();
-    this.setDropdown('none');
-  }
+  // handleReplace() {
+  //   this.props.cmController.showReplace();
+  //   this.setDropdown('none');
+  // }
 
   handleAddFile() {
     this.props.newFile(this.props.rootFile.id);
@@ -386,12 +386,12 @@ class Nav extends React.PureComponent {
                 </span>
               </button>
             </li>
-            <li className="nav__dropdown-item">
-              <button onClick={this.handleReplace} onFocus={this.handleFocusForEdit} onBlur={this.handleBlur}>
-                {this.props.t('Nav.Edit.Replace')}
-                <span className="nav__keyboard-shortcut">{replaceCommand}</span>
-              </button>
-            </li>
+            {/*<li className="nav__dropdown-item">*/}
+            {/*  <button onClick={this.handleReplace} onFocus={this.handleFocusForEdit} onBlur={this.handleBlur}>*/}
+            {/*    {this.props.t('Nav.Edit.Replace')}*/}
+            {/*    <span className="nav__keyboard-shortcut">{replaceCommand}</span>*/}
+            {/*  </button>*/}
+            {/*</li>*/}
           </ul>
         </li>
 
