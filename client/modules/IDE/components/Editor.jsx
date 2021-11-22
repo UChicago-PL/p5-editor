@@ -337,29 +337,33 @@ class Editor extends React.Component {
             <Timer projectSavedTime={this.props.projectSavedTime} isUserOwner={this.props.isUserOwner} />
           </div>
         </header>
-        <JeuceEditor
-          code={this.props.file.content}
-          lang={this.getFileMode(this.props.file.name)}
-          onChange={this.onChange}
-          shapeToolboxCb={this.props.openShapeToolbox}
-          provideView={(view) => (this.cmView = view)}
-          keyBindings={this.keyBindings}
-          extensions={[
-            lintGutter(),
-            linter((view) => {
-              JSHINT(view.state.doc.toString());
-              function toOffset(line, ch) {
-                return view.state.doc.line(line).from + ch - 1;
-              }
-              return JSHINT.errors.map((e) => ({
-                message: e.reason,
-                severity: 'warning',
-                from: toOffset(e.line, e.character),
-                to: toOffset(e.line, e.character + e.evidence ? e.evidence.length : 1)
-              }));
-            })
-          ]}
-        />
+        <article className="editor-holder">
+          <JeuceEditor
+            code={this.props.file.content}
+            lang={this.getFileMode(this.props.file.name)}
+            onChange={this.onChange}
+            shapeToolboxCb={this.props.openShapeToolbox}
+            provideView={(view) => (this.cmView = view)}
+            keyBindings={this.keyBindings}
+            extensions={[
+              lintGutter(),
+              linter((view) => {
+                JSHINT(view.state.doc.toString());
+
+                function toOffset(line, ch) {
+                  return view.state.doc.line(line).from + ch - 1;
+                }
+
+                return JSHINT.errors.map((e) => ({
+                  message: e.reason,
+                  severity: 'warning',
+                  from: toOffset(e.line, e.character),
+                  to: toOffset(e.line, e.character + e.evidence ? e.evidence.length : 1)
+                }));
+              })
+            ]}
+          />
+        </article>
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
     );
