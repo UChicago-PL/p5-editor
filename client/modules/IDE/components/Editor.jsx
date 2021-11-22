@@ -59,6 +59,7 @@ import * as ConsoleActions from '../actions/console';
 
 import JeuceEditor from '../../../../../jeuce/src/components/App.tsx';
 import * as cmSearch from '../../../../../jeuce/node_modules/@codemirror/search';
+import { linter, lintGutter } from '../../../../../jeuce/node_modules/@codemirror/lint';
 
 window.JSHINT = JSHINT;
 window.CSSLint = CSSLint;
@@ -367,6 +368,21 @@ class Editor extends React.Component {
           shapeToolboxCb={this.props.openShapeToolbox}
           provideView={(view) => (this.cmView = view)}
           keyBindings={this.keyBindings}
+          extensions={[
+            lintGutter(),
+            linter((view) => {
+              JSHINT(view.state.doc.toString());
+              function toOffset(line, ch) {
+                return view.state.doc.line(line).from + ch - 1;
+              }
+              return JSHINT.errors.map((e) => ({
+                message: e.reason,
+                severity: 'warning',
+                from: toOffset(e.line, e.character),
+                to: toOffset(e.line, e.character + e.evidence ? e.evidence.length : 1)
+              }));
+            })
+          ]}
         />
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
