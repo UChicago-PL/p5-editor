@@ -298,7 +298,10 @@ export function openShapeToolbox(loc) {
 const SHAPE_TOOLBOX_CALL = 'shapeToolbox()';
 
 function applyShapeToolbox(code, lines, from) {
-  const body = lines.map((line) => `${line};`).join('\n');
+  const splitCode = code.substring(0, from).split('\n');
+  const prevLine = splitCode[splitCode.length - 1];
+  const indent = prevLine.match(/\s*/g)[0];
+  const body = lines.map((line, i) => (i === 0 ? '' : indent) + line + ';').join('\n');
   return code.substring(0, from) + body + code.substring(from + SHAPE_TOOLBOX_CALL.length);
 }
 
