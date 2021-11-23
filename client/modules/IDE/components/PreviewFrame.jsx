@@ -28,6 +28,7 @@ import { stopSketch, expandConsole, endSketchRefresh } from '../actions/ide';
 import { setTextOutput, setGridOutput, setSoundOutput } from '../actions/preferences';
 import { setBlobUrl } from '../actions/files';
 import { clearConsole, dispatchConsoleEvent } from '../actions/console';
+import cs111Prelude from '../../../utils/cs111Prelude';
 
 const shouldRenderSketch = (props, prevProps = undefined) => {
   const { isPlaying, previewIsRefreshing, fullView } = props;
@@ -204,6 +205,10 @@ class PreviewFrame extends React.Component {
     const previewScripts = sketchDoc.createElement('script');
     previewScripts.src = '/previewScripts.js';
     sketchDoc.head.appendChild(previewScripts);
+
+    const cs111PreludeScript = sketchDoc.createElement('script');
+    cs111PreludeScript.innerHTML = cs111Prelude;
+    sketchDoc.head.appendChild(cs111PreludeScript);
 
     const sketchDocString = `<!DOCTYPE HTML>\n${sketchDoc.documentElement.outerHTML}`;
     scriptOffs = getAllScriptOffsets(sketchDocString);
