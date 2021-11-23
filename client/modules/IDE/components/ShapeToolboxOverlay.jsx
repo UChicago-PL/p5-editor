@@ -2,14 +2,14 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 
-export default function ShapeToolbox({ closeCb }) {
+export default function ShapeToolbox({ closeCb, canvasSize }) {
   const el = useRef(null);
 
   const [canvas, setCanvas] = useState(null);
 
   useEffect(() => {
     const canvas_ = new fabric.Canvas(el.current);
-    canvas_.setDimensions({ width: 500, height: 500 });
+    canvas_.setDimensions(canvasSize);
     canvas_.selection = 'true';
     setCanvas(canvas_);
   }, []);

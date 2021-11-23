@@ -327,3 +327,14 @@ export function closeShapeToolbox(lines) {
     });
   };
 }
+
+export function getCanvasSize(state) {
+  const file = state.files.find((f) => f.isSelectedFile);
+  if (file && file.name.split('.')[1] === 'js') {
+    const match = file.content.match(/createCanvas\(\s*(?<width>\d+)\s*,\s*(?<height>\d+)\s*\)/);
+    if (match && match.groups && match.groups.width && match.groups.height) {
+      return { width: parseInt(match.groups.width), height: parseInt(match.groups.height) };
+    }
+  }
+  return [400, 400];
+}

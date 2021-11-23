@@ -340,7 +340,10 @@ class IDEView extends React.Component {
                   </div>
                   <PreviewFrame cmController={this.cmController} />
                   {this.props.ide.showingShapeToolbox && (
-                    <ShapeToolboxOverlay closeCb={(lines) => this.props.closeShapeToolbox(lines)} />
+                    <ShapeToolboxOverlay
+                      closeCb={(lines) => this.props.closeShapeToolbox(lines)}
+                      canvasSize={this.props.canvasSize}
+                    />
                   )}
                 </div>
               </section>
@@ -467,6 +470,7 @@ IDEView.propTypes = {
     showingShapeToolbox: PropTypes.bool.isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
+  canvasSize: PropTypes.arrayOf(PropTypes.number),
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   newFile: PropTypes.func.isRequired,
   newFolder: PropTypes.func.isRequired,
@@ -547,7 +551,8 @@ function mapStateToProps(state) {
     project: state.project,
     toast: state.toast,
     console: state.console,
-    isUserOwner: getIsUserOwner(state)
+    isUserOwner: getIsUserOwner(state),
+    canvasSize: IDEActions.getCanvasSize(state)
   };
 }
 
