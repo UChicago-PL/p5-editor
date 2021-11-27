@@ -25,7 +25,7 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
     strokeUniform: true
   };
 
-  const addRect = () => {
+  const addRect = () =>
     canvas.add(
       new fabric.Rect({
         ...defaults,
@@ -33,37 +33,54 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
         height: 20
       })
     );
-  };
 
-  const addCircle = () => {
+  const addCircle = () =>
     canvas.add(
       new fabric.Circle({
         ...defaults,
         radius: 10
       })
     );
-  };
+
+  const addTriangle = () =>
+    canvas.add(
+      new fabric.Triangle({
+        ...defaults,
+        width: 20,
+        height: 20
+      })
+    );
 
   const generateFuncCalls = (o) => {
     const func = (() => {
       switch (o.type) {
         case 'rect':
-          return ['rect', o.left, o.top, o.width * o.scaleX, o.height * o.scaleY];
+          return (left, top) => ['rect', left, top, o.width * o.scaleX, o.height * o.scaleY];
         case 'circle':
           if (o.scaleX === o.scaleY) {
-            return [
+            return (left, top) => [
               'circle',
-              o.left + o.radius * o.scaleX,
-              o.top + o.radius * o.scaleX,
+              left + o.radius * o.scaleX,
+              top + o.radius * o.scaleX,
               o.radius * 2 * o.scaleX
             ];
           }
-          return [
+          return (left, top) => [
             'ellipse',
-            o.left + (o.width * o.scaleX) / 2,
-            o.top + (o.height * o.scaleY) / 2,
+            left + (o.width * o.scaleX) / 2,
+            top + (o.height * o.scaleY) / 2,
             o.width * o.scaleX,
             o.height * o.scaleY
+          ];
+        case 'triangle':
+          return (left, top) => [
+            'triangle',
+            left + (o.width * o.scaleX) / 2,
+            top,
+            left,
+            top + o.height * o.scaleY,
+            left + o.width * o.scaleX,
+            top + o.height * o.scaleY
           ];
         default:
           return null;
@@ -72,14 +89,14 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
     if (!func) return [];
     if (o.angle) {
       return [
-        ['translate', func[1], func[2]],
+        ['translate', o.left, o.top],
         ['rotate', `radians(${o.angle})`],
-        [func[0], 0, 0, ...func.slice(3)],
+        func(0, 0),
         ['rotate', `radians(${-o.angle})`],
-        ['translate', -func[1], -func[2]]
+        ['translate', -o.left, -o.top]
       ];
     }
-    return [func];
+    return [func(o.left, o.top)];
   };
 
   const roundNums = (xs) => {
@@ -109,6 +126,7 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
       <div className="tools">
         <button onClick={addRect}>rect</button>
         <button onClick={addCircle}>circle</button>
+        <button onClick={addTriangle}>triangle</button>
         <button className="apply" onClick={apply}>
           apply
         </button>
