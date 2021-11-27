@@ -5,6 +5,8 @@ import { fabric } from 'fabric';
 export default function ShapeToolbox({ closeCb, canvasSize }) {
   const el = useRef(null);
 
+  canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.width, 20) };
+
   const [canvas, setCanvas] = useState(null);
 
   useEffect(() => {
@@ -14,12 +16,19 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
     setCanvas(canvas_);
   }, []);
 
+  const defaults = {
+    fill: 'white',
+    stroke: 'black',
+    strokeWidth: 1,
+    left: canvasSize.width / 2 - 10,
+    top: canvasSize.height / 2 - 10,
+    strokeUniform: true
+  };
+
   const addRect = () => {
     canvas.add(
       new fabric.Rect({
-        left: 100,
-        top: 100,
-        fill: 'red',
+        ...defaults,
         width: 20,
         height: 20
       })
@@ -29,9 +38,7 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
   const addCircle = () => {
     canvas.add(
       new fabric.Circle({
-        left: 100,
-        top: 100,
-        fill: 'red',
+        ...defaults,
         radius: 10
       })
     );
