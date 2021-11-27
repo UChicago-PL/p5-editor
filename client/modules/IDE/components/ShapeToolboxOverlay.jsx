@@ -25,6 +25,8 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
     strokeUniform: true
   };
 
+  const addLine = () => canvas.add(new fabric.Line([-10, -10, 10, 10], defaults));
+
   const addRect = () =>
     canvas.add(
       new fabric.Rect({
@@ -54,6 +56,8 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
   const generateFuncCalls = (o) => {
     const func = (() => {
       switch (o.type) {
+        case 'line':
+          return (left, top) => ['line', left, top, left + o.width * o.scaleX, top + o.height * o.scaleY];
         case 'rect':
           return (left, top) => ['rect', left, top, o.width * o.scaleX, o.height * o.scaleY];
         case 'circle':
@@ -124,6 +128,7 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
     <div className="shape-toolbox-overlay" style={{ width: canvasSize.width }}>
       <canvas ref={el} />
       <div className="tools">
+        <button onClick={addLine}>line</button>
         <button onClick={addRect}>rect</button>
         <button onClick={addCircle}>circle</button>
         <button onClick={addTriangle}>triangle</button>
