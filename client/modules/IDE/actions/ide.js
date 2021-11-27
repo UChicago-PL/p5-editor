@@ -328,6 +328,7 @@ export function closeShapeToolbox(lines) {
     dispatch({
       type: ActionTypes.CLOSE_SHAPE_TOOLBOX
     });
+    dispatch(startSketch());
   };
 }
 
