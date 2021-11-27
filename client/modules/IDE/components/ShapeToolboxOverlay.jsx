@@ -54,53 +54,45 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
     );
 
   const generateFuncCalls = (o) => {
-    const func = (() => {
-      switch (o.type) {
-        case 'line':
-          return (left, top) => ['line', left, top, left + o.width * o.scaleX, top + o.height * o.scaleY];
-        case 'rect':
-          return (left, top) => ['rect', left, top, o.width * o.scaleX, o.height * o.scaleY];
-        case 'circle':
-          if (o.scaleX === o.scaleY) {
-            return (left, top) => [
-              'circle',
-              left + o.radius * o.scaleX,
-              top + o.radius * o.scaleX,
-              o.radius * 2 * o.scaleX
-            ];
-          }
-          return (left, top) => [
-            'ellipse',
-            left + (o.width * o.scaleX) / 2,
-            top + (o.height * o.scaleY) / 2,
-            o.width * o.scaleX,
-            o.height * o.scaleY
+    const { oCoords: coords } = o;
+    switch (o.type) {
+      case 'line':
+        return ['line', coords.tl.x, coords.tl.y, coords.br.x, coords.br.y];
+      case 'rect':
+        if (o.angle)
+          return [
+            'quad',
+            coords.tl.x,
+            coords.tl.y,
+            coords.bl.x,
+            coords.bl.y,
+            coords.br.x,
+            coords.br.y,
+            coords.tr.x,
+            coords.tr.y
           ];
-        case 'triangle':
-          return (left, top) => [
-            'triangle',
-            left + (o.width * o.scaleX) / 2,
-            top,
-            left,
-            top + o.height * o.scaleY,
-            left + o.width * o.scaleX,
-            top + o.height * o.scaleY
+        else return ['rect', coords.tl.x, coords.tl.y, o.width * o.scaleX, o.height * o.scaleY];
+      case 'circle':
+        if (o.scaleX === o.scaleY) {
+          return [
+            'circle',
+            coords.tl.x + o.radius * o.scaleX,
+            coords.tl.y + o.radius * o.scaleX,
+            o.radius * 2 * o.scaleX
           ];
-        default:
-          return null;
-      }
-    })();
-    if (!func) return [];
-    if (o.angle) {
-      return [
-        ['translate', o.left, o.top],
-        ['rotate', `radians(${o.angle})`],
-        func(0, 0),
-        ['rotate', `radians(${-o.angle})`],
-        ['translate', -o.left, -o.top]
-      ];
+        }
+        return [
+          'ellipse',
+          coords.tl.x + (o.width * o.scaleX) / 2,
+          coords.tl.y + (o.height * o.scaleY) / 2,
+          o.width * o.scaleX,
+          o.height * o.scaleY
+        ];
+      case 'triangle':
+        return ['triangle', coords.mt.x, coords.mt.y, coords.bl.x, coords.bl.y, coords.br.x, coords.br.y];
+      default:
+        return null;
     }
-    return [func(o.left, o.top)];
   };
 
   const roundNums = (xs) => {
@@ -117,9 +109,9 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
   };
 
   const apply = () => {
-    const data = canvas.toObject();
-    console.log(data);
-    const lines = data.objects.flatMap(generateFuncCalls).map(roundNums).map(generateFuncString);
+    const objects = canvas.getObjects();
+    console.log(objects);
+    const lines = objects.map(generateFuncCalls).filter(Boolean).map(roundNums).map(generateFuncString);
     canvas.clear();
     closeCb(lines);
   };
