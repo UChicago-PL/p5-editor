@@ -53,4 +53,20 @@
     // z-index only works when position is set
     position: relative;
   }
+
+  @include themify() {
+    border: 1px solid getThemifyVariable('ide-border-color');
+  }
+
+  .tools {
+    @include themify() {
+      border-top: 1px solid getThemifyVariable('ide-border-color');
+    }
+
+    .apply {
+      @include themify() {
+        background: getThemifyVariable('modal-background-color');
+      }
+    }
+  }
 }

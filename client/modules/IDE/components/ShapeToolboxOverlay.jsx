@@ -97,11 +97,15 @@ export default function ShapeToolbox({ closeCb, canvasSize }) {
   };
 
   return (
-    <div className="shape-toolbox-overlay">
+    <div className="shape-toolbox-overlay" style={{ width: canvasSize.width }}>
       <canvas ref={el} />
-      <button onClick={addRect}>rect</button>
-      <button onClick={addCircle}>circle</button>
-      <button onClick={apply}>apply</button>
+      <div className="tools">
+        <button onClick={addRect}>rect</button>
+        <button onClick={addCircle}>circle</button>
+        <button className="apply" onClick={apply}>
+          apply
+        </button>
+      </div>
     </div>
   );
 }
