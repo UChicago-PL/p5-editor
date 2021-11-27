@@ -194,13 +194,13 @@ class Toolbar extends React.Component {
           >
             SUBMIT
           </button>
-          <button
-            className={preferencesButtonClass}
-            onClick={this.props.openPreferences}
-            aria-label={this.props.t('Toolbar.OpenPreferencesARIA')}
-          >
-            <PreferencesIcon focusable="false" aria-hidden="true" />
-          </button>
+          {/*<button*/}
+          {/*  className={preferencesButtonClass}*/}
+          {/*  onClick={this.props.openPreferences}*/}
+          {/*  aria-label={this.props.t('Toolbar.OpenPreferencesARIA')}*/}
+          {/*>*/}
+          {/*  <PreferencesIcon focusable="false" aria-hidden="true" />*/}
+          {/*</button>*/}
         </div>
       </div>
     );
