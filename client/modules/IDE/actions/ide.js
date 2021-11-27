@@ -289,6 +289,9 @@ export function createError(error) {
 }
 
 export function openShapeToolbox(loc) {
+  // As part of preventing editing while the toolbox is shown,
+  // un-focus the editor so that typing isn't possible
+  document.body.focus();
   return {
     type: ActionTypes.OPEN_SHAPE_TOOLBOX,
     loc

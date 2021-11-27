@@ -313,11 +313,14 @@ class IDEView extends React.Component {
                 allowResize={this.props.ide.consoleIsExpanded}
                 className="editor-preview-subpanel"
               >
-                <Editor
-                  provideController={(ctl) => {
-                    this.cmController = ctl;
-                  }}
-                />
+                <div>
+                  {this.props.ide.showingShapeToolbox && <div className={'editor-block'} />}
+                  <Editor
+                    provideController={(ctl) => {
+                      this.cmController = ctl;
+                    }}
+                  />
+                </div>
                 <Console />
               </SplitPane>
               <section className="preview-frame-holder">
