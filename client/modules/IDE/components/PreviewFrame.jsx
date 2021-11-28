@@ -132,7 +132,7 @@ class PreviewFrame extends React.Component {
     let newContent = jsText;
     // check the code for js errors before sending it to strip comments
     // or loops.
-    JSHINT(newContent);
+    JSHINT(newContent, { esversion: 11 });
 
     if (JSHINT.errors.length === 0) {
       newContent = decomment(newContent, {

@@ -348,7 +348,7 @@ class Editor extends React.Component {
             extensions={[
               lintGutter(),
               linter((view) => {
-                JSHINT(view.state.doc.toString());
+                JSHINT(view.state.doc.toString(), { esversion: 11 });
 
                 function toOffset(line, ch) {
                   return view.state.doc.line(line).from + ch - 1;
