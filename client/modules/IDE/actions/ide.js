@@ -2,6 +2,7 @@ import * as ActionTypes from '../../../constants';
 import { clearConsole } from './console';
 
 import { checkLoggedIn, logRun } from './project';
+import { applyShapeToolbox, processExistingCode } from './shapeToolbox';
 
 export function startVisualSketch() {
   return {
@@ -288,29 +289,25 @@ export function createError(error) {
   };
 }
 
-export function openShapeToolbox(loc) {
-  // As part of preventing editing while the toolbox is shown,
-  // un-focus the editor so that typing isn't possible
-  document.body.focus();
-  return {
-    type: ActionTypes.OPEN_SHAPE_TOOLBOX,
-    loc
+export function openShapeToolbox(loc, existingCode) {
+  return (dispatch) => {
+    // As part of preventing editing while the toolbox is shown,
+    // un-focus the editor so that typing isn't possible
+    document.body.focus();
+    const existingCalls = processExistingCode(existingCode, dispatch);
+    if (existingCalls !== null) {
+      dispatch({
+        type: ActionTypes.OPEN_SHAPE_TOOLBOX,
+        loc,
+        existingCalls
+      });
+    }
   };
 }
 
-const SHAPE_TOOLBOX_CALL = 'shapeToolbox()';
-
-function applyShapeToolbox(code, lines, from) {
-  const splitCode = code.substring(0, from).split('\n');
-  const prevLine = splitCode[splitCode.length - 1];
-  const indent = prevLine.match(/\s*/g)[0];
-  const body = lines.map((line, i) => (i === 0 ? '' : indent) + line + ';').join('\n');
-  return code.substring(0, from) + body + code.substring(from + SHAPE_TOOLBOX_CALL.length);
-}
-
-export function closeShapeToolbox(lines) {
+export function closeShapeToolbox(calls) {
   return (dispatch, getState) => {
-    if (lines.length) {
+    if (calls.length) {
       const state = getState();
       const file = state.files.find((f) => f.isSelectedFile);
       if (!file || file.name.split('.')[1] !== 'js') {
@@ -322,7 +319,7 @@ export function closeShapeToolbox(lines) {
       dispatch({
         type: ActionTypes.UPDATE_FILE_CONTENT,
         id: file.id,
-        content: applyShapeToolbox(file.content, lines, state.ide.shapeToolboxCodeLoc)
+        content: applyShapeToolbox(file.content, calls, state.ide.shapeToolboxCodeLoc)
       });
     }
     dispatch({

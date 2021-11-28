@@ -346,6 +346,7 @@ class IDEView extends React.Component {
                     <ShapeToolboxOverlay
                       closeCb={(lines) => this.props.closeShapeToolbox(lines)}
                       canvasSize={this.props.canvasSize}
+                      existingCalls={this.props.ide.shapeToolboxExistingCalls}
                     />
                   )}
                 </div>

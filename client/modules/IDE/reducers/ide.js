@@ -23,7 +23,8 @@ const initialState = {
   runtimeErrorWarningVisible: true,
   parentId: undefined,
   showingShapeToolbox: false,
-  shapeToolboxCodeLoc: null
+  shapeToolboxCodeLoc: null,
+  shapeToolboxExistingCalls: null
 };
 
 const ide = (state = initialState, action, parentState) => {
@@ -112,9 +113,17 @@ const ide = (state = initialState, action, parentState) => {
     case ActionTypes.OPEN_SUBMIT_MODEL:
       return Object.assign({}, state, { submitModalVisible: true });
     case ActionTypes.OPEN_SHAPE_TOOLBOX:
-      return Object.assign({}, state, { showingShapeToolbox: true, shapeToolboxCodeLoc: action.loc });
+      return Object.assign({}, state, {
+        showingShapeToolbox: true,
+        shapeToolboxCodeLoc: action.loc,
+        shapeToolboxExistingCalls: action.existingCalls
+      });
     case ActionTypes.CLOSE_SHAPE_TOOLBOX:
-      return Object.assign({}, state, { showingShapeToolbox: false, shapeToolboxCodeLoc: null });
+      return Object.assign({}, state, {
+        showingShapeToolbox: false,
+        shapeToolboxCodeLoc: null,
+        shapeToolboxExistingCalls: []
+      });
     case ActionTypes.CLOSE_SUBMIT_MODEL:
       return Object.assign({}, state, { submitModalVisible: false });
     default:
