@@ -350,6 +350,7 @@ class PreviewFrame extends React.Component {
     const doc = this.iframeElement;
     const localFiles = this.injectLocalFiles();
 
+    // TODO: don't perform check when sketch is run manually
     // Don't reload sketch if the JS files fail to eval without error
     const files = this.mergeLocalFilesAndEditorActiveFile();
     const jsFilesCompile = files.every((file) => {
