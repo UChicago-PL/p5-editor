@@ -325,7 +325,7 @@ class IDEView extends React.Component {
               </SplitPane>
               <section className="preview-frame-holder">
                 <header className="preview-frame__header">
-                  <h2 className="preview-frame__title">{this.props.t('Toolbar.Preview')}</h2>
+                  <h2 className="preview-frame__title">Canvas</h2>
                 </header>
                 <div className="preview-frame__content">
                   <div
