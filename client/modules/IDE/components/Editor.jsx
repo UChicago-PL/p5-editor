@@ -45,7 +45,7 @@ window.HTMLHint = HTMLHint;
 const INDENTATION_AMOUNT = 2;
 const prettierPlugins = [parserBabel, parserHtml, parserCSS];
 
-const REFRESH_DELAY = 2000;
+const REFRESH_DELAY = 1000;
 
 class Editor extends React.Component {
   constructor(props) {
