@@ -444,12 +444,17 @@ export function logRun(type) {
     if (state.project.id) {
       saveLog(state.project.id, logParams);
     } else {
-      // in this case, saveProject will invoke the createProject function on the backend,
-      // so a snapshot log won't be automatically created
-      dispatch(saveProject()).then(() => {
-        const newState = getState();
-        saveLog(newState.project.id, logParams);
-      });
+      try {
+        // in this case, saveProject will invoke the createProject function on the backend,
+        // so a snapshot log won't be automatically created
+        dispatch(saveProject()).then(() => {
+          const newState = getState();
+          saveLog(newState.project.id, logParams);
+        });
+      } catch (e) {
+        // Sometimes there is a `then method not found error`
+        // This is not worth looking into for now
+      }
     }
   };
 }
