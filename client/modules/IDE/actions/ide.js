@@ -342,5 +342,5 @@ export function getCanvasSize(state) {
       return { width: parseInt(match.groups.width), height: parseInt(match.groups.height) };
     }
   }
-  return [400, 400];
+  return { width: 400, height: 400 };
 }
