@@ -12,7 +12,13 @@ export function applyShapeToolbox(code, calls, [from, to]) {
   const lines = calls.map(generateFuncCallCode);
   const body = lines.map((line) => indent + '  ' + line + ';').join('\n');
   return (
-    code.substring(0, from) + 'shapeToolbox(() => {\n' + body + '\n' + indent + '})' + code.substring(to)
+    code.substring(0, from) +
+    'Editor.shapeToolbox(() => {\n' +
+    body +
+    '\n' +
+    indent +
+    '})' +
+    code.substring(to)
   );
 }
 
