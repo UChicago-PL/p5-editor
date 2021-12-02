@@ -10,23 +10,22 @@ import decomment from 'decomment';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Decode } from 'console-feed';
-import { getBlobUrl } from '../actions/files';
+import { getBlobUrl, setBlobUrl } from '../actions/files';
 import { resolvePathToFile } from '../../../../server/utils/filePath';
 import {
-  MEDIA_FILE_REGEX,
-  MEDIA_FILE_QUOTED_REGEX,
-  STRING_REGEX,
-  PLAINTEXT_FILE_REGEX,
   EXTERNAL_LINK_REGEX,
-  NOT_EXTERNAL_LINK_REGEX
+  MEDIA_FILE_QUOTED_REGEX,
+  MEDIA_FILE_REGEX,
+  NOT_EXTERNAL_LINK_REGEX,
+  PLAINTEXT_FILE_REGEX,
+  STRING_REGEX
 } from '../../../../server/utils/fileUtils';
-import { hijackConsoleErrorsScript, startTag, getAllScriptOffsets } from '../../../utils/consoleUtils';
+import { getAllScriptOffsets, hijackConsoleErrorsScript, startTag } from '../../../utils/consoleUtils';
 
 import { getHTMLFile } from '../reducers/files';
 
-import { stopSketch, expandConsole, endSketchRefresh } from '../actions/ide';
-import { setTextOutput, setGridOutput, setSoundOutput } from '../actions/preferences';
-import { setBlobUrl } from '../actions/files';
+import { endSketchRefresh, expandConsole, stopSketch } from '../actions/ide';
+import { setGridOutput, setSoundOutput, setTextOutput } from '../actions/preferences';
 import { clearConsole, dispatchConsoleEvent } from '../actions/console';
 import cs111Prelude from '../../../utils/cs111Prelude';
 
@@ -350,21 +349,30 @@ class PreviewFrame extends React.Component {
     const doc = this.iframeElement;
     const localFiles = this.injectLocalFiles();
 
-    // TODO: don't perform check when sketch is run manually
     // Don't reload sketch if the JS files fail to eval without error
     const files = this.mergeLocalFilesAndEditorActiveFile();
-    const jsFilesCompile = files.every((file) => {
+    const compileErrors = [];
+    files.forEach((file) => {
       if (file.name.match(/.*\.js$/i)) {
         try {
           eval(file.content);
-          return true;
         } catch (e) {
-          return false;
+          compileErrors.push(e);
         }
       }
-      return true;
     });
-    if (!jsFilesCompile) return;
+    if (compileErrors.length) {
+      this.props.endSketchRefresh();
+      setTimeout(() =>
+        this.props.dispatchConsoleEvent([
+          {
+            method: 'error',
+            data: compileErrors.map((e) => e.toString() + ` (line ${e.lineNumber})`)
+          }
+        ])
+      );
+      return;
+    }
 
     if (this.props.isPlaying) {
       this.props.clearConsole();
