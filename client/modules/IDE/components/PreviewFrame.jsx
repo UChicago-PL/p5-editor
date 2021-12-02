@@ -367,7 +367,7 @@ class PreviewFrame extends React.Component {
         this.props.dispatchConsoleEvent([
           {
             method: 'error',
-            data: compileErrors.map((e) => e.toString() + ` (line ${e.lineNumber})`)
+            data: compileErrors.map((e) => (e.toString() + e.lineNumber ? ` (line ${e.lineNumber})` : ''))
           }
         ])
       );
