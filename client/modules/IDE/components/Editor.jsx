@@ -37,6 +37,8 @@ import JeuceEditor from '../../../../../jeuce/src/components/App.tsx';
 import * as cmSearch from '../../../../../jeuce/node_modules/@codemirror/search';
 import { linter, lintGutter } from '../../../../../jeuce/node_modules/@codemirror/lint';
 
+import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
+
 window.JSHINT = JSHINT;
 window.CSSLint = CSSLint;
 window.HTMLHint = HTMLHint;
@@ -46,6 +48,8 @@ const INDENTATION_AMOUNT = 2;
 const prettierPlugins = [parserBabel, parserHtml, parserCSS];
 
 const REFRESH_DELAY = 1000;
+
+const KEYWORDS = { function: Object.keys(p5FunctionKeywords), variable: Object.keys(p5VariableKeywords) };
 
 class Editor extends React.Component {
   constructor(props) {
@@ -345,6 +349,7 @@ class Editor extends React.Component {
             shapeToolboxCb={this.props.openShapeToolbox}
             provideView={(view) => (this.cmView = view)}
             keyBindings={this.keyBindings}
+            keywords={KEYWORDS}
             extensions={[
               lintGutter(),
               linter((view) => {

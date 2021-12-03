@@ -2,6 +2,14 @@
   font-family: Inconsolata, monospace;
 }
 
+.keyword-variable {
+  color: #f10046;
+}
+
+.keyword-function {
+  color: #0071AD;
+}
+
 .CodeMirror {
   font-family: Inconsolata, monospace;
   height: 100%;
