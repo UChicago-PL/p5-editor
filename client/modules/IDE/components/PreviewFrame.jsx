@@ -24,7 +24,15 @@ import { getAllScriptOffsets, hijackConsoleErrorsScript, startTag } from '../../
 
 import { getHTMLFile } from '../reducers/files';
 
-import { endSketchRefresh, expandConsole, stopSketch } from '../actions/ide';
+import {
+  endSketchRefresh,
+  expandConsole,
+  setNotStale,
+  setStale,
+  setShowing,
+  setNotShowing,
+  stopSketch
+} from '../actions/ide';
 import { setGridOutput, setSoundOutput, setTextOutput } from '../actions/preferences';
 import { clearConsole, dispatchConsoleEvent } from '../actions/console';
 
@@ -218,7 +226,8 @@ class PreviewFrame extends React.Component {
     sketchDoc.head.appendChild(previewScripts);
 
     const cs111PreludeScript = sketchDoc.createElement('script');
-    cs111PreludeScript.innerHTML = cs111Prelude;
+    cs111PreludeScript.innerHTML =
+      cs111Prelude + ";\nparent.document.body.dispatchEvent(new Event('finishedLoadingGlobal'));";
     sketchDoc.head.appendChild(cs111PreludeScript);
 
     const sketchDocString = `<!DOCTYPE HTML>\n${sketchDoc.documentElement.outerHTML}`;
@@ -319,15 +328,28 @@ class PreviewFrame extends React.Component {
           } else {
             script.setAttribute('data-tag', `${startTag}${resolvedFile.name}`);
             script.removeAttribute('src');
-            const contentWithHook = falafel(resolvedFile.content, (node) => {
-              if (node.type === 'FunctionDeclaration' && node.id.name === 'draw') {
-                node.body.update(
-                  node.body.source().slice(0, -1) +
-                    "\n;parent.document.body.dispatchEvent(new Event('finishedLoading'));\n}"
-                );
+            let content;
+            try {
+              content = falafel(resolvedFile.content, (node) => {
+                if (node.type === 'FunctionDeclaration' && node.id.name === 'draw') {
+                  // The hook is inserted in the beginning of the body so that it still fires if the body errors
+                  node.body.update(
+                    node.body
+                      .source()
+                      .replace(
+                        '{',
+                        "{\nparent.document.body.dispatchEvent(new Event('finishedLoadingLocal'));\n"
+                      )
+                  );
+                }
+              });
+            } catch (e) {
+              if (e.name === 'SyntaxError') content = resolvedFile.content;
+              else {
+                throw e;
               }
-            });
-            script.innerHTML = contentWithHook;
+            }
+            script.innerHTML = content;
           }
         }
       } else if (
@@ -367,6 +389,7 @@ class PreviewFrame extends React.Component {
 
   renderSketch() {
     this.hasErrored = false;
+    this.props.setNotStale();
 
     if (this.props.isPlaying) {
       if (this.props.endSketchRefresh) {
@@ -374,34 +397,58 @@ class PreviewFrame extends React.Component {
       }
 
       // This method is modified so that it only renders the sketch after ensuring that there is no startup error
-      // To make this happen, the draw function is modified to fire the `finishedLoading` event, as a way of
-      // gauging when the p5 code actually starts running
-      // Then, we wait for a small time (ERROR_CHECK_DELAY) in order to give time for error handling mechanism
+      // To make this happen, two hooks are added to the iframe JS code: one global hook, before any other scripts,
+      // and one local hook at the beginning of the draw function block
+      // These allow us to gauge when the p5 code actually starts running
+      // When the event is fired, we wait for a small time in order to give time for error handling mechanism
       // to kick in, and for any error logs to be displayed
       // Then, if there have been no error logs, we render the new sketch
 
+      // The reason for two hooks is that the local one gives us a better idea of when the code actually
+      // starts running, and so we can afford to use a smaller time delay to it, which improves UX
+      // However, there's a chance that the local one fires, due to the lack of a draw function or a syntax error
+      // Thus we need the global hook, which we can always rely on
+
       const localFiles = this.injectLocalFiles();
       this.props.clearConsole();
-
-      const ERROR_CHECK_DELAY = 500;
-
-      const onLoaded = () => {
-        document.body.removeEventListener('finishedLoading', onLoaded);
-        setTimeout(() => {
-          if (!this.hasErrored) {
-            this.props.clearConsole();
-
-            this.iframeProbingElement.srcdoc = '';
-            srcDoc.set(this.iframeProbingElement, '  ');
-
-            srcDoc.set(this.iframeElement, localFiles);
-          }
-        }, ERROR_CHECK_DELAY);
-      };
-
       srcDoc.set(this.iframeProbingElement, localFiles);
 
-      document.body.addEventListener('finishedLoading', onLoaded);
+      let done = false;
+
+      const onLoaded = (delay) => {
+        setTimeout(() => {
+          if (!done) {
+            done = true;
+            if (!this.hasErrored) {
+              this.props.clearConsole();
+
+              this.iframeProbingElement.srcdoc = '';
+              srcDoc.set(this.iframeProbingElement, '  ');
+
+              srcDoc.set(this.iframeElement, localFiles);
+
+              this.props.setShowing();
+            } else {
+              this.props.setStale();
+            }
+          }
+        }, delay);
+      };
+
+      const LOCAL_HOOK_DELAY = 1000;
+      const GLOBAL_HOOK_DELAY = 2000;
+
+      const onLoadedLocal = () => {
+        document.body.removeEventListener('finishedLoadingLocal', onLoaded);
+        onLoaded(LOCAL_HOOK_DELAY);
+      };
+      const onLoadedGlobal = () => {
+        document.body.removeEventListener('finishedLoadingGlobal', onLoaded);
+        onLoaded(GLOBAL_HOOK_DELAY);
+      };
+
+      document.body.addEventListener('finishedLoadingLocal', onLoadedLocal);
+      document.body.addEventListener('finishedLoadingGlobal', onLoadedGlobal);
     } else {
       this.iframeElement.srcdoc = '';
       srcDoc.set(this.iframeElement, '  ');
@@ -478,7 +525,11 @@ PreviewFrame.propTypes = {
   clearConsole: PropTypes.func.isRequired,
   cmController: PropTypes.shape({
     getContent: PropTypes.func
-  })
+  }),
+  setStale: PropTypes.func.isRequired,
+  setNotStale: PropTypes.func.isRequired,
+  setShowing: PropTypes.func.isRequired,
+  setNotShowing: PropTypes.func.isRequired
 };
 
 PreviewFrame.defaultProps = {
@@ -529,7 +580,11 @@ const mapDispatchToProps = {
   setSoundOutput,
   setBlobUrl,
   clearConsole,
-  dispatchConsoleEvent
+  dispatchConsoleEvent,
+  setStale,
+  setNotStale,
+  setShowing,
+  setNotShowing
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PreviewFrame);

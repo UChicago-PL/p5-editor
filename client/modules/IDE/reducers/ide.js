@@ -24,7 +24,9 @@ const initialState = {
   parentId: undefined,
   showingShapeToolbox: false,
   shapeToolboxCodeLoc: null,
-  shapeToolboxExistingCalls: null
+  shapeToolboxExistingCalls: null,
+  isStale: false,
+  isShowing: false
 };
 
 const ide = (state = initialState, action, parentState) => {
@@ -33,7 +35,7 @@ const ide = (state = initialState, action, parentState) => {
     case ActionTypes.START_SKETCH:
       return Object.assign({}, state, { isPlaying: true });
     case ActionTypes.STOP_SKETCH:
-      return Object.assign({}, state, { isPlaying: false });
+      return Object.assign({}, state, { isPlaying: false, isShowing: false });
     case ActionTypes.START_ACCESSIBLE_OUTPUT:
       return Object.assign({}, state, { isAccessibleOutputPlaying: true });
     case ActionTypes.STOP_ACCESSIBLE_OUTPUT:
@@ -126,6 +128,12 @@ const ide = (state = initialState, action, parentState) => {
       });
     case ActionTypes.CLOSE_SUBMIT_MODEL:
       return Object.assign({}, state, { submitModalVisible: false });
+    case ActionTypes.SET_STALE:
+      return Object.assign({}, state, { isStale: true });
+    case ActionTypes.SET_NOT_STALE:
+      return Object.assign({}, state, { isStale: false });
+    case ActionTypes.SET_SHOWING:
+      return Object.assign({}, state, { isShowing: true });
     default:
       return state;
   }

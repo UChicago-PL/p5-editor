@@ -344,3 +344,21 @@ export function getCanvasSize(state) {
   }
   return { width: 400, height: 400 };
 }
+
+export function setStale() {
+  return {
+    type: ActionTypes.SET_STALE
+  };
+}
+
+export function setNotStale() {
+  return {
+    type: ActionTypes.SET_NOT_STALE
+  };
+}
+
+export function setShowing() {
+  return {
+    type: ActionTypes.SET_SHOWING
+  };
+}

@@ -151,11 +151,13 @@ class IDEView extends React.Component {
       this.props.router.setRouteLeaveHook(this.props.route, () => warnIfUnsavedChanges(this.props));
     }
   }
+
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleGlobalKeydown, false);
     clearTimeout(this.autosaveInterval);
     this.autosaveInterval = null;
   }
+
   handleGlobalKeydown(e) {
     // 83 === s
     if (e.keyCode === 83 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {
@@ -224,6 +226,7 @@ class IDEView extends React.Component {
   };
 
   render() {
+    const isStale = this.props.ide.isStale && this.props.ide.isShowing;
     return (
       <div className="ide">
         <Helmet>
@@ -325,7 +328,9 @@ class IDEView extends React.Component {
               </SplitPane>
               <section className="preview-frame-holder">
                 <header className="preview-frame__header">
-                  <h2 className="preview-frame__title">Canvas</h2>
+                  <h2 className={'preview-frame__title' + (isStale ? ' stale' : '')}>
+                    Canvas {isStale && '(stale)'}
+                  </h2>
                 </header>
                 <div className="preview-frame__content">
                   <div

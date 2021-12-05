@@ -157,3 +157,7 @@ export const SET_PARENT_ID = 'SET_PARENT_ID';
 
 export const OPEN_SHAPE_TOOLBOX = 'OPEN_SHOW_TOOLBOX';
 export const CLOSE_SHAPE_TOOLBOX = 'CLOSE_SHAPE_TOOLBOX';
+
+export const SET_STALE = 'SET_STALE';
+export const SET_NOT_STALE = 'SET_NOT_STALE';
+export const SET_SHOWING = 'SET_SHOWING';
