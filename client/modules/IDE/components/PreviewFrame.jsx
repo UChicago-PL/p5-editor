@@ -27,7 +27,9 @@ import { getHTMLFile } from '../reducers/files';
 import { endSketchRefresh, expandConsole, stopSketch } from '../actions/ide';
 import { setGridOutput, setSoundOutput, setTextOutput } from '../actions/preferences';
 import { clearConsole, dispatchConsoleEvent } from '../actions/console';
+
 import cs111Prelude from '../../../utils/cs111Prelude';
+import falafel from 'falafel';
 
 const shouldRenderSketch = (props, prevProps = undefined) => {
   const { isPlaying, previewIsRefreshing, fullView } = props;
@@ -51,6 +53,7 @@ class PreviewFrame extends React.Component {
   constructor(props) {
     super(props);
     this.handleConsoleEvent = this.handleConsoleEvent.bind(this);
+    this.hasErrored = false;
   }
 
   componentDidMount() {
@@ -76,6 +79,10 @@ class PreviewFrame extends React.Component {
     if (iframeBody) {
       ReactDOM.unmountComponentAtNode(iframeBody);
     }
+    const iframeProbingBody = this.iframeProbingElement.contentDocument.body;
+    if (iframeProbingBody) {
+      ReactDOM.unmountComponentAtNode(iframeProbingBody);
+    }
   }
 
   handleConsoleEvent(messageEvent) {
@@ -85,6 +92,11 @@ class PreviewFrame extends React.Component {
           source: message.source
         })
       );
+
+      if (decodedMessages.some((message) => message.method === 'error')) {
+        console.log('ERRORED');
+        this.hasErrored = true;
+      }
 
       decodedMessages.every((message, index, arr) => {
         const { data: args } = message;
@@ -307,7 +319,15 @@ class PreviewFrame extends React.Component {
           } else {
             script.setAttribute('data-tag', `${startTag}${resolvedFile.name}`);
             script.removeAttribute('src');
-            script.innerHTML = resolvedFile.content; // eslint-disable-line
+            const contentWithHook = falafel(resolvedFile.content, (node) => {
+              if (node.type === 'FunctionDeclaration' && node.id.name === 'draw') {
+                node.body.update(
+                  node.body.source().slice(0, -1) +
+                    "\n;parent.document.body.dispatchEvent(new Event('finishedLoading'));\n}"
+                );
+              }
+            });
+            script.innerHTML = contentWithHook;
           }
         }
       } else if (
@@ -346,43 +366,48 @@ class PreviewFrame extends React.Component {
   }
 
   renderSketch() {
-    const doc = this.iframeElement;
-    const localFiles = this.injectLocalFiles();
-
-    // Don't reload sketch if the JS files fail to eval without error
-    const files = this.mergeLocalFilesAndEditorActiveFile();
-    const compileErrors = [];
-    files.forEach((file) => {
-      if (file.name.match(/.*\.js$/i)) {
-        try {
-          eval(file.content);
-        } catch (e) {
-          compileErrors.push(e);
-        }
-      }
-    });
-    if (compileErrors.length) {
-      this.props.endSketchRefresh();
-      setTimeout(() =>
-        this.props.dispatchConsoleEvent([
-          {
-            method: 'error',
-            data: compileErrors.map((e) => (e.toString() + e.lineNumber ? ` (line ${e.lineNumber})` : ''))
-          }
-        ])
-      );
-      return;
-    }
+    this.hasErrored = false;
 
     if (this.props.isPlaying) {
-      this.props.clearConsole();
-      srcDoc.set(doc, localFiles);
       if (this.props.endSketchRefresh) {
         this.props.endSketchRefresh();
       }
+
+      // This method is modified so that it only renders the sketch after ensuring that there is no startup error
+      // To make this happen, the draw function is modified to fire the `finishedLoading` event, as a way of
+      // gauging when the p5 code actually starts running
+      // Then, we wait for a small time (ERROR_CHECK_DELAY) in order to give time for error handling mechanism
+      // to kick in, and for any error logs to be displayed
+      // Then, if there have been no error logs, we render the new sketch
+
+      const localFiles = this.injectLocalFiles();
+      this.props.clearConsole();
+
+      const ERROR_CHECK_DELAY = 500;
+
+      const onLoaded = () => {
+        document.body.removeEventListener('finishedLoading', onLoaded);
+        setTimeout(() => {
+          if (!this.hasErrored) {
+            this.props.clearConsole();
+
+            this.iframeProbingElement.srcdoc = '';
+            srcDoc.set(this.iframeProbingElement, '  ');
+
+            srcDoc.set(this.iframeElement, localFiles);
+          }
+        }, ERROR_CHECK_DELAY);
+      };
+
+      srcDoc.set(this.iframeProbingElement, localFiles);
+
+      document.body.addEventListener('finishedLoading', onLoaded);
     } else {
-      doc.srcdoc = '';
-      srcDoc.set(doc, '  ');
+      this.iframeElement.srcdoc = '';
+      srcDoc.set(this.iframeElement, '  ');
+
+      this.iframeProbingElement.srcdoc = '';
+      srcDoc.set(this.iframeProbingElement, '  ');
     }
   }
 
@@ -394,18 +419,34 @@ class PreviewFrame extends React.Component {
     const sandboxAttributes =
       'allow-scripts allow-pointer-lock allow-same-origin allow-popups allow-forms allow-modals allow-downloads';
     return (
-      <iframe
-        id="canvas_frame"
-        className={iframeClass}
-        aria-label="sketch output"
-        role="main"
-        frameBorder="0"
-        title="sketch preview"
-        ref={(element) => {
-          this.iframeElement = element;
-        }}
-        sandbox={sandboxAttributes}
-      />
+      <>
+        <iframe
+          id="canvas_frame"
+          className={iframeClass}
+          aria-label="sketch output"
+          role="main"
+          frameBorder="0"
+          title="sketch preview"
+          ref={(element) => {
+            this.iframeElement = element;
+          }}
+          sandbox={sandboxAttributes}
+        />
+        <iframe
+          id="canvas_probing_frame"
+          className={iframeClass}
+          aria-label="sketch output"
+          role="main"
+          frameBorder="0"
+          title="sketch preview"
+          ref={(element) => {
+            this.iframeProbingElement = element;
+          }}
+          sandbox={sandboxAttributes}
+          // display: 'none' causes a strange network error
+          style={{ visibility: 'hidden' }}
+        />
+      </>
     );
   }
 }
