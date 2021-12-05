@@ -66,6 +66,7 @@ class Editor extends React.Component {
     this.justTidied = false;
     this.lastChange = 0;
     this.cmView = null;
+    this.lastColorChangeTime = 0;
 
     // this.updateLintingMessageAccessibility = debounce((annotations) => {
     //   this.props.clearLintMessage();
@@ -226,16 +227,24 @@ class Editor extends React.Component {
   onChange(newCode) {
     this.props.updateFileContent(this.props.file.id, newCode);
     this.lastChange = Date.now();
-    setTimeout(() => {
-      if (Date.now() - this.lastChange >= REFRESH_DELAY) {
-        this.props.setUnsavedChanges(true);
-        if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
-          this.props.clearConsole();
-          this.props.startAutoRefreshSketch();
-        }
-        this.justTidied = false;
+
+    const cb = () => {
+      this.props.setUnsavedChanges(true);
+      if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
+        this.props.clearConsole();
+        this.props.startAutoRefreshSketch();
       }
-    }, REFRESH_DELAY);
+      this.justTidied = false;
+    };
+
+    // Force refresh in the case of a color change
+    if (this.lastChange - this.lastColorChangeTime <= 1000) {
+      cb();
+    } else {
+      setTimeout(() => {
+        if (Date.now() - this.lastChange >= REFRESH_DELAY) cb();
+      }, REFRESH_DELAY);
+    }
   }
 
   getFileMode(fileName) {
@@ -367,6 +376,9 @@ class Editor extends React.Component {
                 }));
               })
             ]}
+            onColorChange={() => {
+              this.lastColorChangeTime = Date.now();
+            }}
           />
         </article>
         <EditorAccessibility lintMessages={this.props.lintMessages} />
