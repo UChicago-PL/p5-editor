@@ -30,7 +30,6 @@ import {
   setNotStale,
   setStale,
   setShowing,
-  setNotShowing,
   stopSketch
 } from '../actions/ide';
 import { setGridOutput, setSoundOutput, setTextOutput } from '../actions/preferences';
@@ -528,8 +527,7 @@ PreviewFrame.propTypes = {
   }),
   setStale: PropTypes.func.isRequired,
   setNotStale: PropTypes.func.isRequired,
-  setShowing: PropTypes.func.isRequired,
-  setNotShowing: PropTypes.func.isRequired
+  setShowing: PropTypes.func.isRequired
 };
 
 PreviewFrame.defaultProps = {
@@ -583,8 +581,7 @@ const mapDispatchToProps = {
   dispatchConsoleEvent,
   setStale,
   setNotStale,
-  setShowing,
-  setNotShowing
+  setShowing
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PreviewFrame);
