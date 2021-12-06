@@ -59,6 +59,13 @@ class Editor extends React.Component {
       {
         key: `${metaKey}-m`,
         run: () => this.tidyCode()
+      },
+      {
+        key: `${metaKey}-Enter`,
+        run: () => {
+          return true;
+        },
+        preventDefault: true
       }
     ];
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
