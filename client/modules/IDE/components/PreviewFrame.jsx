@@ -434,7 +434,7 @@ class PreviewFrame extends React.Component {
         }, delay);
       };
 
-      const LOCAL_HOOK_DELAY = 1000;
+      const LOCAL_HOOK_DELAY = 500;
       const GLOBAL_HOOK_DELAY = 2000;
 
       const onLoadedLocal = () => {
