@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react",
+    "lib": ["es2019", "dom"]
+  }
+}

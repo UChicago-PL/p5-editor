@@ -33,9 +33,9 @@ import * as UserActions from '../../User/actions';
 import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
 
-import JeuceEditor from '../../../../../jeuce/src/components/App.tsx';
-import * as cmSearch from '../../../../../jeuce/node_modules/@codemirror/search';
-import { linter, lintGutter } from '../../../../../jeuce/node_modules/@codemirror/lint';
+import CodeMirror from './CodeMirror';
+import * as cmSearch from '@codemirror/search';
+import { linter, lintGutter } from '@codemirror/lint';
 
 import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
 
@@ -358,7 +358,7 @@ class Editor extends React.Component {
           </div>
         </header>
         <article className="editor-holder">
-          <JeuceEditor
+          <CodeMirror
             code={this.props.file.content}
             lang={this.getFileMode(this.props.file.name)}
             onChange={this.onChange}
