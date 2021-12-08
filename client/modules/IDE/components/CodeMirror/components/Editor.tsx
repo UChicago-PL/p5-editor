@@ -26,7 +26,7 @@ export type ExternalProps = {
   keyBindings: KeyBinding[]
   extensions: Extension[]
   keywords: Keywords
-  onColorChange: () => void
+  onWidgetChange: () => void
 }
 
 type Props = {
@@ -41,8 +41,8 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
   const [view, setView] = useState<EditorView | null>(null)
 
   useEffect(() => {
-    const { shapeToolboxCb, onColorChange } = externalProps
-    const widgetProps = { shapeToolboxCb, onColorChange }
+    const { shapeToolboxCb, onWidgetChange } = externalProps
+    const widgetProps = { shapeToolboxCb, onWidgetChange }
     const view = new EditorView({
       state: EditorState.create({
         extensions: [

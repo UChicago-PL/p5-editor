@@ -453,7 +453,7 @@ class ShapeToolboxWidget extends WidgetType {
 
 type WidgetProps = {
   shapeToolboxCb: (loc: [number, number], existing: string) => void
-  onColorChange: () => void
+  onWidgetChange: () => void
 }
 
 function createWidgets(
@@ -666,6 +666,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
                 target.parentElement!.dataset.from,
                 "Missing 'from' dataset value",
               )
+              props.onWidgetChange()
               changeNum(
                 view,
                 target.classList.contains("cm-inc-widget"),
@@ -690,6 +691,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
                 "Missing 'from' dataset value",
               ),
             )
+            props.onWidgetChange()
             const b = codeString(view, from).startsWith("true")
             view.dispatch({
               changes: {
@@ -698,6 +700,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
                 insert: (!b).toString(),
               },
             })
+            return true
           } else if (
             target.parentElement!.classList.contains("cm-slider-widget")
           ) {
@@ -708,6 +711,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
               target.parentElement!.dataset.from,
               "Missing 'from' dataset value",
             )
+            props.onWidgetChange()
             return changeSlider(
               view,
               view.posAtDOM(target),
@@ -721,7 +725,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
             e.target.dataset.from,
             "Missing 'from' dataset value",
           )
-          props.onColorChange()
+          props.onWidgetChange()
           return changeColor(
             view,
             view.posAtDOM(e.target),

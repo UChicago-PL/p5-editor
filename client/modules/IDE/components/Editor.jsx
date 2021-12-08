@@ -73,7 +73,7 @@ class Editor extends React.Component {
     this.justTidied = false;
     this.lastChange = 0;
     this.cmView = null;
-    this.lastColorChangeTime = 0;
+    this.lastWidgetChangeTime = 0;
 
     // this.updateLintingMessageAccessibility = debounce((annotations) => {
     //   this.props.clearLintMessage();
@@ -245,7 +245,7 @@ class Editor extends React.Component {
     };
 
     // Force refresh in the case of a color change
-    if (this.lastChange - this.lastColorChangeTime <= 1000) {
+    if (this.lastChange - this.lastWidgetChangeTime <= 1000) {
       cb();
     } else {
       setTimeout(() => {
@@ -383,8 +383,8 @@ class Editor extends React.Component {
                 }));
               })
             ]}
-            onColorChange={() => {
-              this.lastColorChangeTime = Date.now();
+            onWidgetChange={() => {
+              this.lastWidgetChangeTime = Date.now();
             }}
           />
         </article>
