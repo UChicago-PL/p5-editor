@@ -4,17 +4,20 @@ import { initialState } from "./state"
 export const setShowBoolWidgets = StateEffect.define<boolean>()
 export const setShowNumWidgets = StateEffect.define<boolean>()
 export const setShowColorWidgets = StateEffect.define<boolean>()
+export const setCurrentLanguage = StateEffect.define<string>()
 
 export type CmState = {
   showBoolWidgets: boolean
   showNumWidgets: boolean
   showColorWidgets: boolean
+  lang: string
 }
 
 export const initialCmState = {
   showBoolWidgets: initialState.showBoolWidgets,
   showNumWidgets: initialState.showNumWidgets,
   showColorWidgets: initialState.showColorWidgets,
+  lang: initialState.lang
 }
 
 function reducer(state: CmState, effect: StateEffect<any>) {
@@ -24,6 +27,8 @@ function reducer(state: CmState, effect: StateEffect<any>) {
     return { ...state, showNumWidgets: effect.value }
   else if (effect.is(setShowColorWidgets))
     return { ...state, showColorWidgets: effect.value }
+    else if (effect.is(setCurrentLanguage))
+    return { ...state, lang: effect.value }
   else return state
 }
 

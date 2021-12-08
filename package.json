@@ -91,6 +91,9 @@
     "@svgr/webpack": "^5.4.0",
     "@testing-library/jest-dom": "^5.10.1",
     "@testing-library/react": "^10.2.1",
+    "@types/lodash": "^4.14.175",
+    "@types/react": "^17.0.24",
+    "@types/react-dom": "^17.0.9",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^9.0.0",
     "babel-loader": "^8.0.0",
@@ -122,10 +125,7 @@
     "typescript": "^4.4.4",
     "webpack-cli": "^3.3.11",
     "webpack-manifest-plugin": "^2.2.0",
-    "webpack-node-externals": "^1.7.2",
-    "@types/react": "^17.0.24",
-    "@types/lodash": "^4.14.175",
-    "@types/react-dom": "^17.0.9"
+    "webpack-node-externals": "^1.7.2"
   },
   "engines": {
     "node": "12",
@@ -136,8 +136,17 @@
     "@babel/core": "^7.8.4",
     "@babel/polyfill": "^7.8.3",
     "@babel/register": "^7.8.3",
+    "@codemirror/basic-setup": "^0.19.0",
+    "@codemirror/lang-css": "^0.19.3",
+    "@codemirror/lang-html": "^0.19.3",
+    "@codemirror/lang-javascript": "^0.19.3",
+    "@codemirror/lang-json": "^0.19.1",
+    "@codemirror/lang-markdown": "^0.19.2",
+    "@codemirror/lint": "^0.19.3",
+    "@codemirror/search": "^0.19.4",
     "@octokit/core": "^3.2.5",
     "@octokit/rest": "^18.0.15",
+    "@simonwep/pickr": "^1.8.2",
     "acorn": "^8.6.0",
     "archiver": "^1.1.0",
     "async": "^2.6.3",
@@ -230,13 +239,6 @@
     "styled-theming": "^2.2.0",
     "url": "^0.11.0",
     "webpack": "^4.41.6",
-    "xhr": "^2.5.0",
-    "@codemirror/basic-setup": "^0.19.0",
-    "@codemirror/lang-css": "^0.19.3",
-    "@codemirror/lang-html": "^0.19.3",
-    "@codemirror/lang-javascript": "^0.19.3",
-    "@codemirror/lang-json": "^0.19.1",
-    "@codemirror/lang-markdown": "^0.19.2",
-    "@simonwep/pickr": "^1.8.2"
+    "xhr": "^2.5.0"
   }
 }

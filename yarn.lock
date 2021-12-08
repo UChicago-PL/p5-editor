@@ -2048,7 +2048,7 @@
     "@lezer/common" "^0.15.5"
     "@lezer/lr" "^0.15.0"
 
-"@codemirror/lint@^0.19.0":
+"@codemirror/lint@^0.19.0", "@codemirror/lint@^0.19.3":
   version "0.19.3"
   resolved "https://registry.yarnpkg.com/@codemirror/lint/-/lint-0.19.3.tgz#84101d0967fea8df114a8f0f79965c22ccd3b3cc"
   integrity sha512-+c39s05ybD2NjghxkPFsUbH/qBL0cdzKmtHbzUm0RVspeL2OiP7uHYJ6J5+Qr9RjMIPWzcqSauRqxfmCrctUfg==
@@ -2095,7 +2095,7 @@
     "@codemirror/text" "^0.19.4"
     "@codemirror/view" "^0.19.0"
 
-"@codemirror/search@^0.19.0":
+"@codemirror/search@^0.19.0", "@codemirror/search@^0.19.4":
   version "0.19.4"
   resolved "https://registry.yarnpkg.com/@codemirror/search/-/search-0.19.4.tgz#89ca7750a0aae0245b8453abe8b15f441bcc2fb7"
   integrity sha512-Oogbi/Ep7suM3Q6eCeRdaPBHyJtuFnYo287H9uXwrbS7nCCoqYBy272tUt0OMt3GhJ3yK0/g+XMDveb+HVKRtA==
