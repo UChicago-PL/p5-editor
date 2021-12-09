@@ -385,7 +385,12 @@ class Editor extends React.Component {
                   return view.state.doc.line(line).from;
                 }
                 if (localLanguage === 'javascript') {
-                  JSHINT(code, { esversion: 11 });
+                  JSHINT(code, {
+                    asi: true,
+                    eqeqeq: true,
+                    '-W041': false,
+                    esversion: 11
+                  });
                   msgs = JSHINT.errors.map((e) => ({
                     message: e.reason,
                     severity: e.id && e.id.includes('error') ? 'error' : 'warning',
