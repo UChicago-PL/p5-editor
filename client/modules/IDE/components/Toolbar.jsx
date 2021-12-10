@@ -12,7 +12,7 @@ import { wrapEvent, trackEvent, setGlobalTrack } from '../../../utils/analytics.
 import PlayIcon from '../../../images/play.svg';
 import StopIcon from '../../../images/stop.svg';
 import AutorefreshIcon from '../../../images/autorefresh.svg';
-// import PreferencesIcon from '../../../images/preferences.svg';
+import PreferencesIcon from '../../../images/preferences.svg';
 import EditProjectNameIcon from '../../../images/pencil.svg';
 
 class Toolbar extends React.Component {
@@ -214,13 +214,13 @@ class Toolbar extends React.Component {
           >
             SUBMIT
           </button>
-          {/* <button */}
-          {/*  className={preferencesButtonClass} */}
-          {/*  onClick={this.props.openPreferences} */}
-          {/*  aria-label={this.props.t('Toolbar.OpenPreferencesARIA')} */}
-          {/* > */}
-          {/*  <PreferencesIcon focusable="false" aria-hidden="true" /> */}
-          {/* </button> */}
+          {/* <button
+            className={preferencesButtonClass}
+            onClick={this.props.openPreferences}
+            aria-label={this.props.t('Toolbar.OpenPreferencesARIA')}
+          >
+            <PreferencesIcon focusable="false" aria-hidden="true" />
+          </button> */}
         </div>
       </div>
     );

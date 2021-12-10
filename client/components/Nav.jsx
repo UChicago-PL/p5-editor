@@ -143,12 +143,12 @@ class Nav extends React.PureComponent {
 
   handleRun() {
     this.props.startSketch();
-    this.setDropdown('none');
+    setTimeout(() => this.setDropdown('none'), 500);
   }
 
   handleStop() {
     this.props.stopSketch();
-    this.setDropdown('none');
+    setTimeout(() => this.setDropdown('none'), 500);
   }
 
   handleStartAccessible() {
@@ -220,7 +220,7 @@ class Nav extends React.PureComponent {
   }
 
   handleBlur() {
-    this.timer = setTimeout(this.setDropdown.bind(this, 'none'), 100);
+    this.timer = setTimeout(this.setDropdown.bind(this, 'none'), 1000);
   }
 
   renderDashboardMenu(navDropdownState) {
@@ -278,11 +278,7 @@ class Nav extends React.PureComponent {
               </li>
             )}
             <li className="nav__dropdown-item">
-              <button
-                onClick={wrapEvent(this.handleRun, { eventName: 'clickMenuRun' })}
-                onFocus={this.handleFocusForSketch}
-                onBlur={this.handleBlur}
-              >
+              <button onClick={wrapEvent(this.handleRun, { eventName: 'clickMenuRun' })}>
                 {this.props.t('Nav.Sketch.Run')}
                 <span className="nav__keyboard-shortcut">
                   {metaKeyName}
@@ -291,11 +287,7 @@ class Nav extends React.PureComponent {
               </button>
             </li>
             <li className="nav__dropdown-item">
-              <button
-                onClick={wrapEvent(this.handleStop, { eventName: 'clickMenuStop' })}
-                onFocus={this.handleFocusForSketch}
-                onBlur={this.handleBlur}
-              >
+              <button onClick={wrapEvent(this.handleStop, { eventName: 'clickMenuStop' })}>
                 {this.props.t('Nav.Sketch.Stop')}
                 <span className="nav__keyboard-shortcut">
                   {'\u21E7'}+{metaKeyName}
@@ -405,12 +397,12 @@ class Nav extends React.PureComponent {
                 </span>
               </button>
             </li>
-            {/* <li className="nav__dropdown-item"> */}
-            {/*  <button onClick={this.handleReplace} onFocus={this.handleFocusForEdit} onBlur={this.handleBlur}> */}
-            {/*    {this.props.t('Nav.Edit.Replace')} */}
-            {/*    <span className="nav__keyboard-shortcut">{replaceCommand}</span> */}
-            {/*  </button> */}
-            {/* </li> */}
+            {/* <li className="nav__dropdown-item">
+              <button onClick={this.handleReplace} onFocus={this.handleFocusForEdit} onBlur={this.handleBlur}>
+                {this.props.t('Nav.Edit.Replace')}
+                <span className="nav__keyboard-shortcut">{replaceCommand}</span>
+              </button>
+            </li> */}
           </ul>
         </li>
 
