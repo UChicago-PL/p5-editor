@@ -1,41 +1,52 @@
-import * as React from "react"
+import * as React from 'react';
+import { setGlobalTrack, trackEvent } from '../../../../../utils/analytics';
 
 export type State = {
-  showBoolWidgets: boolean
-  showNumWidgets: boolean
-  showColorWidgets: boolean
-  lang: string
-}
+  showBoolWidgets: boolean;
+  showNumWidgets: boolean;
+  showColorWidgets: boolean;
+  lang: string;
+};
 
-export type ToggleBoolWidgets = { type: "toggleBoolWidgets" }
-export type ToggleNumWidgets = { type: "toggleNumWidgets" }
-export type ToggleColorWidgets = { type: "toggleColorWidgets" }
-export type SetLang = { type: "setLang"; value: string }
+export type ToggleBoolWidgets = { type: 'toggleBoolWidgets' };
+export type ToggleNumWidgets = { type: 'toggleNumWidgets' };
+export type ToggleColorWidgets = { type: 'toggleColorWidgets' };
+export type SetLang = { type: 'setLang'; value: string };
 
-type Action =
-  | ToggleBoolWidgets
-  | ToggleNumWidgets
-  | ToggleColorWidgets
-  | SetLang
+type Action = ToggleBoolWidgets | ToggleNumWidgets | ToggleColorWidgets | SetLang;
 
-export type Dispatch = React.Dispatch<Action>
+export type Dispatch = React.Dispatch<Action>;
 
 export const initialState = {
   showBoolWidgets: false,
   showNumWidgets: false,
   showColorWidgets: true,
-  lang: "",
-}
+  lang: ''
+};
 
 export function reducer(state: State, action: Action): State {
+  let newState: State;
   switch (action.type) {
-    case "toggleBoolWidgets":
-      return { ...state, showBoolWidgets: !state.showBoolWidgets }
-    case "toggleNumWidgets":
-      return { ...state, showNumWidgets: !state.showNumWidgets }
-    case "toggleColorWidgets":
-      return { ...state, showColorWidgets: !state.showColorWidgets }
-    case "setLang":
-      return { ...state, lang: action.value }
+    case 'toggleBoolWidgets':
+      newState = { ...state, showBoolWidgets: !state.showBoolWidgets };
+      break;
+    case 'toggleNumWidgets':
+      newState = { ...state, showNumWidgets: !state.showNumWidgets };
+      break;
+    case 'toggleColorWidgets':
+      newState = { ...state, showColorWidgets: !state.showColorWidgets };
+      break;
+    case 'setLang':
+      newState = { ...state, lang: (action as SetLang).value };
+      break;
+    default:
+      newState = state;
+      break;
   }
+
+  ['showBoolWidgets', 'showNumWidgets', 'showColorWidgets'].forEach((key) => {
+    setGlobalTrack(key, (newState as any)[key]);
+    trackEvent({ eventName: 'toggleSettings' });
+  });
+  return newState;
 }

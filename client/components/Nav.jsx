@@ -11,6 +11,7 @@ import * as toastActions from '../modules/IDE/actions/toast';
 import * as projectActions from '../modules/IDE/actions/project';
 import { setAllAccessibleOutput, setLanguage } from '../modules/IDE/actions/preferences';
 import { logoutUser } from '../modules/User/actions';
+import { wrapEvent } from '../utils/analytics';
 
 import SocialAuthButton from '../modules/User/components/SocialAuthButton';
 
@@ -41,8 +42,6 @@ class Nav extends React.PureComponent {
     this.handleDuplicate = this.handleDuplicate.bind(this);
     this.handleDownload = this.handleDownload.bind(this);
     this.handleFind = this.handleFind.bind(this);
-    this.handleAddFile = this.handleAddFile.bind(this);
-    this.handleAddFolder = this.handleAddFolder.bind(this);
     this.handleFindNext = this.handleFindNext.bind(this);
     this.handleRun = this.handleRun.bind(this);
     this.handleFindPrevious = this.handleFindPrevious.bind(this);
@@ -142,16 +141,6 @@ class Nav extends React.PureComponent {
   //   this.setDropdown('none');
   // }
 
-  handleAddFile() {
-    this.props.newFile(this.props.rootFile.id);
-    this.setDropdown('none');
-  }
-
-  handleAddFolder() {
-    this.props.newFolder(this.props.rootFile.id);
-    this.setDropdown('none');
-  }
-
   handleRun() {
     this.props.startSketch();
     this.setDropdown('none');
@@ -231,7 +220,7 @@ class Nav extends React.PureComponent {
   }
 
   handleBlur() {
-    this.timer = setTimeout(this.setDropdown.bind(this, 'none'), 10);
+    this.timer = setTimeout(this.setDropdown.bind(this, 'none'), 100);
   }
 
   renderDashboardMenu(navDropdownState) {
@@ -289,7 +278,11 @@ class Nav extends React.PureComponent {
               </li>
             )}
             <li className="nav__dropdown-item">
-              <button onClick={this.handleRun} onFocus={this.handleFocusForSketch} onBlur={this.handleBlur}>
+              <button
+                onClick={wrapEvent(this.handleRun, { eventName: 'clickMenuRun' })}
+                onFocus={this.handleFocusForSketch}
+                onBlur={this.handleBlur}
+              >
                 {this.props.t('Nav.Sketch.Run')}
                 <span className="nav__keyboard-shortcut">
                   {metaKeyName}
@@ -298,7 +291,11 @@ class Nav extends React.PureComponent {
               </button>
             </li>
             <li className="nav__dropdown-item">
-              <button onClick={this.handleStop} onFocus={this.handleFocusForSketch} onBlur={this.handleBlur}>
+              <button
+                onClick={wrapEvent(this.handleStop, { eventName: 'clickMenuStop' })}
+                onFocus={this.handleFocusForSketch}
+                onBlur={this.handleBlur}
+              >
                 {this.props.t('Nav.Sketch.Stop')}
                 <span className="nav__keyboard-shortcut">
                   {'\u21E7'}+{metaKeyName}
@@ -309,7 +306,7 @@ class Nav extends React.PureComponent {
             {this.props.project.id && this.props.user.authenticated && (
               <li className="nav__dropdown-item">
                 <button
-                  onClick={this.handleDuplicate}
+                  onClick={wrapEvent(this.handleDuplicate, { eventName: 'duplicate' })}
                   onFocus={this.handleFocusForFile}
                   onBlur={this.handleBlur}
                 >
@@ -320,7 +317,7 @@ class Nav extends React.PureComponent {
             {this.props.project.id && (
               <li className="nav__dropdown-item">
                 <button
-                  onClick={this.handleDownload}
+                  onClick={wrapEvent(this.handleDownload, { eventName: 'download' })}
                   onFocus={this.handleFocusForFile}
                   onBlur={this.handleBlur}
                 >
@@ -334,7 +331,7 @@ class Nav extends React.PureComponent {
                   to={`/${this.props.user.username}/sketches`}
                   onFocus={this.handleFocusForFile}
                   onBlur={this.handleBlur}
-                  onClick={this.setDropdownForNone}
+                  onClick={wrapEvent(this.setDropdownForNone, { eventName: 'openSketches' })}
                 >
                   {this.props.t('Nav.File.Open')}
                 </Link>
@@ -436,7 +433,7 @@ class Nav extends React.PureComponent {
               <button
                 onFocus={this.handleFocusForHelp}
                 onBlur={this.handleBlur}
-                onClick={this.handleKeyboardShortcuts}
+                onClick={wrapEvent(this.handleKeyboardShortcuts, { eventName: 'kbdShortcuts' })}
               >
                 {this.props.t('Nav.Help.KeyboardShortcuts')}
               </button>
@@ -448,7 +445,7 @@ class Nav extends React.PureComponent {
                 rel="noopener noreferrer"
                 onFocus={this.handleFocusForHelp}
                 onBlur={this.handleBlur}
-                onClick={this.setDropdownForNone}
+                onClick={wrapEvent(this.setDropdownForNone, { eventName: 'linkToDocs' })}
               >
                 {this.props.t('Nav.Help.Reference')}
               </a>
@@ -547,7 +544,7 @@ class Nav extends React.PureComponent {
                 to={`/${this.props.user.username}/sketches`}
                 onFocus={this.handleFocusForAccount}
                 onBlur={this.handleBlur}
-                onClick={this.setDropdownForNone}
+                onClick={wrapEvent(this.setDropdownForNone, { eventName: 'openSketches' })}
               >
                 {this.props.t('Nav.Auth.MySketches')}
               </Link>
@@ -669,8 +666,8 @@ Nav.propTypes = {
   startSketch: PropTypes.func.isRequired,
   stopSketch: PropTypes.func.isRequired,
   setAllAccessibleOutput: PropTypes.func.isRequired,
-  newFile: PropTypes.func.isRequired,
-  newFolder: PropTypes.func.isRequired,
+  // newFile: PropTypes.func.isRequired,
+  // newFolder: PropTypes.func.isRequired,
   layout: PropTypes.oneOf(['dashboard', 'project']),
   rootFile: PropTypes.shape({
     id: PropTypes.string.isRequired

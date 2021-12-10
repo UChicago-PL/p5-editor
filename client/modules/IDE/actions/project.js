@@ -15,6 +15,7 @@ import {
   setPreviousPath
 } from './ide';
 import { clearState, saveState } from '../../../persistState';
+import { trackEvent } from '../../../utils/analytics';
 
 const ROOT_URL = getConfig('API_URL');
 const S3_BUCKET_URL_BASE = getConfig('S3_BUCKET_URL_BASE');
@@ -146,6 +147,7 @@ export function checkLoggedIn(cb) {
 }
 
 export function saveProject(selectedFile = null, autosave = false, mobile = false) {
+  trackEvent({ eventName: 'saveProject' });
   return checkLoggedIn((dispatch, getState) => {
     const state = getState();
     if (state.project.isSaving) {
@@ -408,7 +410,12 @@ export function deleteProject(id) {
   };
 }
 
+// From WI22 (and possibly onwards) full snap shot logging is not required or allowed
+const DISABLED = true;
 export function logRun(type) {
+  if (DISABLED) {
+    return (x, y) => {};
+  }
   const makeRequest = (projectId, logParams) => apiClient.post(`/projects/${projectId}/log`, logParams);
 
   const saveLog = (projectId, logParams) => {

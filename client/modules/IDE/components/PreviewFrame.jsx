@@ -22,6 +22,7 @@ import {
   STRING_REGEX
 } from '../../../../server/utils/fileUtils';
 import { getAllScriptOffsets, hijackConsoleErrorsScript, startTag } from '../../../utils/consoleUtils';
+import { trackEvent, simplep5Mesg } from '../../../utils/analytics.ts';
 
 import { getHTMLFile } from '../reducers/files';
 
@@ -99,10 +100,31 @@ class PreviewFrame extends React.Component {
           source: message.source
         })
       );
-
       if (decodedMessages.some((message) => message.method === 'error')) {
         console.log('ERRORED');
         this.hasErrored = true;
+        decodedMessages
+          .filter((msg) => msg.method === 'error')
+          .forEach((msg) => {
+            const content = msg.data.length ? msg.data[0] : '';
+            const errorType =
+              content.split(/[ ,:]+/).find((x) => x.toLowerCase().includes('error')) || 'error';
+            if (errorType) {
+              trackEvent({ eventName: errorType });
+            }
+          });
+      }
+
+      const msgHasP5msg = (message) => message.data.some((x) => x.includes('p5.js says'));
+      if (decodedMessages.some(msgHasP5msg)) {
+        this.hasErrored = true;
+        decodedMessages.filter(msgHasP5msg).forEach((msg) => {
+          const content = msg.data.length ? msg.data[0] : '';
+          const msgType = simplep5Mesg(content);
+          if (msgType) {
+            trackEvent({ eventName: `p5:${msgType}` });
+          }
+        });
       }
 
       decodedMessages.every((message, index, arr) => {
@@ -394,7 +416,7 @@ class PreviewFrame extends React.Component {
       if (this.props.endSketchRefresh) {
         this.props.endSketchRefresh();
       }
-
+      trackEvent({ eventName: 'codeRun' });
       // This method is modified so that it only renders the sketch after ensuring that there is no startup error
       // To make this happen, two hooks are added to the iframe JS code: one global hook, before any other scripts,
       // and one local hook at the beginning of the draw function block

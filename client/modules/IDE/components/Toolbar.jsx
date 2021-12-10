@@ -7,6 +7,7 @@ import { withTranslation } from 'react-i18next';
 import * as IDEActions from '../actions/ide';
 import * as preferenceActions from '../actions/preferences';
 import * as projectActions from '../actions/project';
+import { wrapEvent, trackEvent, setGlobalTrack } from '../../../utils/analytics.ts';
 
 import PlayIcon from '../../../images/play.svg';
 import StopIcon from '../../../images/stop.svg';
@@ -89,7 +90,6 @@ class Toolbar extends React.Component {
     });
 
     const canEditProjectName = this.canEditProjectName();
-
     return (
       <div className="toolbar">
         <div className="flex h-center">
@@ -107,7 +107,7 @@ class Toolbar extends React.Component {
           </button>
           <button
             className={playButtonClass}
-            onClick={this.props.startSketch}
+            onClick={wrapEvent(this.props.startSketch, { eventName: 'click-play' })}
             aria-label={this.props.t('Toolbar.PlayOnlyVisualSketchARIA')}
             disabled={this.props.infiniteLoop}
           >
@@ -115,7 +115,7 @@ class Toolbar extends React.Component {
           </button>
           <button
             className={stopButtonClass}
-            onClick={this.props.stopSketch}
+            onClick={wrapEvent(this.props.stopSketch, { eventName: 'click-stop' })}
             aria-label={this.props.t('Toolbar.StopSketchARIA')}
           >
             <StopIcon focusable="false" aria-hidden="true" />
@@ -123,6 +123,10 @@ class Toolbar extends React.Component {
           <button
             className={autoRefreshButtonClass}
             onClick={() => {
+              setGlobalTrack('liveMode', !this.props.autorefresh);
+              trackEvent({
+                eventName: this.props.autorefresh ? 'autorefresh-stop' : 'autorefresh-start'
+              });
               this.props.setAutorefresh(!this.props.autorefresh);
             }}
             aria-label={this.props.t('Toolbar.Auto-refresh')}

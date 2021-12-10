@@ -18,6 +18,8 @@ import { linter, lintGutter } from '@codemirror/lint';
 import Timer from './Timer';
 import EditorAccessibility from './EditorAccessibility';
 
+import { trackEvent } from '../../../utils/analytics.ts';
+
 import UnsavedChangesDotIcon from '../../../images/unsaved-changes-dot.svg';
 import RightArrowIcon from '../../../images/right-arrow.svg';
 import LeftArrowIcon from '../../../images/left-arrow.svg';
@@ -67,7 +69,12 @@ class Editor extends React.Component {
     this.keyBindings = [
       {
         key: `${metaKey}-m`,
-        run: () => this.tidyCode()
+        run: () => {
+          trackEvent({ eventName: 'tidyCode' });
+          this.tidyCode();
+          return true;
+        },
+        preventDefault: true
       },
       {
         key: `${metaKey}-Enter`,
@@ -390,7 +397,7 @@ class Editor extends React.Component {
                   }
                   if (localLanguage === 'javascript') {
                     JSHINT(code, {
-                      asi: true,
+                      asi: false,
                       eqeqeq: true,
                       '-W041': false,
                       esversion: 11
@@ -421,11 +428,20 @@ class Editor extends React.Component {
                     });
                   }
 
+                  // is this too much
+                  const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
+                  const langShort = langToShort[localLanguage] || '';
+                  trackEvent({
+                    eventName: 'lint',
+                    context: [msgs.length, langShort]
+                  });
+                  console.log(msgs);
                   return msgs;
                 })
               ]}
-              onWidgetChange={() => {
+              onWidgetChange={(widgetEvent) => {
                 this.lastWidgetChangeTime = Date.now();
+                trackEvent({ eventName: widgetEvent });
               }}
             />
           )}

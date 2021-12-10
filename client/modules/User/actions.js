@@ -5,6 +5,8 @@ import { showErrorModal, justOpenedProject } from '../IDE/actions/ide';
 import { setLanguage } from '../IDE/actions/preferences';
 import { showToast, setToastText } from '../IDE/actions/toast';
 
+import { setGlobalTrack } from '../../utils/analytics.ts';
+
 export function authError(error) {
   return {
     type: ActionTypes.AUTH_ERROR,
@@ -35,6 +37,9 @@ export function authenticateUser(user) {
 }
 
 export function setPreferences(preferences) {
+  if (Object.prototype.hasOwnProperty.call(preferences, 'autorefresh')) {
+    setGlobalTrack('liveMode', preferences.autorefresh);
+  }
   return {
     type: ActionTypes.SET_PREFERENCES,
     preferences
