@@ -111,19 +111,8 @@ module.exports = [
             }
           ]
         },
-        // AM: i dont understand why the p5 special cases each of the scss files?
-        // maybe it's not actually necessary, but i'm cargo-culting it
         {
           test: /_console-feed.scss/,
-          use: {
-            loader: 'sass-extract-loader',
-            options: {
-              plugins: [{ plugin: 'sass-extract-js', options: { camelCase: false } }]
-            }
-          }
-        },
-        {
-          test: /App.scss/,
           use: {
             loader: 'sass-extract-loader',
             options: {
