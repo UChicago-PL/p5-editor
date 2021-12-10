@@ -12,6 +12,7 @@ import {
   cmStatePlugin,
   setShowBoolWidgets,
   setShowColorWidgets,
+  setCurrentLanguage,
   setShowNumWidgets,
 } from "../state/cmState"
 import { keywordPlugin, Keywords } from "../state/keywordPlugin"
@@ -74,10 +75,11 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
           setShowBoolWidgets.of(state.showBoolWidgets),
           setShowColorWidgets.of(state.showColorWidgets),
           setShowNumWidgets.of(state.showNumWidgets),
+          setCurrentLanguage.of(state.lang)
         ],
       })
     }
-  }, [state.showBoolWidgets, state.showColorWidgets, state.showNumWidgets])
+  }, [state.showBoolWidgets, state.showColorWidgets, state.showNumWidgets, externalProps.lang])
 
   useEffect(() => {
     if (view && view.state.doc.toString() !== externalProps.code) {
@@ -102,8 +104,13 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
       dispatch({
         type: "setLang",
         value: externalProps.lang,
+      });
+      setLang(view, externalProps.lang);
+      view.dispatch({
+        effects: [
+          setCurrentLanguage.of(externalProps.lang)
+        ],
       })
-      setLang(view, externalProps.lang)
     }
   }, [externalProps.lang])
 

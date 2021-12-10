@@ -34,6 +34,7 @@ import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
 
 import CodeMirror from './CodeMirror';
+import { cmStatePlugin } from './CodeMirror/state/cmState';
 import * as cmSearch from '@codemirror/search';
 import { linter, lintGutter } from '@codemirror/lint';
 
@@ -42,6 +43,12 @@ import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywor
 window.JSHINT = JSHINT;
 window.CSSLint = CSSLint;
 window.HTMLHint = HTMLHint;
+const htmlHintConfig = {
+  'title-require': false,
+  'doctype-first': false,
+  'alt-require': false
+};
+
 // delete CodeMirror.keyMap.sublime['Shift-Tab];
 
 const INDENTATION_AMOUNT = 2;
@@ -255,21 +262,18 @@ class Editor extends React.Component {
   }
 
   getFileMode(fileName) {
-    let mode;
     if (fileName.match(/.+\.js$/i)) {
-      mode = 'javascript';
+      return 'javascript';
     } else if (fileName.match(/.+\.css$/i)) {
-      mode = 'css';
+      return 'css';
     } else if (fileName.match(/.+\.html$/i)) {
-      mode = 'htmlmixed';
+      return 'htmlmixed';
     } else if (fileName.match(/.+\.json$/i)) {
-      mode = 'application/json';
+      return 'application/json';
     } else if (fileName.match(/.+\.(frag|vert)$/i)) {
-      mode = 'clike';
-    } else {
-      mode = 'text/plain';
+      return 'clike';
     }
-    return mode;
+    return 'text/plain';
   }
 
   getContent() {
@@ -323,7 +327,7 @@ class Editor extends React.Component {
       'editor-holder': true,
       'editor-holder--hidden': this.props.file.fileType === 'folder' || this.props.file.url
     });
-
+    const language = this.getFileMode(this.props.file.name);
     return (
       <section className={editorSectionClass}>
         <header className="editor__header">
@@ -360,7 +364,7 @@ class Editor extends React.Component {
         <article className="editor-holder">
           <CodeMirror
             code={this.props.file.content}
-            lang={this.getFileMode(this.props.file.name)}
+            lang={language}
             onChange={this.onChange}
             shapeToolboxCb={this.props.openShapeToolbox}
             provideView={(view) => (this.cmView = view)}
@@ -369,18 +373,51 @@ class Editor extends React.Component {
             extensions={[
               lintGutter(),
               linter((view) => {
-                JSHINT(view.state.doc.toString(), { esversion: 11 });
+                const code = view.state.doc.toString();
+                const config = view.state.field(cmStatePlugin);
+                const localLanguage = config.lang || language;
 
+                let msgs = [];
                 function toOffset(line, ch) {
                   return view.state.doc.line(line).from + ch - 1;
                 }
+                function lineOffset(line) {
+                  return view.state.doc.line(line).from;
+                }
+                if (localLanguage === 'javascript') {
+                  JSHINT(code, {
+                    asi: true,
+                    eqeqeq: true,
+                    '-W041': false,
+                    esversion: 11
+                  });
+                  msgs = JSHINT.errors.map((e) => ({
+                    message: e.reason,
+                    severity: e.id && e.id.includes('error') ? 'error' : 'warning',
+                    from: toOffset(e.line, e.character),
+                    to: toOffset(e.line, e.character + 1)
+                  }));
+                } else if (localLanguage === 'htmlmixed') {
+                  msgs = HTMLHint.verify(code, htmlHintConfig).map((e) => {
+                    return {
+                      message: e.message,
+                      severity: e.type,
+                      from: lineOffset(e.line),
+                      to: lineOffset(e.line + 1) - 1
+                    };
+                  });
+                } else if (localLanguage === 'css') {
+                  msgs = CSSLint.verify(code).messages.map((e) => {
+                    return {
+                      message: e.message,
+                      severity: e.type,
+                      from: lineOffset(e.line),
+                      to: lineOffset(e.line + 1) - 1
+                    };
+                  });
+                }
 
-                return JSHINT.errors.map((e) => ({
-                  message: e.reason,
-                  severity: 'warning',
-                  from: toOffset(e.line, e.character),
-                  to: toOffset(e.line, e.character + e.evidence ? e.evidence.length : 1)
-                }));
+                return msgs;
               })
             ]}
             onWidgetChange={() => {

@@ -3,7 +3,7 @@
     "plugin:react/recommended",
     "airbnb"
   ],
-	"parser": "babel-eslint",
+	"parser": "@babel/eslint-parser",
 	"env": {
     "browser": true,
     "node": true,
@@ -46,35 +46,32 @@
     "no-return-assign": [2, "except-parens"],
     "jsx-a11y/anchor-is-valid": [
       "error",
-      {
-        "components": [
-          "Link"
-        ],
-        "specialLink": [
-          "to"
-        ]
-      }
+      {"components": ["Link"], "specialLink": ["to"] }
     ],
     "jsx-a11y/label-has-for": [
       2,
       {
-        "components": [
-          "Label"
-        ],
-        "required": {
-          "every": [
-            "id"
-          ]
-        },
+        "components": ["Label"],
+        "required": {"every": ["id"]},
         "allowChildren": false
       }
-    ]
+    ],
+    // new rules 
+    "max-classes-per-file": 0,
+    "react/destructuring-assignment": 0,
+    "react/button-has-type": 0,
+    "no-useless-catch": 0,
+    "implicit-arrow-linebreak": 0,
+    "operator-linebreak": 0,
+    "import/no-cycle": 0,
+    "function-call-argument-newline": 0,
+    "no-multiple-empty-lines": 0
   },
   "plugins": [
     "react", "jsx-a11y", "import"
   ],
   "settings": {
-    "import/parser": "babel-eslint",
+    "import/parser": "@babel/eslint-parser",
     "import/resolve": {
       "moduleDirectory": ["node_modules"]
     }
@@ -92,5 +89,12 @@
         "import/no-extraneous-dependencies": "off"
       }
     }
-  ]
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**"
+  ],
+  "parserOptions": {
+    "requireConfigFile": false,
+    "ecmaVersion": 11
+  }
 }

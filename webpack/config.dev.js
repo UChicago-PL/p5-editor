@@ -23,10 +23,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    modules: ['client', 'node_modules'],
-    alias: {
-      react: path.resolve('./node_modules/react')
-    }
+    modules: ['client', 'node_modules']
   },
   plugins: [
     new webpack.DefinePlugin({
