@@ -22,7 +22,7 @@ import {
   STRING_REGEX
 } from '../../../../server/utils/fileUtils';
 import { getAllScriptOffsets, hijackConsoleErrorsScript, startTag } from '../../../utils/consoleUtils';
-import { trackEvent } from '../../../utils/analytics.ts';
+import { trackEvent, simplep5Mesg } from '../../../utils/analytics.ts';
 
 import { getHTMLFile } from '../reducers/files';
 
@@ -100,7 +100,6 @@ class PreviewFrame extends React.Component {
           source: message.source
         })
       );
-
       if (decodedMessages.some((message) => message.method === 'error')) {
         console.log('ERRORED');
         this.hasErrored = true;
@@ -108,11 +107,24 @@ class PreviewFrame extends React.Component {
           .filter((msg) => msg.method === 'error')
           .forEach((msg) => {
             const content = msg.data.length ? msg.data[0] : '';
-            const errorType = content.split(/[ ,:]+/).find((x) => x.toLowerCase().includes('error'));
+            const errorType =
+              content.split(/[ ,:]+/).find((x) => x.toLowerCase().includes('error')) || 'error';
             if (errorType) {
               trackEvent({ eventName: errorType });
             }
           });
+      }
+
+      const msgHasP5msg = (message) => message.data.some((x) => x.includes('p5.js says'));
+      if (decodedMessages.some(msgHasP5msg)) {
+        this.hasErrored = true;
+        decodedMessages.filter(msgHasP5msg).forEach((msg) => {
+          const content = msg.data.length ? msg.data[0] : '';
+          const msgType = simplep5Mesg(content);
+          if (msgType) {
+            trackEvent({ eventName: `p5:${msgType}` });
+          }
+        });
       }
 
       decodedMessages.every((message, index, arr) => {
