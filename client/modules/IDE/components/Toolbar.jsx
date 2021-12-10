@@ -7,7 +7,7 @@ import { withTranslation } from 'react-i18next';
 import * as IDEActions from '../actions/ide';
 import * as preferenceActions from '../actions/preferences';
 import * as projectActions from '../actions/project';
-import { wrapEvent, trackEvent, setGlobalTrack } from '../../../utils/analytics';
+import { wrapEvent, trackEvent, setGlobalTrack } from '../../../utils/analytics.ts';
 
 import PlayIcon from '../../../images/play.svg';
 import StopIcon from '../../../images/stop.svg';

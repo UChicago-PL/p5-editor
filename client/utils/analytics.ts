@@ -38,22 +38,24 @@ interface EventConfig {
 }
 
 export function wrapEvent(wrapped: (x: any) => any, eventConfig: EventConfig) {
-  // todo add validation
   if (!eventConfig.eventName) {
     console.log('invalid log event', eventConfig);
     return;
   }
 
-  const eventName = prepName(eventConfig);
   return function (e: any) {
-    console.log(eventName);
     // @ts-ignore
-    umami.trackEvent(appSettingsToIndex(), eventConfig.eventName);
+    umami.trackEvent(prepName(eventConfig), eventConfig.eventName);
     wrapped(e);
   };
 }
 
 export function trackEvent(eventConfig: EventConfig) {
+  // todo add validation
+  if (!eventConfig.eventName) {
+    console.log('invalid log event', eventConfig);
+    return;
+  }
   // @ts-ignore
-  umami.trackEvent(appSettingsToIndex(), eventConfig.eventName);
+  umami.trackEvent(prepName(eventConfig), eventConfig.eventName);
 }

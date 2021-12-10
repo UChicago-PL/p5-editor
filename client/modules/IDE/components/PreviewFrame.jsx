@@ -22,7 +22,7 @@ import {
   STRING_REGEX
 } from '../../../../server/utils/fileUtils';
 import { getAllScriptOffsets, hijackConsoleErrorsScript, startTag } from '../../../utils/consoleUtils';
-import { trackEvent } from '../../../utils/analytics';
+import { trackEvent } from '../../../utils/analytics.ts';
 
 import { getHTMLFile } from '../reducers/files';
 
@@ -108,9 +108,10 @@ class PreviewFrame extends React.Component {
           .filter((msg) => msg.method === 'error')
           .forEach((msg) => {
             const content = msg.data.length ? msg.data[0] : '';
-            // const errorType = content.split(/)
             const errorType = content.split(/[ ,:]+/).find((x) => x.toLowerCase().includes('error'));
-            trackEvent({ eventName: errorType });
+            if (errorType) {
+              trackEvent({ eventName: errorType });
+            }
           });
       }
 

@@ -18,7 +18,7 @@ import { linter, lintGutter } from '@codemirror/lint';
 import Timer from './Timer';
 import EditorAccessibility from './EditorAccessibility';
 
-import { trackEvent } from '../../../utils/analytics';
+import { trackEvent } from '../../../utils/analytics.ts';
 
 import UnsavedChangesDotIcon from '../../../images/unsaved-changes-dot.svg';
 import RightArrowIcon from '../../../images/right-arrow.svg';

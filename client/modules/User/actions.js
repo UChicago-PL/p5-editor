@@ -5,7 +5,7 @@ import { showErrorModal, justOpenedProject } from '../IDE/actions/ide';
 import { setLanguage } from '../IDE/actions/preferences';
 import { showToast, setToastText } from '../IDE/actions/toast';
 
-import { setGlobalTrack } from '../../utils/analytics';
+import { setGlobalTrack } from '../../utils/analytics.ts';
 
 export function authError(error) {
   return {
