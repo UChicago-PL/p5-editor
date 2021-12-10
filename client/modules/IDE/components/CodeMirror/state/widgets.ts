@@ -541,7 +541,7 @@ function createWidgets(
                 widget,
                 side: 1,
               })
-              addWidget(deco, argList.parent!.to)
+              addWidget(deco, argList.parent!.to - 1)
             }
 
             if (argListStrings.length === 1) {
@@ -728,7 +728,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
           props.onWidgetChange()
           return changeColor(
             view,
-            view.posAtDOM(e.target),
+            view.posAtDOM(e.target) + 1,
             e.detail,
             parseInt(from),
           )
