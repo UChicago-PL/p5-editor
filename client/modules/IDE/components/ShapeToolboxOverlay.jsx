@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
@@ -160,7 +161,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         const [p1, p2] = calcAbsolutePointsForLine(o);
         return ['line', [p1.x, p1.y, p2.x, p2.y]];
       case 'rect':
-        if (o.angle)
+        if (o.angle) {
           return [
             'quad',
             [
@@ -174,7 +175,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
               coords.tr.y
             ]
           ];
-        else return ['rect', [coords.tl.x, coords.tl.y, o.width * o.scaleX, o.height * o.scaleY]];
+        } else return ['rect', [coords.tl.x, coords.tl.y, o.width * o.scaleX, o.height * o.scaleY]];
       case 'circle':
         if (o.scaleX === o.scaleY) {
           return [
@@ -250,3 +251,4 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     </div>
   );
 }
+/* eslint-enable */

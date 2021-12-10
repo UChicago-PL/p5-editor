@@ -96,7 +96,7 @@ class IDEView extends React.Component {
     this.autosaveInterval = null;
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
       this.props.setPreviousPath(this.props.location.pathname);
     }
@@ -114,7 +114,7 @@ class IDEView extends React.Component {
     }
   }
 
-  componentWillUpdate(nextProps) {
+  UNSAFE_componentWillUpdate(nextProps) {
     if (nextProps.params.project_id && !this.props.params.project_id) {
       if (nextProps.params.project_id !== nextProps.project.id) {
         this.props.getProject(nextProps.params.project_id);
@@ -317,7 +317,7 @@ class IDEView extends React.Component {
                 className="editor-preview-subpanel"
               >
                 <div>
-                  {this.props.ide.showingShapeToolbox && <div className={'editor-block'} />}
+                  {this.props.ide.showingShapeToolbox && <div className="editor-block" />}
                   <Editor
                     provideController={(ctl) => {
                       this.cmController = ctl;
@@ -462,6 +462,8 @@ IDEView.propTypes = {
   ide: PropTypes.shape({
     consoleIsExpanded: PropTypes.bool.isRequired,
     errorType: PropTypes.string,
+    isStale: PropTypes.bool.isRequired,
+    isShowing: PropTypes.bool.isRequired,
     isAccessibleOutputPlaying: PropTypes.bool.isRequired,
     isPlaying: PropTypes.bool.isRequired,
     justOpenedProject: PropTypes.bool.isRequired,
@@ -476,10 +478,11 @@ IDEView.propTypes = {
     submitModalVisible: PropTypes.bool.isRequired,
     unsavedChanges: PropTypes.bool.isRequired,
     uploadFileModalVisible: PropTypes.bool.isRequired,
-    showingShapeToolbox: PropTypes.bool.isRequired
+    showingShapeToolbox: PropTypes.bool.isRequired,
+    shapeToolboxExistingCalls: PropTypes.bool.isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
-  canvasSize: PropTypes.arrayOf(PropTypes.number),
+  canvasSize: PropTypes.arrayOf(PropTypes.number).isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   newFile: PropTypes.func.isRequired,
   newFolder: PropTypes.func.isRequired,

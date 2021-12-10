@@ -10,8 +10,7 @@ export const mobileFirst = (MobileComponent, Fallback) => (props) => {
   return (
     <MediaQuery minWidth={770}>
       {(matches) =>
-        matches || forceDesktop || !mobileEnabled() ? <Fallback {...props} /> : <MobileComponent {...props} />
-      }
+        matches || forceDesktop || !mobileEnabled() ? <Fallback {...props} /> : <MobileComponent {...props} />}
     </MediaQuery>
   );
 };

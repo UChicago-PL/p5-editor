@@ -14,7 +14,7 @@ class Overlay extends React.Component {
     this.keyPressHandle = this.keyPressHandle.bind(this);
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     document.addEventListener('mousedown', this.handleClick, false);
     document.addEventListener('keydown', this.keyPressHandle);
   }

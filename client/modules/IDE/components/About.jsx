@@ -10,7 +10,11 @@ function About(props) {
   return (
     <div className="about__content">
       <Helmet>
-        <title> {t('About.TitleHelmet')} </title>
+        <title>
+          {' '}
+          {t('About.TitleHelmet')}
+          {' '}
+        </title>
       </Helmet>
       <div className="about__content-column">
         <Logo />

@@ -13,8 +13,10 @@ import { HTMLHint } from 'htmlhint';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Timer from '../components/Timer';
-import EditorAccessibility from '../components/EditorAccessibility';
+import * as cmSearch from '@codemirror/search';
+import { linter, lintGutter } from '@codemirror/lint';
+import Timer from './Timer';
+import EditorAccessibility from './EditorAccessibility';
 
 import UnsavedChangesDotIcon from '../../../images/unsaved-changes-dot.svg';
 import RightArrowIcon from '../../../images/right-arrow.svg';
@@ -33,10 +35,10 @@ import * as UserActions from '../../User/actions';
 import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
 
+// eslint-disable-next-line import/extensions
 import CodeMirror from './CodeMirror';
+// eslint-disable-next-line import/extensions
 import { cmStatePlugin } from './CodeMirror/state/cmState';
-import * as cmSearch from '@codemirror/search';
-import { linter, lintGutter } from '@codemirror/lint';
 
 import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
 
@@ -51,7 +53,7 @@ const htmlHintConfig = {
 
 // delete CodeMirror.keyMap.sublime['Shift-Tab];
 
-const INDENTATION_AMOUNT = 2;
+// const INDENTATION_AMOUNT = 2;
 const prettierPlugins = [parserBabel, parserHtml, parserCSS];
 
 const REFRESH_DELAY = 1000;
@@ -323,10 +325,10 @@ class Editor extends React.Component {
       'editor--options': this.props.editorOptionsVisible
     });
 
-    const editorHolderClass = classNames({
-      'editor-holder': true,
-      'editor-holder--hidden': this.props.file.fileType === 'folder' || this.props.file.url
-    });
+    // const editorHolderClass = classNames({
+    //   'editor-holder': true,
+    //   'editor-holder--hidden': this.props.file.fileType === 'folder' || this.props.file.url
+    // });
     const language = this.getFileMode(this.props.file.name);
     return (
       <section className={editorSectionClass}>
@@ -432,10 +434,10 @@ class Editor extends React.Component {
 }
 
 Editor.propTypes = {
-  autocloseBracketsQuotes: PropTypes.bool.isRequired,
-  lineNumbers: PropTypes.bool.isRequired,
-  lintWarning: PropTypes.bool.isRequired,
-  linewrap: PropTypes.bool.isRequired,
+  // autocloseBracketsQuotes: PropTypes.bool.isRequired,
+  // lineNumbers: PropTypes.bool.isRequired,
+  // lintWarning: PropTypes.bool.isRequired,
+  // linewrap: PropTypes.bool.isRequired,
   lintMessages: PropTypes.arrayOf(
     PropTypes.shape({
       severity: PropTypes.string.isRequired,
@@ -444,16 +446,16 @@ Editor.propTypes = {
       id: PropTypes.number.isRequired
     })
   ).isRequired,
-  consoleEvents: PropTypes.arrayOf(
-    PropTypes.shape({
-      method: PropTypes.string.isRequired,
-      args: PropTypes.arrayOf(PropTypes.string)
-    })
-  ),
-  updateLintMessage: PropTypes.func.isRequired,
-  clearLintMessage: PropTypes.func.isRequired,
+  // consoleEvents: PropTypes.arrayOf(
+  //   PropTypes.shape({
+  //     method: PropTypes.string.isRequired,
+  //     args: PropTypes.arrayOf(PropTypes.string)
+  //   })
+  // ),
+  // updateLintMessage: PropTypes.func.isRequired,
+  // clearLintMessage: PropTypes.func.isRequired,
   updateFileContent: PropTypes.func.isRequired,
-  fontSize: PropTypes.number.isRequired,
+  // fontSize: PropTypes.number.isRequired,
   file: PropTypes.shape({
     name: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
@@ -462,38 +464,38 @@ Editor.propTypes = {
     url: PropTypes.string
   }).isRequired,
   editorOptionsVisible: PropTypes.bool.isRequired,
-  showEditorOptions: PropTypes.func.isRequired,
-  closeEditorOptions: PropTypes.func.isRequired,
+  // showEditorOptions: PropTypes.func.isRequired,
+  // closeEditorOptions: PropTypes.func.isRequired,
   setUnsavedChanges: PropTypes.func.isRequired,
   startAutoRefreshSketch: PropTypes.func.isRequired,
   autorefresh: PropTypes.bool.isRequired,
   isPlaying: PropTypes.bool.isRequired,
-  theme: PropTypes.string.isRequired,
+  // theme: PropTypes.string.isRequired,
   unsavedChanges: PropTypes.bool.isRequired,
   projectSavedTime: PropTypes.string.isRequired,
-  files: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      content: PropTypes.string.isRequired
-    })
-  ).isRequired,
+  // files: PropTypes.arrayOf(
+  //   PropTypes.shape({
+  //     id: PropTypes.string.isRequired,
+  //     name: PropTypes.string.isRequired,
+  //     content: PropTypes.string.isRequired
+  //   })
+  // ).isRequired,
   isExpanded: PropTypes.bool.isRequired,
   collapseSidebar: PropTypes.func.isRequired,
   expandSidebar: PropTypes.func.isRequired,
   isUserOwner: PropTypes.bool.isRequired,
   clearConsole: PropTypes.func.isRequired,
-  showRuntimeErrorWarning: PropTypes.func.isRequired,
-  runtimeErrorWarningVisible: PropTypes.bool.isRequired,
+  // showRuntimeErrorWarning: PropTypes.func.isRequired,
+  // runtimeErrorWarningVisible: PropTypes.bool.isRequired,
   provideController: PropTypes.func.isRequired,
   logRun: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
   openShapeToolbox: PropTypes.func.isRequired
 };
 
-Editor.defaultProps = {
-  consoleEvents: []
-};
+// Editor.defaultProps = {
+//   consoleEvents: []
+// };
 
 function mapStateToProps(state) {
   return {

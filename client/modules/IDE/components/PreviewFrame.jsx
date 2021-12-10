@@ -10,6 +10,7 @@ import decomment from 'decomment';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Decode } from 'console-feed';
+import falafel from 'falafel';
 import { getBlobUrl, setBlobUrl } from '../actions/files';
 import { resolvePathToFile } from '../../../../server/utils/filePath';
 import {
@@ -36,7 +37,6 @@ import { setGridOutput, setSoundOutput, setTextOutput } from '../actions/prefere
 import { clearConsole, dispatchConsoleEvent } from '../actions/console';
 
 import cs111Prelude from '../../../utils/cs111Prelude';
-import falafel from 'falafel';
 
 const shouldRenderSketch = (props, prevProps = undefined) => {
   const { isPlaying, previewIsRefreshing, fullView } = props;

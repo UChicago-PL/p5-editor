@@ -162,11 +162,11 @@ const Button = ({
 }) => {
   const hasChildren = React.Children.count(children) > 0;
   const content = (
-    <React.Fragment>
+    <>
       {iconBefore}
       {hasChildren && <span>{children}</span>}
       {iconAfter}
-    </React.Fragment>
+    </>
   );
   let StyledComponent = StyledButton;
 

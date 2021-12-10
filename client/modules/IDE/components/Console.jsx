@@ -29,8 +29,8 @@ import infoContrastUrl from '../../../images/console-info-contrast.svg?byUrl';
 import UpArrowIcon from '../../../images/up-arrow.svg';
 import DownArrowIcon from '../../../images/down-arrow.svg';
 
-import * as IDEActions from '../../IDE/actions/ide';
-import * as ConsoleActions from '../../IDE/actions/console';
+import * as IDEActions from '../actions/ide';
+import * as ConsoleActions from '../actions/console';
 import { useDidUpdate } from '../../../utils/custom-hooks';
 
 const getConsoleFeedStyle = (theme, times, fontSize) => {

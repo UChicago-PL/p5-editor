@@ -126,7 +126,7 @@ class CollectionListRowBase extends React.Component {
     const userIsOwner = this.props.user.username === this.props.username;
 
     return (
-      <React.Fragment>
+      <>
         <button
           className="sketch-list__dropdown-button"
           onClick={this.toggleOptions}
@@ -174,7 +174,7 @@ class CollectionListRowBase extends React.Component {
             )}
           </ul>
         )}
-      </React.Fragment>
+      </>
     );
   };
 
@@ -183,7 +183,7 @@ class CollectionListRowBase extends React.Component {
     const { renameOpen, renameValue } = this.state;
 
     return (
-      <React.Fragment>
+      <>
         <Link to={{ pathname: `/${username}/collections/${collection.id}`, state: { skipSavingPath: true } }}>
           {renameOpen ? '' : collection.name}
         </Link>
@@ -197,7 +197,7 @@ class CollectionListRowBase extends React.Component {
             ref={this.renameInput}
           />
         )}
-      </React.Fragment>
+      </>
     );
   };
 
