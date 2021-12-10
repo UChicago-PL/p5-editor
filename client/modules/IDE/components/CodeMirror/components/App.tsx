@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useReducer } from 'react';
 
-import './../assets/scss/App.scss';
 import Editor, { ExternalProps } from './Editor';
 
 import { initialState, reducer } from '../state/state';
