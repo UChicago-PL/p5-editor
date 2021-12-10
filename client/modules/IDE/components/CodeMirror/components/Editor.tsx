@@ -7,6 +7,7 @@ import { Extension } from '@codemirror/state';
 import { indentWithTab } from '@codemirror/commands';
 import { langPlugin, setLang } from '../state/lang';
 
+import autocomplete from '../state/autocomplete';
 import { widgetsPlugin } from '../state/widgets';
 import {
   cmStatePlugin,
@@ -48,6 +49,7 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
       state: EditorState.create({
         extensions: [
           keymap.of(externalProps.keyBindings),
+          autocomplete(externalProps.keywords),
           basicSetup,
           langPlugin(externalProps.lang),
 
