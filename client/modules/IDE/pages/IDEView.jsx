@@ -38,6 +38,7 @@ import { CollectionSearchbar } from '../components/Searchbar';
 import { getIsUserOwner } from '../selectors/users';
 
 import { autosaveEvery } from '../../../constants';
+import ShapeToolboxOverlay from '../components/ShapeToolboxOverlay';
 
 function getTitle(props) {
   const { id } = props.project;
@@ -95,7 +96,7 @@ class IDEView extends React.Component {
     this.autosaveInterval = null;
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
       this.props.setPreviousPath(this.props.location.pathname);
     }
@@ -113,7 +114,7 @@ class IDEView extends React.Component {
     }
   }
 
-  componentWillUpdate(nextProps) {
+  UNSAFE_componentWillUpdate(nextProps) {
     if (nextProps.params.project_id && !this.props.params.project_id) {
       if (nextProps.params.project_id !== nextProps.project.id) {
         this.props.getProject(nextProps.params.project_id);
@@ -150,11 +151,13 @@ class IDEView extends React.Component {
       this.props.router.setRouteLeaveHook(this.props.route, () => warnIfUnsavedChanges(this.props));
     }
   }
+
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleGlobalKeydown, false);
     clearTimeout(this.autosaveInterval);
     this.autosaveInterval = null;
   }
+
   handleGlobalKeydown(e) {
     // 83 === s
     if (e.keyCode === 83 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {
@@ -223,6 +226,7 @@ class IDEView extends React.Component {
   };
 
   render() {
+    const isStale = this.props.ide.isStale && this.props.ide.isShowing;
     return (
       <div className="ide">
         <Helmet>
@@ -312,16 +316,21 @@ class IDEView extends React.Component {
                 allowResize={this.props.ide.consoleIsExpanded}
                 className="editor-preview-subpanel"
               >
-                <Editor
-                  provideController={(ctl) => {
-                    this.cmController = ctl;
-                  }}
-                />
+                <div>
+                  {this.props.ide.showingShapeToolbox && <div className="editor-block" />}
+                  <Editor
+                    provideController={(ctl) => {
+                      this.cmController = ctl;
+                    }}
+                  />
+                </div>
                 <Console />
               </SplitPane>
               <section className="preview-frame-holder">
                 <header className="preview-frame__header">
-                  <h2 className="preview-frame__title">{this.props.t('Toolbar.Preview')}</h2>
+                  <h2 className={'preview-frame__title' + (isStale ? ' stale' : '')}>
+                    Canvas {isStale && '(stale)'}
+                  </h2>
                 </header>
                 <div className="preview-frame__content">
                   <div
@@ -338,6 +347,13 @@ class IDEView extends React.Component {
                       this.props.ide.isAccessibleOutputPlaying}
                   </div>
                   <PreviewFrame cmController={this.cmController} />
+                  {this.props.ide.showingShapeToolbox && (
+                    <ShapeToolboxOverlay
+                      closeCb={(lines) => this.props.closeShapeToolbox(lines)}
+                      canvasSize={this.props.canvasSize}
+                      existingCalls={this.props.ide.shapeToolboxExistingCalls}
+                    />
+                  )}
                 </div>
               </section>
             </SplitPane>
@@ -446,6 +462,8 @@ IDEView.propTypes = {
   ide: PropTypes.shape({
     consoleIsExpanded: PropTypes.bool.isRequired,
     errorType: PropTypes.string,
+    isStale: PropTypes.bool.isRequired,
+    isShowing: PropTypes.bool.isRequired,
     isAccessibleOutputPlaying: PropTypes.bool.isRequired,
     isPlaying: PropTypes.bool.isRequired,
     justOpenedProject: PropTypes.bool.isRequired,
@@ -459,9 +477,12 @@ IDEView.propTypes = {
     sidebarIsExpanded: PropTypes.bool.isRequired,
     submitModalVisible: PropTypes.bool.isRequired,
     unsavedChanges: PropTypes.bool.isRequired,
-    uploadFileModalVisible: PropTypes.bool.isRequired
+    uploadFileModalVisible: PropTypes.bool.isRequired,
+    showingShapeToolbox: PropTypes.bool.isRequired,
+    shapeToolboxExistingCalls: PropTypes.bool.isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
+  canvasSize: PropTypes.arrayOf(PropTypes.number).isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   newFile: PropTypes.func.isRequired,
   newFolder: PropTypes.func.isRequired,
@@ -523,7 +544,8 @@ IDEView.propTypes = {
     authenticated: PropTypes.bool.isRequired,
     id: PropTypes.string,
     username: PropTypes.string
-  }).isRequired
+  }).isRequired,
+  closeShapeToolbox: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
@@ -541,7 +563,8 @@ function mapStateToProps(state) {
     project: state.project,
     toast: state.toast,
     console: state.console,
-    isUserOwner: getIsUserOwner(state)
+    isUserOwner: getIsUserOwner(state),
+    canvasSize: IDEActions.getCanvasSize(state)
   };
 }
 

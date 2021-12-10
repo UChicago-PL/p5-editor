@@ -9,7 +9,7 @@ class App extends React.Component {
     document.body.className = this.props.theme;
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const locationWillChange = nextProps.location !== this.props.location;
     const shouldSkipRemembering =
       nextProps.location.state && nextProps.location.state.skipSavingPath === true;

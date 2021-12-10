@@ -173,13 +173,13 @@ class Collection extends React.Component {
 
       this.props.editCollection(id, { description: value });
     };
-
+    const thisIsOwner = this.isOwner();
     return (
-      <header className={`collection-metadata ${this.isOwner() ? 'collection-metadata--is-owner' : ''}`}>
+      <header className={`collection-metadata ${thisIsOwner ? 'collection-metadata--is-owner' : ''}`}>
         <div className="collection-metadata__columns">
           <div className="collection-metadata__column--left">
             <h2 className="collection-metadata__name">
-              {this.isOwner() ? (
+              {thisIsOwner ? (
                 <EditableInput
                   value={name}
                   onChange={handleEditCollectionName}
@@ -191,7 +191,7 @@ class Collection extends React.Component {
             </h2>
 
             <p className="collection-metadata__description">
-              {this.isOwner() ? (
+              {thisIsOwner ? (
                 <EditableInput
                   InputComponent="textarea"
                   value={description}
@@ -291,7 +291,7 @@ class Collection extends React.Component {
   }
 
   render() {
-    const title = this.hasCollection() ? this.getCollectionName() : null;
+    // const title = this.hasCollection() ? this.getCollectionName() : null;
     const isOwner = this.isOwner();
 
     return (

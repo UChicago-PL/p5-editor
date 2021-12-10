@@ -23,7 +23,7 @@ class SketchList extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.sketches !== nextProps.sketches && Array.isArray(nextProps.sketches)) {
       this.setState({
         isInitialDataLoad: false

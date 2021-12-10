@@ -53,4 +53,5 @@ DashboardTabSwitcher.propTypes = {
 };
 
 const DashboardTabSwitcherPublic = withTranslation()(DashboardTabSwitcher);
+// eslint-disable-next-line no-restricted-exports
 export { DashboardTabSwitcherPublic as default, TabKey };

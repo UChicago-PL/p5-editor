@@ -35,8 +35,8 @@
 .toolbar__play-sketch-button {
 	@extend %hidden-element;
 }
-
-.toolbar__stop-button {
+.toolbar__stop-button,
+.toolbar__autorefresh-button {
 	@include themify() {
 		@extend %toolbar-button;
 		display: flex;

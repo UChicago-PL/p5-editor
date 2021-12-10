@@ -21,16 +21,21 @@ const initialState = {
   previousPath: '/',
   errorType: undefined,
   runtimeErrorWarningVisible: true,
-  parentId: undefined
+  parentId: undefined,
+  showingShapeToolbox: false,
+  shapeToolboxCodeLoc: null,
+  shapeToolboxExistingCalls: null,
+  isStale: false,
+  isShowing: false
 };
 
-const ide = (state = initialState, action) => {
+const ide = (state = initialState, action, parentState) => {
   console.log(action.type);
   switch (action.type) {
     case ActionTypes.START_SKETCH:
       return Object.assign({}, state, { isPlaying: true });
     case ActionTypes.STOP_SKETCH:
-      return Object.assign({}, state, { isPlaying: false });
+      return Object.assign({}, state, { isPlaying: false, isShowing: false });
     case ActionTypes.START_ACCESSIBLE_OUTPUT:
       return Object.assign({}, state, { isAccessibleOutputPlaying: true });
     case ActionTypes.STOP_ACCESSIBLE_OUTPUT:
@@ -109,8 +114,26 @@ const ide = (state = initialState, action) => {
       return Object.assign({}, state, { uploadFileModalVisible: false });
     case ActionTypes.OPEN_SUBMIT_MODEL:
       return Object.assign({}, state, { submitModalVisible: true });
+    case ActionTypes.OPEN_SHAPE_TOOLBOX:
+      return Object.assign({}, state, {
+        showingShapeToolbox: true,
+        shapeToolboxCodeLoc: action.loc,
+        shapeToolboxExistingCalls: action.existingCalls
+      });
+    case ActionTypes.CLOSE_SHAPE_TOOLBOX:
+      return Object.assign({}, state, {
+        showingShapeToolbox: false,
+        shapeToolboxCodeLoc: null,
+        shapeToolboxExistingCalls: []
+      });
     case ActionTypes.CLOSE_SUBMIT_MODEL:
       return Object.assign({}, state, { submitModalVisible: false });
+    case ActionTypes.SET_STALE:
+      return Object.assign({}, state, { isStale: true });
+    case ActionTypes.SET_NOT_STALE:
+      return Object.assign({}, state, { isStale: false });
+    case ActionTypes.SET_SHOWING:
+      return Object.assign({}, state, { isShowing: true });
     default:
       return state;
   }

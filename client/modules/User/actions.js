@@ -154,7 +154,7 @@ export function initiateResetPassword(formValues) {
       dispatch({
         type: ActionTypes.RESET_PASSWORD_INITIATE
       });
-      return apiClient
+      apiClient
         .post('/reset-password', formValues)
         .then(() => resolve())
         .catch((error) => {
@@ -235,7 +235,7 @@ export function validateResetPasswordToken(token) {
 
 export function updatePassword(formValues, token) {
   return (dispatch) =>
-    new Promise((resolve) =>
+    new Promise((resolve) => {
       apiClient
         .post(`/reset-password/${token}`, formValues)
         .then((response) => {
@@ -248,8 +248,8 @@ export function updatePassword(formValues, token) {
             type: ActionTypes.INVALID_RESET_PASSWORD_TOKEN
           });
           resolve({ error });
-        })
-    );
+        });
+    });
 }
 
 export function updateSettingsSuccess(user) {
@@ -265,7 +265,7 @@ export function submitSettings(formValues) {
 
 export function updateSettings(formValues) {
   return (dispatch) =>
-    new Promise((resolve) =>
+    new Promise((resolve) => {
       submitSettings(formValues)
         .then((response) => {
           dispatch(updateSettingsSuccess(response.data));
@@ -275,8 +275,8 @@ export function updateSettings(formValues) {
         })
         .catch((error) => {
           resolve({ error });
-        })
-    );
+        });
+    });
 }
 
 export function createApiKeySuccess(user) {

@@ -1,7 +1,8 @@
 import * as ActionTypes from '../../../constants';
 import { clearConsole } from './console';
 
-import { logRun, checkLoggedIn } from './project';
+import { checkLoggedIn, logRun } from './project';
+import { applyShapeToolbox, processExistingCode } from './shapeToolbox';
 
 export function startVisualSketch() {
   return {
@@ -285,5 +286,79 @@ export function createError(error) {
   return {
     type: ActionTypes.ERROR,
     error
+  };
+}
+
+export function openShapeToolbox(loc, existingCode) {
+  return (dispatch) => {
+    // As part of preventing editing while the toolbox is shown,
+    // un-focus the editor so that typing isn't possible
+    document.body.focus();
+    const existingCalls = processExistingCode(existingCode, dispatch);
+    if (existingCalls !== null) {
+      dispatch({
+        type: ActionTypes.OPEN_SHAPE_TOOLBOX,
+        loc,
+        existingCalls
+      });
+    }
+    // This variable is read inside of the actual script implementation of shapeToolbox
+    // in order to hide the shapes when the gui editor is shown
+    // so that the shapes are not duplicated (one on the canvas, the other in the gui editor)
+    window.showingShapeToolbox = true;
+  };
+}
+
+export function closeShapeToolbox(calls) {
+  return (dispatch, getState) => {
+    if (calls.length) {
+      const state = getState();
+      const file = state.files.find((f) => f.isSelectedFile);
+      if (!file || file.name.split('.')[1] !== 'js') {
+        throw new Error('Could not find active JS file');
+      }
+      if (!state.ide.shapeToolboxCodeLoc) {
+        throw new Error('Could not find shape toolbox code location');
+      }
+      dispatch({
+        type: ActionTypes.UPDATE_FILE_CONTENT,
+        id: file.id,
+        content: applyShapeToolbox(file.content, calls, state.ide.shapeToolboxCodeLoc)
+      });
+    }
+    dispatch({
+      type: ActionTypes.CLOSE_SHAPE_TOOLBOX
+    });
+    dispatch(startSketch());
+    window.showingShapeToolbox = false;
+  };
+}
+
+export function getCanvasSize(state) {
+  const file = state.files.find((f) => f.isSelectedFile);
+  if (file && file.name.split('.')[1] === 'js') {
+    const match = file.content.match(/createCanvas\(\s*(?<width>\d+)\s*,\s*(?<height>\d+)\s*\)/);
+    if (match && match.groups && match.groups.width && match.groups.height) {
+      return { width: parseInt(match.groups.width), height: parseInt(match.groups.height) };
+    }
+  }
+  return { width: 400, height: 400 };
+}
+
+export function setStale() {
+  return {
+    type: ActionTypes.SET_STALE
+  };
+}
+
+export function setNotStale() {
+  return {
+    type: ActionTypes.SET_NOT_STALE
+  };
+}
+
+export function setShowing() {
+  return {
+    type: ActionTypes.SET_SHOWING
   };
 }

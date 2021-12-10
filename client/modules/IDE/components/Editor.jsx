@@ -1,55 +1,30 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import CodeMirror from 'codemirror';
 import prettier from 'prettier/esm/standalone.mjs';
 import parserBabel from 'prettier/esm/parser-babel.mjs';
 import parserHtml from 'prettier/esm/parser-html.mjs';
 import parserCSS from 'prettier/esm/parser-postcss.mjs';
 
 import { withTranslation } from 'react-i18next';
-import 'codemirror/mode/css/css';
-import 'codemirror/addon/selection/active-line';
-import 'codemirror/addon/lint/lint';
-import 'codemirror/addon/lint/javascript-lint';
-import 'codemirror/addon/lint/css-lint';
-import 'codemirror/addon/lint/html-lint';
-import 'codemirror/addon/fold/brace-fold';
-import 'codemirror/addon/fold/comment-fold';
-import 'codemirror/addon/fold/foldcode';
-import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/addon/fold/indent-fold';
-import 'codemirror/addon/comment/comment';
-import 'codemirror/keymap/sublime';
-import 'codemirror/addon/search/searchcursor';
-import 'codemirror/addon/search/matchesonscrollbar';
-import 'codemirror/addon/search/match-highlighter';
-import 'codemirror/addon/search/jump-to-line';
-import 'codemirror/addon/edit/matchbrackets';
-import 'codemirror/addon/edit/closebrackets';
-import 'codemirror/addon/selection/mark-selection';
 
 import { JSHINT } from 'jshint';
 import { CSSLint } from 'csslint';
 import { HTMLHint } from 'htmlhint';
 import classNames from 'classnames';
-import { debounce } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import '../../../utils/htmlmixed';
-import '../../../utils/p5-javascript';
-import '../../../utils/webGL-clike';
-import Timer from '../components/Timer';
-import EditorAccessibility from '../components/EditorAccessibility';
-import { metaKey } from '../../../utils/metaKey';
+import * as cmSearch from '@codemirror/search';
+import { linter, lintGutter } from '@codemirror/lint';
+import Timer from './Timer';
+import EditorAccessibility from './EditorAccessibility';
 
-import '../../../utils/codemirror-search';
-
-import beepUrl from '../../../sounds/audioAlert.mp3';
 import UnsavedChangesDotIcon from '../../../images/unsaved-changes-dot.svg';
 import RightArrowIcon from '../../../images/right-arrow.svg';
 import LeftArrowIcon from '../../../images/left-arrow.svg';
 import { getHTMLFile } from '../reducers/files';
 import { getIsUserOwner } from '../selectors/users';
+
+import { metaKey } from '../../../utils/metaKey';
 
 import * as FileActions from '../actions/files';
 import * as IDEActions from '../actions/ide';
@@ -60,287 +35,289 @@ import * as UserActions from '../../User/actions';
 import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
 
+// eslint-disable-next-line import/extensions
+import CodeMirror from './CodeMirror';
+// eslint-disable-next-line import/extensions
+import { cmStatePlugin } from './CodeMirror/state/cmState';
+
+import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
+
 window.JSHINT = JSHINT;
 window.CSSLint = CSSLint;
 window.HTMLHint = HTMLHint;
-delete CodeMirror.keyMap.sublime['Shift-Tab'];
+const htmlHintConfig = {
+  'title-require': false,
+  'doctype-first': false,
+  'alt-require': false
+};
 
-const INDENTATION_AMOUNT = 2;
+// delete CodeMirror.keyMap.sublime['Shift-Tab];
+
+// const INDENTATION_AMOUNT = 2;
 const prettierPlugins = [parserBabel, parserHtml, parserCSS];
+
+const REFRESH_DELAY = 1000;
+
+const KEYWORDS = { function: Object.keys(p5FunctionKeywords), variable: Object.keys(p5VariableKeywords) };
 
 class Editor extends React.Component {
   constructor(props) {
     super(props);
     this.tidyCode = this.tidyCode.bind(this);
+    this.keyBindings = [
+      {
+        key: `${metaKey}-m`,
+        run: () => this.tidyCode()
+      },
+      {
+        key: `${metaKey}-Enter`,
+        run: () => {
+          return true;
+        },
+        preventDefault: true
+      }
+    ];
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
     this.justTidied = false;
+    this.lastChange = 0;
+    this.cmView = null;
+    this.lastWidgetChangeTime = 0;
 
-    this.updateLintingMessageAccessibility = debounce((annotations) => {
-      this.props.clearLintMessage();
-      annotations.forEach((x) => {
-        if (x.from.line > -1) {
-          this.props.updateLintMessage(x.severity, x.from.line + 1, x.message);
-        }
-      });
-      if (this.props.lintMessages.length > 0 && this.props.lintWarning) {
-        this.beep.play();
-      }
-    }, 2000);
+    // this.updateLintingMessageAccessibility = debounce((annotations) => {
+    //   this.props.clearLintMessage();
+    //   annotations.forEach((x) => {
+    //     if (x.from.line > -1) {
+    //       this.props.updateLintMessage(x.severity, x.from.line + 1, x.message);
+    //     }
+    //   });
+    //   if (this.props.lintMessages.length > 0 && this.props.lintWarning) {
+    //     this.beep.play();
+    //   }
+    // }, 2000);
     this.showFind = this.showFind.bind(this);
     this.findNext = this.findNext.bind(this);
     this.findPrev = this.findPrev.bind(this);
-    this.showReplace = this.showReplace.bind(this);
     this.getContent = this.getContent.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
-    this.beep = new Audio(beepUrl);
-    this.widgets = [];
-    this._cm = CodeMirror(this.codemirrorContainer, {
-      // eslint-disable-line
-      theme: `p5-${this.props.theme}`,
-      lineNumbers: this.props.lineNumbers,
-      styleActiveLine: true,
-      inputStyle: 'contenteditable',
-      lineWrapping: this.props.linewrap,
-      fixedGutter: false,
-      foldGutter: true,
-      foldOptions: { widget: '\u2026' },
-      gutters: ['CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-      keyMap: 'sublime',
-      highlightSelectionMatches: true, // highlight current search match
-      matchBrackets: true,
-      autoCloseBrackets: this.props.autocloseBracketsQuotes,
-      styleSelectedText: true,
-      lint: {
-        onUpdateLinting: (annotations) => {
-          this.updateLintingMessageAccessibility(annotations);
-        },
-        options: {
-          asi: true,
-          eqeqeq: true,
-          '-W041': false,
-          esversion: 7
-        }
-      }
-    });
+    // this.beep = new Audio(beepUrl);
+    // this.widgets = [];
+    // this._cm = CodeMirror(this.codemirrorContainer, {
+    //   // eslint-disable-line
+    //   theme: `p5-${this.props.theme}`,
+    //   lineNumbers: this.props.lineNumbers,
+    //   styleActiveLine: true,
+    //   inputStyle: 'contenteditable',
+    //   lineWrapping: this.props.linewrap,
+    //   fixedGutter: false,
+    //   foldGutter: true,
+    //   foldOptions: { widget: '\u2026' },
+    //   gutters: ['CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+    //   keyMap: 'sublime',
+    //   highlightSelectionMatches: true, // highlight current search match
+    //   matchBrackets: true,
+    //   autoCloseBrackets: this.props.autocloseBracketsQuotes,
+    //   styleSelectedText: true
+    //   // lint: {
+    //   //   onUpdateLinting: (annotations) => {
+    //   //     this.updateLintingMessageAccessibility(annotations);
+    //   //   },
+    //   //   options: {
+    //   //     asi: true,
+    //   //     eqeqeq: true,
+    //   //     '-W041': false,
+    //   //     esversion: 7
+    //   //   }
+    //   // }
+    // });
 
-    const replaceCommand = metaKey === 'Ctrl' ? `${metaKey}-H` : `${metaKey}-Option-F`;
-    this._cm.setOption('extraKeys', {
-      Tab: (cm) => {
-        // might need to specify and indent more?
-        const selection = cm.doc.getSelection();
-        if (selection.length > 0) {
-          cm.execCommand('indentMore');
-        } else {
-          cm.replaceSelection(' '.repeat(INDENTATION_AMOUNT));
-        }
-      },
-      [`${metaKey}-Enter`]: () => null,
-      [`Shift-${metaKey}-Enter`]: () => null,
-      [`${metaKey}-F`]: 'findPersistent',
-      [`${metaKey}-G`]: 'findNext',
-      [`Shift-${metaKey}-G`]: 'findPrev',
-      [replaceCommand]: 'replace'
-    });
+    // const replaceCommand = metaKey === 'Ctrl' ? `${metaKey}-H` : `${metaKey}-Option-F`;
+    // this._cm.setOption('extraKeys', {
+    //   Tab: (cm) => {
+    //     // might need to specify and indent more?
+    //     const selection = cm.doc.getSelection();
+    //     if (selection.length > 0) {
+    //       cm.execCommand('indentMore');
+    //     } else {
+    //       cm.replaceSelection(' '.repeat(INDENTATION_AMOUNT));
+    //     }
+    //   },
+    //   [`${metaKey}-Enter`]: () => null,
+    //   [`Shift-${metaKey}-Enter`]: () => null,
+    //   [`${metaKey}-F`]: 'findPersistent',
+    //   [`${metaKey}-G`]: 'findNext',
+    //   [`Shift-${metaKey}-G`]: 'findPrev',
+    //   [replaceCommand]: 'replace'
+    // });
 
-    this.initializeDocuments(this.props.files);
-    this._cm.swapDoc(this._docs[this.props.file.id]);
+    // this._cm.on('keyup', () => {
+    //   const temp = this.props.t('Editor.KeyUpLineNumber', {
+    //     lineNumber: parseInt(this._cm.getCursor().line + 1, 10)
+    //   });
+    //   document.getElementById('current-line').innerHTML = temp;
+    // });
 
-    this._cm.on(
-      'change',
-      debounce(() => {
-        this.props.setUnsavedChanges(true);
-        this.props.updateFileContent(this.props.file.id, this._cm.getValue());
-        if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
-          this.props.clearConsole();
-          this.props.startAutoRefreshSketch();
-        }
-        this.justTidied = false;
-      }, 1000)
-    );
-
-    this._cm.on('keyup', () => {
-      const temp = this.props.t('Editor.KeyUpLineNumber', {
-        lineNumber: parseInt(this._cm.getCursor().line + 1, 10)
-      });
-      document.getElementById('current-line').innerHTML = temp;
-    });
-
-    this._cm.on('keydown', (_cm, e) => {
-      // 9 === Tab
-      if (e.keyCode === 9 && e.shiftKey) {
-        this.tidyCode();
-      }
-    });
-
-    this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
+    // this._cm.on('keydown', (_cm, e) => {
+    //   // 9 === Tab
+    //   if (e.keyCode === 9 && e.shiftKey) {
+    //     this.tidyCode();
+    //   }
+    // });
+    //
+    // this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
 
     this.props.provideController({
       tidyCode: this.tidyCode,
       showFind: this.showFind,
       findNext: this.findNext,
       findPrev: this.findPrev,
-      showReplace: this.showReplace,
       getContent: this.getContent
     });
 
     // this very very hacky function gets called in codemirror-search
     // which allows us to log using the replaceAll stuff
-    window.replaceSnooper = (isReplaceAll) => {
-      this.props.logRun(`structure-update-replace${isReplaceAll ? '-all' : ''}`);
-    };
-  }
-
-  componentWillUpdate(nextProps) {
-    // check if files have changed
-    if (this.props.files[0].id !== nextProps.files[0].id) {
-      // then need to make CodeMirror documents
-      this.initializeDocuments(nextProps.files);
-    }
-    if (this.props.files.length !== nextProps.files.length) {
-      this.initializeDocuments(nextProps.files);
-    }
+    // window.replaceSnooper = (isReplaceAll) => {
+    //   this.props.logRun(`structure-update-replace${isReplaceAll ? '-all' : ''}`);
+    // };
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      this.props.file.content !== prevProps.file.content &&
-      this.props.file.content !== this._cm.getValue()
-    ) {
-      const oldDoc = this._cm.swapDoc(this._docs[this.props.file.id]);
-      this._docs[prevProps.file.id] = oldDoc;
-      this._cm.focus();
+    if (this.props.file.content !== prevProps.file.content) {
       if (!prevProps.unsavedChanges) {
         setTimeout(() => this.props.setUnsavedChanges(false), 400);
       }
     }
-    if (this.props.fontSize !== prevProps.fontSize) {
-      this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
-    }
-    if (this.props.linewrap !== prevProps.linewrap) {
-      this._cm.setOption('lineWrapping', this.props.linewrap);
-    }
-    if (this.props.theme !== prevProps.theme) {
-      this._cm.setOption('theme', `p5-${this.props.theme}`);
-    }
-    if (this.props.lineNumbers !== prevProps.lineNumbers) {
-      this._cm.setOption('lineNumbers', this.props.lineNumbers);
-    }
-    if (this.props.autocloseBracketsQuotes !== prevProps.autocloseBracketsQuotes) {
-      this._cm.setOption('autoCloseBrackets', this.props.autocloseBracketsQuotes);
-    }
+    // if (this.props.fontSize !== prevProps.fontSize) {
+    //   this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
+    // }
+    // if (this.props.linewrap !== prevProps.linewrap) {
+    //   this._cm.setOption('lineWrapping', this.props.linewrap);
+    // }
+    // if (this.props.theme !== prevProps.theme) {
+    //   this._cm.setOption('theme', `p5-${this.props.theme}`);
+    // }
+    // if (this.props.lineNumbers !== prevProps.lineNumbers) {
+    //   this._cm.setOption('lineNumbers', this.props.lineNumbers);
+    // }
+    // if (this.props.autocloseBracketsQuotes !== prevProps.autocloseBracketsQuotes) {
+    //   this._cm.setOption('autoCloseBrackets', this.props.autocloseBracketsQuotes);
+    // }
 
-    if (prevProps.consoleEvents !== this.props.consoleEvents) {
-      this.props.showRuntimeErrorWarning();
-    }
-    for (let i = 0; i < this._cm.lineCount(); i += 1) {
-      this._cm.removeLineClass(i, 'background', 'line-runtime-error');
-    }
-    if (this.props.runtimeErrorWarningVisible) {
-      this.props.consoleEvents.forEach((consoleEvent) => {
-        if (consoleEvent.method === 'error') {
-          if (
-            consoleEvent.data &&
-            consoleEvent.data[0] &&
-            consoleEvent.data[0].indexOf &&
-            consoleEvent.data[0].indexOf(')') > -1
-          ) {
-            const n = consoleEvent.data[0].replace(')', '').split(' ');
-            const lineNumber = parseInt(n[n.length - 1], 10) - 1;
-            const { source } = consoleEvent;
-            const fileName = this.props.file.name;
-            const errorFromJavaScriptFile = `${source}.js` === fileName;
-            const errorFromIndexHTML = source === fileName && fileName === 'index.html';
-            if (!Number.isNaN(lineNumber) && (errorFromJavaScriptFile || errorFromIndexHTML)) {
-              this._cm.addLineClass(lineNumber, 'background', 'line-runtime-error');
-            }
-          }
-        }
-      });
-    }
+    // if (prevProps.consoleEvents !== this.props.consoleEvents) {
+    //   this.props.showRuntimeErrorWarning();
+    // }
+    // for (let i = 0; i < this._cm.lineCount(); i += 1) {
+    //   this._cm.removeLineClass(i, 'background', 'line-runtime-error');
+    // }
+    // if (this.props.runtimeErrorWarningVisible) {
+    //   this.props.consoleEvents.forEach((consoleEvent) => {
+    //     if (consoleEvent.method === 'error') {
+    //       if (
+    //         consoleEvent.data &&
+    //         consoleEvent.data[0] &&
+    //         consoleEvent.data[0].indexOf &&
+    //         consoleEvent.data[0].indexOf(')') > -1
+    //       ) {
+    //         const n = consoleEvent.data[0].replace(')', '').split(' ');
+    //         const lineNumber = parseInt(n[n.length - 1], 10) - 1;
+    //         const { source } = consoleEvent;
+    //         const fileName = this.props.file.name;
+    //         const errorFromJavaScriptFile = `${source}.js` === fileName;
+    //         const errorFromIndexHTML = source === fileName && fileName === 'index.html';
+    //         if (!Number.isNaN(lineNumber) && (errorFromJavaScriptFile || errorFromIndexHTML)) {
+    //           this._cm.addLineClass(lineNumber, 'background', 'line-runtime-error');
+    //         }
+    //       }
+    //     }
+    //   });
+    // }
   }
 
   componentWillUnmount() {
-    this._cm = null;
     this.props.provideController(null);
   }
 
-  getFileMode(fileName) {
-    let mode;
-    if (fileName.match(/.+\.js$/i)) {
-      mode = 'javascript';
-    } else if (fileName.match(/.+\.css$/i)) {
-      mode = 'css';
-    } else if (fileName.match(/.+\.html$/i)) {
-      mode = 'htmlmixed';
-    } else if (fileName.match(/.+\.json$/i)) {
-      mode = 'application/json';
-    } else if (fileName.match(/.+\.(frag|vert)$/i)) {
-      mode = 'clike';
+  onChange(newCode) {
+    this.props.updateFileContent(this.props.file.id, newCode);
+    this.lastChange = Date.now();
+
+    const cb = () => {
+      this.props.setUnsavedChanges(true);
+      if (this.props.autorefresh && this.props.isPlaying && !this.justTidied) {
+        this.props.clearConsole();
+        this.props.startAutoRefreshSketch();
+      }
+      this.justTidied = false;
+    };
+
+    // Force refresh in the case of a color change
+    if (this.lastChange - this.lastWidgetChangeTime <= 1000) {
+      cb();
     } else {
-      mode = 'text/plain';
+      setTimeout(() => {
+        if (Date.now() - this.lastChange >= REFRESH_DELAY) cb();
+      }, REFRESH_DELAY);
     }
-    return mode;
+  }
+
+  getFileMode(fileName) {
+    if (fileName.match(/.+\.js$/i)) {
+      return 'javascript';
+    } else if (fileName.match(/.+\.css$/i)) {
+      return 'css';
+    } else if (fileName.match(/.+\.html$/i)) {
+      return 'htmlmixed';
+    } else if (fileName.match(/.+\.json$/i)) {
+      return 'application/json';
+    } else if (fileName.match(/.+\.(frag|vert)$/i)) {
+      return 'clike';
+    }
+    return 'text/plain';
   }
 
   getContent() {
-    const content = this._cm.getValue();
-    const updatedFile = Object.assign({}, this.props.file, { content });
-    return updatedFile;
+    return this.props.file;
   }
 
   findPrev() {
-    this._cm.focus();
-    this._cm.execCommand('findPrev');
+    this.cmView.focus();
+    cmSearch.findPrevious(this.cmView);
   }
 
   findNext() {
-    this._cm.focus();
-    this._cm.execCommand('findNext');
+    this.cmView.focus();
+    cmSearch.findNext(this.cmView);
   }
 
   showFind() {
-    this._cm.execCommand('findPersistent');
-  }
-
-  showReplace() {
-    this._cm.execCommand('replace');
+    cmSearch.openSearchPanel(this.cmView);
   }
 
   tidyCode() {
     this.justTidied = true;
     this.props.logRun('tidy');
-    const mode = this._cm.getOption('mode');
-    const currentPosition = this._cm.doc.getCursor();
+    const mode = this.getFileMode(this.props.file.name);
     const parserMap = { javascript: 'babel', css: 'css', htmlmixed: 'html' };
     if (new Set(['javascript', 'css', 'htmlmixed']).has(mode)) {
       const parser = parserMap[mode];
-      this._cm.doc.setValue(prettier.format(this._cm.doc.getValue(), { parser, plugins: prettierPlugins }));
+      const newCode = prettier.format(this.props.file.content, { parser, plugins: prettierPlugins });
+      this.props.updateFileContent(this.props.file.id, newCode);
     }
-    this._cm.focus();
-    this._cm.doc.setCursor({ line: currentPosition.line, ch: currentPosition.ch + INDENTATION_AMOUNT });
+    this.cmView.focus();
   }
 
-  initializeDocuments(files) {
-    this._docs = {};
-    files.forEach((file) => {
-      if (file.name !== 'root') {
-        this._docs[file.id] = CodeMirror.Doc(file.content, this.getFileMode(file.name)); // eslint-disable-line
-      }
-    });
-  }
-
-  toggleEditorOptions() {
-    if (this.props.editorOptionsVisible) {
-      this.props.closeEditorOptions();
-    } else {
-      this.optionsButton.focus();
-      this.props.showEditorOptions();
-    }
-  }
-
+  // toggleEditorOptions() {
+  //   if (this.props.editorOptionsVisible) {
+  //     this.props.closeEditorOptions();
+  //   } else {
+  //     this.optionsButton.focus();
+  //     this.props.showEditorOptions();
+  //   }
+  // }
+  //
   render() {
     const editorSectionClass = classNames({
       editor: true,
@@ -348,11 +325,11 @@ class Editor extends React.Component {
       'editor--options': this.props.editorOptionsVisible
     });
 
-    const editorHolderClass = classNames({
-      'editor-holder': true,
-      'editor-holder--hidden': this.props.file.fileType === 'folder' || this.props.file.url
-    });
-
+    // const editorHolderClass = classNames({
+    //   'editor-holder': true,
+    //   'editor-holder--hidden': this.props.file.fileType === 'folder' || this.props.file.url
+    // });
+    const language = this.getFileMode(this.props.file.name);
     return (
       <section className={editorSectionClass}>
         <header className="editor__header">
@@ -386,12 +363,70 @@ class Editor extends React.Component {
             <Timer projectSavedTime={this.props.projectSavedTime} isUserOwner={this.props.isUserOwner} />
           </div>
         </header>
-        <article
-          ref={(element) => {
-            this.codemirrorContainer = element;
-          }}
-          className={editorHolderClass}
-        />
+        <article className="editor-holder">
+          <CodeMirror
+            code={this.props.file.content}
+            lang={language}
+            onChange={this.onChange}
+            shapeToolboxCb={this.props.openShapeToolbox}
+            provideView={(view) => (this.cmView = view)}
+            keyBindings={this.keyBindings}
+            keywords={KEYWORDS}
+            extensions={[
+              lintGutter(),
+              linter((view) => {
+                const code = view.state.doc.toString();
+                const config = view.state.field(cmStatePlugin);
+                const localLanguage = config.lang || language;
+
+                let msgs = [];
+                function toOffset(line, ch) {
+                  return view.state.doc.line(line).from + ch - 1;
+                }
+                function lineOffset(line) {
+                  return view.state.doc.line(line).from;
+                }
+                if (localLanguage === 'javascript') {
+                  JSHINT(code, {
+                    asi: true,
+                    eqeqeq: true,
+                    '-W041': false,
+                    esversion: 11
+                  });
+                  msgs = JSHINT.errors.map((e) => ({
+                    message: e.reason,
+                    severity: e.id && e.id.includes('error') ? 'error' : 'warning',
+                    from: toOffset(e.line, e.character),
+                    to: toOffset(e.line, e.character + 1)
+                  }));
+                } else if (localLanguage === 'htmlmixed') {
+                  msgs = HTMLHint.verify(code, htmlHintConfig).map((e) => {
+                    return {
+                      message: e.message,
+                      severity: e.type,
+                      from: lineOffset(e.line),
+                      to: lineOffset(e.line + 1) - 1
+                    };
+                  });
+                } else if (localLanguage === 'css') {
+                  msgs = CSSLint.verify(code).messages.map((e) => {
+                    return {
+                      message: e.message,
+                      severity: e.type,
+                      from: lineOffset(e.line),
+                      to: lineOffset(e.line + 1) - 1
+                    };
+                  });
+                }
+
+                return msgs;
+              })
+            ]}
+            onWidgetChange={() => {
+              this.lastWidgetChangeTime = Date.now();
+            }}
+          />
+        </article>
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
     );
@@ -399,10 +434,10 @@ class Editor extends React.Component {
 }
 
 Editor.propTypes = {
-  autocloseBracketsQuotes: PropTypes.bool.isRequired,
-  lineNumbers: PropTypes.bool.isRequired,
-  lintWarning: PropTypes.bool.isRequired,
-  linewrap: PropTypes.bool.isRequired,
+  // autocloseBracketsQuotes: PropTypes.bool.isRequired,
+  // lineNumbers: PropTypes.bool.isRequired,
+  // lintWarning: PropTypes.bool.isRequired,
+  // linewrap: PropTypes.bool.isRequired,
   lintMessages: PropTypes.arrayOf(
     PropTypes.shape({
       severity: PropTypes.string.isRequired,
@@ -411,16 +446,16 @@ Editor.propTypes = {
       id: PropTypes.number.isRequired
     })
   ).isRequired,
-  consoleEvents: PropTypes.arrayOf(
-    PropTypes.shape({
-      method: PropTypes.string.isRequired,
-      args: PropTypes.arrayOf(PropTypes.string)
-    })
-  ),
-  updateLintMessage: PropTypes.func.isRequired,
-  clearLintMessage: PropTypes.func.isRequired,
+  // consoleEvents: PropTypes.arrayOf(
+  //   PropTypes.shape({
+  //     method: PropTypes.string.isRequired,
+  //     args: PropTypes.arrayOf(PropTypes.string)
+  //   })
+  // ),
+  // updateLintMessage: PropTypes.func.isRequired,
+  // clearLintMessage: PropTypes.func.isRequired,
   updateFileContent: PropTypes.func.isRequired,
-  fontSize: PropTypes.number.isRequired,
+  // fontSize: PropTypes.number.isRequired,
   file: PropTypes.shape({
     name: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
@@ -429,37 +464,38 @@ Editor.propTypes = {
     url: PropTypes.string
   }).isRequired,
   editorOptionsVisible: PropTypes.bool.isRequired,
-  showEditorOptions: PropTypes.func.isRequired,
-  closeEditorOptions: PropTypes.func.isRequired,
+  // showEditorOptions: PropTypes.func.isRequired,
+  // closeEditorOptions: PropTypes.func.isRequired,
   setUnsavedChanges: PropTypes.func.isRequired,
   startAutoRefreshSketch: PropTypes.func.isRequired,
   autorefresh: PropTypes.bool.isRequired,
   isPlaying: PropTypes.bool.isRequired,
-  theme: PropTypes.string.isRequired,
+  // theme: PropTypes.string.isRequired,
   unsavedChanges: PropTypes.bool.isRequired,
   projectSavedTime: PropTypes.string.isRequired,
-  files: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      content: PropTypes.string.isRequired
-    })
-  ).isRequired,
+  // files: PropTypes.arrayOf(
+  //   PropTypes.shape({
+  //     id: PropTypes.string.isRequired,
+  //     name: PropTypes.string.isRequired,
+  //     content: PropTypes.string.isRequired
+  //   })
+  // ).isRequired,
   isExpanded: PropTypes.bool.isRequired,
   collapseSidebar: PropTypes.func.isRequired,
   expandSidebar: PropTypes.func.isRequired,
   isUserOwner: PropTypes.bool.isRequired,
   clearConsole: PropTypes.func.isRequired,
-  showRuntimeErrorWarning: PropTypes.func.isRequired,
-  runtimeErrorWarningVisible: PropTypes.bool.isRequired,
+  // showRuntimeErrorWarning: PropTypes.func.isRequired,
+  // runtimeErrorWarningVisible: PropTypes.bool.isRequired,
   provideController: PropTypes.func.isRequired,
   logRun: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
+  openShapeToolbox: PropTypes.func.isRequired
 };
 
-Editor.defaultProps = {
-  consoleEvents: []
-};
+// Editor.defaultProps = {
+//   consoleEvents: []
+// };
 
 function mapStateToProps(state) {
   return {

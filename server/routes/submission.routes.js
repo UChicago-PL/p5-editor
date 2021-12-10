@@ -4,7 +4,7 @@ import Submission from '../models/submission';
 const router = new Router();
 
 export function getSubmissionForUser(username) {
-  return new Promise((resolve, reject) =>
+  return new Promise((resolve, reject) => {
     Submission.aggregate([
       { $match: { username } },
       { $lookup: { from: 'assignments', localField: 'assignment', foreignField: '_id', as: 'assign' } }
@@ -15,8 +15,8 @@ export function getSubmissionForUser(username) {
         return;
       }
       resolve(submissions);
-    })
-  );
+    });
+  });
 }
 
 router.get('/get-all-submissions', (req, res) => {

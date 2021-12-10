@@ -31,6 +31,7 @@ class CollectionCreate extends React.Component {
   handleTextChange = (field) => (evt) => {
     this.setState({
       collection: {
+        // eslint-disable-next-line react/no-access-state-in-setstate
         ...this.state.collection,
         [field]: evt.target.value
       }

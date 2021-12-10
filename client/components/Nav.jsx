@@ -15,7 +15,10 @@ import { logoutUser } from '../modules/User/actions';
 import SocialAuthButton from '../modules/User/components/SocialAuthButton';
 
 import getConfig from '../utils/getConfig';
-import { metaKeyName, metaKey } from '../utils/metaKey';
+import {
+  metaKeyName
+  // metaKey
+} from '../utils/metaKey';
 import { getIsUserOwner } from '../modules/IDE/selectors/users';
 
 import CaretLeftIcon from '../images/left-arrow.svg';
@@ -43,7 +46,7 @@ class Nav extends React.PureComponent {
     this.handleFindNext = this.handleFindNext.bind(this);
     this.handleRun = this.handleRun.bind(this);
     this.handleFindPrevious = this.handleFindPrevious.bind(this);
-    this.handleReplace = this.handleReplace.bind(this);
+    // this.handleReplace = this.handleReplace.bind(this);
     this.handleStop = this.handleStop.bind(this);
     this.handleStartAccessible = this.handleStartAccessible.bind(this);
     this.handleStopAccessible = this.handleStopAccessible.bind(this);
@@ -71,10 +74,12 @@ class Nav extends React.PureComponent {
     document.addEventListener('mousedown', this.handleClick, false);
     document.addEventListener('keydown', this.closeDropDown, false);
   }
+
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClick, false);
     document.removeEventListener('keydown', this.closeDropDown, false);
   }
+
   setDropdown(dropdown) {
     this.setState({
       dropdownOpen: dropdown
@@ -132,10 +137,10 @@ class Nav extends React.PureComponent {
     this.setDropdown('none');
   }
 
-  handleReplace() {
-    this.props.cmController.showReplace();
-    this.setDropdown('none');
-  }
+  // handleReplace() {
+  //   this.props.cmController.showReplace();
+  //   this.setDropdown('none');
+  // }
 
   handleAddFile() {
     this.props.newFile(this.props.rootFile.id);
@@ -246,7 +251,7 @@ class Nav extends React.PureComponent {
   }
 
   renderProjectMenu(navDropdownState) {
-    const replaceCommand = metaKey === 'Ctrl' ? `${metaKeyName}+H` : `${metaKeyName}+⌥+F`;
+    // const replaceCommand = metaKey === 'Ctrl' ? `${metaKeyName}+H` : `${metaKeyName}+⌥+F`;
     return (
       <ul className="nav__items-left">
         <li className="nav__item-logo">
@@ -276,21 +281,28 @@ class Nav extends React.PureComponent {
               <li className="nav__dropdown-item">
                 <button onClick={this.handleSave} onFocus={this.handleFocusForFile} onBlur={this.handleBlur}>
                   {this.props.t('Common.Save')}
-                  <span className="nav__keyboard-shortcut">{metaKeyName}+S</span>
+                  <span className="nav__keyboard-shortcut">
+                    {metaKeyName}
+                    +S
+                  </span>
                 </button>
               </li>
             )}
             <li className="nav__dropdown-item">
               <button onClick={this.handleRun} onFocus={this.handleFocusForSketch} onBlur={this.handleBlur}>
                 {this.props.t('Nav.Sketch.Run')}
-                <span className="nav__keyboard-shortcut">{metaKeyName}+Enter</span>
+                <span className="nav__keyboard-shortcut">
+                  {metaKeyName}
+                  +Enter
+                </span>
               </button>
             </li>
             <li className="nav__dropdown-item">
               <button onClick={this.handleStop} onFocus={this.handleFocusForSketch} onBlur={this.handleBlur}>
                 {this.props.t('Nav.Sketch.Stop')}
                 <span className="nav__keyboard-shortcut">
-                  {'\u21E7'}+{metaKeyName}+Enter
+                  {'\u21E7'}+{metaKeyName}
+                  +Enter
                 </span>
               </button>
             </li>
@@ -355,13 +367,19 @@ class Nav extends React.PureComponent {
                 onBlur={this.handleBlur}
               >
                 {this.props.t('Nav.Edit.TidyCode')}
-                <span className="nav__keyboard-shortcut">{'\u21E7'}+Tab</span>
+                <span className="nav__keyboard-shortcut">
+                  {metaKeyName}
+                  +M
+                </span>
               </button>
             </li>
             <li className="nav__dropdown-item">
               <button onClick={this.handleFind} onFocus={this.handleFocusForEdit} onBlur={this.handleBlur}>
                 {this.props.t('Nav.Edit.Find')}
-                <span className="nav__keyboard-shortcut">{metaKeyName}+F</span>
+                <span className="nav__keyboard-shortcut">
+                  {metaKeyName}
+                  +F
+                </span>
               </button>
             </li>
             <li className="nav__dropdown-item">
@@ -371,7 +389,10 @@ class Nav extends React.PureComponent {
                 onBlur={this.handleBlur}
               >
                 {this.props.t('Nav.Edit.FindNext')}
-                <span className="nav__keyboard-shortcut">{metaKeyName}+G</span>
+                <span className="nav__keyboard-shortcut">
+                  {metaKeyName}
+                  +G
+                </span>
               </button>
             </li>
             <li className="nav__dropdown-item">
@@ -382,16 +403,17 @@ class Nav extends React.PureComponent {
               >
                 {this.props.t('Nav.Edit.FindPrevious')}
                 <span className="nav__keyboard-shortcut">
-                  {'\u21E7'}+{metaKeyName}+G
+                  {'\u21E7'}+{metaKeyName}
+                  +G
                 </span>
               </button>
             </li>
-            <li className="nav__dropdown-item">
-              <button onClick={this.handleReplace} onFocus={this.handleFocusForEdit} onBlur={this.handleBlur}>
-                {this.props.t('Nav.Edit.Replace')}
-                <span className="nav__keyboard-shortcut">{replaceCommand}</span>
-              </button>
-            </li>
+            {/* <li className="nav__dropdown-item"> */}
+            {/*  <button onClick={this.handleReplace} onFocus={this.handleFocusForEdit} onBlur={this.handleBlur}> */}
+            {/*    {this.props.t('Nav.Edit.Replace')} */}
+            {/*    <span className="nav__keyboard-shortcut">{replaceCommand}</span> */}
+            {/*  </button> */}
+            {/* </li> */}
           </ul>
         </li>
 
@@ -439,55 +461,53 @@ class Nav extends React.PureComponent {
 
   renderLanguageMenu(navDropdownState) {
     return (
-      <React.Fragment>
-        <li className={navDropdownState.lang}>
-          <button
-            onClick={this.toggleDropdownForLang}
-            onBlur={this.handleBlur}
-            onFocus={this.clearHideTimeout}
-            onMouseOver={() => {
-              if (this.state.dropdownOpen !== 'none') {
-                this.setDropdown('lang');
-              }
-            }}
-          >
-            <span className="nav__item-header"> {languageKeyToLabel(this.props.language)}</span>
-            <TriangleIcon className="nav__item-header-triangle" focusable="false" aria-hidden="true" />
-          </button>
-          <ul className="nav__dropdown">
-            <li className="nav__dropdown-item">
-              <button
-                onFocus={this.handleFocusForLang}
-                onBlur={this.handleBlur}
-                value="en-US"
-                onClick={(e) => this.handleLangSelection(e)}
-              >
-                English
-              </button>
-            </li>
-            <li className="nav__dropdown-item">
-              <button
-                onFocus={this.handleFocusForLang}
-                onBlur={this.handleBlur}
-                value="es-419"
-                onClick={(e) => this.handleLangSelection(e)}
-              >
-                Español
-              </button>
-            </li>
-            <li className="nav__dropdown-item">
-              <button
-                onFocus={this.handleFocusForLang}
-                onBlur={this.handleBlur}
-                value="ja"
-                onClick={(e) => this.handleLangSelection(e)}
-              >
-                日本語
-              </button>
-            </li>
-          </ul>
-        </li>
-      </React.Fragment>
+      <li className={navDropdownState.lang}>
+        <button
+          onClick={this.toggleDropdownForLang}
+          onBlur={this.handleBlur}
+          onFocus={this.clearHideTimeout}
+          onMouseOver={() => {
+            if (this.state.dropdownOpen !== 'none') {
+              this.setDropdown('lang');
+            }
+          }}
+        >
+          <span className="nav__item-header"> {languageKeyToLabel(this.props.language)}</span>
+          <TriangleIcon className="nav__item-header-triangle" focusable="false" aria-hidden="true" />
+        </button>
+        <ul className="nav__dropdown">
+          <li className="nav__dropdown-item">
+            <button
+              onFocus={this.handleFocusForLang}
+              onBlur={this.handleBlur}
+              value="en-US"
+              onClick={(e) => this.handleLangSelection(e)}
+            >
+              English
+            </button>
+          </li>
+          <li className="nav__dropdown-item">
+            <button
+              onFocus={this.handleFocusForLang}
+              onBlur={this.handleBlur}
+              value="es-419"
+              onClick={(e) => this.handleLangSelection(e)}
+            >
+              Español
+            </button>
+          </li>
+          <li className="nav__dropdown-item">
+            <button
+              onFocus={this.handleFocusForLang}
+              onBlur={this.handleBlur}
+              value="ja"
+              onClick={(e) => this.handleLangSelection(e)}
+            >
+              日本語
+            </button>
+          </li>
+        </ul>
+      </li>
     );
   }
 
@@ -517,7 +537,7 @@ class Nav extends React.PureComponent {
             }}
           >
             <span>
-              {this.props.t('Nav.Auth.Hello')}, {this.props.user.username}!
+              {this.props.t('Nav.Auth.Hello')},{this.props.user.username}!
             </span>
             <TriangleIcon className="nav__item-header-triangle" focusable="false" aria-hidden="true" />
           </button>

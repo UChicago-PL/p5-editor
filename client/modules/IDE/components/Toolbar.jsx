@@ -10,7 +10,8 @@ import * as projectActions from '../actions/project';
 
 import PlayIcon from '../../../images/play.svg';
 import StopIcon from '../../../images/stop.svg';
-import PreferencesIcon from '../../../images/preferences.svg';
+import AutorefreshIcon from '../../../images/autorefresh.svg';
+// import PreferencesIcon from '../../../images/preferences.svg';
 import EditProjectNameIcon from '../../../images/pencil.svg';
 
 class Toolbar extends React.Component {
@@ -74,10 +75,14 @@ class Toolbar extends React.Component {
       'toolbar__stop-button': true,
       'toolbar__stop-button--selected': !this.props.isPlaying
     });
-    const preferencesButtonClass = classNames({
-      'toolbar__preferences-button': true,
-      'toolbar__preferences-button--selected': this.props.preferencesIsVisible
+    const autoRefreshButtonClass = classNames({
+      'toolbar__autorefresh-button': true,
+      'toolbar__autorefresh-button--selected': this.props.autorefresh
     });
+    // const preferencesButtonClass = classNames({
+    //   'toolbar__preferences-button': true,
+    //   'toolbar__preferences-button--selected': this.props.preferencesIsVisible
+    // });
     const nameContainerClass = classNames({
       'toolbar__project-name-container': true,
       'toolbar__project-name-container--editing': this.props.project.isEditingName
@@ -115,6 +120,16 @@ class Toolbar extends React.Component {
           >
             <StopIcon focusable="false" aria-hidden="true" />
           </button>
+          <button
+            className={autoRefreshButtonClass}
+            onClick={() => {
+              this.props.setAutorefresh(!this.props.autorefresh);
+            }}
+            aria-label={this.props.t('Toolbar.Auto-refresh')}
+          >
+            <AutorefreshIcon focusable="false" aria-hidden="true" />
+          </button>
+          {/* Original Auto-refresh checkbox
           <div className="toolbar__autorefresh">
             <input
               id="autorefresh"
@@ -129,6 +144,7 @@ class Toolbar extends React.Component {
               {this.props.t('Toolbar.Auto-refresh')}
             </label>
           </div>
+            */}
           <div className={`${nameContainerClass} flex-down`}>
             <div className="flex">
               <div className="flex-down">
@@ -194,13 +210,13 @@ class Toolbar extends React.Component {
           >
             SUBMIT
           </button>
-          <button
-            className={preferencesButtonClass}
-            onClick={this.props.openPreferences}
-            aria-label={this.props.t('Toolbar.OpenPreferencesARIA')}
-          >
-            <PreferencesIcon focusable="false" aria-hidden="true" />
-          </button>
+          {/* <button */}
+          {/*  className={preferencesButtonClass} */}
+          {/*  onClick={this.props.openPreferences} */}
+          {/*  aria-label={this.props.t('Toolbar.OpenPreferencesARIA')} */}
+          {/* > */}
+          {/*  <PreferencesIcon focusable="false" aria-hidden="true" /> */}
+          {/* </button> */}
         </div>
       </div>
     );
@@ -221,10 +237,10 @@ Toolbar.propTypes = {
   hideEditProjectName: PropTypes.func.isRequired,
   infiniteLoop: PropTypes.bool.isRequired,
   isPlaying: PropTypes.bool.isRequired,
-  openPreferences: PropTypes.func.isRequired,
+  // openPreferences: PropTypes.func.isRequired,
   openSubmitModal: PropTypes.func.isRequired,
   owner: PropTypes.shape({ username: PropTypes.string }),
-  preferencesIsVisible: PropTypes.bool.isRequired,
+  // preferencesIsVisible: PropTypes.bool.isRequired,
   project: PropTypes.shape({
     name: PropTypes.string.isRequired,
     isEditingName: PropTypes.bool,

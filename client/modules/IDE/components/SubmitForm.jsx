@@ -101,7 +101,8 @@ function SubmitForm(props) {
               {submitting && <div>Submitting...</div>}
               {!submitting && submitState && submitState.success && (
                 <div>
-                  Success!{' '}
+                  Success!
+                  {' '}
                   <a
                     target="_blank"
                     rel="noreferrer"
@@ -115,7 +116,9 @@ function SubmitForm(props) {
               )}
               {!submitting && submitState && !submitState.success && (
                 <div className="flex-down">
-                  <b>Failure!</b> <div>{JSON.stringify(submitState)}</div>
+                  <b>Failure!</b>
+                  {' '}
+                  <div>{JSON.stringify(submitState)}</div>
                 </div>
               )}
             </div>

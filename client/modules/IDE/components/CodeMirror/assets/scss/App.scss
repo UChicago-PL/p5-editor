@@ -1,0 +1,196 @@
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+button, input {
+  cursor: pointer;
+}
+
+// We have our own custom color picker button
+.pickr {
+  display: none;
+}
+
+.cm-num-widget {
+  display: inline-block;
+  font-family: monospace;
+}
+
+.cm-inc-widget {
+  margin-left: 5px;
+  margin-right: 1px;
+  line-height: 1;
+  padding: 0;
+}
+
+.cm-dec-widget {
+  margin-right: 3px;
+  line-height: 1;
+  padding: 0;
+}
+
+.cm-color-widget {
+  display: inline-block;
+  // Codemirror has white-space: pre by default
+  // Resetting here fixes a visual glitch where some whitespace in the color picker code
+  // makes the widget align weirdly
+  white-space: normal;
+}
+
+.cm-bool-widget {
+  display: inline-block;
+}
+
+.cm-bool-checkbox-widget {
+  margin: 0 3px 0 0px;
+  position: relative;
+  top: 2px;
+}
+
+.cm-slider-widget {
+  display: inline-block;
+
+  /* Based on: https://www.w3schools.com/howto/howto_js_rangeslider.asp */
+
+  input[type=range] {
+    -webkit-appearance: none;
+    padding: 0;
+    margin: 0 3px 0 3px;
+    appearance: none;
+    width: 70px;
+    height: 10px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+  }
+
+  input[type=range]:hover {
+    opacity: 1;
+  }
+
+  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge)
+     and -moz- (Firefox) to override default look) */
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #ed225d;
+    cursor: pointer;
+  }
+
+  input[type=range]::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background: #ed225d;
+    cursor: pointer;
+  }
+}
+
+.cm-color-widget {
+  width: 10px;
+  height: 10px;
+  vertical-align: middle;
+  margin: 0 3px 3px 3px;
+}
+
+.color-name-picker {
+  background: white;
+  z-index: 100;
+  overflow: auto;
+  // This prevents the picker for becoming narrower
+  // near the right side of the screen. It preserves its width,
+  // which allows the JS code to move it left the right amount
+  width: max-content;
+
+  .color-group {
+    display: inline-block;
+    width: 75px;
+    font-weight: bold;
+    margin-bottom: 0.1rem;
+    margin-top: 0.2rem;
+  }
+
+  .color-item, .color-group {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .color-item {
+    font-family: monospace;
+    margin-bottom: 0px;
+    // To make the color strips stretch all the way across
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .color-item:first-of-type {
+    margin-top: 2px;
+  }
+
+  .color-item:last-of-type {
+    margin-bottom: 10px;
+  }
+
+  .selected {
+    font-weight: bold;
+  }
+
+  .color-swatch {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 1px;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .buttons {
+    display: flex;
+    margin-top: 1rem;
+
+    button:first-child {
+      margin-right: .5rem;
+    }
+  }
+}
+
+.color-name-picker, body .pcr-app.visible {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  font-family: sans-serif;
+  // Override the "position: fixed" default which is caused by
+  // Pickr using the "NanoPop" engine
+  position: absolute;
+  // Javascript sets the `left` and `top` properties according to the button location
+  // This property moves the picker over an additional bit
+  margin-left: 20px;
+}
+
+.codemirror__root, .cm-editor {
+  height: 100%;
+  font-size: 18px;
+}
+
+.codemirror__editor {
+  height: calc(100% - 25px);
+}
+
+.codemirror__menu {
+  height: 25px;
+  border-top: 1px solid #D9D9D9;
+}
+
+.cm-focused {
+  outline: none !important;
+}
+

@@ -10,24 +10,33 @@ import decomment from 'decomment';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Decode } from 'console-feed';
-import { getBlobUrl } from '../actions/files';
+import falafel from 'falafel';
+import { getBlobUrl, setBlobUrl } from '../actions/files';
 import { resolvePathToFile } from '../../../../server/utils/filePath';
 import {
-  MEDIA_FILE_REGEX,
-  MEDIA_FILE_QUOTED_REGEX,
-  STRING_REGEX,
-  PLAINTEXT_FILE_REGEX,
   EXTERNAL_LINK_REGEX,
-  NOT_EXTERNAL_LINK_REGEX
+  MEDIA_FILE_QUOTED_REGEX,
+  MEDIA_FILE_REGEX,
+  NOT_EXTERNAL_LINK_REGEX,
+  PLAINTEXT_FILE_REGEX,
+  STRING_REGEX
 } from '../../../../server/utils/fileUtils';
-import { hijackConsoleErrorsScript, startTag, getAllScriptOffsets } from '../../../utils/consoleUtils';
+import { getAllScriptOffsets, hijackConsoleErrorsScript, startTag } from '../../../utils/consoleUtils';
 
 import { getHTMLFile } from '../reducers/files';
 
-import { stopSketch, expandConsole, endSketchRefresh } from '../actions/ide';
-import { setTextOutput, setGridOutput, setSoundOutput } from '../actions/preferences';
-import { setBlobUrl } from '../actions/files';
+import {
+  endSketchRefresh,
+  expandConsole,
+  setNotStale,
+  setStale,
+  setShowing,
+  stopSketch
+} from '../actions/ide';
+import { setGridOutput, setSoundOutput, setTextOutput } from '../actions/preferences';
 import { clearConsole, dispatchConsoleEvent } from '../actions/console';
+
+import cs111Prelude from '../../../utils/cs111Prelude';
 
 const shouldRenderSketch = (props, prevProps = undefined) => {
   const { isPlaying, previewIsRefreshing, fullView } = props;
@@ -51,6 +60,7 @@ class PreviewFrame extends React.Component {
   constructor(props) {
     super(props);
     this.handleConsoleEvent = this.handleConsoleEvent.bind(this);
+    this.hasErrored = false;
   }
 
   componentDidMount() {
@@ -76,6 +86,10 @@ class PreviewFrame extends React.Component {
     if (iframeBody) {
       ReactDOM.unmountComponentAtNode(iframeBody);
     }
+    const iframeProbingBody = this.iframeProbingElement.contentDocument.body;
+    if (iframeProbingBody) {
+      ReactDOM.unmountComponentAtNode(iframeProbingBody);
+    }
   }
 
   handleConsoleEvent(messageEvent) {
@@ -85,6 +99,11 @@ class PreviewFrame extends React.Component {
           source: message.source
         })
       );
+
+      if (decodedMessages.some((message) => message.method === 'error')) {
+        console.log('ERRORED');
+        this.hasErrored = true;
+      }
 
       decodedMessages.every((message, index, arr) => {
         const { data: args } = message;
@@ -131,7 +150,7 @@ class PreviewFrame extends React.Component {
     let newContent = jsText;
     // check the code for js errors before sending it to strip comments
     // or loops.
-    JSHINT(newContent);
+    JSHINT(newContent, { esversion: 11 });
 
     if (JSHINT.errors.length === 0) {
       newContent = decomment(newContent, {
@@ -204,6 +223,11 @@ class PreviewFrame extends React.Component {
     const previewScripts = sketchDoc.createElement('script');
     previewScripts.src = '/previewScripts.js';
     sketchDoc.head.appendChild(previewScripts);
+
+    const cs111PreludeScript = sketchDoc.createElement('script');
+    cs111PreludeScript.innerHTML =
+      cs111Prelude + ";\nparent.document.body.dispatchEvent(new Event('finishedLoadingGlobal'));";
+    sketchDoc.head.appendChild(cs111PreludeScript);
 
     const sketchDocString = `<!DOCTYPE HTML>\n${sketchDoc.documentElement.outerHTML}`;
     scriptOffs = getAllScriptOffsets(sketchDocString);
@@ -303,7 +327,28 @@ class PreviewFrame extends React.Component {
           } else {
             script.setAttribute('data-tag', `${startTag}${resolvedFile.name}`);
             script.removeAttribute('src');
-            script.innerHTML = resolvedFile.content; // eslint-disable-line
+            let content;
+            try {
+              content = falafel(resolvedFile.content, (node) => {
+                if (node.type === 'FunctionDeclaration' && node.id.name === 'draw') {
+                  // The hook is inserted in the beginning of the body so that it still fires if the body errors
+                  node.body.update(
+                    node.body
+                      .source()
+                      .replace(
+                        '{',
+                        "{\nparent.document.body.dispatchEvent(new Event('finishedLoadingLocal'));\n"
+                      )
+                  );
+                }
+              });
+            } catch (e) {
+              if (e.name === 'SyntaxError') content = resolvedFile.content;
+              else {
+                throw e;
+              }
+            }
+            script.innerHTML = content;
           }
         }
       } else if (
@@ -342,17 +387,73 @@ class PreviewFrame extends React.Component {
   }
 
   renderSketch() {
-    const doc = this.iframeElement;
-    const localFiles = this.injectLocalFiles();
+    this.hasErrored = false;
+    this.props.setNotStale();
+
     if (this.props.isPlaying) {
-      this.props.clearConsole();
-      srcDoc.set(doc, localFiles);
       if (this.props.endSketchRefresh) {
         this.props.endSketchRefresh();
       }
+
+      // This method is modified so that it only renders the sketch after ensuring that there is no startup error
+      // To make this happen, two hooks are added to the iframe JS code: one global hook, before any other scripts,
+      // and one local hook at the beginning of the draw function block
+      // These allow us to gauge when the p5 code actually starts running
+      // When the event is fired, we wait for a small time in order to give time for error handling mechanism
+      // to kick in, and for any error logs to be displayed
+      // Then, if there have been no error logs, we render the new sketch
+
+      // The reason for two hooks is that the local one gives us a better idea of when the code actually
+      // starts running, and so we can afford to use a smaller time delay to it, which improves UX
+      // However, there's a chance that the local one fires, due to the lack of a draw function or a syntax error
+      // Thus we need the global hook, which we can always rely on
+
+      const localFiles = this.injectLocalFiles();
+      this.props.clearConsole();
+      srcDoc.set(this.iframeProbingElement, localFiles);
+
+      let done = false;
+
+      const onLoaded = (delay) => {
+        setTimeout(() => {
+          if (!done) {
+            done = true;
+            if (!this.hasErrored) {
+              this.props.clearConsole();
+
+              this.iframeProbingElement.srcdoc = '';
+              srcDoc.set(this.iframeProbingElement, '  ');
+
+              srcDoc.set(this.iframeElement, localFiles);
+
+              this.props.setShowing();
+            } else {
+              this.props.setStale();
+            }
+          }
+        }, delay);
+      };
+
+      const LOCAL_HOOK_DELAY = 500;
+      const GLOBAL_HOOK_DELAY = 2000;
+
+      const onLoadedLocal = () => {
+        document.body.removeEventListener('finishedLoadingLocal', onLoaded);
+        onLoaded(LOCAL_HOOK_DELAY);
+      };
+      const onLoadedGlobal = () => {
+        document.body.removeEventListener('finishedLoadingGlobal', onLoaded);
+        onLoaded(GLOBAL_HOOK_DELAY);
+      };
+
+      document.body.addEventListener('finishedLoadingLocal', onLoadedLocal);
+      document.body.addEventListener('finishedLoadingGlobal', onLoadedGlobal);
     } else {
-      doc.srcdoc = '';
-      srcDoc.set(doc, '  ');
+      this.iframeElement.srcdoc = '';
+      srcDoc.set(this.iframeElement, '  ');
+
+      this.iframeProbingElement.srcdoc = '';
+      srcDoc.set(this.iframeProbingElement, '  ');
     }
   }
 
@@ -364,18 +465,34 @@ class PreviewFrame extends React.Component {
     const sandboxAttributes =
       'allow-scripts allow-pointer-lock allow-same-origin allow-popups allow-forms allow-modals allow-downloads';
     return (
-      <iframe
-        id="canvas_frame"
-        className={iframeClass}
-        aria-label="sketch output"
-        role="main"
-        frameBorder="0"
-        title="sketch preview"
-        ref={(element) => {
-          this.iframeElement = element;
-        }}
-        sandbox={sandboxAttributes}
-      />
+      <>
+        <iframe
+          id="canvas_frame"
+          className={iframeClass}
+          aria-label="sketch output"
+          role="main"
+          frameBorder="0"
+          title="sketch preview"
+          ref={(element) => {
+            this.iframeElement = element;
+          }}
+          sandbox={sandboxAttributes}
+        />
+        <iframe
+          id="canvas_probing_frame"
+          className={iframeClass}
+          aria-label="sketch output"
+          role="main"
+          frameBorder="0"
+          title="sketch preview"
+          ref={(element) => {
+            this.iframeProbingElement = element;
+          }}
+          sandbox={sandboxAttributes}
+          // display: 'none' causes a strange network error
+          style={{ visibility: 'hidden' }}
+        />
+      </>
     );
   }
 }
@@ -407,7 +524,10 @@ PreviewFrame.propTypes = {
   clearConsole: PropTypes.func.isRequired,
   cmController: PropTypes.shape({
     getContent: PropTypes.func
-  })
+  }),
+  setStale: PropTypes.func.isRequired,
+  setNotStale: PropTypes.func.isRequired,
+  setShowing: PropTypes.func.isRequired
 };
 
 PreviewFrame.defaultProps = {
@@ -458,7 +578,10 @@ const mapDispatchToProps = {
   setSoundOutput,
   setBlobUrl,
   clearConsole,
-  dispatchConsoleEvent
+  dispatchConsoleEvent,
+  setStale,
+  setNotStale,
+  setShowing
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PreviewFrame);

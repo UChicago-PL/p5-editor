@@ -11,6 +11,7 @@ import User from '../models/user';
 import { resolvePathToFile } from '../utils/filePath';
 import generateFileSystemSafeName from '../utils/generateFileSystemSafeName';
 import isPartOfStudy from './user.controller/isPartOfStudy';
+import { strip } from '../../client/utils/cs111Prelude';
 
 export { default as createProject, apiCreateProject } from './project.controller/createProject';
 export { default as deleteProject } from './project.controller/deleteProject';
@@ -244,6 +245,15 @@ function buildZip(project, req, res) {
   const rootFile = project.files.find((file) => file.name === 'root');
   const numFiles = project.files.filter((file) => file.fileType !== 'folder').length;
   const { files } = project;
+
+  // Remove special functions from JS files
+  files.forEach((file) => {
+    if (file.fileType === 'file' && file.name.split('.')[1] === 'js') {
+      file.content = strip(file.content);
+    }
+  });
+  console.log(files);
+
   let numCompletedFiles = 0;
 
   zip.on('error', (err) => {

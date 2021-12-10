@@ -1,25 +1,20 @@
 const webpack = require('webpack');
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 if (process.env.NODE_ENV === 'development') {
   require('dotenv').config();
 }
 
-const dist = require('./constants.js').dist
-
+const dist = require('./constants.js').dist;
 
 // react hmr being fucked up has to do with the multiple entries!!! cool.
 module.exports = {
   mode: 'development',
   devtool: 'cheap-module-eval-source-map',
   entry: {
-    app: [
-      './client/index.jsx',
-    ],
-    previewScripts: [
-       path.resolve(__dirname, '../client/utils/previewEntry.js')
-    ]
+    app: ['./client/index.jsx'],
+    previewScripts: [path.resolve(__dirname, '../client/utils/previewEntry.js')]
   },
   output: {
     path: dist,
@@ -27,11 +22,8 @@ module.exports = {
     publicPath: '/'
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
-    modules: [
-      'client',
-      'node_modules'
-    ]
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    modules: ['client', 'node_modules']
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -40,25 +32,24 @@ module.exports = {
       }
     }),
     new CopyWebpackPlugin({
-        patterns: [
-          {from: path.resolve(__dirname, '../translations/locales') , to: path.resolve(dist, 'locales')}
-        ]
-      }
-    )
+      patterns: [
+        { from: path.resolve(__dirname, '../translations/locales'), to: path.resolve(dist, 'locales') }
+      ]
+    })
   ],
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: [/\.jsx?$/],
         exclude: [/node_modules/, /.+\.config.js/],
-        use: [{
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true
+            }
           }
-        }, {
-          loader: 'eslint-loader'
-        }]
+        ]
         // use: {
         //   loader: 'babel-loader',
         //   options: {
@@ -68,7 +59,21 @@ module.exports = {
         // }
       },
       {
-        test: /main\.scss$/,
+        test: /\.tsx?$/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            compilerOptions: {
+              noImplicitAny: true,
+              target: 'es6',
+              jsx: 'react',
+              moduleResolution: 'node'
+            }
+          }
+        }
+      },
+      {
+        test: [/main\.scss$/, /App\.scss$/, /\.css$/],
         use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
@@ -83,7 +88,7 @@ module.exports = {
             name: '[name].[ext]',
             outputPath: 'images/'
           }
-         }
+        }
       },
       {
         test: /fonts\/.*\.(eot|ttf|woff|woff2)$/,
@@ -123,6 +128,6 @@ module.exports = {
           }
         }
       }
-    ],
-  },
+    ]
+  }
 };
