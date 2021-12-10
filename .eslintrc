@@ -81,7 +81,10 @@
     "react/jsx-one-expression-per-line": 0,
     "keyword-spacing": 0,
     "jsx-a11y/control-has-associated-label": 0, // really re-enable these one
-    "jsx-a11y/label-has-associated-control": 0
+    "jsx-a11y/label-has-associated-control": 0,
+    "no-restricted-syntax": 0,
+    "no-loop-func": 0,
+    "import/extensions": 0
   },
   "plugins": [
     "react", "jsx-a11y", "import"

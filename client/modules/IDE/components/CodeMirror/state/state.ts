@@ -30,7 +30,6 @@ export const initialState = {
 
 export function reducer(state: State, action: Action): State {
   let newState: State;
-  console.log('cm state event', action.type)
   switch (action.type) {
     case "toggleBoolWidgets":
       newState = { ...state, showBoolWidgets: !state.showBoolWidgets }
@@ -43,6 +42,8 @@ export function reducer(state: State, action: Action): State {
       break;
     case "setLang":
       newState = { ...state, lang: (action as SetLang).value }
+      break;
+    default:
       break;
   }
 
