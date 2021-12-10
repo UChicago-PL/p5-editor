@@ -307,7 +307,11 @@ export function downloadProjectAsZip(req, res) {
   });
 }
 
+const DISABLED = true;
 export function createLogItem(props) {
+  if (DISABLED) {
+    return;
+  }
   const {
     logType,
     projectId,

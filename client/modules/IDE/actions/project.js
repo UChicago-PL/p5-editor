@@ -408,7 +408,12 @@ export function deleteProject(id) {
   };
 }
 
+// From WI22 (and possibly onwards) full snap shot logging is not required or allowed
+const DISABLED = true;
 export function logRun(type) {
+  if (DISABLED) {
+    return (x, y) => {};
+  }
   const makeRequest = (projectId, logParams) => apiClient.post(`/projects/${projectId}/log`, logParams);
 
   const saveLog = (projectId, logParams) => {
