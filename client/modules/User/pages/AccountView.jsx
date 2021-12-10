@@ -14,12 +14,12 @@ import Toast from '../../IDE/components/Toast';
 function SocialLoginPanel(props) {
   const { user, t } = props;
   return (
-    <React.Fragment>
+    <>
       <p className="account__social-text">{t('AccountView.SocialLoginDescription')}</p>
       <div className="account__social-stack">
         <SocialAuthButton service={SocialAuthButton.services.github} linkStyle isConnected={!!user.github} />
       </div>
-    </React.Fragment>
+    </>
   );
 }
 

@@ -498,6 +498,7 @@ export function submitGHRepo(req, res) {
             owner: 'UChicago-PL',
             repo: `${omniRepoName}-${owner}`,
             title: `Submit ${humanReadableName}`,
+            /* eslint max-len: 0 */
             body: `
   This is an automatically generated pull request. It is constitutes the submission of "${humanReadableName}" by ${owner}.
   

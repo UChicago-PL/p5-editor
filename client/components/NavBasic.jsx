@@ -6,10 +6,6 @@ import Logo from './Logo';
 import ArrowIcon from '../images/triangle-arrow-left.svg';
 
 class NavBasic extends React.PureComponent {
-  static defaultProps = {
-    onBack: null
-  };
-
   render() {
     return (
       <nav
@@ -41,6 +37,10 @@ class NavBasic extends React.PureComponent {
 
 NavBasic.propTypes = {
   onBack: PropTypes.func
+};
+
+NavBasic.defaultProps = {
+  onBack: null
 };
 
 export default withTranslation()(NavBasic);

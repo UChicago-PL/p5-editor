@@ -36,7 +36,7 @@ function NewFolderForm() {
           <div className="new-folder-form__input-wrapper">
             <Field name="name">
               {(field) => (
-                <React.Fragment>
+                <>
                   <label className="new-folder-form__name-label" htmlFor="name">
                     Name:
                   </label>
@@ -49,7 +49,7 @@ function NewFolderForm() {
                     ref={folderNameInput}
                     {...field.input}
                   />
-                </React.Fragment>
+                </>
               )}
             </Field>
             <Button type="submit" disabled={invalid || submitting}>

@@ -1,5 +1,5 @@
-import { dispatchConsoleEvent } from './console';
 import * as acorn from 'acorn';
+import { dispatchConsoleEvent } from './console';
 
 const generateFuncCallCode = ([name, args]) => {
   return `${name}(${args.join(',')})`;

@@ -302,7 +302,7 @@ class FileNode extends React.Component {
             <div className="sidebar__file-item-options">
               <ul title="file options">
                 {isFolder && (
-                  <React.Fragment>
+                  <>
                     <li>
                       <button
                         aria-label={t('FileNode.AddFolderARIA')}
@@ -337,7 +337,7 @@ class FileNode extends React.Component {
                         </button>
                       </li>
                     )}
-                  </React.Fragment>
+                  </>
                 )}
                 <li>
                   <button
@@ -408,6 +408,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
+  // eslint-disable-next-line no-import-assign
   return bindActionCreators(Object.assign(FileActions, IDEActions), dispatch);
 }
 
@@ -415,4 +416,5 @@ const TranslatedFileNode = withTranslation()(FileNode);
 
 const ConnectedFileNode = connect(mapStateToProps, mapDispatchToProps)(TranslatedFileNode);
 
+// eslint-disable-next-line no-restricted-exports
 export { TranslatedFileNode as FileNode, ConnectedFileNode as default };

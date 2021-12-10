@@ -18,13 +18,23 @@ function SubmissionGroup(props) {
   return (
     <div className="flex-down dashboard-submission">
       <h3>{assignment.urlName}</h3>
-      <h4>Assignment: {assignment.humanReadableName}</h4>
-      <h5>Due: {`${new Date(assignment.dueDate)}`}</h5>
-      <h5>Submitted: {`${new Date(submittedAssignment.createdAt)}`}</h5>
+      <h4>
+        Assignment:
+        {assignment.humanReadableName}
+      </h4>
+      <h5>
+        Due:
+        {`${new Date(assignment.dueDate)}`}
+      </h5>
+      <h5>
+        Submitted:
+        {`${new Date(submittedAssignment.createdAt)}`}
+      </h5>
       <div className="submission-details">
         <a
           target="_blank"
           rel="noreferrer"
+          // eslint-disable-next-line max-len
           href={`https://github.com/UChicago-PL/cs-11111-${submissions[0].username}/${submittedAssignment.prNumber}/pulls`}
         >
           Link to Pull Request

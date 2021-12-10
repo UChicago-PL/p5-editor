@@ -9,10 +9,6 @@ import CollectionCreate from '../components/CollectionCreate';
 import Collection from '../components/Collection';
 
 class CollectionView extends React.Component {
-  static defaultProps = {
-    user: null
-  };
-
   componentDidMount() {
     document.body.className = this.props.theme;
   }
@@ -73,7 +69,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {};
 }
-
+CollectionView.defaultProps = { user: null };
 CollectionView.propTypes = {
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired

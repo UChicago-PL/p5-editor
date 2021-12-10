@@ -80,7 +80,10 @@ function AccountForm() {
             <p className="form__context">
               <span className="form__status">{t('AccountForm.Unconfirmed')}</span>
               {user.emailVerificationInitiate === true ? (
-                <span className="form__status"> {t('AccountForm.EmailSent')}</span>
+                <span className="form__status">
+                  {' '}
+                  {t('AccountForm.EmailSent')}
+                </span>
               ) : (
                 <Button onClick={handleInitiateVerification}>{t('AccountForm.Resend')}</Button>
               )}

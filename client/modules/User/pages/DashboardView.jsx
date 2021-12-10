@@ -16,10 +16,6 @@ import CollectionCreate from '../components/CollectionCreate';
 import DashboardTabSwitcherPublic, { TabKey } from '../components/DashboardTabSwitcher';
 
 class DashboardView extends React.Component {
-  static defaultProps = {
-    user: null
-  };
-
   constructor(props) {
     super(props);
     this.closeAccountPage = this.closeAccountPage.bind(this);
@@ -70,7 +66,8 @@ class DashboardView extends React.Component {
   }
 
   returnToDashboard = () => {
-    browserHistory.push(`/${this.ownerName()}/collections`);
+    const owner = this.ownerName();
+    browserHistory.push(`/${owner}/collections`);
   };
 
   renderActionButton(tabKey, username, t) {
@@ -78,28 +75,28 @@ class DashboardView extends React.Component {
       case TabKey.collections:
         return (
           this.isOwner() && (
-            <React.Fragment>
+            <>
               <Button to={`/${username}/collections/create`}>{t('DashboardView.CreateCollection')}</Button>
               <CollectionSearchbar />
-            </React.Fragment>
+            </>
           )
         );
       case TabKey.submissions:
         return (
           this.isOwner() && (
-            <React.Fragment>
+            <>
               <div>Submission List</div>
               <div>A list of the most current version of your submissions</div>
-            </React.Fragment>
+            </>
           )
         );
       case TabKey.sketches:
       default:
         return (
-          <React.Fragment>
+          <>
             {this.isOwner() && <Button to="/">{t('DashboardView.NewSketch')}</Button>}
             <SketchSearchbar />
-          </React.Fragment>
+          </>
         );
     }
   }
@@ -175,5 +172,6 @@ DashboardView.propTypes = {
   }),
   t: PropTypes.func.isRequired
 };
+DashboardView.defaultProps = { user: null };
 
 export default withTranslation()(connect(mapStateToProps)(DashboardView));

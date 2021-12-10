@@ -39,7 +39,7 @@ function NewFileForm() {
           <div className="new-file-form__input-wrapper">
             <Field name="name">
               {(field) => (
-                <React.Fragment>
+                <>
                   <label className="new-file-form__name-label" htmlFor="name">
                     Name:
                   </label>
@@ -52,7 +52,7 @@ function NewFileForm() {
                     {...field.input}
                     ref={fileNameInput}
                   />
-                </React.Fragment>
+                </>
               )}
             </Field>
             <Button type="submit" disabled={invalid || submitting}>
