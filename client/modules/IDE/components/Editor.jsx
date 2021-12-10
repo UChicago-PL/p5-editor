@@ -435,7 +435,6 @@ class Editor extends React.Component {
                     eventName: 'lint',
                     context: [msgs.length, langShort]
                   });
-                  console.log(msgs);
                   return msgs;
                 })
               ]}
