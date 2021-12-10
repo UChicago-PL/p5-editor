@@ -65,15 +65,15 @@ module.exports = [
           ]
         },
         {
-          test: /\.ts(x?)$/,
+          test: /\.(t|j)s(x?)$/,
           exclude: /node_modules/,
           use: [{ loader: 'ts-loader' }]
         },
-        {
-          test: /\.jsx?$/,
-          exclude: /node_modules/,
-          use: 'babel-loader'
-        },
+        // {
+        //   test: /\.jsx?$/,
+        //   exclude: /node_modules/,
+        //   use: 'babel-loader'
+        // },
         {
           test: /\.(png)$/,
           use: {

@@ -39,27 +39,27 @@ module.exports = {
   ],
   module: {
     rules: [
+      // {
+      //   test: [/\.jsx?$/],
+      //   exclude: [/node_modules/, /.+\.config.js/],
+      //   use: [
+      //     {
+      //       loader: 'babel-loader',
+      //       options: {
+      //         cacheDirectory: true
+      //       }
+      //     }
+      //   ]
+      //   // use: {
+      //   //   loader: 'babel-loader',
+      //   //   options: {
+      //   //     cacheDirectory: true,
+      //   //     plugins: ['react-hot-loader/babel'],
+      //   //   }
+      //   // }
+      // },
       {
-        test: [/\.jsx?$/],
-        exclude: [/node_modules/, /.+\.config.js/],
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              cacheDirectory: true
-            }
-          }
-        ]
-        // use: {
-        //   loader: 'babel-loader',
-        //   options: {
-        //     cacheDirectory: true,
-        //     plugins: ['react-hot-loader/babel'],
-        //   }
-        // }
-      },
-      {
-        test: /\.tsx?$/,
+        test: /\.(t|j)sx?$/,
         use: {
           loader: 'ts-loader',
           options: {

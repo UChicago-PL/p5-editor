@@ -3,12 +3,11 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-
   entry: ['@babel/polyfill', path.resolve(__dirname, '../server/server.js')],
 
   output: {
     path: path.resolve(__dirname, '../dist/'),
-    filename: 'server.bundle.js',
+    filename: 'server.bundle.js'
   },
 
   target: 'node',
@@ -16,31 +15,29 @@ module.exports = {
 
   node: {
     __filename: true,
-    __dirname: true,
+    __dirname: true
   },
   externals: [nodeExternals()],
 
   resolve: {
     extensions: ['*', '.js', '.jsx'],
-    modules: [
-      'client',
-      'node_modules',
-    ],
+    modules: ['client', 'node_modules']
   },
 
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(j|t)s$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-        options: {
-          babelrc: true
-        }
-      }, {
-        test: /\.json$/,
-        loader: 'json-loader',
+        loader: 'ts-loader'
+        // options: {
+        //   babelrc: true
+        // }
       },
-    ],
-  },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
+      }
+    ]
+  }
 };
