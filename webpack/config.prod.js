@@ -181,18 +181,18 @@ module.exports = [
     module: {
       rules: [
         {
-          test: /\.ts(x?)$/,
+          test: /\.(t|j)s(x?)$/,
           exclude: /node_modules/,
           use: [{ loader: 'ts-loader' }]
-        },
-        {
-          test: /\.jsx?$/,
-          exclude: /node_modules/,
-          loader: 'babel-loader',
-          options: {
-            babelrc: true
-          }
         }
+        // {
+        //   test: /\.jsx?$/,
+        //   exclude: /node_modules/,
+        //   loader: 'babel-loader',
+        //   options: {
+        //     babelrc: true
+        //   }
+        // }
       ]
     },
     optimization: {
