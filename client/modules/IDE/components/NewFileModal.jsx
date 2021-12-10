@@ -1,5 +1,5 @@
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withTranslation } from 'react-i18next';
@@ -10,57 +10,47 @@ import ExitIcon from '../../../images/exit.svg';
 // At some point this will probably be generalized to a generic modal
 // in which you can insert different content
 // but for now, let's just make this work
-class NewFileModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.focusOnModal = this.focusOnModal.bind(this);
-    this.handleOutsideClick = this.handleOutsideClick.bind(this);
-  }
+function NewFileModal(props) {
+  const newFileModalRef = useRef(null);
 
-  componentDidMount() {
-    this.focusOnModal();
-    document.addEventListener('click', this.handleOutsideClick, false);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleOutsideClick, false);
-  }
-
-  handleOutsideClick(e) {
+  function handleOutsideClick(e) {
     // ignore clicks on the component itself
-    if (e.path.includes(this.modal)) return;
+    if (e.path.includes(newFileModalRef.current)) {
+      return;
+    }
 
-    this.props.closeNewFileModal();
+    props.closeNewFileModal();
   }
 
-  focusOnModal() {
-    this.modal.focus();
-  }
-
-  render() {
-    return (
-      <section
-        className="modal"
-        ref={(element) => {
-          this.modal = element;
-        }}
-      >
-        <div className="modal-content">
-          <div className="modal__header">
-            <h2 className="modal__title">{this.props.t('NewFileModal.Title')}</h2>
-            <button
-              className="modal__exit-button"
-              onClick={this.props.closeNewFileModal}
-              aria-label={this.props.t('NewFileModal.CloseButtonARIA')}
-            >
-              <ExitIcon focusable="false" aria-hidden="true" />
-            </button>
-          </div>
-          <NewFileForm focusOnModal={this.focusOnModal} />
+  useEffect(() => {
+    if (newFileModalRef) {
+      console.log(newFileModalRef);
+      newFileModalRef.current.focus();
+    }
+    setTimeout(() => {
+      document.addEventListener('click', handleOutsideClick, false);
+    }, 100);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick, false);
+    };
+  }, []);
+  return (
+    <section className="modal" ref={newFileModalRef}>
+      <div className="modal-content">
+        <div className="modal__header">
+          <h2 className="modal__title">{props.t('NewFileModal.Title')}</h2>
+          <button
+            className="modal__exit-button"
+            onClick={props.closeNewFileModal}
+            aria-label={props.t('NewFileModal.CloseButtonARIA')}
+          >
+            <ExitIcon focusable="false" aria-hidden="true" />
+          </button>
         </div>
-      </section>
-    );
-  }
+        <NewFileForm />
+      </div>
+    </section>
+  );
 }
 
 NewFileModal.propTypes = {

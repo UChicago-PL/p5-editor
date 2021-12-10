@@ -330,6 +330,7 @@ class Editor extends React.Component {
     //   'editor-holder--hidden': this.props.file.fileType === 'folder' || this.props.file.url
     // });
     const language = this.getFileMode(this.props.file.name);
+    const isFolder = this.props.file.fileType === 'folder';
     return (
       <section className={editorSectionClass}>
         <header className="editor__header">
@@ -364,68 +365,70 @@ class Editor extends React.Component {
           </div>
         </header>
         <article className="editor-holder">
-          <CodeMirror
-            code={this.props.file.content}
-            lang={language}
-            onChange={this.onChange}
-            shapeToolboxCb={this.props.openShapeToolbox}
-            provideView={(view) => (this.cmView = view)}
-            keyBindings={this.keyBindings}
-            keywords={KEYWORDS}
-            extensions={[
-              lintGutter(),
-              linter((view) => {
-                const code = view.state.doc.toString();
-                const config = view.state.field(cmStatePlugin);
-                const localLanguage = config.lang || language;
+          {!isFolder && (
+            <CodeMirror
+              code={this.props.file.content}
+              lang={language}
+              onChange={this.onChange}
+              shapeToolboxCb={this.props.openShapeToolbox}
+              provideView={(view) => (this.cmView = view)}
+              keyBindings={this.keyBindings}
+              keywords={KEYWORDS}
+              extensions={[
+                lintGutter(),
+                linter((view) => {
+                  const code = view.state.doc.toString();
+                  const config = view.state.field(cmStatePlugin);
+                  const localLanguage = config.lang || language;
 
-                let msgs = [];
-                function toOffset(line, ch) {
-                  return view.state.doc.line(line).from + ch - 1;
-                }
-                function lineOffset(line) {
-                  return view.state.doc.line(line).from;
-                }
-                if (localLanguage === 'javascript') {
-                  JSHINT(code, {
-                    asi: true,
-                    eqeqeq: true,
-                    '-W041': false,
-                    esversion: 11
-                  });
-                  msgs = JSHINT.errors.map((e) => ({
-                    message: e.reason,
-                    severity: e.id && e.id.includes('error') ? 'error' : 'warning',
-                    from: toOffset(e.line, e.character),
-                    to: toOffset(e.line, e.character + 1)
-                  }));
-                } else if (localLanguage === 'htmlmixed') {
-                  msgs = HTMLHint.verify(code, htmlHintConfig).map((e) => {
-                    return {
-                      message: e.message,
-                      severity: e.type,
-                      from: lineOffset(e.line),
-                      to: lineOffset(e.line + 1) - 1
-                    };
-                  });
-                } else if (localLanguage === 'css') {
-                  msgs = CSSLint.verify(code).messages.map((e) => {
-                    return {
-                      message: e.message,
-                      severity: e.type,
-                      from: lineOffset(e.line),
-                      to: lineOffset(e.line + 1) - 1
-                    };
-                  });
-                }
+                  let msgs = [];
+                  function toOffset(line, ch) {
+                    return view.state.doc.line(line).from + ch - 1;
+                  }
+                  function lineOffset(line) {
+                    return view.state.doc.line(line).from;
+                  }
+                  if (localLanguage === 'javascript') {
+                    JSHINT(code, {
+                      asi: true,
+                      eqeqeq: true,
+                      '-W041': false,
+                      esversion: 11
+                    });
+                    msgs = JSHINT.errors.map((e) => ({
+                      message: e.reason,
+                      severity: e.id && e.id.includes('error') ? 'error' : 'warning',
+                      from: toOffset(e.line, e.character),
+                      to: toOffset(e.line, e.character + 1)
+                    }));
+                  } else if (localLanguage === 'htmlmixed') {
+                    msgs = HTMLHint.verify(code, htmlHintConfig).map((e) => {
+                      return {
+                        message: e.message,
+                        severity: e.type,
+                        from: lineOffset(e.line),
+                        to: lineOffset(e.line + 1) - 1
+                      };
+                    });
+                  } else if (localLanguage === 'css') {
+                    msgs = CSSLint.verify(code).messages.map((e) => {
+                      return {
+                        message: e.message,
+                        severity: e.type,
+                        from: lineOffset(e.line),
+                        to: lineOffset(e.line + 1) - 1
+                      };
+                    });
+                  }
 
-                return msgs;
-              })
-            ]}
-            onWidgetChange={() => {
-              this.lastWidgetChangeTime = Date.now();
-            }}
-          />
+                  return msgs;
+                })
+              ]}
+              onWidgetChange={() => {
+                this.lastWidgetChangeTime = Date.now();
+              }}
+            />
+          )}
         </article>
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>

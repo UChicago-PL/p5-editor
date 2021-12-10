@@ -1,55 +1,50 @@
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { withTranslation } from 'react-i18next';
 import NewFolderForm from './NewFolderForm';
 import ExitIcon from '../../../images/exit.svg';
 
-class NewFolderModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleOutsideClick = this.handleOutsideClick.bind(this);
-  }
+function NewFolderModal(props) {
+  const newFolderModalRef = useRef(null);
 
-  componentDidMount() {
-    this.newFolderModal.focus();
-    document.addEventListener('click', this.handleOutsideClick, false);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleOutsideClick, false);
-  }
-
-  handleOutsideClick(e) {
+  function handleOutsideClick(e) {
     // ignore clicks on the component itself
-    if (e.path.includes(this.newFolderModal)) return;
+    if (e.path.includes(newFolderModalRef.current)) {
+      return;
+    }
 
-    this.props.closeModal();
+    props.closeModal();
   }
 
-  render() {
-    return (
-      <section
-        className="modal"
-        ref={(element) => {
-          this.newFolderModal = element;
-        }}
-      >
-        <div className="modal-content-folder">
-          <div className="modal__header">
-            <h2 className="modal__title">{this.props.t('NewFolderModal.Title')}</h2>
-            <button
-              className="modal__exit-button"
-              onClick={this.props.closeModal}
-              aria-label={this.props.t('NewFolderModal.CloseButtonARIA')}
-            >
-              <ExitIcon focusable="false" aria-hidden="true" />
-            </button>
-          </div>
-          <NewFolderForm />
+  useEffect(() => {
+    if (newFolderModalRef) {
+      console.log(newFolderModalRef);
+      newFolderModalRef.current.focus();
+    }
+    setTimeout(() => {
+      document.addEventListener('click', handleOutsideClick, false);
+    }, 100);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick, false);
+    };
+  }, []);
+  return (
+    <section className="modal" ref={newFolderModalRef}>
+      <div className="modal-content-folder">
+        <div className="modal__header">
+          <h2 className="modal__title">{props.t('NewFolderModal.Title')}</h2>
+          <button
+            className="modal__exit-button"
+            onClick={props.closeModal}
+            aria-label={props.t('NewFolderModal.CloseButtonARIA')}
+          >
+            <ExitIcon focusable="false" aria-hidden="true" />
+          </button>
         </div>
-      </section>
-    );
-  }
+        <NewFolderForm />
+      </div>
+    </section>
+  );
 }
 
 NewFolderModal.propTypes = {
