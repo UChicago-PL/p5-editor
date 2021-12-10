@@ -490,7 +490,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
                 widget,
                 side: 1
               });
-              addWidget(deco, argList.parent!.to);
+              addWidget(deco, argList.parent!.to - 1);
             };
 
             if (argListStrings.length === 1) {
@@ -621,8 +621,9 @@ export const widgetsPlugin = (props: WidgetProps) =>
         colorChosen: (e, view) => {
           const from = unwrap(e.target.dataset.from, "Missing 'from' dataset value");
           props.onWidgetChange('color-picked');
-          return changeColor(view, view.posAtDOM(e.target), e.detail, parseInt(from));
+          return changeColor(view, view.posAtDOM(e.target) + 1, e.detail, parseInt(from));
         }
       }
     }
   );
+
