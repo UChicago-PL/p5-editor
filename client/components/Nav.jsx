@@ -69,15 +69,15 @@ class Nav extends React.PureComponent {
     this.closeDropDown = this.closeDropDown.bind(this);
   }
 
-  // componentDidMount() {
-  //   document.addEventListener('mousedown', this.handleClick, false);
-  //   document.addEventListener('keydown', this.closeDropDown, false);
-  // }
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClick, false);
+    document.addEventListener('keydown', this.closeDropDown, false);
+  }
 
-  // componentWillUnmount() {
-  //   document.removeEventListener('mousedown', this.handleClick, false);
-  //   document.removeEventListener('keydown', this.closeDropDown, false);
-  // }
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClick, false);
+    document.removeEventListener('keydown', this.closeDropDown, false);
+  }
 
   setDropdown(dropdown) {
     this.setState({
@@ -142,7 +142,6 @@ class Nav extends React.PureComponent {
   // }
 
   handleRun() {
-    console.log('got here');
     this.props.startSketch();
     this.setDropdown('none');
   }
@@ -667,8 +666,8 @@ Nav.propTypes = {
   startSketch: PropTypes.func.isRequired,
   stopSketch: PropTypes.func.isRequired,
   setAllAccessibleOutput: PropTypes.func.isRequired,
-  newFile: PropTypes.func.isRequired,
-  newFolder: PropTypes.func.isRequired,
+  // newFile: PropTypes.func.isRequired,
+  // newFolder: PropTypes.func.isRequired,
   layout: PropTypes.oneOf(['dashboard', 'project']),
   rootFile: PropTypes.shape({
     id: PropTypes.string.isRequired
