@@ -423,11 +423,11 @@ export function submitGHRepo(req, res) {
       console.log('error on submitting for ', req.user.github);
       return;
     }
-    const { edition } = allowListItem;
+    // const { edition } = allowListItem;
     getFileContent(id)
       .then((contents) => prepPR(contents, `${urlName}/`, true).then((preppedPr) => [preppedPr, contents]))
       .then(([preppedPr, contents]) => {
-        const omniRepoName = edition === 'csp21' ? 'creative-coding' : 'cmsc-19911';
+        const omniRepoName = 'creative-coding-wi22';
         const O = Octokit.plugin(createPullRequest);
         const submissionId = `${Math.floor(Math.random() * 1000000000000000000000)}`;
         new O({ auth: req.user.githubToken })
