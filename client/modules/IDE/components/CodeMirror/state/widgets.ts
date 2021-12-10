@@ -453,7 +453,7 @@ class ShapeToolboxWidget extends WidgetType {
 
 type WidgetProps = {
   shapeToolboxCb: (loc: [number, number], existing: string) => void
-  onWidgetChange: () => void
+  onWidgetChange: (widgetType: string) => void
 }
 
 function createWidgets(
@@ -666,12 +666,9 @@ export const widgetsPlugin = (props: WidgetProps) =>
                 target.parentElement!.dataset.from,
                 "Missing 'from' dataset value",
               )
-              props.onWidgetChange()
-              changeNum(
-                view,
-                target.classList.contains("cm-inc-widget"),
-                parseInt(from),
-              )
+              const isIncrease = target.classList.contains("cm-inc-widget");
+              props.onWidgetChange(isIncrease ? 'inc-val' : 'dec-val')
+              changeNum(view, isIncrease, parseInt(from))
             }, 100)
 
             document.body.addEventListener("mouseup", () =>
@@ -691,8 +688,8 @@ export const widgetsPlugin = (props: WidgetProps) =>
                 "Missing 'from' dataset value",
               ),
             )
-            props.onWidgetChange()
             const b = codeString(view, from).startsWith("true")
+            props.onWidgetChange(b ? 'bool-t' : 'bool-f')
             view.dispatch({
               changes: {
                 from,
@@ -711,7 +708,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
               target.parentElement!.dataset.from,
               "Missing 'from' dataset value",
             )
-            props.onWidgetChange()
+            props.onWidgetChange('slider')
             return changeSlider(
               view,
               view.posAtDOM(target),
@@ -725,7 +722,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
             e.target.dataset.from,
             "Missing 'from' dataset value",
           )
-          props.onWidgetChange()
+          props.onWidgetChange('color-picked')
           return changeColor(
             view,
             view.posAtDOM(e.target),

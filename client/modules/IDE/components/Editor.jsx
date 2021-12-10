@@ -18,6 +18,8 @@ import { linter, lintGutter } from '@codemirror/lint';
 import Timer from './Timer';
 import EditorAccessibility from './EditorAccessibility';
 
+import { trackEvent } from '../../../utils/analytics';
+
 import UnsavedChangesDotIcon from '../../../images/unsaved-changes-dot.svg';
 import RightArrowIcon from '../../../images/right-arrow.svg';
 import LeftArrowIcon from '../../../images/left-arrow.svg';
@@ -421,11 +423,19 @@ class Editor extends React.Component {
                     });
                   }
 
+                  // is this too much
+                  const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
+                  const langShort = langToShort[localLanguage] || '';
+                  trackEvent({
+                    eventName: 'lint',
+                    context: [msgs.length, langShort]
+                  });
                   return msgs;
                 })
               ]}
-              onWidgetChange={() => {
+              onWidgetChange={(widgetEvent) => {
                 this.lastWidgetChangeTime = Date.now();
+                trackEvent({ eventName: widgetEvent });
               }}
             />
           )}

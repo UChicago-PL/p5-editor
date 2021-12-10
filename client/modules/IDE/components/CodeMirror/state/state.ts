@@ -1,4 +1,5 @@
 import * as React from "react"
+import {setGlobalTrack, trackEvent} from '../../../../../utils/analytics'
 
 export type State = {
   showBoolWidgets: boolean
@@ -28,14 +29,26 @@ export const initialState = {
 }
 
 export function reducer(state: State, action: Action): State {
+  let newState: State;
+  console.log('cm state event', action.type)
   switch (action.type) {
     case "toggleBoolWidgets":
-      return { ...state, showBoolWidgets: !state.showBoolWidgets }
+      newState = { ...state, showBoolWidgets: !state.showBoolWidgets }
+      break;
     case "toggleNumWidgets":
-      return { ...state, showNumWidgets: !state.showNumWidgets }
+      newState = { ...state, showNumWidgets: !state.showNumWidgets }
+      break;
     case "toggleColorWidgets":
-      return { ...state, showColorWidgets: !state.showColorWidgets }
+      newState = { ...state, showColorWidgets: !state.showColorWidgets }
+      break;
     case "setLang":
-      return { ...state, lang: action.value }
+      newState = { ...state, lang: (action as SetLang).value }
+      break;
   }
+
+  ['showBoolWidgets', 'showNumWidgets', 'showColorWidgets'].forEach(key => {
+    setGlobalTrack(key, (newState as any)[key]);
+    trackEvent({eventName: 'toggleSettings'})
+  })
+  return newState
 }

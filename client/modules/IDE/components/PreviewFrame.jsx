@@ -22,6 +22,7 @@ import {
   STRING_REGEX
 } from '../../../../server/utils/fileUtils';
 import { getAllScriptOffsets, hijackConsoleErrorsScript, startTag } from '../../../utils/consoleUtils';
+import { trackEvent } from '../../../utils/analytics';
 
 import { getHTMLFile } from '../reducers/files';
 
@@ -103,6 +104,14 @@ class PreviewFrame extends React.Component {
       if (decodedMessages.some((message) => message.method === 'error')) {
         console.log('ERRORED');
         this.hasErrored = true;
+        decodedMessages
+          .filter((msg) => msg.method === 'error')
+          .forEach((msg) => {
+            const content = msg.data.length ? msg.data[0] : '';
+            // const errorType = content.split(/)
+            const errorType = content.split(/[ ,:]+/).find((x) => x.toLowerCase().includes('error'));
+            trackEvent({ eventName: errorType });
+          });
       }
 
       decodedMessages.every((message, index, arr) => {
