@@ -38,7 +38,6 @@ class Sidebar extends React.Component {
   }
 
   toggleProjectOptions(e) {
-    console.log('toggle called');
     e.preventDefault();
     if (this.props.projectOptionsVisible) {
       this.props.closeProjectOptions();
