@@ -138,7 +138,9 @@ export function handleCreateFolder(formProps) {
         .then((response) => {
           const { file, updatedAt } = response;
           dispatch(createFile(file, parentId));
-          if (updatedAt) dispatch(setProjectSavedTime(updatedAt));
+          if (updatedAt) {
+            dispatch(setProjectSavedTime(updatedAt));
+          }
           dispatch(closeNewFolderModal());
           dispatch(setUnsavedChanges(true));
           resolve();
