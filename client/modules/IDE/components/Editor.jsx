@@ -69,7 +69,12 @@ class Editor extends React.Component {
     this.keyBindings = [
       {
         key: `${metaKey}-m`,
-        run: () => this.tidyCode()
+        run: () => {
+          trackEvent({ eventName: 'tidyCode' });
+          this.tidyCode();
+          return true;
+        },
+        preventDefault: true
       },
       {
         key: `${metaKey}-Enter`,
@@ -392,7 +397,7 @@ class Editor extends React.Component {
                   }
                   if (localLanguage === 'javascript') {
                     JSHINT(code, {
-                      asi: true,
+                      asi: false,
                       eqeqeq: true,
                       '-W041': false,
                       esversion: 11
@@ -430,6 +435,7 @@ class Editor extends React.Component {
                     eventName: 'lint',
                     context: [msgs.length, langShort]
                   });
+                  console.log(msgs);
                   return msgs;
                 })
               ]}

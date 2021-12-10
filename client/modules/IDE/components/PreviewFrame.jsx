@@ -416,7 +416,7 @@ class PreviewFrame extends React.Component {
       if (this.props.endSketchRefresh) {
         this.props.endSketchRefresh();
       }
-
+      trackEvent({ eventName: 'codeRun' });
       // This method is modified so that it only renders the sketch after ensuring that there is no startup error
       // To make this happen, two hooks are added to the iframe JS code: one global hook, before any other scripts,
       // and one local hook at the beginning of the draw function block

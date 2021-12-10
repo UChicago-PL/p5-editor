@@ -1,5 +1,3 @@
-// TODO: NEED TO GET THE USING EDITOR SLIDER
-
 const appWidgetState: { [x: string]: boolean } = {
   showBoolWidgets: false,
   showNumWidgets: false,
@@ -60,6 +58,10 @@ export function trackEvent(eventConfig: EventConfig) {
   umami.trackEvent(prepName(eventConfig), eventConfig.eventName);
 }
 
+/**
+ * List of the friendly errors from p5 distilled down to fragments
+ * used by the function below to try to identify one based on the p5
+ */
 const pairs = [
   ['The media that tried to play', 'autoplay'],
   ["Please correct it if it's not intentional.", 'checkUserDefinedFns'],

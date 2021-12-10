@@ -37,6 +37,8 @@ import Feedback from '../components/Feedback';
 import { CollectionSearchbar } from '../components/Searchbar';
 import { getIsUserOwner } from '../selectors/users';
 
+import { trackEvent } from '../../../utils/analytics';
+
 import { autosaveEvery } from '../../../constants';
 import ShapeToolboxOverlay from '../components/ShapeToolboxOverlay';
 
@@ -174,10 +176,12 @@ class IDEView extends React.Component {
     } else if (e.keyCode === 13 && e.shiftKey && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {
       e.preventDefault();
       e.stopPropagation();
+      trackEvent({ eventName: 'kbdStop' });
       this.props.stopSketch();
     } else if (e.keyCode === 13 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac))) {
       e.preventDefault();
       e.stopPropagation();
+      trackEvent({ eventName: 'kbdRun' });
       this.props.startSketch();
       // 50 === 2
     } else if (e.keyCode === 50 && ((e.metaKey && this.isMac) || (e.ctrlKey && !this.isMac)) && e.shiftKey) {
