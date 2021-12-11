@@ -42,21 +42,7 @@ module.exports = {
       {
         test: [/\.jsx?$/],
         exclude: [/node_modules/, /.+\.config.js/],
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              cacheDirectory: true
-            }
-          }
-        ]
-        // use: {
-        //   loader: 'babel-loader',
-        //   options: {
-        //     cacheDirectory: true,
-        //     plugins: ['react-hot-loader/babel'],
-        //   }
-        // }
+        use: [{ loader: 'babel-loader', options: { cacheDirectory: true } }]
       },
       {
         test: /\.tsx?$/,
@@ -64,10 +50,11 @@ module.exports = {
           loader: 'ts-loader',
           options: {
             compilerOptions: {
-              noImplicitAny: true,
+              noImplicitAny: false,
               target: 'es6',
-              jsx: 'react',
-              moduleResolution: 'node'
+              jsx: 'react'
+              // moduleResolution: 'browser'
+              "moduleResolution": "node",
             }
           }
         }
@@ -76,18 +63,12 @@ module.exports = {
         test: [/main\.scss$/, /App\.scss$/, /\.css$/],
         use: ['style-loader', 'css-loader', 'sass-loader']
       },
-      {
-        test: /\.(mp3)$/,
-        use: 'file-loader'
-      },
+      { test: /\.(mp3)$/, use: 'file-loader' },
       {
         test: /\.(png)$/,
         use: {
           loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'images/'
-          }
+          options: { name: '[name].[ext]', outputPath: 'images/' }
         }
       },
       {
@@ -97,24 +78,12 @@ module.exports = {
       {
         test: /\.svg$/,
         oneOf: [
-          {
-            resourceQuery: /byContent/,
-            use: 'raw-loader'
-          },
-          {
-            resourceQuery: /byUrl/,
-            use: 'file-loader'
-          },
+          { resourceQuery: /byContent/, use: 'raw-loader' },
+          { resourceQuery: /byUrl/, use: 'file-loader' },
           {
             use: {
               loader: '@svgr/webpack',
-              options: {
-                svgoConfig: {
-                  plugins: {
-                    removeViewBox: false
-                  }
-                }
-              }
+              options: { svgoConfig: { plugins: { removeViewBox: false } } }
             }
           }
         ]
