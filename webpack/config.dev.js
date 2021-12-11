@@ -52,9 +52,9 @@ module.exports = {
             compilerOptions: {
               noImplicitAny: false,
               target: 'es6',
-              jsx: 'react'
+              jsx: 'react',
               // moduleResolution: 'browser'
-              "moduleResolution": "node",
+              moduleResolution: 'node'
             }
           }
         }
