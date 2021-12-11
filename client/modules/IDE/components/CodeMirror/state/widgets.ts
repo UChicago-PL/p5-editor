@@ -260,17 +260,18 @@ function fromRgbaString(s: string): { r: string; g: string; b: string } | null {
 }
 
 class ColorWidget extends WidgetType {
-  constructor(readonly initColor: string, readonly from: number) {
+  constructor(readonly initColor: string, readonly from: number, readonly to: number) {
     super()
   }
 
   eq(other: ColorWidget) {
-    return this.from === other.from && this.initColor === other.initColor
+    return this.from === other.from && this.to === other.to && this.initColor === other.initColor
   }
 
   toDOM() {
     const wrap = document.createElement("button")
     wrap.dataset.from = this.from.toString()
+    wrap.dataset.to = this.to.toString()
     wrap.className = "cm-color-widget"
     wrap.style.background = this.initColor
     let child = document.createElement("div")
@@ -309,12 +310,12 @@ class ColorNameWidget extends WidgetType {
   wrap: HTMLElement | null = null
   active: boolean = false
 
-  constructor(readonly initColor: string, readonly from: number) {
+  constructor(readonly initColor: string, readonly from: number, readonly to: number) {
     super()
   }
 
   eq(other: ColorWidget) {
-    const eq_ = this.from === other.from && this.initColor == other.initColor
+    const eq_ = this.from === other.from && this.to === other.to && this.initColor == other.initColor
     if (!eq_) {
       // Hacky way to tell that a widget will be removed
       document.removeEventListener("click", this.clickListener)
@@ -326,6 +327,7 @@ class ColorNameWidget extends WidgetType {
   toDOM() {
     const wrap = document.createElement("button")
     wrap.dataset.from = this.from.toString()
+    wrap.dataset.to = this.to.toString()
     wrap.className = "cm-color-widget"
     wrap.style.background = this.initColor
 
@@ -503,13 +505,13 @@ function createWidgets(
           // TODO move
           if (val.match(colorRegex)) {
             const deco = Decoration.widget({
-              widget: new ColorWidget(val, from),
+              widget: new ColorWidget(val, from, to),
               side: 1,
             })
             addWidget(deco, to)
           } else if (Object.keys(colorNames).includes(val.toLowerCase())) {
             const deco = Decoration.widget({
-              widget: new ColorNameWidget(val.toLowerCase(), from),
+              widget: new ColorNameWidget(val.toLowerCase(), from, to),
               side: 1,
             })
             addWidget(deco, to)
@@ -535,8 +537,8 @@ function createWidgets(
 
             const makeWidget = (color: string, colorName: boolean = false) => {
               const widget = colorName
-                ? new ColorNameWidget(color, argList.parent!.from)
-                : new ColorWidget(color, argList.parent!.from)
+                ? new ColorNameWidget(color, argList.parent!.from, argList.parent!.to - 1)
+                : new ColorWidget(color, argList.parent!.from, argList.parent!.to - 1)
               const deco = Decoration.widget({
                 widget,
                 side: 1,
@@ -725,10 +727,14 @@ export const widgetsPlugin = (props: WidgetProps) =>
             e.target.dataset.from,
             "Missing 'from' dataset value",
           )
+          const to = unwrap(
+            e.target.dataset.from,
+            "Missing 'from' dataset value",
+          )
           props.onWidgetChange()
           return changeColor(
             view,
-            view.posAtDOM(e.target) + 1,
+            parseInt(to),
             e.detail,
             parseInt(from),
           )
