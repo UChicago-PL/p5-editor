@@ -5,5 +5,8 @@
     "jsx": "react",
     "lib": ["es2019", "dom"],
     "target": "es6",
+    "noImplicitAny": false,
+    "importHelpers": true,
+    "moduleResolution": "node"
   }
 }

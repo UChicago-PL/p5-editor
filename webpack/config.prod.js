@@ -19,15 +19,8 @@ module.exports = [
   {
     devtool: 'source-map',
     mode: 'production',
-    entry: {
-      app: ['@babel/polyfill', path.resolve(__dirname, '../client/index.jsx')]
-    },
-    output: {
-      path: dist,
-      filename: '[name].[hash].js',
-      publicPath: '/'
-    },
-
+    entry: { app: ['@babel/polyfill', path.resolve(__dirname, '../client/index.jsx')] },
+    output: { path: dist, filename: '[name].[hash].js', publicPath: '/' },
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
       modules: ['client', 'node_modules']
@@ -95,14 +88,8 @@ module.exports = [
         {
           test: /\.svg$/,
           oneOf: [
-            {
-              resourceQuery: /byContent/,
-              use: 'raw-loader'
-            },
-            {
-              resourceQuery: /byUrl/,
-              use: 'file-loader'
-            },
+            { resourceQuery: /byContent/, use: 'raw-loader' },
+            { resourceQuery: /byUrl/, use: 'file-loader' },
             {
               use: {
                 loader: '@svgr/webpack',
@@ -133,13 +120,7 @@ module.exports = [
     },
     optimization: {
       minimize: true,
-      minimizer: [
-        new TerserJSPlugin({
-          sourceMap: true,
-          parallel: true
-        }),
-        new OptimizeCSSAssetsPlugin()
-      ]
+      minimizer: [new TerserJSPlugin({ sourceMap: true, parallel: true }), new OptimizeCSSAssetsPlugin()]
     },
     plugins: [
       new ManifestPlugin({ basePath: '/' }),
@@ -152,9 +133,7 @@ module.exports = [
     ]
   },
   {
-    entry: {
-      app: [path.resolve(__dirname, '../client/utils/previewEntry.js')]
-    },
+    entry: { app: [path.resolve(__dirname, '../client/utils/previewEntry.js')] },
     target: 'web',
     devtool: 'source-map',
     mode: 'production',
@@ -178,20 +157,13 @@ module.exports = [
           test: /\.jsx?$/,
           exclude: /node_modules/,
           loader: 'babel-loader',
-          options: {
-            babelrc: true
-          }
+          options: { babelrc: true }
         }
       ]
     },
     optimization: {
       minimize: true,
-      minimizer: [
-        new TerserJSPlugin({
-          sourceMap: true,
-          parallel: true
-        })
-      ]
+      minimizer: [new TerserJSPlugin({ sourceMap: true, parallel: true })]
     }
   }
 ];

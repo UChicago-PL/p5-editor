@@ -430,7 +430,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
     syntaxTree(view.state).iterate({
       from,
       to,
-      enter: (type, from, to, get) => {
+      enter: (type: any, from: any, to: any, get: any) => {
         if (type.name === 'Number' && showWidgets.showNumWidgets && !isArgToSpecialFunc(view, get())) {
           const decoDec = Decoration.widget({
             widget: new NumWidget(false, from),
@@ -556,6 +556,7 @@ function unwrap(value: any, errorMessage: string) {
   }
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export const widgetsPlugin = (props: WidgetProps) =>
   ViewPlugin.fromClass(
     class {
@@ -571,18 +572,19 @@ export const widgetsPlugin = (props: WidgetProps) =>
           update.docChanged ||
           update.viewportChanged ||
           !isEqual(update.startState.field(cmStatePlugin), update.state.field(cmStatePlugin))
-        )
+        ) {
           this.decorations = createWidgets(update.view, update.state.field(cmStatePlugin), props);
+        }
       }
     },
     {
-      decorations: (v) => v.decorations,
+      decorations: (v: any) => v.decorations,
 
       eventHandlers: {
-        mousedown: (e, view) => {
+        mousedown: (e: any, view: any) => {
           const target = e.target as HTMLElement;
           if (target.classList.contains('cm-inc-widget') || target.classList.contains('cm-dec-widget')) {
-            let interval = setInterval(() => {
+            const interval = setInterval(() => {
               const from = unwrap(target.parentElement!.dataset.from, "Missing 'from' dataset value");
               const isIncrease = target.classList.contains('cm-inc-widget');
               props.onWidgetChange(isIncrease ? 'inc-val' : 'dec-val');
@@ -594,7 +596,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
             return true;
           }
         },
-        click: (e, view) => {
+        click: (e: any, view: any) => {
           const target = e.target as HTMLElement;
           if (target.classList.contains('cm-bool-checkbox-widget')) {
             // TODO
@@ -612,13 +614,13 @@ export const widgetsPlugin = (props: WidgetProps) =>
           } else if (target.parentElement!.classList.contains('cm-slider-widget')) {
             // The slider relies on the "click" event as opposed to the "input" event
             // because codemirror does not pick up on the latter for some reason
-            const target = e.target as HTMLInputElement;
-            const from = unwrap(target.parentElement!.dataset.from, "Missing 'from' dataset value");
+            const targ = e.target as HTMLInputElement;
+            const from = unwrap(targ.parentElement!.dataset.from, "Missing 'from' dataset value");
             props.onWidgetChange('slider');
-            return changeSlider(view, view.posAtDOM(target), parseInt(from), target.value);
+            return changeSlider(view, view.posAtDOM(targ), parseInt(from), targ.value);
           }
         },
-        colorChosen: (e, view) => {
+        colorChosen: (e: any, view: any) => {
           const from = unwrap(e.target.dataset.from, "Missing 'from' dataset value");
           props.onWidgetChange('color-picked');
           return changeColor(view, view.posAtDOM(e.target) + 1, e.detail, parseInt(from));
@@ -626,4 +628,3 @@ export const widgetsPlugin = (props: WidgetProps) =>
       }
     }
   );
-
