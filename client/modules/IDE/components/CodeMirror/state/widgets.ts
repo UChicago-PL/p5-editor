@@ -162,7 +162,8 @@ function changeSlider(view: EditorView, pos: number, from: number, value: string
   return true;
 }
 
-const COLOR_FUNCS = ['color', 'fill', 'stroke', 'background'];
+// const COLOR_FUNCS = ['color', 'fill', 'stroke', 'background'];
+const COLOR_FUNCS: string[] = [];
 
 const SPECIAL_FUNCS = ['slider', 'shapeToolbox'];
 
@@ -343,7 +344,6 @@ class ColorNameWidget extends WidgetType {
 
       const cb = (newColor: string | null) => {
         if (newColor) {
-          console.log(newColor, this.from, this.to);
           const event = new CustomEvent('colorChosen', {
             bubbles: true,
             detail: { color: newColor, from: this.from, to: this.to }
@@ -460,7 +460,6 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
         ) {
           // + 1 and - 1 to avoid the quotation marks
           const val = codeString(view, from + 1, to - 1);
-
           // TODO move
           if (val.match(colorRegex)) {
             const deco = Decoration.widget({
@@ -468,8 +467,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
               side: 1
             });
             addWidget(deco, to);
-          } else if (Object.keys(colorNames).includes(val.toLowerCase())) {
-            console.log('here', from, to, codeString(view, from, to));
+          } else if (colorNames[val.toLowerCase()]) {
             const deco = Decoration.widget({
               widget: new ColorNameWidget(val.toLowerCase(), from, to),
               side: 1
@@ -487,34 +485,39 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
           const argList = get();
           const funcType = getFuncType(view, argList);
 
-          if (funcType === 'color' && showWidgets.showColorWidgets) {
-            const argListStrings = argList.getChildren('String');
-            const argListNumbers = argList.getChildren('Number');
-            const argListArrayExp = argList.getChild('ArrayExpression');
-
-            const makeWidget = (color: string, colorName: boolean = false) => {
-              const widget = colorName
-                ? new ColorNameWidget(color, from + 1, to - 1)
-                : new ColorWidget(color, from, argList.parent!.to - 1);
-              const deco = Decoration.widget({ widget, side: 1 });
-              addWidget(deco, argList.parent!.to - 1);
-            };
-
-            if (argListStrings.length === 1) {
-              // avoid the quotation marks and parentheses (assuming no spaces)
-              const val = codeString(view, from + 2, to - 2);
-              if (val.match(colorRegex)) {
-                makeWidget(val);
-              } else if (Object.keys(colorNames).includes(val.toLowerCase())) {
-                makeWidget(val.toLowerCase(), true);
-              }
-              // TODO: handle 4, twice
-            } else if (argListNumbers.length === 3) {
-              makeWidget(rgbToString(argListToIntList(view, argListNumbers)));
-            } else if (argListArrayExp && argListArrayExp.getChildren('Number').length === 3) {
-              makeWidget(rgbToString(argListToIntList(view, argListArrayExp.getChildren('Number'))));
-            }
-          } else if (funcType === 'slider') {
+          // this appears to create more problems than expected?
+          // if (funcType === 'color' && showWidgets.showColorWidgets) {
+          // const argListStrings = argList.getChildren('String');
+          // const argListNumbers = argList.getChildren('Number');
+          // const argListArrayExp = argList.getChild('ArrayExpression');
+          // const makeWidget = (color: string, colorName: boolean = false) => {
+          //   if (colorName) {
+          //     // console.log('cn there', color, from, to);
+          //   }
+          //   const widget = colorName
+          //     ? new ColorNameWidget(color, from + 1, to - 1)
+          //     : new ColorWidget(color, from, argList.parent!.to - 1);
+          //   const deco = Decoration.widget({ widget, side: 1 });
+          //   addWidget(deco, argList.parent!.to - 1);
+          // };
+          // // this seems like a mess??
+          // if (argListStrings.length === 1) {
+          //   // avoid the quotation marks and parentheses (assuming no spaces)
+          //   const val = codeString(view, from + 2, to - 2);
+          //   if (val.match(colorRegex)) {
+          //     makeWidget(val);
+          //     // } else if (Object.keys(colorNames).includes(val.toLowerCase())) {
+          //   } else if (colorNames[val.toLowerCase()]) {
+          //     makeWidget(val.toLowerCase(), true);
+          //   }
+          //   // TODO: handle 4, twice
+          // } else if (argListNumbers.length === 3) {
+          //   makeWidget(rgbToString(argListToIntList(view, argListNumbers)));
+          // } else if (argListArrayExp && argListArrayExp.getChildren('Number').length === 3) {
+          //   makeWidget(rgbToString(argListToIntList(view, argListArrayExp.getChildren('Number'))));
+          // }
+          // } else
+          if (funcType === 'slider') {
             const argListNumbers = argList.getChildren('Number');
             if (argListNumbers.length === 3 || argListNumbers.length === 4) {
               const [min, max, value, step = 1] = argListToIntList(view, argListNumbers);
