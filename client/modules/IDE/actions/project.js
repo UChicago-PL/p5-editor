@@ -54,7 +54,7 @@ export function setNewProject(project) {
 }
 
 export function getProject(id, username) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch(justOpenedProject());
     apiClient
       .get(`/${username}/projects/${id}`)
@@ -146,7 +146,7 @@ export function checkLoggedIn(cb) {
   };
 }
 
-export function saveProject(selectedFile = null, autosave = false, mobile = false) {
+export function saveProject(selectedFile = null, autosave = false) {
   trackEvent({ eventName: 'saveProject' });
   return checkLoggedIn((dispatch, getState) => {
     const state = getState();
@@ -312,7 +312,7 @@ export function cloneProject(project) {
           callback(null);
         }
       },
-      (err) => {
+      () => {
         // if not errors in duplicating the files on S3, then duplicate it
         const formParams = Object.assign({}, { name: `${projectName} copy` }, { files: newFiles });
         apiClient
@@ -414,7 +414,7 @@ export function deleteProject(id) {
 const DISABLED = true;
 export function logRun(type) {
   if (DISABLED) {
-    return (x, y) => {};
+    return () => {};
   }
   const makeRequest = (projectId, logParams) => apiClient.post(`/projects/${projectId}/log`, logParams);
 
@@ -428,7 +428,9 @@ export function logRun(type) {
         Promise.allSettled(offlineLogs.map((log) => makeRequest(projectId, log))).then((results) => {
           // filter out the logs whose save request did not go through
           const failedLogs = zip(offlineLogs, results)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             .filter(([log, result]) => result.status === 'rejected')
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             .map(([log, result]) => result);
           localStorage.setItem(offlineLogKey, JSON.stringify(failedLogs));
         });

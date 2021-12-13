@@ -6,7 +6,7 @@ import { validateResetPassword } from '../../../utils/reduxFormUtils';
 import { initiateResetPassword } from '../actions';
 import Button from '../../../common/Button';
 
-function ResetPasswordForm(props) {
+function ResetPasswordForm() {
   const { t } = useTranslation();
   const resetPasswordInitiate = useSelector((state) => state.user.resetPasswordInitiate);
   const dispatch = useDispatch();

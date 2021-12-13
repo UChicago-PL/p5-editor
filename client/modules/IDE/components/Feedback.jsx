@@ -2,7 +2,7 @@ import React from 'react';
 import { withTranslation } from 'react-i18next';
 import GitHubLogo from '../../../images/github.svg';
 
-function Feedback(props) {
+function Feedback() {
   return (
     <div className="feedback__content">
       <div className="feedback__content-pane">

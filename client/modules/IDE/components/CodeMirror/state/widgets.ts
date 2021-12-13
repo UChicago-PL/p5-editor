@@ -98,6 +98,7 @@ class NumWidget extends WidgetType {
 
 function changeNum(view: EditorView, isInc: boolean, from: number) {
   const s = codeString(view, from)
+    // eslint-disable-next-line no-useless-escape
     .match(/([0-9\-\.]+)([^0-9]?)/)!
     .splice(1)[0];
   const num = parseFloat(s) * (codeString(view, from - 1, from) === '-' ? -1 : 1);
@@ -255,7 +256,7 @@ class ColorWidget extends WidgetType {
       wrap.appendChild(child);
     };
 
-    wrap.onclick = (e) => {
+    wrap.onclick = () => {
       createColorPicker(
         child,
         this.initColor,
@@ -284,7 +285,7 @@ class ColorWidget extends WidgetType {
 class ColorNameWidget extends WidgetType {
   wrap: HTMLElement | null = null;
 
-  active: boolean = false;
+  active = false;
 
   constructor(readonly initColor: string, readonly from: number, readonly to: number) {
     super();
@@ -386,12 +387,10 @@ function changeColor(view: EditorView, pos: number, color: string, from: number)
     } else {
       insert = `"${color}"`;
     }
+  } else if (colorFuncCall) {
+    insert = `${colorFuncCall.func}("${color}")`;
   } else {
-    if (colorFuncCall) {
-      insert = `${colorFuncCall.func}("${color}")`;
-    } else {
-      insert = `"${color}"`;
-    }
+    insert = `"${color}"`;
   }
   view.dispatch({ changes: { from, to: pos, insert } });
   return true;
@@ -491,7 +490,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
             const argListStrings = argList.getChildren('String');
             const argListNumbers = argList.getChildren('Number');
             const argListArrayExp = argList.getChild('ArrayExpression');
-            const makeWidget = (color: string, colorName: boolean = false) => {
+            const makeWidget = (color: string, colorName = false) => {
               const widget = colorName
                 ? new ColorNameWidget(color, from + 1, to - 1)
                 : new ColorWidget(color, from + 1, argList.parent!.to - 1);

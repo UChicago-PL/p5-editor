@@ -85,17 +85,19 @@ export function resetPasswordInitiate(req, res) {
           });
         });
       },
-      (token, user, done) => {
-        // const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-        // const mailOptions = renderResetPassword({
-        //   body: {
-        //     domain: `${protocol}://${req.headers.host}`,
-        //     link: `${protocol}://${req.headers.host}/reset-password/${token}`,
-        //   },
-        //   to: user.email,
-        // });
-        // mail.send(mailOptions, done);
-      }
+      // eslint-ignore line
+      () => {}
+      // (token, user, done) => {
+      // const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+      // const mailOptions = renderResetPassword({
+      //   body: {
+      //     domain: `${protocol}://${req.headers.host}`,
+      //     link: `${protocol}://${req.headers.host}/reset-password/${token}`,
+      //   },
+      //   to: user.email,
+      // });
+      // mail.send(mailOptions, done);
+      // }
     ],
     (err) => {
       if (err) {
@@ -127,7 +129,7 @@ export function validateResetPasswordToken(req, res) {
 export function emailVerificationInitiate(req, res) {
   async.waterfall([
     random,
-    (token, done) => {
+    () => {
       User.findById(req.user.id, (err, user) => {
         if (err) {
           res.status(500).json({ error: err });
@@ -183,7 +185,7 @@ export function verifyEmail(req, res) {
     user.verified = User.EmailConfirmation.Verified;
     user.verifiedToken = null;
     user.verifiedTokenExpires = null;
-    user.save().then((result) => {
+    user.save().then(() => {
       // eslint-disable-line
       res.json({ success: true });
     });
@@ -203,8 +205,8 @@ export function updatePassword(req, res) {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpires = undefined;
 
-      user.save((saveErr) => {
-        req.logIn(user, (loginErr) => res.json(userResponse(req.user)));
+      user.save(() => {
+        req.logIn(user, () => res.json(userResponse(req.user)));
       });
     }
   );
@@ -427,13 +429,13 @@ export function submitGHRepo(req, res) {
     getFileContent(id)
       .then((contents) => prepPR(contents, `${urlName}/`, true).then((preppedPr) => [preppedPr, contents]))
       .then(([preppedPr, contents]) => {
-        const omniRepoName = 'creative-coding-wi22';
+        const repoName = 'creative-coding-wi22';
         const O = Octokit.plugin(createPullRequest);
         const submissionId = `${Math.floor(Math.random() * 1000000000000000000000)}`;
         new O({ auth: req.user.githubToken })
           .createPullRequest({
             owner: 'UChicago-PL',
-            repo: `${omniRepoName}-${owner}`,
+            repo: `${repoName}-${owner}`,
             title: `Submit ${humanReadableName}`,
             /* eslint max-len: 0 */
             body: `

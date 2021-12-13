@@ -223,7 +223,7 @@ class Nav extends React.PureComponent {
     this.timer = setTimeout(this.setDropdown.bind(this, 'none'), 1000);
   }
 
-  renderDashboardMenu(navDropdownState) {
+  renderDashboardMenu() {
     return (
       <ul className="nav__items-left">
         <li className="nav__item-logo">

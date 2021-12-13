@@ -28,7 +28,7 @@ apiKeySchema.virtual('id').get(function getApiKeyId() {
  * should never be exposed to the client. So we only return
  * a safe list of fields when toObject and toJSON are called.
  */
-function apiKeyMetadata(doc, ret, options) {
+function apiKeyMetadata(doc) {
   return {
     id: doc.id,
     label: doc.label,
@@ -86,7 +86,6 @@ const userSchema = new Schema(
  * Password hash middleware.
  */
 userSchema.pre('save', function checkPassword(next) {
-  // eslint-disable-line consistent-return
   const user = this;
   if (!user.isModified('password')) {
     return next();
@@ -110,7 +109,6 @@ userSchema.pre('save', function checkPassword(next) {
  * API keys hash middleware
  */
 userSchema.pre('save', function checkApiKey(next) {
-  // eslint-disable-line consistent-return
   const user = this;
   if (!user.isModified('apiKeys')) {
     return next();

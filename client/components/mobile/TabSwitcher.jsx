@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line
 import React from 'react';
 import styled from 'styled-components';
 
@@ -14,5 +14,5 @@ export default styled.div`
   }
   border-top: 1px solid ${prop('Separator')};
 
-  background: ${(props) => prop('backgroundColor')};
+  background: ${() => prop('backgroundColor')};
 `;

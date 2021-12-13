@@ -1,9 +1,15 @@
 {
 	"extends": [
+    "eslint:recommended",
     "plugin:react/recommended",
-    "airbnb"
+    "plugin:@typescript-eslint/recommended"
   ],
-	"parser": "@babel/eslint-parser",
+  "plugins": [
+    "react",
+    "jsx-a11y",
+    "import"
+  ],
+	"parser": "@typescript-eslint/parser",
 	"env": {
     "browser": true,
     "node": true,
@@ -84,11 +90,15 @@
     "jsx-a11y/label-has-associated-control": 0,
     "no-restricted-syntax": 0,
     "no-loop-func": 0,
-    "import/extensions": 0
+    "import/extensions": 0,
+    "react/display-name": 0,
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/no-this-alias": 0,
+    "@typescript-eslint/no-empty-function": 0,
+    "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "react/jsx-uses-react": 1
   },
-  "plugins": [
-    "react", "jsx-a11y", "import"
-  ],
   "settings": {
     "import/parser": "@babel/eslint-parser",
     "import/resolve": {

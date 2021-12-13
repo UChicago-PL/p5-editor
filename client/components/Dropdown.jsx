@@ -76,7 +76,7 @@ const Dropdown = ({ items, align }) => (
   <DropdownWrapper align={align}>
     {/* className="nav__items-left" */}
     {items &&
-      items.map(({ title, icon, href, action }) => (
+      items.map(({ title, href, action }) => (
         <li key={`nav-${title && title.toLowerCase()}`}>
           {/* {MaybeIcon(icon, `Navigate to ${title}`)} */}
           {href ? (

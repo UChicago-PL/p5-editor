@@ -149,16 +149,16 @@ async function consolidateAccount(email) {
       //   },
       //   to: currentUser.email,
       // });
-
-      return new Promise((resolve, reject) => {
-        // mail.send(mailOptions, (mailErr, result) => {
-        //   console.log('Sent email.');
-        //   if (mailErr) {
-        //     return reject(mailErr);
-        //   }
-        //   return resolve(result);
-        // });
-      });
+      return Promise.resolve();
+      // return new Promise((resolve, reject) => {
+      //   // mail.send(mailOptions, (mailErr, result) => {
+      //   //   console.log('Sent email.');
+      //   //   if (mailErr) {
+      //   //     return reject(mailErr);
+      //   //   }
+      //   //   return resolve(result);
+      //   // });
+      // });
     })
     .catch((err) => {
       console.log(err);

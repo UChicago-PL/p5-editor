@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line
 import React, { useEffect, useRef, useState } from 'react';
 
 export const noop = () => {};
@@ -17,7 +17,7 @@ export const useDidUpdate = (callback, deps) => {
 
 // Usage: const ref = useModalBehavior(() => setSomeState(false))
 // place this ref on a component
-export const useModalBehavior = (hideOverlay) => {
+export const useModalBehavior = () => {
   const ref = useRef({});
 
   // Return values

@@ -105,7 +105,7 @@ export function getProject(req, res) {
 }
 
 export function getProjectsForUserId(userId) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     Project.find({ user: userId })
       .sort('-createdAt')
       .select('name files id createdAt updatedAt')

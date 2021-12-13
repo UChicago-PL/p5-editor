@@ -21,10 +21,13 @@ export function createFile(req, res) {
     },
     {
       new: true
-    }, (err, updatedProject) => {
+    },
+    (err, updatedProject) => {
       if (err || !updatedProject) {
         console.log(err);
-        res.status(403).send({ success: false, message: 'Project does not exist, or user does not match owner.' });
+        res
+          .status(403)
+          .send({ success: false, message: 'Project does not exist, or user does not match owner.' });
         return;
       }
       const newFile = updatedProject.files[updatedProject.files.length - 1];
@@ -47,36 +50,42 @@ export function createFile(req, res) {
 }
 
 function getAllDescendantIds(files, nodeId) {
-  const parentFile = files.find(file => file.id === nodeId);
+  const parentFile = files.find((file) => file.id === nodeId);
   if (!parentFile) return [];
-  return parentFile.children
-    .reduce((acc, childId) => (
-      [...acc, childId, ...getAllDescendantIds(files, childId)]
-    ), []);
+  return parentFile.children.reduce(
+    (acc, childId) => [...acc, childId, ...getAllDescendantIds(files, childId)],
+    []
+  );
 }
 
 function deleteMany(files, ids) {
   const objectKeys = [];
 
-  each(ids, (id, cb) => {
-    if (files.id(id).url) {
-      if (!process.env.S3_DATE
-        || (process.env.S3_DATE && isBefore(new Date(process.env.S3_DATE), new Date(files.id(id).createdAt)))) {
-        const objectKey = getObjectKey(files.id(id).url);
-        objectKeys.push(objectKey);
+  each(
+    ids,
+    (id, cb) => {
+      if (files.id(id).url) {
+        if (
+          !process.env.S3_DATE ||
+          (process.env.S3_DATE && isBefore(new Date(process.env.S3_DATE), new Date(files.id(id).createdAt)))
+        ) {
+          const objectKey = getObjectKey(files.id(id).url);
+          objectKeys.push(objectKey);
+        }
       }
+      files.id(id).remove();
+      cb();
+    },
+    () => {
+      deleteObjectsFromS3(objectKeys);
     }
-    files.id(id).remove();
-    cb();
-  }, (err) => {
-    deleteObjectsFromS3(objectKeys);
-  });
+  );
 }
 
 function deleteChild(files, parentId, id) {
   return files.map((file) => {
     if (file.id === parentId) {
-      file.children = file.children.filter(child => child !== id);
+      file.children = file.children.filter((child) => child !== id);
       return file;
     }
     return file;
@@ -94,7 +103,7 @@ export function deleteFile(req, res) {
     }
 
     // make sure file exists for project
-    const fileToDelete = project.files.find(file => file.id === req.params.file_id);
+    const fileToDelete = project.files.find((file) => file.id === req.params.file_id);
     if (!fileToDelete) {
       res.status(404).send({ success: false, message: 'File does not exist in project.' });
       return;
