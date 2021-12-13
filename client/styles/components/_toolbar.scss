@@ -57,6 +57,14 @@
 	}
 }
 
+.toolbar__autorefresh-button {
+	svg {
+		height: 44px;
+		width: 44px;
+		transform: translate(0, 4px);
+	}
+}
+
 .toolbar__preferences-button {
 	@include themify() {
 		@extend %toolbar-button;
