@@ -492,16 +492,13 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
             const argListNumbers = argList.getChildren('Number');
             const argListArrayExp = argList.getChild('ArrayExpression');
             const makeWidget = (color: string, colorName: boolean = false) => {
-              // if (colorName) {
-              // console.log('cn there', color, from, to);
-              // }
               const widget = colorName
                 ? new ColorNameWidget(color, from + 1, to - 1)
                 : new ColorWidget(color, from + 1, argList.parent!.to - 1);
               const deco = Decoration.widget({ widget, side: 1 });
               addWidget(deco, argList.parent!.to - 1);
             };
-            // this seems like a mess??
+
             if (argListStrings.length === 1) {
               // case like background("red")
               // avoid the quotation marks and parentheses (assuming no spaces)
