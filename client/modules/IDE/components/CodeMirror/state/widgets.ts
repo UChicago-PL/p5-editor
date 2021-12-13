@@ -162,9 +162,7 @@ function changeSlider(view: EditorView, pos: number, from: number, value: string
   return true;
 }
 
-// const COLOR_FUNCS = ['color', 'fill', 'stroke', 'background'];
-const COLOR_FUNCS: string[] = [];
-
+const COLOR_FUNCS = ['color', 'fill', 'stroke', 'background'];
 const SPECIAL_FUNCS = ['slider', 'shapeToolbox'];
 
 function getFuncType(view: EditorView, argList: SyntaxNode): string | undefined {
@@ -484,40 +482,43 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
           const argList = get();
           const funcType = getFuncType(view, argList);
 
-          // this appears to create more problems than expected?
-          // if (funcType === 'color' && showWidgets.showColorWidgets) {
-          // const argListStrings = argList.getChildren('String');
-          // const argListNumbers = argList.getChildren('Number');
-          // const argListArrayExp = argList.getChild('ArrayExpression');
-          // const makeWidget = (color: string, colorName: boolean = false) => {
-          //   if (colorName) {
-          //     // console.log('cn there', color, from, to);
-          //   }
-          //   const widget = colorName
-          //     ? new ColorNameWidget(color, from + 1, to - 1)
-          //     : new ColorWidget(color, from, argList.parent!.to - 1);
-          //   const deco = Decoration.widget({ widget, side: 1 });
-          //   addWidget(deco, argList.parent!.to - 1);
-          // };
-          // // this seems like a mess??
-          // if (argListStrings.length === 1) {
-          //   // avoid the quotation marks and parentheses (assuming no spaces)
-          //   const val = codeString(view, from + 2, to - 2);
-          //   if (val.match(colorRegex)) {
-          //     makeWidget(val);
-          //     // } else if (Object.keys(colorNames).includes(val.toLowerCase())) {
-          //   } else if (colorNames[val.toLowerCase()]) {
-          //     makeWidget(val.toLowerCase(), true);
-          //   }
-          //   // TODO: handle 4, twice
-          // } else if (argListNumbers.length === 3) {
-          //   makeWidget(rgbToString(argListToIntList(view, argListNumbers)));
-          // } else if (argListArrayExp && argListArrayExp.getChildren('Number').length === 3) {
-          //   makeWidget(rgbToString(argListToIntList(view, argListArrayExp.getChildren('Number'))));
-          // }
-          // } else
-          if (funcType === 'slider') {
-            console.log('sldier');
+          // add color picking to special color functions (see list above)
+          // note that this covers some other color cases (see in line comments)
+          // in doing so it makes assemptions about what arguments those functions have
+          // (e.g. each color func has either 1 or 3 arguments) which may be problematic
+          if (funcType === 'color' && showWidgets.showColorWidgets) {
+            const argListStrings = argList.getChildren('String');
+            const argListNumbers = argList.getChildren('Number');
+            const argListArrayExp = argList.getChild('ArrayExpression');
+            const makeWidget = (color: string, colorName: boolean = false) => {
+              // if (colorName) {
+              // console.log('cn there', color, from, to);
+              // }
+              const widget = colorName
+                ? new ColorNameWidget(color, from + 1, to - 1)
+                : new ColorWidget(color, from + 1, argList.parent!.to - 1);
+              const deco = Decoration.widget({ widget, side: 1 });
+              addWidget(deco, argList.parent!.to - 1);
+            };
+            // this seems like a mess??
+            if (argListStrings.length === 1) {
+              // case like background("red")
+              // avoid the quotation marks and parentheses (assuming no spaces)
+              const val = codeString(view, from + 2, to - 2);
+              if (val.match(colorRegex)) {
+                makeWidget(val);
+              } else if (colorNames[val.toLowerCase()]) {
+                makeWidget(val.toLowerCase(), true);
+              }
+              // TODO: handle 4, twice
+            } else if (argListNumbers.length === 3) {
+              // case like background([123, 123, 123])
+              makeWidget(rgbToString(argListToIntList(view, argListNumbers)));
+            } else if (argListArrayExp && argListArrayExp.getChildren('Number').length === 3) {
+              // case like background(123, 123, 123)
+              makeWidget(rgbToString(argListToIntList(view, argListArrayExp.getChildren('Number'))));
+            }
+          } else if (funcType === 'slider') {
             const argListNumbers = argList.getChildren('Number');
             if (argListNumbers.length === 3 || argListNumbers.length === 4) {
               const [min, max, value, step = 1] = argListToIntList(view, argListNumbers);
@@ -529,7 +530,6 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
               usingASliderWidget = true;
             }
           } else if (funcType === 'shapeToolbox') {
-            console.log('shape toolbox');
             const { from, to } = argList.parent!;
             const loc = [from, to] as [number, number];
             let cb = () => shapeToolboxCb(loc, '');
