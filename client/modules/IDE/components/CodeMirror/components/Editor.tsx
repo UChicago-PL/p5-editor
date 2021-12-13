@@ -47,9 +47,11 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
     const localView = new EditorView({
       state: EditorState.create({
         extensions: [
-          // @ts-ignore
-          keymap.of([indentWithTab, ...externalProps.keyBindings]),
+          keymap.of(externalProps.keyBindings),
           basicSetup,
+          // @ts-ignore
+          keymap.of([indentWithTab]),
+          // this approach may not yield appropriate highlighting for non-js, bc this is only called on start up
           langPlugin(externalProps.lang),
           cmStatePlugin,
           widgetsPlugin(widgetProps),
@@ -59,6 +61,7 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
               externalProps.onChange(v.state.doc.toString());
             }
           }),
+
           ...externalProps.extensions
         ],
         doc: externalProps.code

@@ -231,17 +231,18 @@ function fromRgbaString(s: string): { r: string; g: string; b: string } | null {
 }
 
 class ColorWidget extends WidgetType {
-  constructor(readonly initColor: string, readonly from: number) {
+  constructor(readonly initColor: string, readonly from: number, readonly to: number) {
     super();
   }
 
   eq(other: ColorWidget) {
-    return this.from === other.from && this.initColor === other.initColor;
+    return this.from === other.from && this.to === other.to && this.initColor === other.initColor;
   }
 
   toDOM() {
     const wrap = document.createElement('button');
     wrap.dataset.from = this.from.toString();
+    wrap.dataset.to = this.to.toString();
     wrap.className = 'cm-color-widget';
     wrap.style.background = this.initColor;
     let child = document.createElement('div');
@@ -261,7 +262,12 @@ class ColorWidget extends WidgetType {
         (newColor) => {
           const event = new CustomEvent('colorChosen', {
             bubbles: true,
-            detail: newColor
+            //  detail: newColor
+            detail: {
+              color: newColor,
+              from: this.from,
+              to: this.to
+            }
           });
           wrap.dispatchEvent(event);
         },
@@ -278,14 +284,15 @@ class ColorWidget extends WidgetType {
 
 class ColorNameWidget extends WidgetType {
   wrap: HTMLElement | null = null;
+
   active: boolean = false;
 
-  constructor(readonly initColor: string, readonly from: number) {
+  constructor(readonly initColor: string, readonly from: number, readonly to: number) {
     super();
   }
 
   eq(other: ColorWidget) {
-    const eq_ = this.from === other.from && this.initColor == other.initColor;
+    const eq_ = this.from === other.from && this.to === other.to && this.initColor === other.initColor;
     if (!eq_) {
       // Hacky way to tell that a widget will be removed
       document.removeEventListener('click', this.clickListener);
@@ -297,6 +304,7 @@ class ColorNameWidget extends WidgetType {
   toDOM() {
     const wrap = document.createElement('button');
     wrap.dataset.from = this.from.toString();
+    wrap.dataset.to = this.to.toString();
     wrap.className = 'cm-color-widget';
     wrap.style.background = this.initColor;
 
@@ -312,7 +320,7 @@ class ColorNameWidget extends WidgetType {
   }
 
   destroy() {
-    let pickerWrap = document.getElementById('color-name-picker');
+    const pickerWrap = document.getElementById('color-name-picker');
     if (pickerWrap) {
       ReactDOM.unmountComponentAtNode(pickerWrap);
     }
@@ -335,9 +343,10 @@ class ColorNameWidget extends WidgetType {
 
       const cb = (newColor: string | null) => {
         if (newColor) {
+          console.log(newColor, this.from, this.to);
           const event = new CustomEvent('colorChosen', {
             bubbles: true,
-            detail: newColor
+            detail: { color: newColor, from: this.from, to: this.to }
           });
           this.wrap!.dispatchEvent(event);
         }
@@ -455,13 +464,14 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
           // TODO move
           if (val.match(colorRegex)) {
             const deco = Decoration.widget({
-              widget: new ColorWidget(val, from),
+              widget: new ColorWidget(val, from, to),
               side: 1
             });
             addWidget(deco, to);
           } else if (Object.keys(colorNames).includes(val.toLowerCase())) {
+            console.log('here', from, to, codeString(view, from, to));
             const deco = Decoration.widget({
-              widget: new ColorNameWidget(val.toLowerCase(), from),
+              widget: new ColorNameWidget(val.toLowerCase(), from, to),
               side: 1
             });
             addWidget(deco, to);
@@ -484,12 +494,9 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
 
             const makeWidget = (color: string, colorName: boolean = false) => {
               const widget = colorName
-                ? new ColorNameWidget(color, argList.parent!.from)
-                : new ColorWidget(color, argList.parent!.from);
-              const deco = Decoration.widget({
-                widget,
-                side: 1
-              });
+                ? new ColorNameWidget(color, from + 1, to - 1)
+                : new ColorWidget(color, from, argList.parent!.to - 1);
+              const deco = Decoration.widget({ widget, side: 1 });
               addWidget(deco, argList.parent!.to - 1);
             };
 
@@ -621,9 +628,11 @@ export const widgetsPlugin = (props: WidgetProps) =>
           }
         },
         colorChosen: (e: any, view: any) => {
-          const from = unwrap(e.target.dataset.from, "Missing 'from' dataset value");
+          const { from, to, color } = e.detail;
+          // const from = unwrap(e.target.dataset.from, "Missing 'from' dataset value");
+          // const to = unwrap(e.target.dataset.to, "Missing 'to' dataset value");
           props.onWidgetChange('color-picked');
-          return changeColor(view, view.posAtDOM(e.target) + 1, e.detail, parseInt(from));
+          return changeColor(view, to, color, parseInt(from));
         }
       }
     }
