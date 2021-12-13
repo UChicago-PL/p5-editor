@@ -11,7 +11,7 @@ import {
   WidgetType
 } from '@codemirror/view';
 import { syntaxTree } from '@codemirror/language';
-import { SyntaxNode } from '@lezer/common';
+import { SyntaxNode, NodeType } from '@lezer/common';
 
 import { isEqual } from 'lodash';
 import { setGlobalTrack } from '../../../../../utils/analytics';
@@ -164,7 +164,6 @@ function changeSlider(view: EditorView, to: number, from: number, value: string)
 }
 
 const COLOR_FUNCS = ['color', 'fill', 'stroke', 'background'];
-
 const SPECIAL_FUNCS = ['slider', 'shapeToolbox'];
 
 function getFuncType(view: EditorView, argList: SyntaxNode): string | undefined {
@@ -232,17 +231,18 @@ function fromRgbaString(s: string): { r: string; g: string; b: string } | null {
 }
 
 class ColorWidget extends WidgetType {
-  constructor(readonly initColor: string, readonly from: number) {
+  constructor(readonly initColor: string, readonly from: number, readonly to: number) {
     super();
   }
 
   eq(other: ColorWidget) {
-    return this.from === other.from && this.initColor === other.initColor;
+    return this.from === other.from && this.to === other.to && this.initColor === other.initColor;
   }
 
   toDOM() {
     const wrap = document.createElement('button');
     wrap.dataset.from = this.from.toString();
+    wrap.dataset.to = this.to.toString();
     wrap.className = 'cm-color-widget';
     wrap.style.background = this.initColor;
     let child = document.createElement('div');
@@ -262,7 +262,11 @@ class ColorWidget extends WidgetType {
         (newColor) => {
           const event = new CustomEvent('colorChosen', {
             bubbles: true,
-            detail: newColor
+            detail: {
+              color: newColor,
+              from: this.from,
+              to: this.to
+            }
           });
           wrap.dispatchEvent(event);
         },
@@ -279,14 +283,15 @@ class ColorWidget extends WidgetType {
 
 class ColorNameWidget extends WidgetType {
   wrap: HTMLElement | null = null;
+
   active: boolean = false;
 
-  constructor(readonly initColor: string, readonly from: number) {
+  constructor(readonly initColor: string, readonly from: number, readonly to: number) {
     super();
   }
 
   eq(other: ColorWidget) {
-    const eq_ = this.from === other.from && this.initColor == other.initColor;
+    const eq_ = this.from === other.from && this.to === other.to && this.initColor === other.initColor;
     if (!eq_) {
       // Hacky way to tell that a widget will be removed
       document.removeEventListener('click', this.clickListener);
@@ -298,6 +303,7 @@ class ColorNameWidget extends WidgetType {
   toDOM() {
     const wrap = document.createElement('button');
     wrap.dataset.from = this.from.toString();
+    wrap.dataset.to = this.to.toString();
     wrap.className = 'cm-color-widget';
     wrap.style.background = this.initColor;
 
@@ -313,7 +319,7 @@ class ColorNameWidget extends WidgetType {
   }
 
   destroy() {
-    let pickerWrap = document.getElementById('color-name-picker');
+    const pickerWrap = document.getElementById('color-name-picker');
     if (pickerWrap) {
       ReactDOM.unmountComponentAtNode(pickerWrap);
     }
@@ -338,7 +344,7 @@ class ColorNameWidget extends WidgetType {
         if (newColor) {
           const event = new CustomEvent('colorChosen', {
             bubbles: true,
-            detail: newColor
+            detail: { color: newColor, from: this.from, to: this.to }
           });
           this.wrap!.dispatchEvent(event);
         }
@@ -431,7 +437,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
     syntaxTree(view.state).iterate({
       from: range.from,
       to: range.to,
-      enter: (type: any, from: any, to: any, get: any) => {
+      enter: (type: NodeType, from: number, to: number, get: () => SyntaxNode) => {
         if (type.name === 'Number' && showWidgets.showNumWidgets && !isArgToSpecialFunc(view, get())) {
           const decoDec = Decoration.widget({
             widget: new NumWidget(false, from),
@@ -452,17 +458,16 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
         ) {
           // + 1 and - 1 to avoid the quotation marks
           const val = codeString(view, from + 1, to - 1);
-
           // TODO move
           if (val.match(colorRegex)) {
             const deco = Decoration.widget({
-              widget: new ColorWidget(val, from),
+              widget: new ColorWidget(val, from, to),
               side: 1
             });
             addWidget(deco, to);
-          } else if (Object.keys(colorNames).includes(val.toLowerCase())) {
+          } else if (colorNames[val.toLowerCase()]) {
             const deco = Decoration.widget({
-              widget: new ColorNameWidget(val.toLowerCase(), from),
+              widget: new ColorNameWidget(val.toLowerCase(), from, to),
               side: 1
             });
             addWidget(deco, to);
@@ -478,34 +483,37 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
           const argList = get();
           const funcType = getFuncType(view, argList);
 
+          // add color picking to special color functions (see list above)
+          // note that this covers some other color cases (see in line comments)
+          // in doing so it makes assemptions about what arguments those functions have
+          // (e.g. each color func has either 1 or 3 arguments) which may be problematic
           if (funcType === 'color' && showWidgets.showColorWidgets) {
             const argListStrings = argList.getChildren('String');
             const argListNumbers = argList.getChildren('Number');
             const argListArrayExp = argList.getChild('ArrayExpression');
-
             const makeWidget = (color: string, colorName: boolean = false) => {
               const widget = colorName
-                ? new ColorNameWidget(color, argList.parent!.from)
-                : new ColorWidget(color, argList.parent!.from);
-              const deco = Decoration.widget({
-                widget,
-                side: 1
-              });
+                ? new ColorNameWidget(color, from + 1, to - 1)
+                : new ColorWidget(color, from + 1, argList.parent!.to - 1);
+              const deco = Decoration.widget({ widget, side: 1 });
               addWidget(deco, argList.parent!.to - 1);
             };
 
             if (argListStrings.length === 1) {
+              // case like background("red")
               // avoid the quotation marks and parentheses (assuming no spaces)
               const val = codeString(view, from + 2, to - 2);
               if (val.match(colorRegex)) {
                 makeWidget(val);
-              } else if (Object.keys(colorNames).includes(val.toLowerCase())) {
+              } else if (colorNames[val.toLowerCase()]) {
                 makeWidget(val.toLowerCase(), true);
               }
               // TODO: handle 4, twice
             } else if (argListNumbers.length === 3) {
+              // case like background([123, 123, 123])
               makeWidget(rgbToString(argListToIntList(view, argListNumbers)));
             } else if (argListArrayExp && argListArrayExp.getChildren('Number').length === 3) {
+              // case like background(123, 123, 123)
               makeWidget(rgbToString(argListToIntList(view, argListArrayExp.getChildren('Number'))));
             }
           } else if (funcType === 'slider') {
@@ -592,6 +600,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
               changeNum(view, isIncrease, parseInt(from));
             }, 100);
 
+            // TODO --- AM says: i think this might be a listener leak
             document.body.addEventListener('mouseup', () => clearInterval(interval));
 
             return true;
@@ -622,9 +631,9 @@ export const widgetsPlugin = (props: WidgetProps) =>
           }
         },
         colorChosen: (e: any, view: any) => {
-          const from = unwrap(e.target.dataset.from, "Missing 'from' dataset value");
+          const { from, to, color } = e.detail;
           props.onWidgetChange('color-picked');
-          return changeColor(view, view.posAtDOM(e.target) + 1, e.detail, parseInt(from));
+          return changeColor(view, to, color, parseInt(from));
         }
       }
     }

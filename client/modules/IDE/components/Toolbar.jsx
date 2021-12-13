@@ -12,7 +12,7 @@ import { wrapEvent, trackEvent, setGlobalTrack } from '../../../utils/analytics.
 import PlayIcon from '../../../images/play.svg';
 import StopIcon from '../../../images/stop.svg';
 import AutorefreshIcon from '../../../images/autorefresh.svg';
-import PreferencesIcon from '../../../images/preferences.svg';
+// import PreferencesIcon from '../../../images/preferences.svg';
 import EditProjectNameIcon from '../../../images/pencil.svg';
 
 class Toolbar extends React.Component {

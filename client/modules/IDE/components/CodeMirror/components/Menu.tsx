@@ -15,7 +15,7 @@ export default function Menu({ dispatch, state }: Props) {
       <button onClick={() => dispatch({ type: 'toggleNumWidgets' })}>
         {state.showNumWidgets ? 'Hide' : 'Show'} Number Pickers
       </button>
-      {/* <button onClick={() => dispatch({ type: 'toggleBoolWidgets' })}>Toggle Bool</button> */}
+      <button onClick={() => dispatch({ type: 'toggleBoolWidgets' })}>Toggle Bool</button>
     </div>
   );
 }

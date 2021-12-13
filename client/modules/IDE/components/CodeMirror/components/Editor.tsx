@@ -47,10 +47,12 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
     const localView = new EditorView({
       state: EditorState.create({
         extensions: [
-          // @ts-ignore
-          keymap.of([indentWithTab, ...externalProps.keyBindings]),
+          keymap.of(externalProps.keyBindings),
           basicSetup,
           langPlugin(externalProps.lang),
+
+          // @ts-ignore
+          keymap.of([indentWithTab]),
           cmStatePlugin,
           widgetsPlugin(widgetProps),
           ...keywordPlugin(externalProps.keywords),
