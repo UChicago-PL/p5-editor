@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 
 import { basicSetup, EditorState } from '@codemirror/basic-setup';
 import { EditorView, KeyBinding, keymap, ViewUpdate } from '@codemirror/view';
-import { Extension } from '@codemirror/state';
+import { Extension, Compartment } from '@codemirror/state';
 import { indentWithTab } from '@codemirror/commands';
+import { javascript } from '@codemirror/lang-javascript';
 import { langPlugin, setLang } from '../state/lang';
 
 import { widgetsPlugin } from '../state/widgets';
@@ -44,29 +45,30 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
   useEffect(() => {
     const { shapeToolboxCb, onWidgetChange } = externalProps;
     const widgetProps = { shapeToolboxCb, onWidgetChange };
-    const localView = new EditorView({
-      state: EditorState.create({
-        extensions: [
-          keymap.of(externalProps.keyBindings),
-          basicSetup,
-          // @ts-ignore
-          keymap.of([indentWithTab]),
-          // this approach may not yield appropriate highlighting for non-js, bc this is only called on start up
-          langPlugin(externalProps.lang),
-          cmStatePlugin,
-          widgetsPlugin(widgetProps),
-          ...keywordPlugin(externalProps.keywords),
-          EditorView.updateListener.of((v: ViewUpdate) => {
-            if (v.docChanged) {
-              externalProps.onChange(v.state.doc.toString());
-            }
-          }),
-          ...externalProps.extensions
-        ],
-        doc: externalProps.code
-      }),
-      parent: cmParent.current!
+    const jsExtension = javascript();
+    console.log('what', jsExtension);
+    const editorState = EditorState.create({
+      extensions: [
+        keymap.of(externalProps.keyBindings),
+        basicSetup,
+        langPlugin(externalProps.lang),
+
+        // @ts-ignore
+        keymap.of([indentWithTab]),
+        cmStatePlugin,
+        widgetsPlugin(widgetProps),
+        ...keywordPlugin(externalProps.keywords),
+        EditorView.updateListener.of((v: ViewUpdate) => {
+          if (v.docChanged) {
+            externalProps.onChange(v.state.doc.toString());
+          }
+        }),
+        ...externalProps.extensions
+      ],
+      doc: externalProps.code
     });
+    console.log(editorState);
+    const localView = new EditorView({ state: editorState, parent: cmParent.current! });
     setView(localView);
     externalProps.provideView(localView);
   }, []);

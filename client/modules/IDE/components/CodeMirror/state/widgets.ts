@@ -11,7 +11,7 @@ import {
   WidgetType
 } from '@codemirror/view';
 import { syntaxTree } from '@codemirror/language';
-import { SyntaxNode } from '@lezer/common';
+import { SyntaxNode, NodeType } from '@lezer/common';
 
 import { isEqual } from 'lodash';
 import { setGlobalTrack } from '../../../../../utils/analytics';
@@ -293,7 +293,8 @@ class ColorNameWidget extends WidgetType {
   }
 
   eq(other: ColorWidget) {
-    const eq_ = this.from === other.from && this.to === other.to && this.initColor === other.initColor;
+    // const eq_ = this.from === other.from && this.to === other.to && this.initColor === other.initColor;
+    const eq_ = false;
     if (!eq_) {
       // Hacky way to tell that a widget will be removed
       document.removeEventListener('click', this.clickListener);
@@ -439,7 +440,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
     syntaxTree(view.state).iterate({
       from,
       to,
-      enter: (type: any, from: any, to: any, get: any) => {
+      enter: (type: NodeType, from: number, to: number, get: () => SyntaxNode) => {
         if (type.name === 'Number' && showWidgets.showNumWidgets && !isArgToSpecialFunc(view, get())) {
           const decoDec = Decoration.widget({
             widget: new NumWidget(false, from),
@@ -518,6 +519,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
           // }
           // } else
           if (funcType === 'slider') {
+            console.log('sldier');
             const argListNumbers = argList.getChildren('Number');
             if (argListNumbers.length === 3 || argListNumbers.length === 4) {
               const [min, max, value, step = 1] = argListToIntList(view, argListNumbers);
@@ -529,6 +531,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
               usingASliderWidget = true;
             }
           } else if (funcType === 'shapeToolbox') {
+            console.log('shape toolbox');
             const { from, to } = argList.parent!;
             const loc = [from, to] as [number, number];
             let cb = () => shapeToolboxCb(loc, '');
@@ -601,6 +604,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
               changeNum(view, isIncrease, parseInt(from));
             }, 100);
 
+            // TODO --- AM says: i think this might be a listener leak
             document.body.addEventListener('mouseup', () => clearInterval(interval));
 
             return true;

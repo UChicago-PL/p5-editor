@@ -30,7 +30,7 @@ const initialState = {
 };
 
 const ide = (state = initialState, action, parentState) => {
-  console.log(action.type);
+  // console.log(action.type);
   switch (action.type) {
     case ActionTypes.START_SKETCH:
       return Object.assign({}, state, { isPlaying: true });
