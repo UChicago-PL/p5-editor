@@ -61,7 +61,6 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
               externalProps.onChange(v.state.doc.toString());
             }
           }),
-
           ...externalProps.extensions
         ],
         doc: externalProps.code

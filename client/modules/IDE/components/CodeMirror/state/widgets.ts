@@ -629,8 +629,6 @@ export const widgetsPlugin = (props: WidgetProps) =>
         },
         colorChosen: (e: any, view: any) => {
           const { from, to, color } = e.detail;
-          // const from = unwrap(e.target.dataset.from, "Missing 'from' dataset value");
-          // const to = unwrap(e.target.dataset.to, "Missing 'to' dataset value");
           props.onWidgetChange('color-picked');
           return changeColor(view, to, color, parseInt(from));
         }
