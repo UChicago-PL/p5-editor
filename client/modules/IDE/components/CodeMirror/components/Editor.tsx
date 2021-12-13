@@ -56,7 +56,6 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
           // @ts-ignore
           keymap.of([indentWithTab]),
 
-          autocomplete(externalProps.keywords),
           cmStatePlugin,
           widgetsPlugin(widgetProps),
           ...keywordPlugin(externalProps.keywords),
