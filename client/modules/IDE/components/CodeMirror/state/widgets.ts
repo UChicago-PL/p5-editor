@@ -263,7 +263,6 @@ class ColorWidget extends WidgetType {
         (newColor) => {
           const event = new CustomEvent('colorChosen', {
             bubbles: true,
-            //  detail: newColor
             detail: {
               color: newColor,
               from: this.from,
@@ -293,8 +292,7 @@ class ColorNameWidget extends WidgetType {
   }
 
   eq(other: ColorWidget) {
-    // const eq_ = this.from === other.from && this.to === other.to && this.initColor === other.initColor;
-    const eq_ = false;
+    const eq_ = this.from === other.from && this.to === other.to && this.initColor === other.initColor;
     if (!eq_) {
       // Hacky way to tell that a widget will be removed
       document.removeEventListener('click', this.clickListener);

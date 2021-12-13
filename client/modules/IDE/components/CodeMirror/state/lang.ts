@@ -9,7 +9,6 @@ import { EditorView } from '@codemirror/view';
 const languageConf = new Compartment();
 
 function langToPlugin(mode: string) {
-  console.log('lang?', mode);
   switch (mode) {
     case 'javascript':
       return javascript();
@@ -25,7 +24,6 @@ function langToPlugin(mode: string) {
 }
 
 export function setLang(view: EditorView, lang: string) {
-  console.log('here??');
   const effect = languageConf.reconfigure(langToPlugin(lang));
   view.dispatch({ effects: effect });
 }
