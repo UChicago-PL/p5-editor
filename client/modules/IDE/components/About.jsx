@@ -5,16 +5,12 @@ import Logo from '../../../components/Logo';
 // import PlayIcon from '../../../images/play.svg';
 import AsteriskIcon from '../../../images/p5-asterisk.svg';
 
-function About(props) {
+function About() {
   const { t } = useTranslation();
   return (
     <div className="about__content">
       <Helmet>
-        <title>
-          {' '}
-          {t('About.TitleHelmet')}
-          {' '}
-        </title>
+        <title> {t('About.TitleHelmet')} </title>
       </Helmet>
       <div className="about__content-column">
         <Logo />

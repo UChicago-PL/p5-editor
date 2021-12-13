@@ -100,7 +100,7 @@ export function getGHRepos() {
 }
 
 export function submitToGH(formProps) {
-  return (dispatch) => apiClient.post('/submit-gh-repo', formProps);
+  return () => apiClient.post('/submit-gh-repo', formProps);
 }
 
 export function getUser() {

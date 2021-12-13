@@ -1,8 +1,6 @@
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line
 import React from 'react';
 import styled from 'styled-components';
-// eslint-disable-next-line no-unused-vars
-import PropTypes from 'prop-types';
 import { remSize } from '../../../theme';
 
 const ResponsiveForm = styled.div`

@@ -38,7 +38,7 @@ export function apiCreateProject(req, res) {
   }
 
   // TODO: Error handling to match spec
-  function sendFailure(err) {
+  function sendFailure() {
     res.status(500).end();
   }
 

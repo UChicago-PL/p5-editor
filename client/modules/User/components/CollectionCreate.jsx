@@ -109,7 +109,7 @@ CollectionCreate.propTypes = {
   t: PropTypes.func.isRequired
 };
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   return {
     user: state.user
   };

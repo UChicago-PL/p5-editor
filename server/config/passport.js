@@ -71,7 +71,7 @@ passport.use(
             req.user.github = profile.username;
             req.user.githubToken = accessToken;
             req.user.verified = User.EmailConfirmation.Verified;
-            req.user.save((saveErr) => done(null, req.user));
+            req.user.save(() => done(null, req.user));
             return;
           }
           // otherwise, the user does not exist in the database. Attempt to find the user
@@ -84,7 +84,7 @@ passport.use(
               existingEmailUser.githubToken = accessToken;
               existingEmailUser.name = existingEmailUser.name || profile.displayName;
               existingEmailUser.verified = User.EmailConfirmation.Verified;
-              existingEmailUser.save((saveErr) => done(null, existingEmailUser));
+              existingEmailUser.save(() => done(null, existingEmailUser));
               return;
             }
             User.findByUsername(

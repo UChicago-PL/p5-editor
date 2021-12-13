@@ -39,7 +39,7 @@ class CollectionList extends React.Component {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (prevProps.loading === true && this.props.loading === false) {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({

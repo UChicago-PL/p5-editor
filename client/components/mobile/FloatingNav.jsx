@@ -22,8 +22,8 @@ const FloatingContainer = styled.div`
 
 const FloatingNav = ({ items }) => (
   <FloatingContainer>
-    {items.map(({ icon, onPress }) => (
-      <IconButton onClick={onPress} icon={icon} />
+    {items.map(({ icon, onPress }, idx) => (
+      <IconButton onClick={onPress} icon={icon} key={idx} />
     ))}
   </FloatingContainer>
 );

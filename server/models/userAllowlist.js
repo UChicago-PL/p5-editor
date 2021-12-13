@@ -23,7 +23,7 @@ const UserAllowlist = mongoose.model('UserAllowlist', userAllowlistSchema);
 const users = ['mcnuttandrew', 'mcnuttandrew-test', 'brianhempel', 'ravichugh'];
 
 users.forEach((user) => {
-  UserAllowlist.create({ github: user, type: 'user', studyParticipant: true, edition: 'csp21' }, (e) => {
+  UserAllowlist.create({ github: user, type: 'user', studyParticipant: true, edition: 'csp21' }, () => {
     // there is a uniqueness constraint on usernames, so no duplicates will be created
     // ignore the uniqueness error
   });

@@ -53,7 +53,6 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
           basicSetup,
           langPlugin(externalProps.lang),
 
-          // @ts-ignore
           keymap.of([indentWithTab]),
 
           cmStatePlugin,

@@ -29,7 +29,7 @@ const initialState = {
   isShowing: false
 };
 
-const ide = (state = initialState, action, parentState) => {
+const ide = (state = initialState, action) => {
   console.log(action.type);
   switch (action.type) {
     case ActionTypes.START_SKETCH:

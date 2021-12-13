@@ -17,15 +17,16 @@ const client = s3.createClient({
     accessKeyId: `${process.env.AWS_ACCESS_KEY}`,
     secretAccessKey: `${process.env.AWS_SECRET_KEY}`,
     region: `${process.env.AWS_REGION}`
-  },
+  }
 });
 
-const s3Bucket = process.env.S3_BUCKET_URL_BASE ||
+const s3Bucket =
+  process.env.S3_BUCKET_URL_BASE ||
   `https://s3-${process.env.AWS_REGION}.amazonaws.com/${process.env.S3_BUCKET}/`;
 
 function getExtension(filename) {
   const i = filename.lastIndexOf('.');
-  return (i < 0) ? '' : filename.substr(i);
+  return i < 0 ? '' : filename.substr(i);
 }
 
 export function getObjectKey(url) {
@@ -39,13 +40,15 @@ export function getObjectKey(url) {
 }
 
 export function deleteObjectsFromS3(keyList, callback) {
-  const keys = keyList.map((key) => { return { Key: key }; }); // eslint-disable-line
+  const keys = keyList.map((key) => {
+    return { Key: key };
+  }); // eslint-disable-line
   if (keyList.length > 0) {
     const params = {
       Bucket: `${process.env.S3_BUCKET}`,
       Delete: {
-        Objects: keys,
-      },
+        Objects: keys
+      }
     };
     const del = client.deleteObjects(params);
     del.on('end', () => {
@@ -117,7 +120,7 @@ export function copyObjectInS3(url, userId) {
       copy.on('err', (err) => {
         reject(err);
       });
-      copy.on('end', (data) => {
+      copy.on('end', () => {
         resolve(`${s3Bucket}${userId}/${newFilename}`);
       });
     });
@@ -155,7 +158,7 @@ export function moveObjectToUserInS3(url, userId) {
       move.on('err', (err) => {
         reject(err);
       });
-      move.on('end', (data) => {
+      move.on('end', () => {
         resolve(`${s3Bucket}${userId}/${newFilename}`);
       });
     });
@@ -171,48 +174,52 @@ export function listObjectsInS3ForUser(userId) {
         Prefix: `${userId}/`
       }
     };
-    client.listObjects(params)
+    client
+      .listObjects(params)
       .on('data', (data) => {
-        assets = assets.concat(data.Contents.map(object => ({ key: object.Key, size: object.Size })));
+        assets = assets.concat(data.Contents.map((object) => ({ key: object.Key, size: object.Size })));
       })
       .on('end', () => {
         resolve();
       });
-  }).then(() => getProjectsForUserId(userId)).then((projects) => {
-    const projectAssets = [];
-    let totalSize = 0;
-    assets.forEach((asset) => {
-      const name = asset.key.split('/').pop();
-      const foundAsset = {
-        key: asset.key,
-        name,
-        size: asset.size,
-        url: `${process.env.S3_BUCKET_URL_BASE}${asset.key}`
-      };
-      totalSize += asset.size;
-      projects.some((project) => {
-        let found = false;
-        project.files.some((file) => {
-          if (!file.url) return false;
-          if (file.url.includes(asset.key)) {
-            found = true;
-            foundAsset.name = file.name;
-            foundAsset.sketchName = project.name;
-            foundAsset.sketchId = project.id;
-            foundAsset.url = file.url;
-            return true;
-          }
-          return false;
+  })
+    .then(() => getProjectsForUserId(userId))
+    .then((projects) => {
+      const projectAssets = [];
+      let totalSize = 0;
+      assets.forEach((asset) => {
+        const name = asset.key.split('/').pop();
+        const foundAsset = {
+          key: asset.key,
+          name,
+          size: asset.size,
+          url: `${process.env.S3_BUCKET_URL_BASE}${asset.key}`
+        };
+        totalSize += asset.size;
+        projects.some((project) => {
+          let found = false;
+          project.files.some((file) => {
+            if (!file.url) return false;
+            if (file.url.includes(asset.key)) {
+              found = true;
+              foundAsset.name = file.name;
+              foundAsset.sketchName = project.name;
+              foundAsset.sketchId = project.id;
+              foundAsset.url = file.url;
+              return true;
+            }
+            return false;
+          });
+          return found;
         });
-        return found;
+        projectAssets.push(foundAsset);
       });
-      projectAssets.push(foundAsset);
+      return Promise.resolve({ assets: projectAssets, totalSize });
+    })
+    .catch((err) => {
+      console.log('got an error');
+      console.log(err);
     });
-    return Promise.resolve({ assets: projectAssets, totalSize });
-  }).catch((err) => {
-    console.log('got an error');
-    console.log(err);
-  });
 }
 
 export function listObjectsInS3ForUserRequestHandler(req, res) {

@@ -14,6 +14,7 @@ export const keywordPlugin = (keywords: Keywords) =>
     ViewPlugin.fromClass(
       class {
         decorations: DecorationSet;
+
         matchDecorator: MatchDecorator;
 
         constructor(view: EditorView) {
@@ -25,8 +26,9 @@ export const keywordPlugin = (keywords: Keywords) =>
         }
 
         update(update: ViewUpdate) {
-          if (update.docChanged || update.viewportChanged)
+          if (update.docChanged || update.viewportChanged) {
             this.decorations = this.matchDecorator.updateDeco(update, this.decorations);
+          }
         }
       },
       {

@@ -39,7 +39,7 @@ export function deleteAssetRequest(assetKey) {
   return (dispatch) => {
     apiClient
       .delete(`/S3/${assetKey}`)
-      .then((response) => {
+      .then(() => {
         dispatch(deleteAsset(assetKey));
       })
       .catch(() => {

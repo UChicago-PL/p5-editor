@@ -29,7 +29,7 @@ Tab.propTypes = {
   to: PropTypes.string.isRequired
 };
 
-const DashboardTabSwitcher = ({ currentTab, isOwner, username, t }) => (
+const DashboardTabSwitcher = ({ currentTab, username, t }) => (
   <ul className="dashboard-header__switcher">
     <div className="dashboard-header__tabs">
       <Tab to={`/${username}/sketches`} isSelected={currentTab === TabKey.sketches}>

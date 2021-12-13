@@ -7,6 +7,11 @@ const appWidgetState: { [x: string]: boolean } = {
   usingEditorSlider: false
 };
 
+interface EventConfig {
+  eventName: string;
+  context?: string[];
+}
+
 export const setGlobalTrack = (key: string, value: boolean) => {
   appWidgetState[key] = value;
 };
@@ -30,11 +35,6 @@ const prepName = (eventConfig: EventConfig) =>
     ? `${eventConfig.context.join('|')}|${appSettingsToIndex()}`
     : `${appSettingsToIndex()}`;
 
-interface EventConfig {
-  eventName: string;
-  context?: string[];
-}
-
 export function wrapEvent(wrapped: (x: any) => any, eventConfig: EventConfig) {
   if (!eventConfig.eventName) {
     console.log('invalid log event', eventConfig);
@@ -42,6 +42,7 @@ export function wrapEvent(wrapped: (x: any) => any, eventConfig: EventConfig) {
   }
 
   return function (e: any) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     umami.trackEvent(prepName(eventConfig), eventConfig.eventName);
     wrapped(e);
@@ -54,6 +55,7 @@ export function trackEvent(eventConfig: EventConfig) {
     console.log('invalid log event', eventConfig);
     return;
   }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   umami.trackEvent(prepName(eventConfig), eventConfig.eventName);
 }
@@ -124,6 +126,6 @@ const pairs = [
 ];
 
 export const simplep5Mesg = (msg: string) => {
-  const result = pairs.find(([comparator, val]) => msg.includes(comparator));
+  const result = pairs.find(([comparator]) => msg.includes(comparator));
   return result ? result[1] : undefined;
 };
