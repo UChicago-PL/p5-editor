@@ -27,7 +27,8 @@ const appSettingsToIndex = () => {
   ]
     .map((v) => (v ? 1 : 0))
     .join('');
-  return `${parseInt(binRep, 2)}`;
+  // return `${parseInt(binRep, 2)}`;
+  return binRep;
 };
 
 const prepName = (eventConfig: EventConfig) =>
