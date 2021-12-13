@@ -1,4 +1,3 @@
-import '@simonwep/pickr/dist/themes/classic.min.css';
 import Pickr from '@simonwep/pickr';
 
 export default function createColorPicker(
