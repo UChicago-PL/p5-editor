@@ -150,15 +150,16 @@ class SliderWidget extends WidgetType {
   }
 }
 
-function changeSlider(view: EditorView, pos: number, from: number, value: string) {
-  const regex = /(?<=Editor\.slider\(\s*\d+\s*,\s*\d+\s*,\s*)\d+/;
-  view.dispatch({
-    changes: {
-      from: from,
-      to: pos,
-      insert: view.state.doc.sliceString(from, pos).replace(regex, value)
-    }
-  });
+// OLD REGEX used negative look behind which is not supported on safari
+// const regex = /(?<=Editor\.slider\(\s*\d+\s*,\s*\d+\s*,\s*)\d+/;
+// this dumber strategy does the right thing, but is kinda stupid, shruggie
+function changeSlider(view: EditorView, to: number, from: number, value: string) {
+  const sections = view.state.doc.sliceString(from, to).split(',');
+  if (sections.length !== 3) {
+    return false;
+  }
+  const insert = [sections[0], sections[1], sections[2].replace(/\d+/, value)].join(',');
+  view.dispatch({ changes: { from, to, insert } });
   return true;
 }
 
@@ -432,10 +433,10 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
   };
 
   let usingASliderWidget = false;
-  for (const { from, to } of view.visibleRanges) {
+  for (const range of view.visibleRanges) {
     syntaxTree(view.state).iterate({
-      from,
-      to,
+      from: range.from,
+      to: range.to,
       enter: (type: NodeType, from: number, to: number, get: () => SyntaxNode) => {
         if (type.name === 'Number' && showWidgets.showNumWidgets && !isArgToSpecialFunc(view, get())) {
           const decoDec = Decoration.widget({
