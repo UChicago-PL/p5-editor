@@ -23,6 +23,7 @@ import serverRoutes from './routes/server.routes';
 import embedRoutes from './routes/embed.routes';
 import assetRoutes from './routes/asset.routes';
 import passportRoutes from './routes/passport.routes';
+import linterRoutes from './routes/linter.routes';
 import { requestsOfTypeJSON } from './utils/requestsOfType';
 
 import { renderIndex } from './views/index';
@@ -116,6 +117,7 @@ app.use('/editor', requestsOfTypeJSON(), projects);
 app.use('/editor', requestsOfTypeJSON(), aws);
 app.use('/editor', requestsOfTypeJSON(), collections);
 app.use('/editor', requestsOfTypeJSON(), submissions);
+app.use('/', linterRoutes);
 
 // this is supposed to be TEMPORARY -- until i figure out
 // isomorphic rendering
