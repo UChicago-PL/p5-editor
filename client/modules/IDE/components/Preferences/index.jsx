@@ -9,7 +9,7 @@ import { withTranslation } from 'react-i18next';
 
 import PlusIcon from '../../../../images/plus.svg';
 import MinusIcon from '../../../../images/minus.svg';
-import beepUrl from '../../../../sounds/audioAlert.mp3';
+// import beepUrl from '../../../../sounds/audioAlert.mp3';
 
 class Preferences extends React.Component {
   constructor(props) {
@@ -83,7 +83,7 @@ class Preferences extends React.Component {
   }
 
   render() {
-    const beep = new Audio(beepUrl);
+    // const beep = new Audio(beepUrl);
 
     return (
       <section className="preferences">
