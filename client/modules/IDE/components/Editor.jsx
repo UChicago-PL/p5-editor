@@ -381,6 +381,12 @@ class Editor extends React.Component {
               provideView={(view) => (this.cmView = view)}
               keyBindings={this.keyBindings}
               keywords={KEYWORDS}
+              configOptions={{
+                autocloseBracketsQuotes: this.props.autocloseBracketsQuotes,
+                fontSize: this.props.fontSize,
+                linewrap: this.props.linewrap,
+                theme: this.props.theme
+              }}
               extensions={[
                 lintGutter(),
                 linter((view) => {
@@ -452,10 +458,10 @@ class Editor extends React.Component {
 }
 
 Editor.propTypes = {
-  // autocloseBracketsQuotes: PropTypes.bool.isRequired,
+  autocloseBracketsQuotes: PropTypes.bool.isRequired,
   // lineNumbers: PropTypes.bool.isRequired,
   // lintWarning: PropTypes.bool.isRequired,
-  // linewrap: PropTypes.bool.isRequired,
+  linewrap: PropTypes.bool.isRequired,
   lintMessages: PropTypes.arrayOf(
     PropTypes.shape({
       severity: PropTypes.string.isRequired,
@@ -473,7 +479,7 @@ Editor.propTypes = {
   // updateLintMessage: PropTypes.func.isRequired,
   // clearLintMessage: PropTypes.func.isRequired,
   updateFileContent: PropTypes.func.isRequired,
-  // fontSize: PropTypes.number.isRequired,
+  fontSize: PropTypes.number.isRequired,
   file: PropTypes.shape({
     name: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
@@ -488,7 +494,7 @@ Editor.propTypes = {
   startAutoRefreshSketch: PropTypes.func.isRequired,
   autorefresh: PropTypes.bool.isRequired,
   isPlaying: PropTypes.bool.isRequired,
-  // theme: PropTypes.string.isRequired,
+  theme: PropTypes.string.isRequired,
   unsavedChanges: PropTypes.bool.isRequired,
   projectSavedTime: PropTypes.string.isRequired,
   // files: PropTypes.arrayOf(

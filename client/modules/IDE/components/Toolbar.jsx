@@ -12,7 +12,7 @@ import { wrapEvent, trackEvent, setGlobalTrack } from '../../../utils/analytics.
 import PlayIcon from '../../../images/play.svg';
 import StopIcon from '../../../images/stop.svg';
 import AutorefreshIcon from '../../../images/autorefresh.svg';
-// import PreferencesIcon from '../../../images/preferences.svg';
+import PreferencesIcon from '../../../images/preferences.svg';
 import EditProjectNameIcon from '../../../images/pencil.svg';
 
 class Toolbar extends React.Component {
@@ -80,10 +80,10 @@ class Toolbar extends React.Component {
       'toolbar__autorefresh-button': true,
       'toolbar__autorefresh-button--selected': this.props.autorefresh
     });
-    // const preferencesButtonClass = classNames({
-    //   'toolbar__preferences-button': true,
-    //   'toolbar__preferences-button--selected': this.props.preferencesIsVisible
-    // });
+    const preferencesButtonClass = classNames({
+      'toolbar__preferences-button': true,
+      'toolbar__preferences-button--selected': this.props.preferencesIsVisible
+    });
     const nameContainerClass = classNames({
       'toolbar__project-name-container': true,
       'toolbar__project-name-container--editing': this.props.project.isEditingName
@@ -214,13 +214,13 @@ class Toolbar extends React.Component {
           >
             SUBMIT
           </button>
-          {/* <button
+          <button
             className={preferencesButtonClass}
             onClick={this.props.openPreferences}
             aria-label={this.props.t('Toolbar.OpenPreferencesARIA')}
           >
             <PreferencesIcon focusable="false" aria-hidden="true" />
-          </button> */}
+          </button>
         </div>
       </div>
     );
@@ -241,10 +241,10 @@ Toolbar.propTypes = {
   hideEditProjectName: PropTypes.func.isRequired,
   infiniteLoop: PropTypes.bool.isRequired,
   isPlaying: PropTypes.bool.isRequired,
-  // openPreferences: PropTypes.func.isRequired,
+  openPreferences: PropTypes.func.isRequired,
   openSubmitModal: PropTypes.func.isRequired,
   owner: PropTypes.shape({ username: PropTypes.string }),
-  // preferencesIsVisible: PropTypes.bool.isRequired,
+  preferencesIsVisible: PropTypes.bool.isRequired,
   project: PropTypes.shape({
     name: PropTypes.string.isRequired,
     isEditingName: PropTypes.bool,
