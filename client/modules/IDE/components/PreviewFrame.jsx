@@ -119,8 +119,7 @@ class PreviewFrame extends React.Component {
       if (decodedMessages.some(msgHasP5msg)) {
         this.hasErrored = true;
         decodedMessages.filter(msgHasP5msg).forEach((msg) => {
-          const content = msg.data.length ? msg.data[0] : '';
-          const msgType = simplep5Mesg(content);
+          const msgType = simplep5Mesg(msg.data.length ? msg.data[0] : '');
           if (msgType) {
             trackEvent({ eventName: `p5:${msgType}` });
           }

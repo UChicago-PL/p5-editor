@@ -66,6 +66,7 @@ export function trackEvent(eventConfig: EventConfig) {
  * used by the function below to try to identify one based on the p5
  */
 const pairs = [
+  ['is not a valid color representation', 'colorRepresentation'],
   ['The media that tried to play', 'autoplay'],
   ["Please correct it if it's not intentional.", 'checkUserDefinedFns'],
   ['It looks like there was a problem loading your file.', 'fileLoadError:bytes'],
@@ -112,7 +113,6 @@ const pairs = [
     'typeNotfuncObj'
   ],
 
-  ['If not stated otherwise, it might be an issue with the arguments passed to', 'libraryError'],
   ['Please correct it to', 'misspelling'],
   ['You may have meant one of the following:', 'misspelling_plural'],
   [
@@ -123,7 +123,8 @@ const pairs = [
   [
     'Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function.',
     'wrongPreload'
-  ]
+  ],
+  ['If not stated otherwise, it might be an issue with the arguments passed to', 'libraryError']
 ];
 
 export const simplep5Mesg = (msg: string) => {

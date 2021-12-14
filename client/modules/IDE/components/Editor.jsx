@@ -408,7 +408,9 @@ class Editor extends React.Component {
                       to: toOffset(e.line, e.character + 1)
                     }));
                   } else if (localLanguage === 'htmlmixed') {
-                    msgs = HTMLHint.verify(code, htmlHintConfig).map((e) => {
+                    // msgs = HTMLHint.verify(code, htmlHintConfig).
+
+                    msgs = HTMLHint.verify(code).map((e) => {
                       return {
                         message: e.message,
                         severity: e.type,
@@ -426,7 +428,7 @@ class Editor extends React.Component {
                       };
                     });
                   }
-
+                  console.log('getting linty', msgs);
                   // is this too much
                   const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
                   const langShort = langToShort[localLanguage] || '';

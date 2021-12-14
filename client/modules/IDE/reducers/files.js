@@ -12,6 +12,7 @@ function draw() {
 const defaultHTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>Sketch</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.3.1/p5.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
     <meta charset="utf-8" />
