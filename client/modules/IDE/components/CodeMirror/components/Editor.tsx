@@ -77,6 +77,7 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
     externalProps.provideView(localView);
   }, []);
 
+  // Control the widget configs
   useEffect(() => {
     if (view) {
       view.dispatch({
@@ -90,6 +91,7 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
     }
   }, [state.showBoolWidgets, state.showColorWidgets, state.showNumWidgets, externalProps.lang]);
 
+  // Control the current code
   useEffect(() => {
     if (view && view.state.doc.toString() !== externalProps.code) {
       const currentPos = view.state.selection.main.head;
@@ -108,6 +110,7 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
     }
   }, [externalProps.code]);
 
+  // Control the language config
   useEffect(() => {
     if (view && state.lang !== externalProps.lang) {
       dispatch({ type: 'setLang', value: externalProps.lang });
@@ -116,9 +119,9 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
     }
   }, [externalProps.lang]);
 
+  // Control the theme config
   useEffect(() => {
     const externalTheme = externalProps.configOptions;
-    // if (view && JSON.stringify(state.theme) !== JSON.stringify(externalTheme)) {
     if (view) {
       dispatch({
         type: 'setTheme',
@@ -129,7 +132,7 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
         effects: [setCurrentTheme.of(externalProps.configOptions)]
       });
     }
-  }, [externalProps.configOptions]);
+  }, [JSON.stringify(externalProps.configOptions)]);
 
   return <div className="codemirror__editor" ref={cmParent} />;
 }

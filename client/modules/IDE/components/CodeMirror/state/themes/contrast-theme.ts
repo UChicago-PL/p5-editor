@@ -1,28 +1,13 @@
+// FORKED FROM https://github.com/codemirror/theme-one-dark/blob/main/src/one-dark.ts
+
 import { EditorView } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { HighlightStyle, tags as t } from '@codemirror/highlight';
 
-// Using https://github.com/one-dark/vscode-one-dark-theme/ as reference for the colors
-
-// const chalky = '#e5c07b',
-//   coral = '#e06c75',
-//   cyan = '#56b6c2',
-//   invalid = '#ffffff',
-//   ivory = '#abb2bf',
-//   stone = '#7d8799', // Brightened compared to original to increase contrast
-//   malibu = '#61afef',
-//   sage = '#98c379',
-//   whiskey = '#d19a66',
-//   violet = '#c678dd',
-//   darkBackground = '#21252b',
-//   highlightBackground = '#2c313a',
-//   background = '#282c34',
-//   tooltipBackground = '#353a42',
-//   selection = '#3E4451',
-//   cursor = '#528bff';
-
+// these colors are copied from the _p5-contrast-codemirror-theme
+// i did my best to replicate the theme, but it's not a perfect translation
 const black = '#1C1C1C';
-const gray = '#A0A0A0';
+// const gray = '#A0A0A0';
 const white = '#FDFDFD';
 const darkgray = '#333333';
 const lightgray = '#C1C1C1';
@@ -32,12 +17,12 @@ const yellow = '#F5DC23';
 const orange = '#FFA95D';
 const pink = '#FFA9D9';
 
-const contrastGutter = '#454545';
+// const contrastGutter = '#454545';
 const contrastNumber = '#FDFDFD';
 const contrastSelected = 'rgba(45, 123, 182, 25)';
 const contrastActiveline = '#999999';
 
-/// The editor theme styles for One Dark.
+/// The editor theme styles for Contrast
 export const contrastTheme = EditorView.theme(
   {
     '&': {
@@ -66,7 +51,7 @@ export const contrastTheme = EditorView.theme(
       backgroundColor: '#6199ff2f'
     },
 
-    '.cm-activeLine': { backgroundColor: darkgray }, // might be wrong
+    '.cm-activeLine': { backgroundColor: darkgray },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
 
     '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
@@ -114,7 +99,6 @@ export const contrastTheme = EditorView.theme(
 );
 
 /// The highlighting style for code in the reconstructed contrast theme.
-// missing builtin?
 export const contrastHighlightStyle = HighlightStyle.define([
   { tag: t.keyword, color: yellow },
   { tag: [t.name, t.deleted, t.character, t.propertyName, t.macroName], color: white },
@@ -143,6 +127,4 @@ export const contrastHighlightStyle = HighlightStyle.define([
   { tag: [t.color, t.constant(t.name), t.standard(t.name)], color: lightgray }
 ]);
 
-/// Extension to enable the One Dark theme (both the editor theme and
-/// the highlight style).
 export const contrast: Extension = [contrastTheme, contrastHighlightStyle];

@@ -20,8 +20,6 @@ const fontSizeConfig = new Compartment();
 const themeConfig = new Compartment();
 const syntaxThemeConfig = new Compartment();
 
-// EditorView.defaultLineHeight
-
 const createFontSizeTheme = (fontSize) =>
   EditorView.theme({
     '&': {
@@ -51,7 +49,6 @@ const getSyntaxTheme = (themeName: string) => {
   }
 };
 
-// do i also need to set the highlight for theme?
 export function setTheme(view: EditorView, theme: ThemeConfig) {
   view.dispatch({
     effects: [
