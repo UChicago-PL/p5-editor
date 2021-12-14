@@ -37,23 +37,16 @@ import * as UserActions from '../../User/actions';
 import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
 
-// eslint-disable-next-line import/extensions
 import CodeMirror from './CodeMirror';
-// eslint-disable-next-line import/extensions
 import { cmStatePlugin } from './CodeMirror/state/cmState';
 
 import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
 
-window.JSHINT = JSHINT;
-window.CSSLint = CSSLint;
-window.HTMLHint = HTMLHint;
 const htmlHintConfig = {
   'title-require': false,
   'doctype-first': false,
   'alt-require': false
 };
-
-// delete CodeMirror.keyMap.sublime['Shift-Tab];
 
 // const INDENTATION_AMOUNT = 2;
 const prettierPlugins = [parserBabel, parserHtml, parserCSS];
@@ -415,7 +408,9 @@ class Editor extends React.Component {
                       to: toOffset(e.line, e.character + 1)
                     }));
                   } else if (localLanguage === 'htmlmixed') {
-                    msgs = HTMLHint.verify(code, htmlHintConfig).map((e) => {
+                    // msgs = HTMLHint.verify(code, htmlHintConfig).
+
+                    msgs = HTMLHint.verify(code).map((e) => {
                       return {
                         message: e.message,
                         severity: e.type,
@@ -433,7 +428,7 @@ class Editor extends React.Component {
                       };
                     });
                   }
-
+                  console.log('getting linty', msgs);
                   // is this too much
                   const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
                   const langShort = langToShort[localLanguage] || '';

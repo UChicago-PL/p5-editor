@@ -589,18 +589,13 @@ export const widgetsPlugin = (props: WidgetProps) =>
       decorations: (v: any) => v.decorations,
 
       eventHandlers: {
-        mousedown: (e: any, view: any) => {
+        mouseup: (e: any, view: any) => {
           const target = e.target as HTMLElement;
           if (target.classList.contains('cm-inc-widget') || target.classList.contains('cm-dec-widget')) {
-            const interval = setInterval(() => {
-              const from = unwrap(target.parentElement!.dataset.from, "Missing 'from' dataset value");
-              const isIncrease = target.classList.contains('cm-inc-widget');
-              props.onWidgetChange(isIncrease ? 'inc-val' : 'dec-val');
-              changeNum(view, isIncrease, parseInt(from));
-            }, 100);
-
-            // TODO --- AM says: i think this might be a listener leak
-            document.body.addEventListener('mouseup', () => clearInterval(interval));
+            const from = unwrap(target.parentElement!.dataset.from, "Missing 'from' dataset value");
+            const isIncrease = target.classList.contains('cm-inc-widget');
+            props.onWidgetChange(isIncrease ? 'inc-val' : 'dec-val');
+            changeNum(view, isIncrease, parseInt(from));
 
             return true;
           }

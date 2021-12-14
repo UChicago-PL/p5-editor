@@ -526,7 +526,7 @@ class Nav extends React.PureComponent {
             }}
           >
             <span>
-              {this.props.t('Nav.Auth.Hello')},{this.props.user.username}!
+              {this.props.t('Nav.Auth.Hello')}, {this.props.user.username}!
             </span>
             <TriangleIcon className="nav__item-header-triangle" focusable="false" aria-hidden="true" />
           </button>

@@ -103,6 +103,9 @@
     "import/parser": "@babel/eslint-parser",
     "import/resolve": {
       "moduleDirectory": ["node_modules"]
+    },
+    "react": {
+      "version": "detect"
     }
   },
   "globals": {

@@ -1,11 +1,8 @@
 import { Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { EditorState } from '@codemirror/state';
 import { closeBrackets } from '@codemirror/closebrackets';
 import { oneDarkTheme, oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 import { contrastTheme, contrastHighlightStyle } from './themes/contrast-theme';
-
-console.log(EditorView.lineWrapping, EditorState);
 
 export interface ThemeConfig {
   autocloseBracketsQuotes?: boolean;
@@ -28,7 +25,6 @@ const createFontSizeTheme = (fontSize) =>
   });
 
 const getTheme = (themeName: string) => {
-  console.log(themeName);
   if (themeName === 'dark') {
     return oneDarkTheme;
   } else if (themeName === 'contrast') {
@@ -39,7 +35,6 @@ const getTheme = (themeName: string) => {
 };
 
 const getSyntaxTheme = (themeName: string) => {
-  console.log(themeName);
   if (themeName === 'dark') {
     return oneDarkHighlightStyle;
   } else if (themeName === 'contrast') {
