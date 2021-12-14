@@ -14,10 +14,12 @@ import {
   setShowBoolWidgets,
   setShowColorWidgets,
   setCurrentLanguage,
-  setShowNumWidgets
+  setShowNumWidgets,
+  setCurrentTheme
 } from '../state/cmState';
 import { keywordPlugin, Keywords } from '../state/keywordPlugin';
 import { Dispatch, State } from '../state/state';
+import { ThemeConfig, themePlugin, setTheme } from '../state/theme-plugin';
 
 export type ExternalProps = {
   onChange: (code: string) => void;
@@ -29,6 +31,7 @@ export type ExternalProps = {
   extensions: Extension[];
   keywords: Keywords;
   onWidgetChange: () => void;
+  configOptions?: ThemeConfig;
 };
 
 type Props = {
@@ -50,6 +53,7 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
         extensions: [
           keymap.of(externalProps.keyBindings),
           autocomplete(externalProps.keywords),
+          themePlugin(externalProps.configOptions || {}),
           basicSetup,
           langPlugin(externalProps.lang),
 
@@ -106,16 +110,26 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
 
   useEffect(() => {
     if (view && state.lang !== externalProps.lang) {
-      dispatch({
-        type: 'setLang',
-        value: externalProps.lang
-      });
+      dispatch({ type: 'setLang', value: externalProps.lang });
       setLang(view, externalProps.lang);
-      view.dispatch({
-        effects: [setCurrentLanguage.of(externalProps.lang)]
-      });
+      view.dispatch({ effects: [setCurrentLanguage.of(externalProps.lang)] });
     }
   }, [externalProps.lang]);
+
+  useEffect(() => {
+    const externalTheme = externalProps.configOptions;
+    // if (view && JSON.stringify(state.theme) !== JSON.stringify(externalTheme)) {
+    if (view) {
+      dispatch({
+        type: 'setTheme',
+        value: externalTheme || {}
+      });
+      setTheme(view, externalTheme || {});
+      view.dispatch({
+        effects: [setCurrentTheme.of(externalProps.configOptions)]
+      });
+    }
+  }, [externalProps.configOptions]);
 
   return <div className="codemirror__editor" ref={cmParent} />;
 }

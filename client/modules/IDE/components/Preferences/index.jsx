@@ -96,9 +96,9 @@ class Preferences extends React.Component {
               <Tab>
                 <h4 className="tabs__title">{this.props.t('Preferences.GeneralSettings')}</h4>
               </Tab>
-              <Tab>
+              {/* <Tab>
                 <h4 className="tabs__title">{this.props.t('Preferences.Accessibility')}</h4>
-              </Tab>
+              </Tab> */}
             </div>
           </TabList>
           <TabPanel>
@@ -246,7 +246,7 @@ class Preferences extends React.Component {
               </div>
             </div>
           </TabPanel>
-          <TabPanel>
+          {/* <TabPanel>
             <div className="preference">
               <h4 className="preference__title">{this.props.t('Preferences.LineNumbers')}</h4>
               <div className="preference__options">
@@ -365,7 +365,7 @@ class Preferences extends React.Component {
                 </label>
               </div>
             </div>
-          </TabPanel>
+          </TabPanel> */}
         </Tabs>
       </section>
     );

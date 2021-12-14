@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { setGlobalTrack, trackEvent } from '../../../../../utils/analytics';
+import { ThemeConfig } from './theme-plugin';
 
 export type State = {
   showBoolWidgets: boolean;
@@ -12,8 +13,9 @@ export type ToggleBoolWidgets = { type: 'toggleBoolWidgets' };
 export type ToggleNumWidgets = { type: 'toggleNumWidgets' };
 export type ToggleColorWidgets = { type: 'toggleColorWidgets' };
 export type SetLang = { type: 'setLang'; value: string };
+export type SetTheme = { type: 'setTheme'; value: ThemeConfig };
 
-type Action = ToggleBoolWidgets | ToggleNumWidgets | ToggleColorWidgets | SetLang;
+type Action = ToggleBoolWidgets | ToggleNumWidgets | ToggleColorWidgets | SetLang | SetTheme;
 
 export type Dispatch = React.Dispatch<Action>;
 
