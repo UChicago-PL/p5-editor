@@ -382,62 +382,110 @@ class Editor extends React.Component {
               }}
               extensions={[
                 lintGutter(),
-                linter((view) => {
-                  const code = view.state.doc.toString();
-                  const config = view.state.field(cmStatePlugin);
-                  const localLanguage = config.lang || language;
-
-                  let msgs = [];
-                  function toOffset(line, ch) {
-                    return view.state.doc.line(line).from + ch - 1;
-                  }
-                  function lineOffset(line) {
-                    return view.state.doc.line(line).from;
-                  }
-                  if (localLanguage === 'javascript') {
-                    JSHINT(code, {
-                      asi: false,
-                      eqeqeq: true,
-                      '-W041': false,
-                      esversion: 11
-                    });
-                    msgs = JSHINT.errors.map((e) => ({
-                      message: e.reason,
-                      severity: e.id && e.id.includes('error') ? 'error' : 'warning',
-                      from: toOffset(e.line, e.character),
-                      to: toOffset(e.line, e.character + 1)
-                    }));
-                  } else if (localLanguage === 'htmlmixed') {
-                    // msgs = HTMLHint.verify(code, htmlHintConfig).
-
-                    msgs = HTMLHint.verify(code).map((e) => {
-                      return {
-                        message: e.message,
-                        severity: e.type,
-                        from: lineOffset(e.line),
-                        to: lineOffset(e.line + 1) - 1
-                      };
-                    });
-                  } else if (localLanguage === 'css') {
-                    msgs = CSSLint.verify(code).messages.map((e) => {
-                      return {
-                        message: e.message,
-                        severity: e.type,
-                        from: lineOffset(e.line),
-                        to: lineOffset(e.line + 1) - 1
-                      };
-                    });
-                  }
-                  console.log('getting linty', msgs);
-                  // is this too much
-                  const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
-                  const langShort = langToShort[localLanguage] || '';
-                  trackEvent({
-                    eventName: 'lint',
-                    context: [msgs.length, langShort]
+                (() => {
+                  const cache = {};
+                  return linter((view) => {
+                    function lineOffset(line) {
+                      return view.state.doc.line(line).from;
+                    }
+                    const code = view.state.doc.toString();
+                    if (cache[code]) {
+                      return cache[code];
+                    }
+                    const config = view.state.field(cmStatePlugin);
+                    const localLanguage = config.lang || language;
+                    return fetch('/lint-file', {
+                      method: 'post',
+                      body: JSON.stringify({ code, language: localLanguage }),
+                      headers: { 'Content-Type': 'application/json' }
+                    })
+                      .then((x) => x.json())
+                      .then(({ msgs }) => {
+                        console.log(msgs);
+                        if (!msgs || !Array.isArray(msgs)) {
+                          return [];
+                        }
+                        const formattedMsgs = msgs.map((msg) => {
+                          return {
+                            ...msg,
+                            from: lineOffset(msg.line),
+                            to: lineOffset(msg.line + 1) - 1
+                          };
+                        });
+                        cache[code] = formattedMsgs;
+                        console.log({ formattedMsgs });
+                        return formattedMsgs;
+                      })
+                      .catch((e) => console.log(e));
                   });
-                  return msgs;
-                })
+                })()
+                // linter((view) => {
+                //   const code = view.state.doc.toString();
+                //   const config = view.state.field(cmStatePlugin);
+                //   const localLanguage = config.lang || language;
+
+                //   fetch('/lint-file', {
+                //     method: 'post',
+                //     body: JSON.stringify({ code }),
+                //     headers: {
+                //       'Content-Type': 'application/json'
+                //     }
+                //   })
+                //     .then((x) => x.json())
+                //     .then((x) => console.log(x))
+                //     .catch((e) => console.log(e));
+
+                //   let msgs = [];
+                //   function toOffset(line, ch) {
+                //     return view.state.doc.line(line).from + ch - 1;
+                //   }
+                //   function lineOffset(line) {
+                //     return view.state.doc.line(line).from;
+                //   }
+                //   if (localLanguage === 'javascript') {
+                //     JSHINT(code, {
+                //       asi: false,
+                //       eqeqeq: true,
+                //       '-W041': false,
+                //       esversion: 11
+                //     });
+                //     msgs = JSHINT.errors.map((e) => ({
+                //       message: e.reason,
+                //       severity: e.id && e.id.includes('error') ? 'error' : 'warning',
+                //       from: toOffset(e.line, e.character),
+                //       to: toOffset(e.line, e.character + 1)
+                //     }));
+                //   } else if (localLanguage === 'htmlmixed') {
+                //     // msgs = HTMLHint.verify(code, htmlHintConfig).
+
+                //     msgs = HTMLHint.verify(code).map((e) => {
+                //       return {
+                //         message: e.message,
+                //         severity: e.type,
+                //         from: lineOffset(e.line),
+                //         to: lineOffset(e.line + 1) - 1
+                //       };
+                //     });
+                //   } else if (localLanguage === 'css') {
+                //     msgs = CSSLint.verify(code).messages.map((e) => {
+                //       return {
+                //         message: e.message,
+                //         severity: e.type,
+                //         from: lineOffset(e.line),
+                //         to: lineOffset(e.line + 1) - 1
+                //       };
+                //     });
+                //   }
+                //   console.log('getting linty', msgs);
+                //   // is this too much
+                //   const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
+                //   const langShort = langToShort[localLanguage] || '';
+                //   trackEvent({
+                //     eventName: 'lint',
+                //     context: [msgs.length, langShort]
+                //   });
+                //   return msgs;
+                // })
               ]}
               onWidgetChange={(widgetEvent) => {
                 this.lastWidgetChangeTime = Date.now();
