@@ -37,23 +37,16 @@ import * as UserActions from '../../User/actions';
 import * as ToastActions from '../actions/toast';
 import * as ConsoleActions from '../actions/console';
 
-// eslint-disable-next-line import/extensions
 import CodeMirror from './CodeMirror';
-// eslint-disable-next-line import/extensions
 import { cmStatePlugin } from './CodeMirror/state/cmState';
 
 import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
 
-window.JSHINT = JSHINT;
-window.CSSLint = CSSLint;
-window.HTMLHint = HTMLHint;
 const htmlHintConfig = {
   'title-require': false,
   'doctype-first': false,
   'alt-require': false
 };
-
-// delete CodeMirror.keyMap.sublime['Shift-Tab];
 
 // const INDENTATION_AMOUNT = 2;
 const prettierPlugins = [parserBabel, parserHtml, parserCSS];
