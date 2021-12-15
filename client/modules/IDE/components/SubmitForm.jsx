@@ -6,6 +6,28 @@ import { useDispatch } from 'react-redux';
 import Button from '../../../common/Button';
 import { submitToGH } from '../../User/actions';
 
+function errorDisplay(submitState) {
+  if (submitState.err === 'Not Found') {
+    return (
+      <div className="flex-down">
+        <div>Unable to submit because you have not accepted the assignment!</div>
+        <div>
+          {'Please '}
+          <a href="https://classroom.github.com/a/duQh2yvt" target="_blank" rel="noreferrer">
+            Click here
+          </a>
+          {' to accept'}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="flex-down">
+      <b>Failure!</b> <div>{JSON.stringify(submitState)}</div>
+    </div>
+  );
+}
+
 function SubmitForm(props) {
   const { repos, project } = props;
   const [submitState, setSubmitState] = useState(false);
@@ -92,7 +114,11 @@ function SubmitForm(props) {
               <br />
               <div>
                 If you are having difficulty submitting please ensure that you have accepted the assignment
-                for course.
+                for course by clicking{' '}
+                <a href="https://classroom.github.com/a/duQh2yvt" target="_blank" rel="noreferrer">
+                  here
+                </a>
+                .
               </div>
               <br />
               <Button type="submit" disabled={invalid || submitting}>
@@ -101,8 +127,7 @@ function SubmitForm(props) {
               {submitting && <div>Submitting...</div>}
               {!submitting && submitState && submitState.success && (
                 <div>
-                  Success!
-                  {' '}
+                  Success!{' '}
                   <a
                     target="_blank"
                     rel="noreferrer"
@@ -114,13 +139,7 @@ function SubmitForm(props) {
                   </a>
                 </div>
               )}
-              {!submitting && submitState && !submitState.success && (
-                <div className="flex-down">
-                  <b>Failure!</b>
-                  {' '}
-                  <div>{JSON.stringify(submitState)}</div>
-                </div>
-              )}
+              {!submitting && submitState && !submitState.success && errorDisplay(submitState)}
             </div>
           </form>
         );
