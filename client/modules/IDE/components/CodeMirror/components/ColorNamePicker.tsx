@@ -16,7 +16,6 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
   if (!initColorGroup) {
     throw new Error('Invalid color passed to the color name picker');
   }
-  const [hoveredColor, setHoveredColor] = useState('');
   const [state, setState] = useState({
     ...initialState,
     // to initially expand the group of initColor, set the following to true
@@ -53,7 +52,7 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
     }
   }, []);
 
-  const showGroupIndicators = false;
+  const showGroupIndicators = true;
   return (
     <div className="color-name-picker" style={{ left, top }} ref={el}>
       <ul>
@@ -64,7 +63,7 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
               onClick={() => setState({ ...state, [groupName]: !state[groupName] })}
             >
               {/* https://en.wikipedia.org/wiki/Geometric_Shapes */}
-              {(showGroupIndicators ? (state[groupName] ? '▾ ' : '▿ ') : '') +
+              {(showGroupIndicators ? (state[groupName] ? '▲ ' : '▼ ') : '') +
                 groupName.slice(0, 1).toUpperCase() +
                 groupName.slice(1)}
             </span>
@@ -72,9 +71,8 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
               {colors.map((color) => (
                 <span
                   key={color + '-swatch'}
-                  onMouseEnter={() => setHoveredColor(color)}
-                  onMouseLeave={() => setHoveredColor('')}
                   className="color-swatch"
+                  title={color}
                   onClick={() => cb(color)}
                   style={{
                     background: color,
@@ -103,7 +101,6 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
           </li>
         ))}
       </ul>
-      <div className="current-color-readout">Hovered color: {hoveredColor}</div>
       <div className="buttons">
         {/* TODO: Escape */}
         <button onClick={() => cb(null)}>Close</button>

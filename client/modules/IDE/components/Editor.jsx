@@ -428,7 +428,6 @@ class Editor extends React.Component {
                       };
                     });
                   }
-                  console.log('getting linty', msgs);
                   // is this too much
                   const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
                   const langShort = langToShort[localLanguage] || '';
