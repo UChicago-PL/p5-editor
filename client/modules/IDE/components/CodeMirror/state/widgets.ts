@@ -589,7 +589,13 @@ export const widgetsPlugin = (props: WidgetProps) =>
       decorations: (v: any) => v.decorations,
 
       eventHandlers: {
-        mouseup: (e: any, view: any) => {
+        mousedown: (e) => {
+          const target = e.target as HTMLElement;
+          if (target.classList.contains('cm-inc-widget') || target.classList.contains('cm-dec-widget')) {
+            return true;
+          }
+        },
+        mouseup: (e, view) => {
           const target = e.target as HTMLElement;
           if (target.classList.contains('cm-inc-widget') || target.classList.contains('cm-dec-widget')) {
             const from = unwrap(target.parentElement!.dataset.from, "Missing 'from' dataset value");
@@ -600,7 +606,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
             return true;
           }
         },
-        click: (e: any, view: any) => {
+        click: (e, view) => {
           const target = e.target as HTMLElement;
           if (target.classList.contains('cm-bool-checkbox-widget')) {
             // TODO
@@ -624,7 +630,7 @@ export const widgetsPlugin = (props: WidgetProps) =>
             return changeSlider(view, view.posAtDOM(targ), parseInt(from), targ.value);
           }
         },
-        colorChosen: (e: any, view: any) => {
+        colorChosen: (e, view) => {
           const { from, to, color } = e.detail;
           props.onWidgetChange('color-picked');
           return changeColor(view, to, color, parseInt(from));
