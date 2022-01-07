@@ -42,11 +42,11 @@ import { cmStatePlugin } from './CodeMirror/state/cmState';
 
 import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
 
-const htmlHintConfig = {
-  'title-require': false,
-  'doctype-first': false,
-  'alt-require': false
-};
+// const htmlHintConfig = {
+//   'title-require': false,
+//   'doctype-first': false,
+//   'alt-require': false
+// };
 
 // const INDENTATION_AMOUNT = 2;
 const prettierPlugins = [parserBabel, parserHtml, parserCSS];
@@ -397,9 +397,10 @@ class Editor extends React.Component {
                   if (localLanguage === 'javascript') {
                     JSHINT(code, {
                       asi: false,
+                      bitwise: true,
+                      curly: true,
                       eqeqeq: true,
-                      '-W041': false,
-                      esversion: 11
+                      esversion: 10
                     });
                     msgs = JSHINT.errors.map((e) => ({
                       message: e.reason,
