@@ -201,6 +201,7 @@ function isArgToSpecialFunc(view: EditorView, node: SyntaxNode): boolean {
   }
 }
 
+/*
 function maybeColorFuncCall(s: string): { func: string; tupleArgs: boolean | null } | null {
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Groups_and_Ranges
   const m1 = s.match(/^(?<func>color|fill|stroke|background)\s*\(\d+,\s*\d+,\s*\d+\)$/);
@@ -216,6 +217,7 @@ function maybeColorFuncCall(s: string): { func: string; tupleArgs: boolean | nul
   }
   return null;
 }
+*/
 
 function rgbToString(rgb: number[]): string {
   return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
@@ -231,8 +233,17 @@ function fromRgbaString(s: string): { r: string; g: string; b: string } | null {
   return null;
 }
 
+// Could add 'rgbaString' if want to handle some
+// scenarios described in changeColor()
+type specialColorFormat = 'colorName' | 'colorNumbers' | 'colorTuple' | undefined;
+
 class ColorWidget extends WidgetType {
-  constructor(readonly initColor: string, readonly from: number, readonly to: number) {
+  constructor(
+    readonly initColor: string,
+    readonly from: number,
+    readonly to: number,
+    readonly specialColorFormat: specialColorFormat
+  ) {
     super();
   }
 
@@ -266,7 +277,8 @@ class ColorWidget extends WidgetType {
             detail: {
               color: newColor,
               from: this.from,
-              to: this.to
+              to: this.to,
+              specialColorFormat: this.specialColorFormat
             }
           });
           wrap.dispatchEvent(event);
@@ -374,25 +386,30 @@ class ColorNameWidget extends WidgetType {
   }
 }
 
-function changeColor(view: EditorView, pos: number, color: string, from: number) {
-  const colorFuncCall = maybeColorFuncCall(codeString(view, from, pos));
+function changeColor(
+  view: EditorView,
+  color: string,
+  from: number,
+  to: number,
+  specialColorFormat: specialColorFormat
+) {
   const rgba = fromRgbaString(color);
-
   let insert: string;
-  if (rgba !== null) {
-    if (colorFuncCall && colorFuncCall.tupleArgs) {
-      insert = `${colorFuncCall.func}([${rgba.r}, ${rgba.g}, ${rgba.b}])`;
-    } else if (colorFuncCall && !colorFuncCall.tupleArgs) {
-      insert = `${colorFuncCall.func}(${rgba.r}, ${rgba.g}, ${rgba.b})`;
-    } else {
-      insert = `"${color}"`;
-    }
-  } else if (colorFuncCall) {
-    insert = `${colorFuncCall.func}("${color}")`;
+  if (rgba === null) {
+    insert = `"${color}"`;
+  } else if (specialColorFormat === "colorNumbers") {
+    insert = `${rgba.r}, ${rgba.g}, ${rgba.b}`;
+  } else if (specialColorFormat === "colorTuple") {
+    insert = `[${rgba.r}, ${rgba.g}, ${rgba.b}]`;
   } else {
+    // If desired, if alpha !== 1 could check that initColor
+    // was not an rgba() string and then convert alpha to
+    // opacity value 0-255. But, meh.
+    // More important would be to support the case where
+    // initColor was hex and now color is rgba() string.
     insert = `"${color}"`;
   }
-  view.dispatch({ changes: { from, to: pos, insert } });
+  view.dispatch({ changes: { from, to, insert } });
   return true;
 }
 
@@ -460,7 +477,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
           // TODO move
           if (val.match(colorRegex)) {
             const deco = Decoration.widget({
-              widget: new ColorWidget(val, from, to),
+              widget: new ColorWidget(val, from, to, undefined),
               side: 1
             });
             addWidget(deco, to);
@@ -490,30 +507,40 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
             const argListStrings = argList.getChildren('String');
             const argListNumbers = argList.getChildren('Number');
             const argListArrayExp = argList.getChild('ArrayExpression');
-            const makeWidget = (color: string, colorName = false) => {
-              const widget = colorName
+            const makeWidget = (color: string, specialColorFormat: specialColorFormat) => {
+              const widget = specialColorFormat === "colorName"
                 ? new ColorNameWidget(color, from + 1, to - 1)
-                : new ColorWidget(color, from + 1, argList.parent!.to - 1);
+                : new ColorWidget(color, from + 1, argList.parent!.to - 1, specialColorFormat);
               const deco = Decoration.widget({ widget, side: 1 });
               addWidget(deco, argList.parent!.to - 1);
             };
 
             if (argListStrings.length === 1) {
-              // case like background("red")
+              // Example: background("red")
               // avoid the quotation marks and parentheses (assuming no spaces)
               const val = codeString(view, from + 2, to - 2);
               if (val.match(colorRegex)) {
-                makeWidget(val);
+                makeWidget(val, undefined);
               } else if (colorNames[val.toLowerCase()]) {
-                makeWidget(val.toLowerCase(), true);
+                makeWidget(val.toLowerCase(), "colorName");
               }
-              // TODO: handle 4, twice
             } else if (argListNumbers.length === 3) {
-              // case like background([123, 123, 123])
-              makeWidget(rgbToString(argListToIntList(view, argListNumbers)));
+              // Example: background(123, 123, 123)
+              // Not handling a fourth argument (the weirder 0-255 opacity value).
+              // Instead, the color picker will convert to rgba() string
+              // (with a transparency percentage).
+              makeWidget(
+                rgbToString(argListToIntList(view, argListNumbers)),
+                "colorNumbers"
+              );
             } else if (argListArrayExp && argListArrayExp.getChildren('Number').length === 3) {
-              // case like background(123, 123, 123)
-              makeWidget(rgbToString(argListToIntList(view, argListArrayExp.getChildren('Number'))));
+              // Example: background([123, 123, 123])
+              // Ditto four arguments above.
+              const argListNumbers = argListArrayExp.getChildren('Number');
+              makeWidget(
+                rgbToString(argListToIntList(view, argListNumbers)),
+                "colorTuple"
+              );
             }
           } else if (funcType === 'slider') {
             const argListNumbers = argList.getChildren('Number');
@@ -631,9 +658,9 @@ export const widgetsPlugin = (props: WidgetProps) =>
           }
         },
         colorChosen: (e, view) => {
-          const { from, to, color } = e.detail;
+          const { color, from, to, specialColorFormat } = e.detail;
           props.onWidgetChange('color-picked');
-          return changeColor(view, to, color, parseInt(from));
+          return changeColor(view, color, from, to, specialColorFormat);
         }
       }
     }
