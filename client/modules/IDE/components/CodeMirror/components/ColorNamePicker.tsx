@@ -63,7 +63,7 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
               onClick={() => setState({ ...state, [groupName]: !state[groupName] })}
             >
               {/* https://en.wikipedia.org/wiki/Geometric_Shapes */}
-              <span style={{fontSize: "75%"}}>
+              <span className="color-group-arrow">
                 {(showGroupIndicators ? (state[groupName] ? '▲ ' : '▼ ') : '')}
               </span>
               <span>
