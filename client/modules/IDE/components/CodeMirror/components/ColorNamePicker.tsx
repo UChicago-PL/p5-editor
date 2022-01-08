@@ -67,7 +67,7 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
                 {(showGroupIndicators ? (state[groupName] ? '▲ ' : '▼ ') : '')}
               </span>
               <span>
-               {groupName.slice(0, 1).toUpperCase() + groupName.slice(1)}
+                {groupName.slice(0, 1).toUpperCase() + groupName.slice(1)}
               </span>
             </span>
             <span>
