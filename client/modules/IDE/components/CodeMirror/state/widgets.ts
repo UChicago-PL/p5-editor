@@ -233,12 +233,16 @@ function fromRgbaString(s: string): { r: string; g: string; b: string } | null {
   return null;
 }
 
+// Could add 'rgbaString' if want to handle some
+// scenarios described in changeColor()
+type specialColorFormat = 'colorName' | 'colorNumbers' | 'colorTuple' | undefined;
+
 class ColorWidget extends WidgetType {
   constructor(
     readonly initColor: string,
     readonly from: number,
     readonly to: number,
-    readonly specialFormat: string | undefined
+    readonly specialColorFormat: specialColorFormat
   ) {
     super();
   }
@@ -274,7 +278,7 @@ class ColorWidget extends WidgetType {
               color: newColor,
               from: this.from,
               to: this.to,
-              specialFormat: this.specialFormat
+              specialColorFormat: this.specialColorFormat
             }
           });
           wrap.dispatchEvent(event);
@@ -387,15 +391,15 @@ function changeColor(
   color: string,
   from: number,
   to: number,
-  specialFormat: string | undefined
+  specialColorFormat: specialColorFormat
 ) {
   const rgba = fromRgbaString(color);
   let insert: string;
   if (rgba === null) {
     insert = `"${color}"`;
-  } else if (specialFormat === "colorNumbers") {
+  } else if (specialColorFormat === "colorNumbers") {
     insert = `${rgba.r}, ${rgba.g}, ${rgba.b}`;
-  } else if (specialFormat === "colorTuple") {
+  } else if (specialColorFormat === "colorTuple") {
     insert = `[${rgba.r}, ${rgba.g}, ${rgba.b}]`;
   } else {
     // If desired, if alpha !== 1 could check that initColor
@@ -503,10 +507,10 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
             const argListStrings = argList.getChildren('String');
             const argListNumbers = argList.getChildren('Number');
             const argListArrayExp = argList.getChild('ArrayExpression');
-            const makeWidget = (color: string, specialFormat: string | undefined) => {
-              const widget = specialFormat === "colorName"
+            const makeWidget = (color: string, specialColorFormat: specialColorFormat) => {
+              const widget = specialColorFormat === "colorName"
                 ? new ColorNameWidget(color, from + 1, to - 1)
-                : new ColorWidget(color, from + 1, argList.parent!.to - 1, specialFormat);
+                : new ColorWidget(color, from + 1, argList.parent!.to - 1, specialColorFormat);
               const deco = Decoration.widget({ widget, side: 1 });
               addWidget(deco, argList.parent!.to - 1);
             };
@@ -654,9 +658,9 @@ export const widgetsPlugin = (props: WidgetProps) =>
           }
         },
         colorChosen: (e, view) => {
-          const { color, from, to, specialFormat } = e.detail;
+          const { color, from, to, specialColorFormat } = e.detail;
           props.onWidgetChange('color-picked');
-          return changeColor(view, color, parseInt(from), to, specialFormat);
+          return changeColor(view, color, from, to, specialColorFormat);
         }
       }
     }
