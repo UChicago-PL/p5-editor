@@ -2,7 +2,7 @@ import * as acorn from 'acorn';
 import { dispatchConsoleEvent } from './console';
 
 const generateFuncCallCode = ([name, args]) => {
-  return `${name}(${args.join(',')})`;
+  return `${name}(${args.join(', ')})`;
 };
 
 export function applyShapeToolbox(code, calls, [from, to]) {
