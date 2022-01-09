@@ -483,7 +483,7 @@ IDEView.propTypes = {
     unsavedChanges: PropTypes.bool.isRequired,
     uploadFileModalVisible: PropTypes.bool.isRequired,
     showingShapeToolbox: PropTypes.bool.isRequired,
-    shapeToolboxExistingCalls: PropTypes.bool.isRequired
+    shapeToolboxExistingCalls: PropTypes.arrayOf(PropTypes.any).isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
   canvasSize: PropTypes.arrayOf(PropTypes.number).isRequired,

@@ -24,7 +24,7 @@ const initialState = {
   parentId: undefined,
   showingShapeToolbox: false,
   shapeToolboxCodeLoc: null,
-  shapeToolboxExistingCalls: null,
+  shapeToolboxExistingCalls: [],
   isStale: false,
   isShowing: false
 };
