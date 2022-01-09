@@ -226,7 +226,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   };
 
   const roundNums = ([name, args]) => {
-    return [name, args.map((x) => Math.round(x * 100) / 100)];
+    return [name, args.map(Math.round)];
   };
 
   const apply = () => {
