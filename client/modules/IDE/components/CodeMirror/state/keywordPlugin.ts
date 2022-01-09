@@ -19,7 +19,7 @@ export const keywordPlugin = (keywords: Keywords) =>
 
         constructor(view: EditorView) {
           this.matchDecorator = new MatchDecorator({
-            regexp: new RegExp(`(${keywords.join('|')})`, 'g'),
+            regexp: new RegExp(`\\b(${keywords.join('|')})\\b`, 'g'),
             decoration: Decoration.mark({ class: `keyword-${name}` })
           });
           this.decorations = this.matchDecorator.createDeco(view);
