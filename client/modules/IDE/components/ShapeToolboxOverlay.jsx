@@ -240,10 +240,10 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     <div className="shape-toolbox-overlay" style={{ width: canvasSize.width }}>
       <canvas ref={el} />
       <div className="tools">
-        <button onClick={addLine}>line</button>
-        <button onClick={addRect}>rect</button>
-        <button onClick={addCircle}>circle</button>
-        <button onClick={addTriangle}>triangle</button>
+        <button onClick={addLine}>line()</button>
+        <button onClick={addRect}>square()/rect()</button>
+        <button onClick={addCircle}>circle()/ellipse()</button>
+        <button onClick={addTriangle}>triangle()</button>
         <button className="apply" onClick={apply}>
           apply
         </button>
