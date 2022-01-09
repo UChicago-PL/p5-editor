@@ -1,3 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const tracker = window.umami || { trackEvent: () => {} };
+
 const appWidgetState: { [x: string]: boolean } = {
   showBoolWidgets: false,
   showNumWidgets: false,
@@ -43,9 +47,7 @@ export function wrapEvent(wrapped: (x: any) => any, eventConfig: EventConfig) {
   }
 
   return function (e: any) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    umami.trackEvent(prepName(eventConfig), eventConfig.eventName);
+    tracker.trackEvent(prepName(eventConfig), eventConfig.eventName);
     wrapped(e);
   };
 }
@@ -56,9 +58,8 @@ export function trackEvent(eventConfig: EventConfig) {
     console.log('invalid log event', eventConfig);
     return;
   }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  umami.trackEvent(prepName(eventConfig), eventConfig.eventName);
+
+  tracker.trackEvent(prepName(eventConfig), eventConfig.eventName);
 }
 
 /**
