@@ -6,7 +6,7 @@ import { fabric } from 'fabric';
 export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const el = useRef(null);
 
-  canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.width, 20) };
+  canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.height, 20) };
 
   const [canvas, setCanvas] = useState(null);
 
