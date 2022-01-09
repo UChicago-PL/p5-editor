@@ -56,7 +56,7 @@ export function renderIndex() {
     <body>
       <div id="root" class="root-app">
       </div>
-      <script async defer data-website-id="0992c58e-d497-4d16-ae2b-de39bb09136a" src="https://tan-lytics.herokuapp.com/umami.js"></script>
+      <script async defer data-website-id="0992c58e-d497-4d16-ae2b-de39bb09136a" src="https://tan-lytics.herokuapp.com/tanlytics.js"></script>
       <script src='${
         process.env.NODE_ENV === 'production' ? `${assetsManifest['/app.js']}` : '/app.js'
       }'></script>
