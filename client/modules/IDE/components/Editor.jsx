@@ -53,7 +53,10 @@ const prettierPlugins = [parserBabel, parserHtml, parserCSS];
 
 const REFRESH_DELAY = 1000;
 
-const KEYWORDS = { function: Object.keys(p5FunctionKeywords), variable: Object.keys(p5VariableKeywords) };
+const KEYWORDS = {
+  function: [...Object.keys(p5FunctionKeywords), 'Editor.shapeToolbox', 'Editor.slider'],
+  variable: Object.keys(p5VariableKeywords)
+};
 
 class Editor extends React.Component {
   constructor(props) {
