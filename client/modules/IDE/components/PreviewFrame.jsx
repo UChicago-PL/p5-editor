@@ -397,22 +397,29 @@ class PreviewFrame extends React.Component {
       }
       trackEvent({ eventName: 'codeRun' });
 
-      const files = this.mergeLocalFilesAndEditorActiveFile();
-      const doesLinterError = files.some((file) => {
-        if (file.name.match(/.*\.js$/i)) {
-          JSHINT(file.content, {
-            asi: false,
-            bitwise: true,
-            curly: true,
-            eqeqeq: true,
-            esversion: 10
-          });
-          return JSHINT.errors.some((e) => e.id && e.id.includes('error'));
-        }
-        return false;
-      });
+      let shouldRefresh = true;
 
-      if (!doesLinterError) {
+      // When autorefresh is enabled, perform a JSHINT check before reloading the sketch
+      // So that the sketch isn't reloaded when there's a parsing error or something like that
+      if (this.props.isAutoRefresh) {
+        const files = this.mergeLocalFilesAndEditorActiveFile();
+        const doesLinterError = files.some((file) => {
+          if (file.name.match(/.*\.js$/i)) {
+            JSHINT(file.content, {
+              asi: false,
+              bitwise: true,
+              curly: true,
+              eqeqeq: true,
+              esversion: 10
+            });
+            return JSHINT.errors.some((e) => e.id && e.id.includes('error'));
+          }
+          return false;
+        });
+        shouldRefresh = !doesLinterError;
+      }
+
+      if (shouldRefresh) {
         const localFiles = this.injectLocalFiles();
         this.props.clearConsole();
         srcDoc.set(this.iframeElement, localFiles);
@@ -455,6 +462,7 @@ class PreviewFrame extends React.Component {
 
 PreviewFrame.propTypes = {
   isPlaying: PropTypes.bool.isRequired,
+  isAutoRefresh: PropTypes.bool.isRequired,
   isAccessibleOutputPlaying: PropTypes.bool.isRequired,
   textOutput: PropTypes.bool.isRequired,
   gridOutput: PropTypes.bool.isRequired,
@@ -515,6 +523,7 @@ function mapStateToProps(state, ownProps) {
       state.files.find((file) => file.name !== 'root')
     ).content,
     isPlaying: state.ide.isPlaying,
+    isAutoRefresh: state.ide.isAutoRefresh,
     isAccessibleOutputPlaying: state.ide.isAccessibleOutputPlaying,
     previewIsRefreshing: state.ide.previewIsRefreshing,
     textOutput: state.preferences.textOutput,
