@@ -6,6 +6,8 @@ import { TEXT_FILE_REGEX } from '../../../../server/utils/fileUtils';
 const s3BucketHttps = `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
 const MAX_LOCAL_FILE_SIZE = 80000; // bytes, aka 80 KB
 
+const prepFileName = (file) => file.replace(/ /g, '_');
+
 function localIntercept(file, options = {}) {
   return new Promise((resolve, reject) => {
     if (!options.readType) {
@@ -38,8 +40,13 @@ function toBinary(string) {
   return String.fromCharCode(...new Uint8Array(codeUnits.buffer));
 }
 
-export function dropzoneAcceptCallback(userId, file, done) {
+export function dropzoneAcceptCallback(userId, reject, file, done) {
   return () => {
+    if (file.name.includes(' ')) {
+      reject('Rejected. Spaces are not allowed in file name');
+      return;
+    }
+    // const name = prepFileNamefile.name;
     // if a user would want to edit this file as text, local interceptor
     if (file.name.match(TEXT_FILE_REGEX) && file.size < MAX_LOCAL_FILE_SIZE) {
       localIntercept(file)
