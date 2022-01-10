@@ -115,7 +115,6 @@ class DashboardView extends React.Component {
 
   render() {
     const currentTab = this.selectedTabKey();
-    console.log({ currentTab });
     const isOwner = this.isOwner();
     const { username } = this.props.params;
     const actions = this.renderActionButton(currentTab, username, this.props.t);

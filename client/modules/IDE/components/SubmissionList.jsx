@@ -11,9 +11,7 @@ function SubmissionGroup(props) {
   const orderedSubs = [...submissions].sort((a, b) => {
     return new Date(a).getTime() - new Date(b).getTime();
   });
-  console.log(submissions);
   const assignment = submissions[0].assign[0];
-  console.log(assignment);
   const submittedAssignment = orderedSubs[0];
   return (
     <div className="flex-down dashboard-submission">
@@ -65,7 +63,6 @@ function SubmissionList(props) {
     acc[row.assignment] = (acc[row.assignment] || []).concat(row);
     return acc;
   }, {});
-  console.log({ groupedSubmissions });
   return (
     <div className="dashboard-submission-list">
       <Helmet>
@@ -77,6 +74,7 @@ function SubmissionList(props) {
           console.log({ submissionGroup });
           return <SubmissionGroup key={submissionGroup[0].assignment} submissions={submissionGroup} />;
         })}
+      {!loading && !Object.values(groupedSubmissions).length && <div>No submissions found!</div>}
     </div>
   );
 }
