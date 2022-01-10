@@ -6,8 +6,6 @@ import { TEXT_FILE_REGEX } from '../../../../server/utils/fileUtils';
 const s3BucketHttps = `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
 const MAX_LOCAL_FILE_SIZE = 80000; // bytes, aka 80 KB
 
-const prepFileName = (file) => file.replace(/ /g, '_');
-
 function localIntercept(file, options = {}) {
   return new Promise((resolve, reject) => {
     if (!options.readType) {
