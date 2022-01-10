@@ -25,20 +25,29 @@ router.get('/get-all-submissions', (req, res) => {
     return;
   }
 
-  getSubmissionForUser(req.user.username).then((result) => {
-    res.json(
-      (Array.isArray(result) ? result : [result]).map((sub) => ({
-        username: sub.username,
-        project: sub.project,
-        submissionId: sub.submissionId,
-        projectName: sub.projectName,
-        assignment: sub.assignment,
-        prNumber: sub.prNumber,
-        assign: sub.assign,
-        createdAt: sub.createdAt
-      }))
-    );
-  });
+  getSubmissionForUser(req.user.username)
+    .then((result) => {
+      if (!result) {
+        res.json([]);
+        return;
+      }
+      res.json(
+        (Array.isArray(result) ? result : [result]).map((sub) => ({
+          username: sub.username,
+          project: sub.project,
+          submissionId: sub.submissionId,
+          projectName: sub.projectName,
+          assignment: sub.assignment,
+          prNumber: sub.prNumber,
+          assign: sub.assign,
+          createdAt: sub.createdAt
+        }))
+      );
+    })
+    .catch((e) => {
+      console.log('get all submissions error', e);
+      res.status(300).json([]);
+    });
 });
 
 export default router;
