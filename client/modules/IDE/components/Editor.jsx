@@ -110,6 +110,10 @@ class Editor extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.log('CAUGHT ERROR', error, errorInfo);
+    // Without this setTimeout, if an error occurs on page load, then because
+    // the authentication information hasn't been initialized, the gui will show
+    // an "unable to save" dialogue
+    setTimeout(() => this.props.saveProject(this.getContent()), 100);
   }
 
   static getDerivedStateFromError() {
@@ -505,6 +509,7 @@ Editor.propTypes = {
   editorOptionsVisible: PropTypes.bool.isRequired,
   // showEditorOptions: PropTypes.func.isRequired,
   // closeEditorOptions: PropTypes.func.isRequired,
+  saveProject: PropTypes.func.isRequired,
   setUnsavedChanges: PropTypes.func.isRequired,
   startAutoRefreshSketch: PropTypes.func.isRequired,
   autorefresh: PropTypes.bool.isRequired,
