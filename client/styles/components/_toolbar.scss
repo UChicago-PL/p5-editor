@@ -35,8 +35,7 @@
 .toolbar__play-sketch-button {
 	@extend %hidden-element;
 }
-.toolbar__stop-button,
-.toolbar__autorefresh-button {
+.toolbar__stop-button {
 	@include themify() {
 		@extend %toolbar-button;
 		display: flex;
@@ -46,6 +45,40 @@
 		padding: 0;
 		&--selected {
 			@extend %toolbar-button--selected;
+		}
+	}
+	span {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: #{20 / $base-font-size}rem;
+		height: #{20 / $base-font-size}rem;
+	}
+}
+
+.toolbar__autorefresh-button {
+	@include themify() {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-right: #{15 / $base-font-size}rem;
+		padding: 0;
+		
+		& g, & path {
+			fill: getThemifyVariable('button-color');
+		}
+		&--selected, 
+		&--selected:hover {
+			& g, & path {
+				fill: getThemifyVariable('button-background-hover-color');
+			}
+		}
+		&:hover {
+			opacity: 0.5;
+		}
+		&:focus {
+			outline: none;
+			box-shadow: none;
 		}
 	}
 	span {

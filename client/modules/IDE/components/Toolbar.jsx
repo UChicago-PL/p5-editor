@@ -122,12 +122,13 @@ class Toolbar extends React.Component {
           </button>
           <button
             className={autoRefreshButtonClass}
-            onClick={() => {
+            onClick={(e) => {
               setGlobalTrack('liveMode', !this.props.autorefresh);
               trackEvent({
                 eventName: this.props.autorefresh ? 'autorefresh-stop' : 'autorefresh-start'
               });
               this.props.setAutorefresh(!this.props.autorefresh);
+              e.currentTarget.blur();
             }}
             aria-label={this.props.t('Toolbar.Auto-refresh')}
           >
