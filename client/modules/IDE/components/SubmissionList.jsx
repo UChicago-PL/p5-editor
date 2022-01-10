@@ -33,7 +33,7 @@ function SubmissionGroup(props) {
           target="_blank"
           rel="noreferrer"
           // eslint-disable-next-line max-len
-          href={`https://github.com/UChicago-PL/cs-11111-${submissions[0].username}/${submittedAssignment.prNumber}/pulls`}
+          href={`https://github.com/UChicago-PL/creative-coding-wi22-${submissions[0].username}/${submittedAssignment.prNumber}/pulls`}
         >
           Link to Pull Request
         </a>
