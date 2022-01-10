@@ -169,18 +169,20 @@ class PreviewFrame extends React.Component {
 
   jsPreprocess(jsText) {
     let newContent = jsText;
-    // check the code for js errors before sending it to strip comments
-    // or loops.
-    JSHINT(newContent, { esversion: 11 });
 
-    if (JSHINT.errors.length === 0) {
+    try {
       newContent = decomment(newContent, {
         ignore: /\/\/\s*noprotect/g,
         space: true
       });
       newContent = loopProtect(newContent);
+      return newContent;
+    } catch (e) {
+      // There's a chance that one of the above parsing steps fails due to invalid JS code
+      // This used to be addressed by running JSHINT on the code, but that seems more inefficient
+      // than just using try/catch
+      return newContent;
     }
-    return newContent;
   }
 
   mergeLocalFilesAndEditorActiveFile() {
@@ -398,8 +400,13 @@ class PreviewFrame extends React.Component {
       const files = this.mergeLocalFilesAndEditorActiveFile();
       const doesLinterError = files.some((file) => {
         if (file.name.match(/.*\.js$/i)) {
-          JSHINT(file.content, { esversion: 11 });
-          console.log(JSHINT.errors);
+          JSHINT(file.content, {
+            asi: false,
+            bitwise: true,
+            curly: true,
+            eqeqeq: true,
+            esversion: 10
+          });
           return JSHINT.errors.some((e) => e.id && e.id.includes('error'));
         }
         return false;
