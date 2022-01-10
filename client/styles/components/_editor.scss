@@ -373,6 +373,10 @@ div.CodeMirror-lint-message.CodeMirror-lint-message-error, div.CodeMirror-lint-m
   position: absolute;
   @include themify() {
     border: 1px solid getThemifyVariable('ide-border-color');
+    .editor-holder__error {
+      color: getThemifyVariable('error-color');
+      margin: 1rem;
+    }
   }
   &.editor-holder--hidden .CodeMirror {
     display: none;

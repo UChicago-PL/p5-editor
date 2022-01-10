@@ -464,7 +464,7 @@ class Editor extends React.Component {
             />
           )}
           {this.state.hasError && (
-            <p>
+            <p className="editor-holder__error">
               Unfortunately, it looks like something went wrong. Please report this to the course staff, and
               in the meantime, you can also try reloading the page. Your progress has been saved.
             </p>
