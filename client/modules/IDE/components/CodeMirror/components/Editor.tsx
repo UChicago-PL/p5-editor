@@ -25,7 +25,7 @@ export type ExternalProps = {
   onChange: (code: string) => void;
   code: string;
   lang: string;
-  shapeToolboxCb: (loc: [number, number], existing: string) => void;
+  shapeToolboxCb: (loc: [number, number], startLine: number, existing: string) => void;
   provideView: (view: EditorView) => void;
   keyBindings: KeyBinding[];
   extensions: Extension[];

@@ -437,7 +437,7 @@ class ShapeToolboxWidget extends WidgetType {
 }
 
 type WidgetProps = {
-  shapeToolboxCb: (loc: [number, number], existing: string) => void;
+  shapeToolboxCb: (loc: [number, number], startLine: number, existing: string) => void;
   onWidgetChange: (widgetType: string) => void;
 };
 
@@ -556,11 +556,12 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
           } else if (funcType === 'shapeToolbox') {
             const { from, to } = argList.parent!;
             const loc = [from, to] as [number, number];
-            let cb = () => shapeToolboxCb(loc, '');
+            const startLine = view.state.doc.lineAt(from).number;
+            let cb = () => shapeToolboxCb(loc, startLine, '');
 
             const block = argList.getChild('ArrowFunction')?.getChild('Block');
             if (block) {
-              cb = () => shapeToolboxCb(loc, view.state.doc.sliceString(block.from, block.to));
+              cb = () => shapeToolboxCb(loc, startLine, view.state.doc.sliceString(block.from, block.to));
             }
 
             const deco = Decoration.widget({

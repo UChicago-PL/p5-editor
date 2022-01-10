@@ -289,12 +289,12 @@ export function createError(error) {
   };
 }
 
-export function openShapeToolbox(loc, existingCode) {
+export function openShapeToolbox(loc, startLine, existingCode) {
   return (dispatch) => {
     // As part of preventing editing while the toolbox is shown,
     // un-focus the editor so that typing isn't possible
     document.body.focus();
-    const existingCalls = processExistingCode(existingCode, dispatch);
+    const existingCalls = processExistingCode(existingCode, startLine, dispatch);
     if (existingCalls !== null) {
       dispatch({
         type: ActionTypes.OPEN_SHAPE_TOOLBOX,

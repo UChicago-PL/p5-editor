@@ -22,7 +22,11 @@ export function applyShapeToolbox(code, calls, [from, to]) {
   );
 }
 
-export function processExistingCode(code, dispatch) {
+function chToLine(code, ch) {
+  return [...code.slice(0, ch)].filter((c) => c === '\n').length;
+}
+
+export function processExistingCode(code, startLine, dispatch) {
   if (code) {
     let ast;
     try {
@@ -30,33 +34,54 @@ export function processExistingCode(code, dispatch) {
     } catch (e) {
       return null;
     }
+
+    const reportError = (msg) =>
+      dispatch(
+        dispatchConsoleEvent([
+          {
+            method: 'log',
+            data: [msg]
+          }
+        ])
+      );
+
+    const reportCodeError = (syntaxVals, msg) => {
+      const lineNumbers = syntaxVals.map((val) => chToLine(code, val.start) + startLine);
+      reportError(
+        msg + '\n\nProblem line' + (lineNumbers.length === 1 ? '' : 's') + ': ' + lineNumbers.join(', ')
+      );
+    };
+
     const blockStatement = ast.body[0];
     if (blockStatement?.type === 'BlockStatement') {
-      if (
-        blockStatement.body.every(
-          (o) => o.type === 'ExpressionStatement' && o.expression.type === 'CallExpression'
-        )
-      ) {
+      const nonExpressions = blockStatement.body.filter(
+        (o) => o.type !== 'ExpressionStatement' || o.expression.type !== 'CallExpression'
+      );
+      if (!nonExpressions.length) {
         const args = blockStatement.body.map((o) => o.expression.arguments);
-        if (args.flat().every((a) => a.type === 'Literal' && typeof a.value === 'number')) {
+
+        const nonNumberVals = args.flat().filter((a) => a.type !== 'Literal' || typeof a.value !== 'number');
+
+        if (!nonNumberVals.length) {
           return blockStatement.body.map((o) => [
             o.expression.callee.name,
             o.expression.arguments.map((arg) => arg.value)
           ]);
+        } else {
+          reportCodeError(
+            nonNumberVals,
+            'Shape toolbox code may only contain p5 function calls that pass number literals as arguments.'
+          );
         }
+      } else {
+        reportCodeError(
+          nonExpressions,
+          'Shape toolbox code may only contain p5 function calls, and cannot include other structures like variable declarations, if statements, or for loops.'
+        );
       }
+    } else {
+      reportError('The shape toolbox argument must be a lambda with a block body.');
     }
-
-    dispatch(
-      dispatchConsoleEvent([
-        {
-          method: 'log',
-          data: [
-            'Shape toolbox code may consist only of p5 function calls that pass number literals as arguments.'
-          ]
-        }
-      ])
-    );
     return null;
   }
   return [];
