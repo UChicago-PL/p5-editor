@@ -113,7 +113,7 @@ class Editor extends React.Component {
     // Without this setTimeout, if an error occurs on page load, then because
     // the authentication information hasn't been initialized, the gui will show
     // an "unable to save" dialogue
-    setTimeout(() => this.props.saveProject(this.getContent()), 100);
+    setTimeout(() => this.props.saveProject(this.getContent()), 1000);
   }
 
   static getDerivedStateFromError() {
