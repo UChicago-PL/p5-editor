@@ -3,6 +3,10 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 
+function randrange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
 export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const el = useRef(null);
 
@@ -22,39 +26,52 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   }, []);
 
   const defaults = {
-    fill: 'white',
+    fill: '#F0FFFF',
     stroke: 'black',
-    strokeWidth: 1,
+    strokeWidth: 3,
     strokeUniform: true,
     originX: 'left',
     originY: 'top'
   };
 
-  const defaultLoc = {
-    left: canvasSize.width / 2 - 10,
-    top: canvasSize.height / 2 - 10
+  const defaultSize = {
+    width: Math.min(canvasSize.width / 2, 70),
+    height: Math.min(canvasSize.height / 2, 70)
   };
 
-  const addLine = () =>
+  // The randomness slightly changes the placement of every new shape
+  // This makes it obvious that a new shape is added, even when it's the same one multiple times in a row
+  const variation = 20;
+  const defaultLoc = () => ({
+    left: canvasSize.width / 2 - defaultSize.width / 2 + randrange(-variation, variation),
+    top: canvasSize.height / 2 - defaultSize.height / 2 + randrange(-variation, variation)
+  });
+
+  const addLine = () => {
+    const loc = defaultLoc();
+
     canvas.add(
-      new fabric.Line([defaultLoc.left, defaultLoc.top, defaultLoc.left + 20, defaultLoc.top + 20], defaults)
+      new fabric.Line(
+        [loc.left, loc.top, loc.left + defaultSize.width, loc.top + defaultSize.height],
+        defaults
+      )
     );
+  };
 
   const addRect = () =>
     canvas.add(
       new fabric.Rect({
         ...defaults,
-        ...defaultLoc,
-        width: 20,
-        height: 20
+        ...defaultLoc(),
+        ...defaultSize
       })
     );
 
   const addCircle = () => {
     const o = new fabric.Circle({
       ...defaults,
-      ...defaultLoc,
-      radius: 10
+      ...defaultLoc(),
+      radius: defaultSize.width / 2
     });
 
     // https://stackoverflow.com/a/66692592
@@ -70,9 +87,8 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     canvas.add(
       new fabric.Triangle({
         ...defaults,
-        ...defaultLoc,
-        width: 20,
-        height: 20
+        ...defaultLoc(),
+        ...defaultSize
       })
     );
 
