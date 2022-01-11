@@ -442,6 +442,17 @@ class Nav extends React.PureComponent {
                 {this.props.t('Nav.Help.Reference')}
               </a>
             </li>
+            <li className="nav__dropdown-item">
+              <a
+                href="https://www.classes.cs.uchicago.edu/archive/2022/winter/11111-1/editor-features/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onFocus={this.handleFocusForHelp}
+                onBlur={this.handleBlur}
+              >
+                {this.props.t('Nav.Help.EditorReference')}
+              </a>
+            </li>
           </ul>
         </li>
       </ul>
