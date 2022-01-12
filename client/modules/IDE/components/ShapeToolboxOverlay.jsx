@@ -26,7 +26,8 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   }, []);
 
   const defaults = {
-    fill: '#F0FFFF',
+    strokeDashArray: [5, 5],
+    fill: 'rgb(158,158,236)',
     stroke: 'black',
     strokeWidth: 3,
     strokeUniform: true,
