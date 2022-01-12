@@ -156,10 +156,12 @@ class SliderWidget extends WidgetType {
 // this dumber strategy does the right thing, but is kinda stupid, shruggie
 function changeSlider(view: EditorView, to: number, from: number, value: string) {
   const sections = view.state.doc.sliceString(from, to).split(',');
-  if (sections.length !== 3) {
+  if (sections.length !== 3 && sections.length !== 4) {
     return false;
   }
-  const insert = [sections[0], sections[1], sections[2].replace(/\d+/, value)].join(',');
+  const insert = [sections[0], sections[1], sections[2].replace(/\d+/, value), sections[3]]
+    .filter(Boolean)
+    .join(',');
   view.dispatch({ changes: { from, to, insert } });
   return true;
 }
