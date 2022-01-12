@@ -424,7 +424,7 @@ class ShapeToolboxWidget extends WidgetType {
 
   toDOM() {
     const wrap = document.createElement('button');
-    wrap.innerText = 'show';
+    wrap.innerText = 'open';
     wrap.dataset.from = this.from.toString();
     wrap.className = 'cm-shape-toolbox-widget';
     wrap.onclick = this.cb;

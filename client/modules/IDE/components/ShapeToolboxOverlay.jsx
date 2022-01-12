@@ -275,7 +275,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
           reset
         </button>
         <button className="apply" onClick={apply}>
-          apply
+          save
         </button>
       </div>
     </div>
