@@ -498,6 +498,7 @@ class PreviewFrame extends React.Component {
             this.iframeElement = element;
           }}
           sandbox={sandboxAttributes}
+          style={{ opacity: this.props.showingShapeToolbox ? 0.5 : 1 }}
         />
         <iframe
           id="canvas_probing_frame"
@@ -511,7 +512,7 @@ class PreviewFrame extends React.Component {
           }}
           sandbox={sandboxAttributes}
           // display: 'none' causes a strange network error
-          style={{ visibility: 'hidden' }}
+          style={{ visibility: 'hidden', opacity: this.props.showingShapeToolbox ? 0.5 : 1 }}
         />
       </>
     );
@@ -538,6 +539,7 @@ PreviewFrame.propTypes = {
   dispatchConsoleEvent: PropTypes.func.isRequired,
   endSketchRefresh: PropTypes.func.isRequired,
   previewIsRefreshing: PropTypes.bool.isRequired,
+  showingShapeToolbox: PropTypes.bool.isRequired,
   fullView: PropTypes.bool,
   setBlobUrl: PropTypes.func.isRequired,
   stopSketch: PropTypes.func.isRequired,
@@ -582,6 +584,7 @@ function mapStateToProps(state, ownProps) {
     isPlaying: state.ide.isPlaying,
     isAccessibleOutputPlaying: state.ide.isAccessibleOutputPlaying,
     previewIsRefreshing: state.ide.previewIsRefreshing,
+    showingShapeToolbox: state.ide.showingShapeToolbox,
     textOutput: state.preferences.textOutput,
     gridOutput: state.preferences.gridOutput,
     soundOutput: state.preferences.soundOutput,
