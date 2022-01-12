@@ -7,6 +7,9 @@ function randrange(min, max) {
   return Math.random() * (max - min) + min;
 }
 
+// https://stackoverflow.com/a/51587105/6643726
+fabric.Object.prototype.objectCaching = false;
+
 export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const el = useRef(null);
 
