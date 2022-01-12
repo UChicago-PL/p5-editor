@@ -17,14 +17,19 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   const [canvas, setCanvas] = useState(null);
 
-  useEffect(() => {
-    const canvas_ = new fabric.Canvas(el.current);
-    canvas_.setDimensions(canvasSize);
-    canvas_.selection = 'true';
+  const resetCanvas = (canvas_) => {
+    canvas_.clear();
     existingCalls
       .map(processExistingCall)
       .filter(Boolean)
       .forEach((o) => canvas_.add(o));
+  };
+
+  useEffect(() => {
+    const canvas_ = new fabric.Canvas(el.current);
+    canvas_.setDimensions(canvasSize);
+    canvas_.selection = 'true';
+    resetCanvas(canvas_);
     setCanvas(canvas_);
   }, []);
 
@@ -249,6 +254,8 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     return [name, args.map(Math.round)];
   };
 
+  const reset = () => resetCanvas(canvas);
+
   const apply = () => {
     const objects = canvas.getObjects();
     console.log(objects);
@@ -264,6 +271,9 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         <button onClick={addRect}>square()/rect()</button>
         <button onClick={addCircle}>circle()/ellipse()</button>
         <button onClick={addTriangle}>triangle()</button>
+        <button className="reset" onClick={reset}>
+          reset
+        </button>
         <button className="apply" onClick={apply}>
           apply
         </button>
