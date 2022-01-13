@@ -3,6 +3,11 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 
+import Line from '../../../images/shapeToolbox/line.svg';
+import Circle from '../../../images/shapeToolbox/circle.svg';
+import Square from '../../../images/shapeToolbox/square.svg';
+import Triangle from '../../../images/shapeToolbox/triangle.svg';
+
 function randrange(min, max) {
   return Math.random() * (max - min) + min;
 }
@@ -264,13 +269,21 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   };
 
   return (
-    <div className="shape-toolbox-overlay" style={{ width: canvasSize.width }}>
+    <div className="shape-toolbox-overlay" style={{ height: canvasSize.height }}>
       <canvas ref={el} />
-      <div className="tools">
-        <button onClick={addLine}>line()</button>
-        <button onClick={addRect}>square()/rect()</button>
-        <button onClick={addCircle}>circle()/ellipse()</button>
-        <button onClick={addTriangle}>triangle()</button>
+      <div className="shape-toolbox-overlay__tools">
+        <button onClick={addLine}>
+          <Line role="img" aria-label="line()" focusable="false" />
+        </button>
+        <button onClick={addRect}>
+          <Square role="img" aria-label="square()/rect()" focusable="false" />
+        </button>
+        <button onClick={addCircle}>
+          <Circle role="img" aria-label="circle()/ellipse()" focusable="false" />
+        </button>
+        <button onClick={addTriangle}>
+          <Triangle role="img" aria-label="triangle()" focusable="false" />
+        </button>
         <button className="reset" onClick={reset}>
           reset
         </button>
