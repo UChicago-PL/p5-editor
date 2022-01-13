@@ -24,10 +24,12 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   const resetCanvas = (canvas_) => {
     canvas_.clear();
-    existingCalls
-      .map(processExistingCall)
-      .filter(Boolean)
-      .forEach((o) => canvas_.add(o));
+    existingCalls.map(processExistingCall).forEach((o, i) => {
+      if (o) {
+        o.id = i;
+        canvas_.add(o);
+      }
+    });
   };
 
   useEffect(() => {
@@ -36,6 +38,14 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     canvas_.selection = 'true';
     resetCanvas(canvas_);
     setCanvas(canvas_);
+
+    const delHandler = (e) => {
+      if (e.key === 'Delete') {
+        canvas_.remove(canvas_.getActiveObject());
+      }
+    };
+    document.addEventListener('keyup', delHandler);
+    return () => document.removeEventListener('keyup', delHandler);
   }, []);
 
   const defaults = {
@@ -106,59 +116,65 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
       })
     );
 
-  const processExistingCall = ([name, args]) => {
-    switch (name) {
-      case 'line':
-        return new fabric.Line(args, defaults);
-      // Curly brackets necessary here because of duplicate declaration of left and top below :(
-      case 'rect': {
-        const [left, top, width, height] = args;
-        return new fabric.Rect({
-          ...defaults,
-          left,
-          top,
-          width,
-          height
-        });
+  const processExistingCall = (call) => {
+    if (typeof call === 'string') {
+      // We are dealing with an ignored line, which has been left in its raw form
+      return null;
+    } else {
+      const [name, args] = call;
+      switch (name) {
+        case 'line':
+          return new fabric.Line(args, defaults);
+        // Curly brackets necessary here because of duplicate declaration of left and top below :(
+        case 'rect': {
+          const [left, top, width, height] = args;
+          return new fabric.Rect({
+            ...defaults,
+            left,
+            top,
+            width,
+            height
+          });
+        }
+        case 'quad': {
+          const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
+          const points = [
+            { x: x1, y: y1 },
+            { x: x2, y: y2 },
+            { x: x3, y: y3 },
+            { x: x4, y: y4 }
+          ];
+          return new fabric.Polygon(points, defaults);
+        }
+        case 'circle': {
+          const [left, top, diameter] = args;
+          return new fabric.Circle({
+            ...defaults,
+            left: left - diameter / 2,
+            top: top - diameter / 2,
+            radius: diameter / 2
+          });
+        }
+        case 'ellipse':
+          const [left, top, width, height] = args;
+          return new fabric.Ellipse({
+            ...defaults,
+            left: left - width / 2,
+            top: top - height / 2,
+            rx: width / 2,
+            ry: height / 2
+          });
+        case 'triangle':
+          const [x1, y1, x2, y2, x3, y3] = args;
+          const points = [
+            { x: x1, y: y1 },
+            { x: x2, y: y2 },
+            { x: x3, y: y3 }
+          ];
+          return new fabric.Polygon(points, defaults);
+        default:
+          return null;
       }
-      case 'quad': {
-        const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
-        const points = [
-          { x: x1, y: y1 },
-          { x: x2, y: y2 },
-          { x: x3, y: y3 },
-          { x: x4, y: y4 }
-        ];
-        return new fabric.Polygon(points, defaults);
-      }
-      case 'circle': {
-        const [left, top, diameter] = args;
-        return new fabric.Circle({
-          ...defaults,
-          left: left - diameter / 2,
-          top: top - diameter / 2,
-          radius: diameter / 2
-        });
-      }
-      case 'ellipse':
-        const [left, top, width, height] = args;
-        return new fabric.Ellipse({
-          ...defaults,
-          left: left - width / 2,
-          top: top - height / 2,
-          rx: width / 2,
-          ry: height / 2
-        });
-      case 'triangle':
-        const [x1, y1, x2, y2, x3, y3] = args;
-        const points = [
-          { x: x1, y: y1 },
-          { x: x2, y: y2 },
-          { x: x3, y: y3 }
-        ];
-        return new fabric.Polygon(points, defaults);
-      default:
-        return null;
     }
   };
 
@@ -184,7 +200,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     );
   };
 
-  const generateFuncCalls = (o) => {
+  const generateFuncCall = (o) => {
     const { oCoords: coords } = o;
     switch (o.type) {
       case 'line':
@@ -259,13 +275,38 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     return [name, args.map(Math.round)];
   };
 
+  const generateFuncCallCode = ([name, args]) => {
+    return `${name}(${args.join(', ')})`;
+  };
+
   const reset = () => resetCanvas(canvas);
 
   const apply = () => {
     const objects = canvas.getObjects();
     console.log(objects);
     canvas.clear();
-    closeCb(objects.map(generateFuncCalls).filter(Boolean).map(roundNums));
+
+    // Start with just the ignored lines
+    let res = existingCalls.map((call) => (typeof call === 'string' ? call : null));
+    console.log(res);
+
+    // Add in the shapeToolbox calls
+    objects.forEach((o) => {
+      const line = generateFuncCallCode(roundNums(generateFuncCall(o)));
+      if (o.id !== undefined) {
+        // This is an existing object with a specific position among the other calls
+        res[o.id] = line;
+      } else {
+        // This is a new object
+        res.push(line);
+      }
+    });
+    console.log(res);
+
+    // Filter out any nulls that may be left over from original calls that have since been deleted
+    res = res.filter(Boolean);
+
+    closeCb(res);
   };
 
   return (
