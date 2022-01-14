@@ -115,7 +115,10 @@ class PreviewFrame extends React.Component {
           });
       }
 
-      const msgHasP5msg = (message) => message.data.some((x) => x.includes('p5.js says'));
+      const msgHasP5msg = (message) =>
+        message.data.some((x) => {
+          return x && x.includes && x.includes('p5.js says');
+        });
       if (decodedMessages.some(msgHasP5msg)) {
         this.hasErrored = true;
         decodedMessages.filter(msgHasP5msg).forEach((msg) => {
