@@ -49,17 +49,15 @@
 
 .shape-toolbox-overlay {
   display: flex;
+  align-items: start;
 
   .canvas-container {
-    @include themify() {
-      border: 1px solid getThemifyVariable('ide-border-color');
-    }
+    //@include themify() {
+    //  border: 1px solid getThemifyVariable('ide-border-color');
+    //}
   }
 
   .shape-toolbox-overlay__tools {
-    // Account for two borders side-by-side
-    margin-left: -1px;
-
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -70,6 +68,10 @@
       position: relative;
       margin-bottom: 1rem;
       font-size: 1.5rem;
+    }
+
+    button:last-of-type {
+      margin-bottom: 0;
     }
 
     // Override global selector declared elsewhere

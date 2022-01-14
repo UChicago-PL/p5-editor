@@ -308,7 +308,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   };
 
   return (
-    <div className="shape-toolbox-overlay" style={{ height: canvasSize.height }}>
+    <div className="shape-toolbox-overlay">
       <canvas ref={el} />
       <div className="shape-toolbox-overlay__tools">
         <button onClick={addLine}>
