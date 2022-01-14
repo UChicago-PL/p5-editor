@@ -3,6 +3,8 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 
+import { wrapEvent } from '../../../utils/analytics';
+
 import Line from '../../../images/shapeToolbox/line.svg';
 import Circle from '../../../images/shapeToolbox/circle.svg';
 import Square from '../../../images/shapeToolbox/square.svg';
@@ -311,22 +313,22 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     <div className="shape-toolbox-overlay">
       <canvas ref={el} />
       <div className="shape-toolbox-overlay__tools">
-        <button onClick={addLine}>
+        <button onClick={wrapEvent(addLine, { eventName: 'stb-addLine' })}>
           <Line role="img" aria-label="line()" focusable="false" />
         </button>
-        <button onClick={addRect}>
+        <button onClick={wrapEvent(addRect, { eventName: 'stb-addRect' })}>
           <Square role="img" aria-label="square()/rect()" focusable="false" />
         </button>
-        <button onClick={addCircle}>
+        <button onClick={wrapEvent(addCircle, { eventName: 'stb-addCircle' })}>
           <Circle role="img" aria-label="circle()/ellipse()" focusable="false" />
         </button>
-        <button onClick={addTriangle}>
+        <button onClick={wrapEvent(addTriangle, { eventName: 'stb-addTri' })}>
           <Triangle role="img" aria-label="triangle()" focusable="false" />
         </button>
-        <button className="reset" onClick={reset}>
+        <button className="reset" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
           reset
         </button>
-        <button className="apply" onClick={apply}>
+        <button className="apply" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
           save
         </button>
       </div>

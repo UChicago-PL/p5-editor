@@ -14,7 +14,7 @@ import { syntaxTree } from '@codemirror/language';
 import { SyntaxNode, NodeType } from '@lezer/common';
 
 import { isEqual } from 'lodash';
-import { setGlobalTrack } from '../../../../../utils/analytics';
+import { setGlobalTrack, trackEvent } from '../../../../../utils/analytics';
 import { CmState, cmStatePlugin, initialCmState } from './cmState';
 import createColorPicker from './colorPicker';
 import colorRegex from './colorRegex';
@@ -397,9 +397,9 @@ function changeColor(
   let insert: string;
   if (rgba === null) {
     insert = `"${color}"`;
-  } else if (specialColorFormat === "colorNumbers") {
+  } else if (specialColorFormat === 'colorNumbers') {
     insert = `${rgba.r}, ${rgba.g}, ${rgba.b}`;
-  } else if (specialColorFormat === "colorTuple") {
+  } else if (specialColorFormat === 'colorTuple') {
     insert = `[${rgba.r}, ${rgba.g}, ${rgba.b}]`;
   } else {
     // If desired, if alpha !== 1 could check that initColor
@@ -427,7 +427,10 @@ class ShapeToolboxWidget extends WidgetType {
     wrap.innerText = 'open';
     wrap.dataset.from = this.from.toString();
     wrap.className = 'cm-shape-toolbox-widget';
-    wrap.onclick = this.cb;
+    wrap.onclick = () => {
+      trackEvent({ eventName: 'stb-open' });
+      this.cb();
+    };
     return wrap;
   }
 
@@ -508,9 +511,10 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
             const argListNumbers = argList.getChildren('Number');
             const argListArrayExp = argList.getChild('ArrayExpression');
             const makeWidget = (color: string, specialColorFormat: specialColorFormat) => {
-              const widget = specialColorFormat === "colorName"
-                ? new ColorNameWidget(color, from + 1, to - 1)
-                : new ColorWidget(color, from + 1, argList.parent!.to - 1, specialColorFormat);
+              const widget =
+                specialColorFormat === 'colorName'
+                  ? new ColorNameWidget(color, from + 1, to - 1)
+                  : new ColorWidget(color, from + 1, argList.parent!.to - 1, specialColorFormat);
               const deco = Decoration.widget({ widget, side: 1 });
               addWidget(deco, argList.parent!.to - 1);
             };
@@ -522,25 +526,19 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
               if (val.match(colorRegex)) {
                 makeWidget(val, undefined);
               } else if (colorNames[val.toLowerCase()]) {
-                makeWidget(val.toLowerCase(), "colorName");
+                makeWidget(val.toLowerCase(), 'colorName');
               }
             } else if (argListNumbers.length === 3) {
               // Example: background(123, 123, 123)
               // Not handling a fourth argument (the weirder 0-255 opacity value).
               // Instead, the color picker will convert to rgba() string
               // (with a transparency percentage).
-              makeWidget(
-                rgbToString(argListToIntList(view, argListNumbers)),
-                "colorNumbers"
-              );
+              makeWidget(rgbToString(argListToIntList(view, argListNumbers)), 'colorNumbers');
             } else if (argListArrayExp && argListArrayExp.getChildren('Number').length === 3) {
               // Example: background([123, 123, 123])
               // Ditto four arguments above.
               const argListNumbers = argListArrayExp.getChildren('Number');
-              makeWidget(
-                rgbToString(argListToIntList(view, argListNumbers)),
-                "colorTuple"
-              );
+              makeWidget(rgbToString(argListToIntList(view, argListNumbers)), 'colorTuple');
             }
           } else if (funcType === 'slider') {
             const argListNumbers = argList.getChildren('Number');
