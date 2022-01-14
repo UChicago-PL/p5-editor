@@ -320,7 +320,7 @@ class IDEView extends React.Component {
                 allowResize={this.props.ide.consoleIsExpanded}
                 className="editor-preview-subpanel"
               >
-                <div>
+                <div className={this.props.ide.showingShapeToolbox ? 'showing-shape-toolbox' : ''}>
                   {this.props.ide.showingShapeToolbox && <div className="editor-block" />}
                   <Editor
                     provideController={(ctl) => {
