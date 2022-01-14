@@ -10,7 +10,7 @@ import decomment from 'decomment';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Decode } from 'console-feed';
-import falafel from 'falafel';
+import jshintRules from '../../../utils/jshintRules';
 import { getBlobUrl, setBlobUrl } from '../actions/files';
 import { resolvePathToFile } from '../../../../server/utils/filePath';
 import {
@@ -405,13 +405,8 @@ class PreviewFrame extends React.Component {
         const files = this.mergeLocalFilesAndEditorActiveFile();
         const doesLinterError = files.some((file) => {
           if (file.name.match(/.*\.js$/i)) {
-            JSHINT(file.content, {
-              asi: false,
-              bitwise: true,
-              curly: true,
-              eqeqeq: true,
-              esversion: 10
-            });
+            JSHINT(file.content, jshintRules);
+            trackEvent({ eventName: 'codeRefreshBlockedByLint' });
             return JSHINT.errors.some((e) => e.id && e.id.includes('error'));
           }
           return false;

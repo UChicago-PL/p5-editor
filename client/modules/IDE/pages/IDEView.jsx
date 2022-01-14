@@ -42,6 +42,8 @@ import { trackEvent } from '../../../utils/analytics';
 import { autosaveEvery } from '../../../constants';
 import ShapeToolboxOverlay from '../components/ShapeToolboxOverlay';
 
+import LinterError from '../../../images/linterError.svg';
+
 function getTitle(props) {
   const { id } = props.project;
   return id ? `CS 111 Editor | ${props.project.name}` : 'CS 111 Editor';
@@ -332,8 +334,9 @@ class IDEView extends React.Component {
               </SplitPane>
               <section className="preview-frame-holder">
                 <header className="preview-frame__header">
+                  {isStale && <LinterError />}
                   <h2 className={'preview-frame__title' + (isStale ? ' stale' : '')}>
-                    Canvas {isStale && '(stale)'}
+                    Canvas {isStale && '(Lint error is blocking refresh)'}
                   </h2>
                 </header>
                 <div className="preview-frame__content">
