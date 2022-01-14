@@ -291,12 +291,12 @@ export function createError(error) {
   };
 }
 
-export function openShapeToolbox(loc, existingCode) {
+export function openShapeToolbox(loc, startLine, existingCode) {
   return (dispatch) => {
     // As part of preventing editing while the toolbox is shown,
     // un-focus the editor so that typing isn't possible
     document.body.focus();
-    const existingCalls = processExistingCode(existingCode, dispatch);
+    const existingCalls = processExistingCode(existingCode, startLine, dispatch);
     if (existingCalls !== null) {
       dispatch({
         type: ActionTypes.OPEN_SHAPE_TOOLBOX,
@@ -304,10 +304,6 @@ export function openShapeToolbox(loc, existingCode) {
         existingCalls
       });
     }
-    // This variable is read inside of the actual script implementation of shapeToolbox
-    // in order to hide the shapes when the gui editor is shown
-    // so that the shapes are not duplicated (one on the canvas, the other in the gui editor)
-    window.showingShapeToolbox = true;
   };
 }
 
@@ -332,7 +328,6 @@ export function closeShapeToolbox(calls) {
       type: ActionTypes.CLOSE_SHAPE_TOOLBOX
     });
     dispatch(startSketch());
-    window.showingShapeToolbox = false;
   };
 }
 

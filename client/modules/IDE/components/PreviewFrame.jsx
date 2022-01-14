@@ -115,7 +115,10 @@ class PreviewFrame extends React.Component {
           });
       }
 
-      const msgHasP5msg = (message) => message.data.some((x) => x.includes('p5.js says'));
+      const msgHasP5msg = (message) =>
+        message.data.some((x) => {
+          return x && x.includes && x.includes('p5.js says');
+        });
       if (decodedMessages.some(msgHasP5msg)) {
         this.hasErrored = true;
         decodedMessages.filter(msgHasP5msg).forEach((msg) => {
@@ -449,6 +452,7 @@ class PreviewFrame extends React.Component {
             this.iframeElement = element;
           }}
           sandbox={sandboxAttributes}
+          style={{ opacity: this.props.showingShapeToolbox ? 0.5 : 1 }}
         />
       </>
     );
@@ -476,6 +480,7 @@ PreviewFrame.propTypes = {
   dispatchConsoleEvent: PropTypes.func.isRequired,
   endSketchRefresh: PropTypes.func.isRequired,
   previewIsRefreshing: PropTypes.bool.isRequired,
+  showingShapeToolbox: PropTypes.bool.isRequired,
   fullView: PropTypes.bool,
   setBlobUrl: PropTypes.func.isRequired,
   stopSketch: PropTypes.func.isRequired,
@@ -521,6 +526,7 @@ function mapStateToProps(state, ownProps) {
     isAutoRefresh: state.ide.isAutoRefresh,
     isAccessibleOutputPlaying: state.ide.isAccessibleOutputPlaying,
     previewIsRefreshing: state.ide.previewIsRefreshing,
+    showingShapeToolbox: state.ide.showingShapeToolbox,
     textOutput: state.preferences.textOutput,
     gridOutput: state.preferences.gridOutput,
     soundOutput: state.preferences.soundOutput,

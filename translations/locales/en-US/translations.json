@@ -28,7 +28,8 @@
     "Help": {
       "Title": "Help",
       "KeyboardShortcuts": "Keyboard Shortcuts",
-      "Reference": "Reference",
+      "Reference": "p5 Reference",
+      "EditorReference": "Editor Reference",
       "About": "About"
     },
     "Lang": "Language",

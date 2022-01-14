@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Dropzone from 'dropzone';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -10,15 +10,12 @@ import { fileExtensionsAndMimeTypes } from '../../../../server/utils/fileUtils';
 
 const s3Bucket = `https://s3-${getConfig('AWS_REGION')}.amazonaws.com/${getConfig('S3_BUCKET')}/`;
 
-class FileUploader extends React.Component {
-  componentDidMount() {
-    this.createDropzone();
-    Dropzone.autoDiscover = false;
-  }
-
-  createDropzone() {
-    const userId = this.props.project.owner ? this.props.project.owner.id : this.props.user.id;
-    this.uploader = new Dropzone('div#uploader', {
+function FileUploader(props) {
+  const uploadContainer = useRef(null);
+  const [inError, setInError] = useState(false);
+  useEffect(() => {
+    const userId = props.project.owner ? props.project.owner.id : props.user.id;
+    new Dropzone(uploadContainer.current, {
       url: s3Bucket,
       method: 'post',
       autoProcessQueue: true,
@@ -30,20 +27,23 @@ class FileUploader extends React.Component {
       thumbnailWidth: 200,
       thumbnailHeight: 200,
       acceptedFiles: fileExtensionsAndMimeTypes,
-      dictDefaultMessage: this.props.t('FileUploader.DictDefaultMessage'),
-      accept: this.props.dropzoneAcceptCallback.bind(this, userId),
-      sending: this.props.dropzoneSendingCallback,
-      complete: this.props.dropzoneCompleteCallback
-      // error: (file, errorMessage) => {
-      //   console.log(file);
-      //   console.log(errorMessage);
-      // }
+      dictDefaultMessage: props.t('FileUploader.DictDefaultMessage'),
+      accept: props.dropzoneAcceptCallback.bind(this, userId, (e) => setInError(e)),
+      sending: props.dropzoneSendingCallback,
+      complete: props.dropzoneCompleteCallback,
+      error: (file, errorMessage) => {
+        console.log(file);
+        console.log(errorMessage);
+      }
     });
-  }
+    Dropzone.autoDiscover = false;
+  }, []);
 
-  render() {
-    return <div id="uploader" className="uploader dropzone"></div>;
-  }
+  return (
+    <div ref={uploadContainer} id="uploader" className="uploader dropzone">
+      {inError && <div>{inError}</div>}
+    </div>
+  );
 }
 
 FileUploader.propTypes = {

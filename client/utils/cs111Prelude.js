@@ -1,7 +1,7 @@
 export default `
 const Editor = {
   shapeToolbox: (cb) => {
-    if (typeof cb === 'function' && (!parent || !parent.showingShapeToolbox)) cb()
+    if (typeof cb === 'function') cb()
   },
   slider: (min, max, val, step) => val
 }

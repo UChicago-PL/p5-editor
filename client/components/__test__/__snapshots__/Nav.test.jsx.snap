@@ -185,6 +185,15 @@ exports[`Nav renders correctly 1`] = `
                 target="_blank"
               />
             </li>
+            <li
+              class="nav__dropdown-item"
+            >
+              <a
+                href="https://www.classes.cs.uchicago.edu/archive/2022/winter/11111-1/editor-features/"
+                rel="noopener noreferrer"
+                target="_blank"
+              />
+            </li>
           </ul>
         </li>
       </ul>

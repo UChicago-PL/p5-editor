@@ -5,13 +5,23 @@ import { startLoader, stopLoader } from './loader';
 export function getSubmissions() {
   return (dispatch) => {
     dispatch(startLoader());
-
-    apiClient.get('/get-all-submissions').then((response) => {
-      dispatch(stopLoader());
-      dispatch({
-        type: ActionTypes.RECEIVE_SUBMISSIONS,
-        submissions: response.data
+    apiClient
+      .get('/get-all-submissions')
+      .then((response) => {
+        console.log('here');
+        dispatch(stopLoader());
+        dispatch({
+          type: ActionTypes.RECEIVE_SUBMISSIONS,
+          submissions: response.data
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+        dispatch(stopLoader());
+        dispatch({
+          type: ActionTypes.RECEIVE_SUBMISSIONS,
+          submissions: []
+        });
       });
-    });
   };
 }
