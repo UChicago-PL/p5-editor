@@ -40,7 +40,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     setCanvas(canvas_);
 
     const delHandler = (e) => {
-      if (e.key === 'Delete') {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
         canvas_.remove(canvas_.getActiveObject());
       }
     };
