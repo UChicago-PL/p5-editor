@@ -619,7 +619,13 @@ export const widgetsPlugin = (props: WidgetProps) =>
       eventHandlers: {
         mousedown: (e) => {
           const target = e.target as HTMLElement;
-          if (target.classList.contains('cm-inc-widget') || target.classList.contains('cm-dec-widget')) {
+          // This is necessary to prevent a bug where button clicks aren't registered the first time around
+          // But I'm not sure why exactly
+          if (
+            target.classList.contains('cm-inc-widget') ||
+            target.classList.contains('cm-dec-widget') ||
+            target.classList.contains('cm-shape-toolbox-widget')
+          ) {
             return true;
           }
         },
