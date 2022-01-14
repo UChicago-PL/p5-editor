@@ -553,11 +553,24 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
             const { from, to } = argList.parent!;
             const loc = [from, to] as [number, number];
             const startLine = view.state.doc.lineAt(from).number;
-            let cb = () => shapeToolboxCb(loc, startLine, '');
+            const selectZone = () =>
+              view.dispatch({
+                selection: EditorSelection.create([
+                  EditorSelection.range(from, to),
+                  EditorSelection.cursor(to)
+                ])
+              });
+            let cb = () => {
+              selectZone();
+              return shapeToolboxCb(loc, startLine, '');
+            };
 
             const block = argList.getChild('ArrowFunction')?.getChild('Block');
             if (block) {
-              cb = () => shapeToolboxCb(loc, startLine, view.state.doc.sliceString(block.from, block.to));
+              cb = () => {
+                selectZone();
+                return shapeToolboxCb(loc, startLine, view.state.doc.sliceString(block.from, block.to));
+              };
             }
 
             const deco = Decoration.widget({
