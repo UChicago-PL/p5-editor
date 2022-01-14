@@ -112,6 +112,15 @@
   user-select: none;
 }
 
+.showing-shape-toolbox .cm-selectionBackground {
+  @include themify() {
+    background: linear-gradient(-45deg, getThemifyVariable('logo-color'), getThemifyVariable('console-info-background-color'), getThemifyVariable('logo-color'), getThemifyVariable('console-info-background-color'));
+  }
+  opacity: 0.4;
+}
+
+
+
 .stale {
   @include themify() {
     color: getThemifyVariable('error-color');
