@@ -48,28 +48,60 @@
 }
 
 .shape-toolbox-overlay {
-  button {
-    z-index: 100;
-    // z-index only works when position is set
-    position: relative;
+  display: flex;
+  align-items: start;
+
+  .canvas-container {
+    //@include themify() {
+    //  border: 1px solid getThemifyVariable('ide-border-color');
+    //}
   }
 
-  @include themify() {
-    border: 1px solid getThemifyVariable('ide-border-color');
-  }
+  .shape-toolbox-overlay__tools {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
 
-  .tools {
-    @include themify() {
-      border-top: 1px solid getThemifyVariable('ide-border-color');
+    button {
+      z-index: 100;
+      // z-index only works when position is set
+      position: relative;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
     }
 
-    .apply {
+    button:last-of-type {
+      margin-bottom: 0;
+    }
+
+    // Override global selector declared elsewhere
+    button:focus {
+      box-shadow: none !important;
+    }
+    path {
+      fill: none !important;
+    }
+
+    button:hover svg path, button:hover svg circle {
+      fill: lightgrey !important;
+    }
+
+    @include themify() {
+      border: 1px solid getThemifyVariable('ide-border-color');
+    }
+
+    .reset, .apply {
       @include themify() {
         background: getThemifyVariable('modal-background-color');
       }
     }
   }
 }
+
+.dark .shape-toolbox-overlay__tools svg, .contrast .shape-toolbox-overlay__tools svg {
+  filter: invert(100%);
+}
+
 
 .editor-block {
   width: 100%;
@@ -79,6 +111,15 @@
   z-index: 100;
   user-select: none;
 }
+
+.showing-shape-toolbox .cm-selectionBackground {
+  @include themify() {
+    background: linear-gradient(-45deg, getThemifyVariable('logo-color'), getThemifyVariable('console-info-background-color'), getThemifyVariable('logo-color'), getThemifyVariable('console-info-background-color'));
+  }
+  opacity: 0.4;
+}
+
+
 
 .stale {
   @include themify() {

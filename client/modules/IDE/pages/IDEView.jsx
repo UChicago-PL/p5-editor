@@ -320,7 +320,7 @@ class IDEView extends React.Component {
                 allowResize={this.props.ide.consoleIsExpanded}
                 className="editor-preview-subpanel"
               >
-                <div>
+                <div className={this.props.ide.showingShapeToolbox ? 'showing-shape-toolbox' : ''}>
                   {this.props.ide.showingShapeToolbox && <div className="editor-block" />}
                   <Editor
                     provideController={(ctl) => {
@@ -483,7 +483,7 @@ IDEView.propTypes = {
     unsavedChanges: PropTypes.bool.isRequired,
     uploadFileModalVisible: PropTypes.bool.isRequired,
     showingShapeToolbox: PropTypes.bool.isRequired,
-    shapeToolboxExistingCalls: PropTypes.bool.isRequired
+    shapeToolboxExistingCalls: PropTypes.arrayOf(PropTypes.any).isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
   canvasSize: PropTypes.arrayOf(PropTypes.number).isRequired,

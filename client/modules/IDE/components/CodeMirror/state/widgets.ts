@@ -10,11 +10,12 @@ import {
   ViewUpdate,
   WidgetType
 } from '@codemirror/view';
+import { EditorSelection } from '@codemirror/state';
 import { syntaxTree } from '@codemirror/language';
 import { SyntaxNode, NodeType } from '@lezer/common';
 
 import { isEqual } from 'lodash';
-import { setGlobalTrack } from '../../../../../utils/analytics';
+import { setGlobalTrack, trackEvent } from '../../../../../utils/analytics';
 import { CmState, cmStatePlugin, initialCmState } from './cmState';
 import createColorPicker from './colorPicker';
 import colorRegex from './colorRegex';
@@ -399,9 +400,9 @@ function changeColor(
   let insert: string;
   if (rgba === null) {
     insert = `"${color}"`;
-  } else if (specialColorFormat === "colorNumbers") {
+  } else if (specialColorFormat === 'colorNumbers') {
     insert = `${rgba.r}, ${rgba.g}, ${rgba.b}`;
-  } else if (specialColorFormat === "colorTuple") {
+  } else if (specialColorFormat === 'colorTuple') {
     insert = `[${rgba.r}, ${rgba.g}, ${rgba.b}]`;
   } else {
     // If desired, if alpha !== 1 could check that initColor
@@ -426,10 +427,13 @@ class ShapeToolboxWidget extends WidgetType {
 
   toDOM() {
     const wrap = document.createElement('button');
-    wrap.innerText = 'show';
+    wrap.innerText = 'open';
     wrap.dataset.from = this.from.toString();
     wrap.className = 'cm-shape-toolbox-widget';
-    wrap.onclick = this.cb;
+    wrap.onclick = () => {
+      trackEvent({ eventName: 'stb-open' });
+      this.cb();
+    };
     return wrap;
   }
 
@@ -439,7 +443,7 @@ class ShapeToolboxWidget extends WidgetType {
 }
 
 type WidgetProps = {
-  shapeToolboxCb: (loc: [number, number], existing: string) => void;
+  shapeToolboxCb: (loc: [number, number], startLine: number, existing: string) => void;
   onWidgetChange: (widgetType: string) => void;
 };
 
@@ -510,9 +514,10 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
             const argListNumbers = argList.getChildren('Number');
             const argListArrayExp = argList.getChild('ArrayExpression');
             const makeWidget = (color: string, specialColorFormat: specialColorFormat) => {
-              const widget = specialColorFormat === "colorName"
-                ? new ColorNameWidget(color, from + 1, to - 1)
-                : new ColorWidget(color, from + 1, argList.parent!.to - 1, specialColorFormat);
+              const widget =
+                specialColorFormat === 'colorName'
+                  ? new ColorNameWidget(color, from + 1, to - 1)
+                  : new ColorWidget(color, from + 1, argList.parent!.to - 1, specialColorFormat);
               const deco = Decoration.widget({ widget, side: 1 });
               addWidget(deco, argList.parent!.to - 1);
             };
@@ -524,25 +529,19 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
               if (val.match(colorRegex)) {
                 makeWidget(val, undefined);
               } else if (colorNames[val.toLowerCase()]) {
-                makeWidget(val.toLowerCase(), "colorName");
+                makeWidget(val.toLowerCase(), 'colorName');
               }
             } else if (argListNumbers.length === 3) {
               // Example: background(123, 123, 123)
               // Not handling a fourth argument (the weirder 0-255 opacity value).
               // Instead, the color picker will convert to rgba() string
               // (with a transparency percentage).
-              makeWidget(
-                rgbToString(argListToIntList(view, argListNumbers)),
-                "colorNumbers"
-              );
+              makeWidget(rgbToString(argListToIntList(view, argListNumbers)), 'colorNumbers');
             } else if (argListArrayExp && argListArrayExp.getChildren('Number').length === 3) {
               // Example: background([123, 123, 123])
               // Ditto four arguments above.
               const argListNumbers = argListArrayExp.getChildren('Number');
-              makeWidget(
-                rgbToString(argListToIntList(view, argListNumbers)),
-                "colorTuple"
-              );
+              makeWidget(rgbToString(argListToIntList(view, argListNumbers)), 'colorTuple');
             }
           } else if (funcType === 'slider') {
             const argListNumbers = argList.getChildren('Number');
@@ -558,11 +557,25 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
           } else if (funcType === 'shapeToolbox') {
             const { from, to } = argList.parent!;
             const loc = [from, to] as [number, number];
-            let cb = () => shapeToolboxCb(loc, '');
+            const startLine = view.state.doc.lineAt(from).number;
+            const selectZone = () =>
+              view.dispatch({
+                selection: EditorSelection.create([
+                  EditorSelection.range(from, to),
+                  EditorSelection.cursor(to)
+                ])
+              });
+            let cb = () => {
+              selectZone();
+              return shapeToolboxCb(loc, startLine, '');
+            };
 
             const block = argList.getChild('ArrowFunction')?.getChild('Block');
             if (block) {
-              cb = () => shapeToolboxCb(loc, view.state.doc.sliceString(block.from, block.to));
+              cb = () => {
+                selectZone();
+                return shapeToolboxCb(loc, startLine, view.state.doc.sliceString(block.from, block.to));
+              };
             }
 
             const deco = Decoration.widget({
@@ -620,7 +633,13 @@ export const widgetsPlugin = (props: WidgetProps) =>
       eventHandlers: {
         mousedown: (e) => {
           const target = e.target as HTMLElement;
-          if (target.classList.contains('cm-inc-widget') || target.classList.contains('cm-dec-widget')) {
+          // This is necessary to prevent a bug where button clicks aren't registered the first time around
+          // But I'm not sure why exactly
+          if (
+            target.classList.contains('cm-inc-widget') ||
+            target.classList.contains('cm-dec-widget') ||
+            target.classList.contains('cm-shape-toolbox-widget')
+          ) {
             return true;
           }
         },

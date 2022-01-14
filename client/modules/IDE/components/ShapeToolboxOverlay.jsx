@@ -3,58 +3,101 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 
+import { wrapEvent } from '../../../utils/analytics';
+
+import Line from '../../../images/shapeToolbox/line.svg';
+import Circle from '../../../images/shapeToolbox/circle.svg';
+import Square from '../../../images/shapeToolbox/square.svg';
+import Triangle from '../../../images/shapeToolbox/triangle.svg';
+
+function randrange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// https://stackoverflow.com/a/51587105/6643726
+fabric.Object.prototype.objectCaching = false;
+
 export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const el = useRef(null);
 
-  canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.width, 20) };
+  canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.height, 20) };
 
   const [canvas, setCanvas] = useState(null);
+
+  const resetCanvas = (canvas_) => {
+    canvas_.clear();
+    existingCalls.map(processExistingCall).forEach((o, i) => {
+      if (o) {
+        o.id = i;
+        canvas_.add(o);
+      }
+    });
+  };
 
   useEffect(() => {
     const canvas_ = new fabric.Canvas(el.current);
     canvas_.setDimensions(canvasSize);
     canvas_.selection = 'true';
-    existingCalls
-      .map(processExistingCall)
-      .filter(Boolean)
-      .forEach((o) => canvas_.add(o));
+    resetCanvas(canvas_);
     setCanvas(canvas_);
+
+    const delHandler = (e) => {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        canvas_.remove(canvas_.getActiveObject());
+      }
+    };
+    document.addEventListener('keyup', delHandler);
+    return () => document.removeEventListener('keyup', delHandler);
   }, []);
 
   const defaults = {
-    fill: 'white',
+    strokeDashArray: [5, 5],
+    fill: 'rgb(158,158,236)',
     stroke: 'black',
-    strokeWidth: 1,
+    strokeWidth: 3,
     strokeUniform: true,
     originX: 'left',
     originY: 'top'
   };
 
-  const defaultLoc = {
-    left: canvasSize.width / 2 - 10,
-    top: canvasSize.height / 2 - 10
+  const defaultSize = {
+    width: Math.min(canvasSize.width / 2, 70),
+    height: Math.min(canvasSize.height / 2, 70)
   };
 
-  const addLine = () =>
+  // The randomness slightly changes the placement of every new shape
+  // This makes it obvious that a new shape is added, even when it's the same one multiple times in a row
+  const variation = 20;
+  const defaultLoc = () => ({
+    left: canvasSize.width / 2 - defaultSize.width / 2 + randrange(-variation, variation),
+    top: canvasSize.height / 2 - defaultSize.height / 2 + randrange(-variation, variation)
+  });
+
+  const addLine = () => {
+    const loc = defaultLoc();
+
     canvas.add(
-      new fabric.Line([defaultLoc.left, defaultLoc.top, defaultLoc.left + 20, defaultLoc.top + 20], defaults)
+      new fabric.Line(
+        [loc.left, loc.top, loc.left + defaultSize.width, loc.top + defaultSize.height],
+        defaults
+      )
     );
+  };
 
   const addRect = () =>
     canvas.add(
       new fabric.Rect({
         ...defaults,
-        ...defaultLoc,
-        width: 20,
-        height: 20
+        ...defaultLoc(),
+        ...defaultSize
       })
     );
 
   const addCircle = () => {
     const o = new fabric.Circle({
       ...defaults,
-      ...defaultLoc,
-      radius: 10
+      ...defaultLoc(),
+      radius: defaultSize.width / 2
     });
 
     // https://stackoverflow.com/a/66692592
@@ -70,65 +113,70 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     canvas.add(
       new fabric.Triangle({
         ...defaults,
-        ...defaultLoc,
-        width: 20,
-        height: 20
+        ...defaultLoc(),
+        ...defaultSize
       })
     );
 
-  const processExistingCall = ([name, args]) => {
-    switch (name) {
-      case 'line':
-        return new fabric.Line(args, defaults);
-      // Curly brackets necessary here because of duplicate declaration of left and top below :(
-      case 'rect': {
-        const [left, top, width, height] = args;
-        return new fabric.Rect({
-          ...defaults,
-          left,
-          top,
-          width,
-          height
-        });
+  const processExistingCall = (call) => {
+    if (typeof call === 'string') {
+      // We are dealing with an ignored line, which has been left in its raw form
+      return null;
+    } else {
+      const [name, args] = call;
+      switch (name) {
+        case 'line':
+          return new fabric.Line(args, defaults);
+        // Curly brackets necessary here because of duplicate declaration of left and top below :(
+        case 'rect': {
+          const [left, top, width, height] = args;
+          return new fabric.Rect({
+            ...defaults,
+            left,
+            top,
+            width,
+            height
+          });
+        }
+        case 'quad': {
+          const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
+          const points = [
+            { x: x1, y: y1 },
+            { x: x2, y: y2 },
+            { x: x3, y: y3 },
+            { x: x4, y: y4 }
+          ];
+          return new fabric.Polygon(points, defaults);
+        }
+        case 'circle': {
+          const [left, top, diameter] = args;
+          return new fabric.Circle({
+            ...defaults,
+            left: left - diameter / 2,
+            top: top - diameter / 2,
+            radius: diameter / 2
+          });
+        }
+        case 'ellipse':
+          const [left, top, width, height] = args;
+          return new fabric.Ellipse({
+            ...defaults,
+            left: left - width / 2,
+            top: top - height / 2,
+            rx: width / 2,
+            ry: height / 2
+          });
+        case 'triangle':
+          const [x1, y1, x2, y2, x3, y3] = args;
+          const points = [
+            { x: x1, y: y1 },
+            { x: x2, y: y2 },
+            { x: x3, y: y3 }
+          ];
+          return new fabric.Polygon(points, defaults);
+        default:
+          return null;
       }
-      case 'quad': {
-        const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
-        const points = [
-          { x: x1, y: y1 },
-          { x: x2, y: y2 },
-          { x: x3, y: y3 },
-          { x: x4, y: y4 }
-        ];
-        return new fabric.Polygon(points, defaults);
-      }
-      case 'circle': {
-        const [left, top, diameter] = args;
-        return new fabric.Circle({
-          ...defaults,
-          left: left - diameter / 2,
-          top: top - diameter / 2,
-          radius: diameter / 2
-        });
-      }
-      case 'ellipse':
-        const [left, top, width, height] = args;
-        return new fabric.Ellipse({
-          ...defaults,
-          left: left - width / 2,
-          top: top - height / 2,
-          rx: width / 2,
-          ry: height / 2
-        });
-      case 'triangle':
-        const [x1, y1, x2, y2, x3, y3] = args;
-        const points = [
-          { x: x1, y: y1 },
-          { x: x2, y: y2 },
-          { x: x3, y: y3 }
-        ];
-        return new fabric.Polygon(points, defaults);
-      default:
-        return null;
     }
   };
 
@@ -154,7 +202,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     );
   };
 
-  const generateFuncCalls = (o) => {
+  const generateFuncCall = (o) => {
     const { oCoords: coords } = o;
     switch (o.type) {
       case 'line':
@@ -226,26 +274,62 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   };
 
   const roundNums = ([name, args]) => {
-    return [name, args.map((x) => Math.round(x * 100) / 100)];
+    return [name, args.map(Math.round)];
   };
+
+  const generateFuncCallCode = ([name, args]) => {
+    return `${name}(${args.join(', ')})`;
+  };
+
+  const reset = () => resetCanvas(canvas);
 
   const apply = () => {
     const objects = canvas.getObjects();
     console.log(objects);
     canvas.clear();
-    closeCb(objects.map(generateFuncCalls).filter(Boolean).map(roundNums));
+
+    // Start with just the ignored lines
+    let res = existingCalls.map((call) => (typeof call === 'string' ? call : null));
+
+    // Add in the shapeToolbox calls
+    objects.forEach((o) => {
+      const line = generateFuncCallCode(roundNums(generateFuncCall(o)));
+      if (o.id !== undefined) {
+        // This is an existing object with a specific position among the other calls
+        res[o.id] = line;
+      } else {
+        // This is a new object
+        res.push(line);
+      }
+    });
+
+    // Filter out any nulls that may be left over from original calls that have since been deleted
+    res = res.filter(Boolean);
+
+    closeCb(res);
   };
 
   return (
-    <div className="shape-toolbox-overlay" style={{ width: canvasSize.width }}>
+    <div className="shape-toolbox-overlay">
       <canvas ref={el} />
-      <div className="tools">
-        <button onClick={addLine}>line</button>
-        <button onClick={addRect}>rect</button>
-        <button onClick={addCircle}>circle</button>
-        <button onClick={addTriangle}>triangle</button>
-        <button className="apply" onClick={apply}>
-          apply
+      <div className="shape-toolbox-overlay__tools">
+        <button onClick={wrapEvent(addLine, { eventName: 'stb-addLine' })}>
+          <Line role="img" aria-label="line()" focusable="false" />
+        </button>
+        <button onClick={wrapEvent(addRect, { eventName: 'stb-addRect' })}>
+          <Square role="img" aria-label="square()/rect()" focusable="false" />
+        </button>
+        <button onClick={wrapEvent(addCircle, { eventName: 'stb-addCircle' })}>
+          <Circle role="img" aria-label="circle()/ellipse()" focusable="false" />
+        </button>
+        <button onClick={wrapEvent(addTriangle, { eventName: 'stb-addTri' })}>
+          <Triangle role="img" aria-label="triangle()" focusable="false" />
+        </button>
+        <button className="reset" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
+          reset
+        </button>
+        <button className="apply" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
+          save
         </button>
       </div>
     </div>
