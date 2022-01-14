@@ -288,7 +288,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
     // Start with just the ignored lines
     let res = existingCalls.map((call) => (typeof call === 'string' ? call : null));
-    console.log(res);
 
     // Add in the shapeToolbox calls
     objects.forEach((o) => {
@@ -301,7 +300,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         res.push(line);
       }
     });
-    console.log(res);
 
     // Filter out any nulls that may be left over from original calls that have since been deleted
     res = res.filter(Boolean);
