@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
+import { line } from 'd3-shape';
 
 import { wrapEvent } from '../../../utils/analytics';
 
@@ -22,13 +23,13 @@ function randrange(min, max) {
 fabric.Object.prototype.objectCaching = false;
 
 const defaults = {
-  strokeDashArray: [5, 5],
+  // strokeDashArray: [5, 5],
   fill: 'rgb(158,158,236)',
   stroke: 'black',
-  strokeWidth: 3,
-  strokeUniform: true,
-  originX: 'left',
-  originY: 'top'
+  strokeWidth: 3
+  // strokeUniform: true
+  // originX: 'left',
+  // originY: 'top'
 };
 
 const calcAbsolutePointsForLine = (o) => {
@@ -51,14 +52,16 @@ type XXX = {
   // defaultLoc: any;
   defaultSize: any;
 };
+type Point = { x: number; y: number };
 interface DrawOperation {
   name: string;
-  insertIntoCanvas: (canvas, XXX, gestureSequence: { x: number; y: number }[]) => any | void;
+  insertIntoCanvas: (canvas, XXX, gestureSequence: Point[]) => any | void;
   processExisitingCall: (args) => any;
   generateCode: (o: fabric.Object) => [string, any[]];
   icon?: any;
-  gestureLength: number;
+  gestureLength: number | 'Infinity';
   skip?: Boolean;
+  gesturePreview: (seq: Point[], newPoint: Point) => JSX.Element;
 }
 const drawOperations: DrawOperation[] = [
   {
@@ -95,7 +98,8 @@ const drawOperations: DrawOperation[] = [
       } else return ['rect', [coords.tl.x, coords.tl.y, o.width! * o.scaleX!, o.height! * o.scaleY!]];
     },
     icon: Square,
-    gestureLength: 1
+    gestureLength: 1,
+    gesturePreview: (seq, point) => <rect x={point.x} y={point.y} height={20} width={20} {...defaults}></rect>
   },
   {
     name: 'quad',
@@ -112,7 +116,8 @@ const drawOperations: DrawOperation[] = [
     },
     generateCode: () => ['console.log', ['"not implemented yet"']],
     gestureLength: 2,
-    skip: true
+    skip: true,
+    gesturePreview: () => <></>
   },
   {
     name: 'circle',
@@ -165,7 +170,8 @@ const drawOperations: DrawOperation[] = [
       ];
     },
     icon: Circle,
-    gestureLength: 1
+    gestureLength: 1,
+    gesturePreview: (seq, point) => <circle cx={point.x + 15} cy={point.y + 15} r={30} {...defaults}></circle>
   },
   {
     name: 'ellipse',
@@ -193,7 +199,8 @@ const drawOperations: DrawOperation[] = [
     },
     insertIntoCanvas: () => {},
     gestureLength: 1,
-    skip: true
+    skip: true,
+    gesturePreview: () => <></>
   },
   {
     name: 'triangle',
@@ -222,7 +229,8 @@ const drawOperations: DrawOperation[] = [
       return ['triangle', [coords.mt.x, coords.mt.y, coords.bl.x, coords.bl.y, coords.br.x, coords.br.y]];
     },
     icon: Triangle,
-    gestureLength: 1
+    gestureLength: 1,
+    gesturePreview: (seq, point) => <circle cx={point.x} cy={point.y} r={20} {...defaults}></circle>
   },
   {
     name: 'line',
@@ -230,12 +238,6 @@ const drawOperations: DrawOperation[] = [
       const loc = defaultLoc();
       const points = [gestureSeq[0].x, gestureSeq[0].y, gestureSeq[1].x, gestureSeq[1].y];
       canvas.add(new fabric.Line(points, defaults));
-      // canvas.add(
-      //   new fabric.Line(
-      //     [loc.left, loc.top, loc.left + defaultSize.width, loc.top + defaultSize.height],
-      //     defaults
-      //   )
-      // );
     },
     processExisitingCall: (args) => new fabric.Line(args, defaults),
     generateCode: (o) => {
@@ -243,7 +245,13 @@ const drawOperations: DrawOperation[] = [
       return ['line', [p1.x, p1.y, p2.x, p2.y]];
     },
     icon: Line,
-    gestureLength: 2
+    gestureLength: 2,
+    gesturePreview: (seq, point) => {
+      if (!seq.length) {
+        return <circle cx={point.x} cy={point.y} {...defaults}></circle>;
+      }
+      return <line x1={point.x} y1={point.y} x2={seq[0].x} y2={seq[0].y} {...defaults}></line>;
+    }
   }
 ];
 
@@ -253,8 +261,9 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.height, 20) };
 
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
-  const [gestureSequence, setGestureSequence] = useState<false | { x: number; y: number }[]>(false);
+  const [gestureSequence, setGestureSequence] = useState<false | Point[]>(false);
   const [opType, setOpType] = useState<false | string>(false);
+  const [mouseMovePos, setMouseMovePos] = useState<false | Point>(false);
   const resetCanvas = (canvas_) => {
     canvas_.clear();
     existingCalls.map(processExistingCall).forEach((o, i) => {
@@ -369,7 +378,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
     closeCb(res);
   };
-
+  const operation = drawOperations.find((op) => op.name === opType)!;
   return (
     <div className="shape-toolbox-overlay">
       <canvas ref={el} />
@@ -399,19 +408,29 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         <button className="apply" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
           save
         </button>
+        {operation && operation.gestureLength === 'Infinity' && (
+          <button
+            className="finish-long"
+            onClick={() => {
+              setGestureSequence(false);
+              setOpType(false);
+              operation.insertIntoCanvas(canvas, { defaultLoc, defaultSize }, gestureSequence as Point[]);
+            }}
+          >
+            finish
+          </button>
+        )}
       </div>
-      {Array.isArray(gestureSequence) && (
+      {Array.isArray(gestureSequence) && operation && (
         <svg
           height={canvas?.height}
           width={canvas?.width}
           style={{ position: 'absolute' }}
+          onMouseMove={(e) => {
+            setMouseMovePos({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
+          }}
           onClick={(e) => {
-            console.log(e);
-            const newGestureSeq = [
-              ...gestureSequence,
-              { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }
-            ];
-            const operation = drawOperations.find((op) => op.name === opType)!;
+            const newGestureSeq = [...gestureSequence, mouseMovePos as Point];
             if (newGestureSeq.length >= operation.gestureLength) {
               setGestureSequence(false);
               setOpType(false);
@@ -424,9 +443,10 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             }
           }}
         >
-          {gestureSequence.map((item) => (
-            <circle r={10} cx={item.x} cy={item.y}></circle>
+          {gestureSequence.map((item, idx) => (
+            <circle key={idx} r={10} cx={item.x} cy={item.y}></circle>
           ))}
+          {operation.gesturePreview(gestureSequence, mouseMovePos as Point)}
         </svg>
       )}
     </div>
