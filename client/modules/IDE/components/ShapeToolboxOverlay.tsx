@@ -47,34 +47,34 @@ const calcAbsolutePointsForLine = (o) => {
 const roundNums = ([name, args]: [string, any[]]): [string, any[]] => [name, args.map(Math.round)];
 
 const generateFuncCallCode = ([name, args]: [string, any[]]) => `${name}(${args.join(', ')})`;
-type XXX = { defaultLoc: any; defaultSize: any };
+type XXX = {
+  // defaultLoc: any;
+  defaultSize: any;
+};
 interface DrawOperation {
   name: string;
-  insertIntoCanvas: (canvas, XXX) => any | void;
+  insertIntoCanvas: (canvas, XXX, gestureSequence: { x: number; y: number }[]) => any | void;
   processExisitingCall: (args) => any;
   generateCode: (o: fabric.Object) => [string, any[]];
   icon?: any;
+  gestureLength: number;
+  skip?: Boolean;
 }
 const drawOperations: DrawOperation[] = [
   {
     name: 'rect',
-    insertIntoCanvas: (canvas, { defaultLoc, defaultSize }) =>
+    insertIntoCanvas: (canvas, { defaultSize }, gestureSeq) =>
       canvas.add(
         new fabric.Rect({
           ...defaults,
-          ...defaultLoc(),
+          // ...defaultLoc(),
+          left: gestureSeq[0].x,
+          top: gestureSeq[0].y,
           ...defaultSize
         })
       ),
-    processExisitingCall: (args) => {
-      const [left, top, width, height] = args;
-      return new fabric.Rect({
-        ...defaults,
-        left,
-        top,
-        width,
-        height
-      });
+    processExisitingCall: ([left, top, width, height]) => {
+      return new fabric.Rect({ ...defaults, left, top, width, height });
     },
     generateCode: (o) => {
       const coords = o.oCoords!;
@@ -94,7 +94,8 @@ const drawOperations: DrawOperation[] = [
         ];
       } else return ['rect', [coords.tl.x, coords.tl.y, o.width! * o.scaleX!, o.height! * o.scaleY!]];
     },
-    icon: Square
+    icon: Square,
+    gestureLength: 1
   },
   {
     name: 'quad',
@@ -109,14 +110,18 @@ const drawOperations: DrawOperation[] = [
       ];
       return new fabric.Polygon(points, defaults);
     },
-    generateCode: () => ['console.log', ['"not implemented yet"']]
+    generateCode: () => ['console.log', ['"not implemented yet"']],
+    gestureLength: 2,
+    skip: true
   },
   {
     name: 'circle',
-    insertIntoCanvas: (canvas, { defaultLoc, defaultSize }) => {
+    insertIntoCanvas: (canvas, { defaultSize }, gestureSeq) => {
       const o = new fabric.Circle({
         ...defaults,
-        ...defaultLoc(),
+        // ...defaultLoc(),
+        left: gestureSeq[0].x,
+        top: gestureSeq[0].y,
         radius: defaultSize.width / 2
       });
 
@@ -159,7 +164,8 @@ const drawOperations: DrawOperation[] = [
         ]
       ];
     },
-    icon: Circle
+    icon: Circle,
+    gestureLength: 1
   },
   {
     name: 'ellipse',
@@ -185,15 +191,19 @@ const drawOperations: DrawOperation[] = [
         ]
       ];
     },
-    insertIntoCanvas: () => {}
+    insertIntoCanvas: () => {},
+    gestureLength: 1,
+    skip: true
   },
   {
     name: 'triangle',
-    insertIntoCanvas: (canvas, { defaultLoc, defaultSize }) =>
+    insertIntoCanvas: (canvas, { defaultLoc, defaultSize }, gestureSeq) =>
       canvas.add(
         new fabric.Triangle({
           ...defaults,
-          ...defaultLoc(),
+          // ...defaultLoc(),
+          left: gestureSeq[0].x,
+          top: gestureSeq[0].y,
           ...defaultSize
         })
       ),
@@ -211,26 +221,29 @@ const drawOperations: DrawOperation[] = [
       const coords = o.oCoords!;
       return ['triangle', [coords.mt.x, coords.mt.y, coords.bl.x, coords.bl.y, coords.br.x, coords.br.y]];
     },
-    icon: Triangle
+    icon: Triangle,
+    gestureLength: 1
   },
   {
     name: 'line',
-    insertIntoCanvas: (canvas, { defaultLoc, defaultSize }) => {
+    insertIntoCanvas: (canvas, { defaultLoc, defaultSize }, gestureSeq) => {
       const loc = defaultLoc();
-
-      canvas.add(
-        new fabric.Line(
-          [loc.left, loc.top, loc.left + defaultSize.width, loc.top + defaultSize.height],
-          defaults
-        )
-      );
+      const points = [gestureSeq[0].x, gestureSeq[0].y, gestureSeq[1].x, gestureSeq[1].y];
+      canvas.add(new fabric.Line(points, defaults));
+      // canvas.add(
+      //   new fabric.Line(
+      //     [loc.left, loc.top, loc.left + defaultSize.width, loc.top + defaultSize.height],
+      //     defaults
+      //   )
+      // );
     },
     processExisitingCall: (args) => new fabric.Line(args, defaults),
     generateCode: (o) => {
       const [p1, p2] = calcAbsolutePointsForLine(o);
       return ['line', [p1.x, p1.y, p2.x, p2.y]];
     },
-    icon: Line
+    icon: Line,
+    gestureLength: 2
   }
 ];
 
@@ -240,7 +253,8 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.height, 20) };
 
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
-
+  const [gestureSequence, setGestureSequence] = useState<false | { x: number; y: number }[]>(false);
+  const [opType, setOpType] = useState<false | string>(false);
   const resetCanvas = (canvas_) => {
     canvas_.clear();
     existingCalls.map(processExistingCall).forEach((o, i) => {
@@ -360,19 +374,25 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     <div className="shape-toolbox-overlay">
       <canvas ref={el} />
       <div className="shape-toolbox-overlay__tools">
-        {drawOperations.map((op) => {
-          const Icon = op.icon || Circle;
-          return (
-            <button
-              key={op.name}
-              onClick={wrapEvent(() => op.insertIntoCanvas(canvas, { defaultLoc, defaultSize }), {
-                eventName: `stb-add${op.name}`
-              })}
-            >
-              <Icon role="img" aria-label="circle()/ellipse()" focusable="false" />
-            </button>
-          );
-        })}
+        {drawOperations
+          .filter((op) => !op.skip)
+          .map((op) => {
+            const Icon = op.icon || Circle;
+            return (
+              <button
+                key={op.name}
+                // onClick={wrapEvent(() => op.insertIntoCanvas(canvas, { defaultLoc, defaultSize }), {
+                //   eventName: `stb-add${op.name}`
+                // })}
+                onClick={() => {
+                  setGestureSequence([]);
+                  setOpType(op.name);
+                }}
+              >
+                <Icon role="img" aria-label="circle()/ellipse()" focusable="false" />
+              </button>
+            );
+          })}
         <button className="reset" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
           reset
         </button>
@@ -380,6 +400,35 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
           save
         </button>
       </div>
+      {Array.isArray(gestureSequence) && (
+        <svg
+          height={canvas?.height}
+          width={canvas?.width}
+          style={{ position: 'absolute' }}
+          onClick={(e) => {
+            console.log(e);
+            const newGestureSeq = [
+              ...gestureSequence,
+              { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }
+            ];
+            const operation = drawOperations.find((op) => op.name === opType)!;
+            if (newGestureSeq.length >= operation.gestureLength) {
+              setGestureSequence(false);
+              setOpType(false);
+              operation.insertIntoCanvas(canvas, { defaultLoc, defaultSize }, newGestureSeq);
+              // onClick={wrapEvent(() => op.insertIntoCanvas(canvas, { defaultLoc, defaultSize }), {
+              //   eventName: `stb-add${op.name}`
+              // })}
+            } else {
+              setGestureSequence(newGestureSeq);
+            }
+          }}
+        >
+          {gestureSequence.map((item) => (
+            <circle r={10} cx={item.x} cy={item.y}></circle>
+          ))}
+        </svg>
+      )}
     </div>
   );
 }
