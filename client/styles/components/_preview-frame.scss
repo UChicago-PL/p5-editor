@@ -25,6 +25,13 @@
 
 .preview-frame__header {
   height: #{29 / $base-font-size}rem;
+  display: flex;
+  align-items: center;
+  svg {
+    width: 10px;
+    height: 10px;
+    margin-right: 1px;
+  }
 }
 
 .preview-frame__title {

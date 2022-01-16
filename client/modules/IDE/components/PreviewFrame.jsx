@@ -10,7 +10,7 @@ import decomment from 'decomment';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Decode } from 'console-feed';
-import falafel from 'falafel';
+import jshintRules from '../../../utils/jshintRules';
 import { getBlobUrl, setBlobUrl } from '../actions/files';
 import { resolvePathToFile } from '../../../../server/utils/filePath';
 import {
@@ -172,18 +172,20 @@ class PreviewFrame extends React.Component {
 
   jsPreprocess(jsText) {
     let newContent = jsText;
-    // check the code for js errors before sending it to strip comments
-    // or loops.
-    JSHINT(newContent, { esversion: 11 });
 
-    if (JSHINT.errors.length === 0) {
+    try {
       newContent = decomment(newContent, {
         ignore: /\/\/\s*noprotect/g,
         space: true
       });
       newContent = loopProtect(newContent);
+      return newContent;
+    } catch (e) {
+      // There's a chance that one of the above parsing steps fails due to invalid JS code
+      // This used to be addressed by running JSHINT on the code, but that seems more inefficient
+      // than just using try/catch
+      return newContent;
     }
-    return newContent;
   }
 
   mergeLocalFilesAndEditorActiveFile() {
@@ -249,8 +251,7 @@ class PreviewFrame extends React.Component {
     sketchDoc.head.appendChild(previewScripts);
 
     const cs111PreludeScript = sketchDoc.createElement('script');
-    cs111PreludeScript.innerHTML =
-      cs111Prelude + ";\nparent.document.body.dispatchEvent(new Event('finishedLoadingGlobal'));";
+    cs111PreludeScript.innerHTML = cs111Prelude;
     sketchDoc.head.appendChild(cs111PreludeScript);
 
     const sketchDocString = `<!DOCTYPE HTML>\n${sketchDoc.documentElement.outerHTML}`;
@@ -351,28 +352,7 @@ class PreviewFrame extends React.Component {
           } else {
             script.setAttribute('data-tag', `${startTag}${resolvedFile.name}`);
             script.removeAttribute('src');
-            let content;
-            try {
-              content = falafel(resolvedFile.content, (node) => {
-                if (node.type === 'FunctionDeclaration' && node.id.name === 'draw') {
-                  // The hook is inserted in the beginning of the body so that it still fires if the body errors
-                  node.body.update(
-                    node.body
-                      .source()
-                      .replace(
-                        '{',
-                        "{\nparent.document.body.dispatchEvent(new Event('finishedLoadingLocal'));\n"
-                      )
-                  );
-                }
-              });
-            } catch (e) {
-              if (e.name === 'SyntaxError') content = resolvedFile.content;
-              else {
-                throw e;
-              }
-            }
-            script.innerHTML = content;
+            script.innerHTML = resolvedFile.content;
           }
         }
       } else if (
@@ -419,65 +399,36 @@ class PreviewFrame extends React.Component {
         this.props.endSketchRefresh();
       }
       trackEvent({ eventName: 'codeRun' });
-      // This method is modified so that it only renders the sketch after ensuring that there is no startup error
-      // To make this happen, two hooks are added to the iframe JS code: one global hook, before any other scripts,
-      // and one local hook at the beginning of the draw function block
-      // These allow us to gauge when the p5 code actually starts running
-      // When the event is fired, we wait for a small time in order to give time for error handling mechanism
-      // to kick in, and for any error logs to be displayed
-      // Then, if there have been no error logs, we render the new sketch
 
-      // The reason for two hooks is that the local one gives us a better idea of when the code actually
-      // starts running, and so we can afford to use a smaller time delay to it, which improves UX
-      // However, there's a chance that the local one fires, due to the lack of a draw function or a syntax error
-      // Thus we need the global hook, which we can always rely on
+      let shouldRefresh = true;
 
-      const localFiles = this.injectLocalFiles();
-      this.props.clearConsole();
-      srcDoc.set(this.iframeProbingElement, localFiles);
-
-      let done = false;
-
-      const onLoaded = (delay) => {
-        setTimeout(() => {
-          if (!done) {
-            done = true;
-            if (!this.hasErrored) {
-              this.props.clearConsole();
-
-              this.iframeProbingElement.srcdoc = '';
-              srcDoc.set(this.iframeProbingElement, '  ');
-
-              srcDoc.set(this.iframeElement, localFiles);
-
-              this.props.setShowing();
-            } else {
-              this.props.setStale();
-            }
+      // When autorefresh is enabled, perform a JSHINT check before reloading the sketch
+      // So that the sketch isn't reloaded when there's a parsing error or something like that
+      if (this.props.isAutoRefresh) {
+        const files = this.mergeLocalFilesAndEditorActiveFile();
+        const doesLinterError = files.some((file) => {
+          if (file.name.match(/.*\.js$/i)) {
+            JSHINT(file.content, jshintRules);
+            trackEvent({ eventName: 'codeRefreshBlockedByLint' });
+            return JSHINT.errors.some((e) => e.id && e.id.includes('error'));
           }
-        }, delay);
-      };
+          return false;
+        });
+        shouldRefresh = !doesLinterError;
+      }
 
-      const LOCAL_HOOK_DELAY = 500;
-      const GLOBAL_HOOK_DELAY = 2000;
+      if (shouldRefresh) {
+        const localFiles = this.injectLocalFiles();
+        this.props.clearConsole();
+        srcDoc.set(this.iframeElement, localFiles);
 
-      const onLoadedLocal = () => {
-        document.body.removeEventListener('finishedLoadingLocal', onLoaded);
-        onLoaded(LOCAL_HOOK_DELAY);
-      };
-      const onLoadedGlobal = () => {
-        document.body.removeEventListener('finishedLoadingGlobal', onLoaded);
-        onLoaded(GLOBAL_HOOK_DELAY);
-      };
-
-      document.body.addEventListener('finishedLoadingLocal', onLoadedLocal);
-      document.body.addEventListener('finishedLoadingGlobal', onLoadedGlobal);
+        this.props.setShowing();
+      } else {
+        this.props.setStale();
+      }
     } else {
       this.iframeElement.srcdoc = '';
       srcDoc.set(this.iframeElement, '  ');
-
-      this.iframeProbingElement.srcdoc = '';
-      srcDoc.set(this.iframeProbingElement, '  ');
     }
   }
 
@@ -503,20 +454,6 @@ class PreviewFrame extends React.Component {
           sandbox={sandboxAttributes}
           style={{ opacity: this.props.showingShapeToolbox ? 0.5 : 1 }}
         />
-        <iframe
-          id="canvas_probing_frame"
-          className={iframeClass}
-          aria-label="sketch output"
-          role="main"
-          frameBorder="0"
-          title="sketch preview"
-          ref={(element) => {
-            this.iframeProbingElement = element;
-          }}
-          sandbox={sandboxAttributes}
-          // display: 'none' causes a strange network error
-          style={{ visibility: 'hidden', opacity: this.props.showingShapeToolbox ? 0.5 : 1 }}
-        />
       </>
     );
   }
@@ -524,6 +461,7 @@ class PreviewFrame extends React.Component {
 
 PreviewFrame.propTypes = {
   isPlaying: PropTypes.bool.isRequired,
+  isAutoRefresh: PropTypes.bool.isRequired,
   isAccessibleOutputPlaying: PropTypes.bool.isRequired,
   textOutput: PropTypes.bool.isRequired,
   gridOutput: PropTypes.bool.isRequired,
@@ -585,6 +523,7 @@ function mapStateToProps(state, ownProps) {
       state.files.find((file) => file.name !== 'root')
     ).content,
     isPlaying: state.ide.isPlaying,
+    isAutoRefresh: state.ide.isAutoRefresh,
     isAccessibleOutputPlaying: state.ide.isAccessibleOutputPlaying,
     previewIsRefreshing: state.ide.previewIsRefreshing,
     showingShapeToolbox: state.ide.showingShapeToolbox,

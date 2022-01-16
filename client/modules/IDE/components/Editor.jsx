@@ -17,6 +17,7 @@ import * as cmSearch from '@codemirror/search';
 import { linter, lintGutter } from '@codemirror/lint';
 import Timer from './Timer';
 import EditorAccessibility from './EditorAccessibility';
+import jshintRules from '../../../utils/jshintRules';
 
 import { trackEvent } from '../../../utils/analytics.ts';
 
@@ -398,13 +399,7 @@ class Editor extends React.Component {
                     return view.state.doc.line(line).from;
                   }
                   if (localLanguage === 'javascript') {
-                    JSHINT(code, {
-                      asi: false,
-                      bitwise: true,
-                      curly: true,
-                      eqeqeq: true,
-                      esversion: 10
-                    });
+                    JSHINT(code, jshintRules);
                     msgs = JSHINT.errors.map((e) => ({
                       message: e.reason,
                       severity: e.id && e.id.includes('error') ? 'error' : 'warning',

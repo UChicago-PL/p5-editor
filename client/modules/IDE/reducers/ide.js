@@ -16,6 +16,7 @@ const initialState = {
   unsavedChanges: false,
   infiniteLoop: false,
   previewIsRefreshing: false,
+  isAutoRefresh: false,
   infiniteLoopMessage: '',
   justOpenedProject: false,
   previousPath: '/',
@@ -91,7 +92,9 @@ const ide = (state = initialState, action) => {
     case ActionTypes.RESET_INFINITE_LOOPS:
       return Object.assign({}, state, { infiniteLoop: false, infiniteLoopMessage: '' });
     case ActionTypes.START_SKETCH_REFRESH:
-      return Object.assign({}, state, { previewIsRefreshing: true });
+      return Object.assign({}, state, { previewIsRefreshing: true, isAutoRefresh: false });
+    case ActionTypes.START_SKETCH_AUTO_REFRESH:
+      return Object.assign({}, state, { previewIsRefreshing: true, isAutoRefresh: true });
     case ActionTypes.END_SKETCH_REFRESH:
       return Object.assign({}, state, { previewIsRefreshing: false });
     case ActionTypes.JUST_OPENED_PROJECT:

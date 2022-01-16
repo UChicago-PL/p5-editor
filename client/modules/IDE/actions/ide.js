@@ -270,7 +270,9 @@ export function startAccessibleSketch() {
 
 export function startAutoRefreshSketch() {
   return checkLoggedIn((dispatch) => {
-    dispatch(startRefreshSketch());
+    dispatch({
+      type: ActionTypes.START_SKETCH_AUTO_REFRESH
+    });
     dispatch(logRun('run-auto'));
   });
 }
