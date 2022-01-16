@@ -160,6 +160,7 @@ function changeSlider(view: EditorView, to: number, from: number, value: string)
   if (sections.length !== 3 && sections.length !== 4) {
     return false;
   }
+  // eslint-disable-next-line no-useless-escape
   const insert = [sections[0], sections[1], sections[2].replace(/\-?\d+\.?\d*/g, value), sections[3]]
     .filter(Boolean)
     .join(',');
@@ -171,6 +172,7 @@ function getSliderNumberChildren(argList: SyntaxNode, view: EditorView) {
   let currentChild = argList.firstChild;
   const children = [] as SyntaxNode[];
   while (currentChild && currentChild.nextSibling) {
+    // eslint-disable-next-line no-useless-escape
     if (codeString(view, currentChild.from, currentChild.to).match(/\-?\d+\.?\d*/g)) {
       children.push(currentChild);
     }
