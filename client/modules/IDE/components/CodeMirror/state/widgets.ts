@@ -160,11 +160,25 @@ function changeSlider(view: EditorView, to: number, from: number, value: string)
   if (sections.length !== 3 && sections.length !== 4) {
     return false;
   }
-  const insert = [sections[0], sections[1], sections[2].replace(/\d+/, value), sections[3]]
+  // eslint-disable-next-line no-useless-escape
+  const insert = [sections[0], sections[1], sections[2].replace(/\-?\d+\.?\d*/g, value), sections[3]]
     .filter(Boolean)
     .join(',');
   view.dispatch({ changes: { from, to, insert } });
   return true;
+}
+
+function getSliderNumberChildren(argList: SyntaxNode, view: EditorView) {
+  let currentChild = argList.firstChild;
+  const children = [] as SyntaxNode[];
+  while (currentChild && currentChild.nextSibling) {
+    // eslint-disable-next-line no-useless-escape
+    if (codeString(view, currentChild.from, currentChild.to).match(/\-?\d+\.?\d*/g)) {
+      children.push(currentChild);
+    }
+    currentChild = currentChild.nextSibling;
+  }
+  return children;
 }
 
 const COLOR_FUNCS = ['color', 'fill', 'stroke', 'background'];
@@ -544,7 +558,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
               makeWidget(rgbToString(argListToIntList(view, argListNumbers)), 'colorTuple');
             }
           } else if (funcType === 'slider') {
-            const argListNumbers = argList.getChildren('Number');
+            const argListNumbers = getSliderNumberChildren(argList, view);
             if (argListNumbers.length === 3 || argListNumbers.length === 4) {
               const [min, max, value, step = 1] = argListToIntList(view, argListNumbers);
               const deco = Decoration.widget({
