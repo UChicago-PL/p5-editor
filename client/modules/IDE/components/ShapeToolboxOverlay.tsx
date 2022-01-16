@@ -309,20 +309,20 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   // The randomness slightly changes the placement of every new shape
   // This makes it obvious that a new shape is added, even when it's the same one multiple times in a row
-  const variation = 20;
-  const defaultLoc = () => ({
-    left: canvasSize.width / 2 - defaultSize.width / 2 + randrange(-variation, variation),
-    top: canvasSize.height / 2 - defaultSize.height / 2 + randrange(-variation, variation)
-  });
+  // const variation = 20;
+  // const defaultLoc = () => ({
+  //   left: canvasSize.width / 2 - defaultSize.width / 2 + randrange(-variation, variation),
+  //   top: canvasSize.height / 2 - defaultSize.height / 2 + randrange(-variation, variation)
+  // });
 
   const processExistingCall = (call) => {
     if (typeof call === 'string') {
       // We are dealing with an ignored line, which has been left in its raw form
       return null;
     }
-
-    const operation = drawOperations.find((op) => op.name);
-    return operation ? operation.processExisitingCall(call[1]) : null;
+    const [name, args] = call;
+    const operation = drawOperations.find((op) => op.name === name);
+    return operation ? operation.processExisitingCall(args) : null;
   };
 
   // https://stackoverflow.com/a/53710375
