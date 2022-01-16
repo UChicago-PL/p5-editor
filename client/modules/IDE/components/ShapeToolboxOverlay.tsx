@@ -48,25 +48,25 @@ const calcAbsolutePointsForLine = (o) => {
 const roundNums = ([name, args]: [string, any[]]): [string, any[]] => [name, args.map(Math.round)];
 
 const generateFuncCallCode = ([name, args]: [string, any[]]) => `${name}(${args.join(', ')})`;
-type XXX = {
+type LocalDefaults = {
   // defaultLoc: any;
-  defaultSize: any;
+  defaultSize: { height: number; width: number };
 };
 type Point = { x: number; y: number };
 interface DrawOperation {
   name: string;
-  insertIntoCanvas: (canvas, XXX, gestureSequence: Point[]) => any | void;
+  insertIntoCanvas: (canvas, gestureSequence: Point[], defaults: LocalDefaults) => any | void;
   processExisitingCall: (args) => any;
   generateCode: (o: fabric.Object) => [string, any[]];
   icon?: any;
   gestureLength: number | 'Infinity';
   skip?: Boolean;
-  gesturePreview: (seq: Point[], newPoint: Point) => JSX.Element;
+  gesturePreview: (seq: Point[], newPoint: Point, defaults: LocalDefaults) => JSX.Element;
 }
 const drawOperations: DrawOperation[] = [
   {
     name: 'rect',
-    insertIntoCanvas: (canvas, { defaultSize }, gestureSeq) =>
+    insertIntoCanvas: (canvas, gestureSeq, { defaultSize }) =>
       canvas.add(
         new fabric.Rect({
           ...defaults,
@@ -99,7 +99,15 @@ const drawOperations: DrawOperation[] = [
     },
     icon: Square,
     gestureLength: 1,
-    gesturePreview: (seq, point) => <rect x={point.x} y={point.y} height={20} width={20} {...defaults}></rect>
+    gesturePreview: (seq, point, def) => (
+      <rect
+        x={point.x}
+        y={point.y}
+        height={def.defaultSize.height}
+        width={def.defaultSize.width}
+        {...defaults}
+      ></rect>
+    )
   },
   {
     name: 'quad',
@@ -121,7 +129,7 @@ const drawOperations: DrawOperation[] = [
   },
   {
     name: 'circle',
-    insertIntoCanvas: (canvas, { defaultSize }, gestureSeq) => {
+    insertIntoCanvas: (canvas, gestureSeq, { defaultSize }) => {
       const o = new fabric.Circle({
         ...defaults,
         // ...defaultLoc(),
@@ -171,7 +179,10 @@ const drawOperations: DrawOperation[] = [
     },
     icon: Circle,
     gestureLength: 1,
-    gesturePreview: (seq, point) => <circle cx={point.x + 15} cy={point.y + 15} r={30} {...defaults}></circle>
+    gesturePreview: (seq, point, def) => {
+      const r = Math.min(def.defaultSize.height, def.defaultSize.width) / 2;
+      return <circle cx={point.x + r} cy={point.y + r} r={r} {...defaults}></circle>;
+    }
   },
   {
     name: 'ellipse',
@@ -204,7 +215,7 @@ const drawOperations: DrawOperation[] = [
   },
   {
     name: 'triangle',
-    insertIntoCanvas: (canvas, { defaultLoc, defaultSize }, gestureSeq) =>
+    insertIntoCanvas: (canvas, gestureSeq, { defaultSize }) =>
       canvas.add(
         new fabric.Triangle({
           ...defaults,
@@ -234,8 +245,8 @@ const drawOperations: DrawOperation[] = [
   },
   {
     name: 'line',
-    insertIntoCanvas: (canvas, { defaultLoc, defaultSize }, gestureSeq) => {
-      const loc = defaultLoc();
+    insertIntoCanvas: (canvas, gestureSeq) => {
+      // const loc = defaultLoc();
       const points = [gestureSeq[0].x, gestureSeq[0].y, gestureSeq[1].x, gestureSeq[1].y];
       canvas.add(new fabric.Line(points, defaults));
     },
@@ -408,18 +419,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         <button className="apply" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
           save
         </button>
-        {operation && operation.gestureLength === 'Infinity' && (
-          <button
-            className="finish-long"
-            onClick={() => {
-              setGestureSequence(false);
-              setOpType(false);
-              operation.insertIntoCanvas(canvas, { defaultLoc, defaultSize }, gestureSequence as Point[]);
-            }}
-          >
-            finish
-          </button>
-        )}
       </div>
       {Array.isArray(gestureSequence) && operation && (
         <svg
@@ -434,7 +433,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             if (newGestureSeq.length >= operation.gestureLength) {
               setGestureSequence(false);
               setOpType(false);
-              operation.insertIntoCanvas(canvas, { defaultLoc, defaultSize }, newGestureSeq);
+              operation.insertIntoCanvas(canvas, newGestureSeq, { defaultSize });
               // onClick={wrapEvent(() => op.insertIntoCanvas(canvas, { defaultLoc, defaultSize }), {
               //   eventName: `stb-add${op.name}`
               // })}
@@ -444,9 +443,14 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
           }}
         >
           {gestureSequence.map((item, idx) => (
-            <circle key={idx} r={10} cx={item.x} cy={item.y}></circle>
+            <circle
+              key={idx}
+              r={Math.min(defaultSize.height, defaultSize.width)}
+              cx={item.x}
+              cy={item.y}
+            ></circle>
           ))}
-          {operation.gesturePreview(gestureSequence, mouseMovePos as Point)}
+          {operation.gesturePreview(gestureSequence, mouseMovePos as Point, { defaultSize })}
         </svg>
       )}
     </div>
