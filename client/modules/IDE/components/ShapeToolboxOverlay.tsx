@@ -377,7 +377,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   const apply = () => {
     const objects = canvas!.getObjects();
-    console.log(objects);
     canvas!.clear();
 
     // Start with just the ignored lines
