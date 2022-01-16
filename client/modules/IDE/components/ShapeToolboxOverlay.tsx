@@ -130,12 +130,16 @@ const drawOperations: DrawOperation[] = [
   {
     name: 'circle',
     insertIntoCanvas: (canvas, gestureSeq, { defaultSize }) => {
+      const radius = Math.sqrt(
+        Math.pow(gestureSeq[0].x - gestureSeq[1].x, 2) + Math.pow(gestureSeq[0].y - gestureSeq[1].y, 2)
+      );
       const o = new fabric.Circle({
         ...defaults,
         // ...defaultLoc(),
         left: gestureSeq[0].x,
         top: gestureSeq[0].y,
-        radius: defaultSize.width / 2
+        // radius: defaultSize.width / 2
+        radius
       });
 
       // https://stackoverflow.com/a/66692592
@@ -178,10 +182,17 @@ const drawOperations: DrawOperation[] = [
       ];
     },
     icon: Circle,
-    gestureLength: 1,
+    gestureLength: 2,
     gesturePreview: (seq, point, def) => {
-      const r = Math.min(def.defaultSize.height, def.defaultSize.width) / 2;
-      return <circle cx={point.x + r} cy={point.y + r} r={r} {...defaults}></circle>;
+      let r = Math.min(def.defaultSize.height, def.defaultSize.width) / 2;
+      let cx = point.x;
+      let cy = point.y;
+      if (seq.length === 1) {
+        cx = seq[0].x;
+        cy = seq[0].y;
+        r = Math.sqrt(Math.pow(cx - point.x, 2) + Math.pow(cy - point.y, 2));
+      }
+      return <circle cx={cx + r} cy={cy + r} r={r} {...defaults}></circle>;
     }
   },
   {
@@ -442,14 +453,14 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             }
           }}
         >
-          {gestureSequence.map((item, idx) => (
+          {/* {gestureSequence.map((item, idx) => (
             <circle
               key={idx}
               r={Math.min(defaultSize.height, defaultSize.width)}
               cx={item.x}
               cy={item.y}
             ></circle>
-          ))}
+          ))} */}
           {operation.gesturePreview(gestureSequence, mouseMovePos as Point, { defaultSize })}
         </svg>
       )}
