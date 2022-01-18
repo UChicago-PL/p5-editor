@@ -9,6 +9,7 @@ import Project from '../models/project';
 import User from '../models/user';
 import UserAllowlist from '../models/userAllowlist';
 import Assignment from '../models/assignment';
+import { strip } from '../../client/utils/cs111Prelude';
 
 export * from './user.controller/apiKey';
 
@@ -358,6 +359,10 @@ async function prepPR(data, prefix) {
       file.fileType = 'asset';
       delete file.url;
     }
+    if (file.fileType === 'file' && file.name.split('.')[1] === 'js') {
+      file.content = strip(file.content);
+    }
+    console.log(file);
     files.push(file);
   }
   const idsToFiles = files.reduce((acc, file) => {
@@ -420,7 +425,6 @@ export function submitGHRepo(req, res) {
     return;
   }
   UserAllowlist.findOne({ github: req.user.github }).then((allowListItem) => {
-    console.log(allowListItem);
     if (!allowListItem) {
       console.log('error on submitting for ', req.user.github);
       return;
