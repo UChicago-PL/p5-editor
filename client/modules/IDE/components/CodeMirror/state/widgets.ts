@@ -654,10 +654,11 @@ export const widgetsPlugin = (props: WidgetProps) =>
         keyup: (e) => {
           keysPressed[e.key] = false;
         },
-        mousedown: (e) => {
+        mousedown: (e, view) => {
           const target = e.target as HTMLElement;
           // This is necessary to prevent a bug where button clicks aren't registered the first time around
           // But I'm not sure why exactly
+          view.focus();
           if (
             target.classList.contains('cm-inc-widget') ||
             target.classList.contains('cm-dec-widget') ||
