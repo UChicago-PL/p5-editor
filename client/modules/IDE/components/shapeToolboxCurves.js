@@ -1,5 +1,7 @@
 // Modified from http://fabricjs.com/quadratic-curve
 
+import { fabric } from 'fabric';
+
 export const createBezier = (points, defaults) => {
   const p_ = (i) => `${points[i][0]} ${points[i][1]}`;
   const svgString = `M ${p_(0)} C ${p_(1)}, ${p_(2)}, ${p_(3)}`;
