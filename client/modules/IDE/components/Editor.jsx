@@ -79,6 +79,12 @@ class Editor extends React.Component {
           return true;
         },
         preventDefault: true
+      },
+      // block the use of the linter pop up
+      {
+        key: `${metaKey}-Shift-m`,
+        run: () => true,
+        preventDefault: true
       }
     ];
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
