@@ -6,7 +6,7 @@ import Circle from '../../../../images/shapeToolbox/circle.svg';
 import { fabricDefaults, defaults, DrawOperation } from '../ShapeToolboxOverlay';
 const CircleDrawingTool: DrawOperation = {
   name: 'circle',
-  insertIntoCanvas: (canvas, gestureSeq, { defaultSize }) => {
+  insertIntoCanvas: (canvas, gestureSeq) => {
     const radius = Math.sqrt(
       Math.pow(gestureSeq[0].x - gestureSeq[1].x, 2) + Math.pow(gestureSeq[0].y - gestureSeq[1].y, 2)
     );
@@ -25,7 +25,7 @@ const CircleDrawingTool: DrawOperation = {
 
     canvas.add(o);
   },
-  processExisitingCall: (args) => {
+  processExistingCall: (args) => {
     const [left, top, diameter] = args;
     return new fabric.Circle({
       ...defaults,

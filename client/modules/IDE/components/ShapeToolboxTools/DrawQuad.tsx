@@ -5,8 +5,8 @@ import { fabric } from 'fabric';
 import { defaults, DrawOperation } from '../ShapeToolboxOverlay';
 const QuadDrawingTool: DrawOperation = {
   name: 'quad',
-  insertIntoCanvas: (canvas) => {},
-  processExisitingCall: (args) => {
+  insertIntoCanvas: () => {},
+  processExistingCall: (args) => {
     const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
     const points = [
       { x: x1, y: y1 },

@@ -68,6 +68,9 @@
       position: relative;
       margin-bottom: 1rem;
       font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     button:last-of-type {
@@ -85,6 +88,15 @@
     button:hover svg path, button:hover svg circle {
       fill: lightgrey !important;
     }
+    
+    button.gesture-in-progress {
+      @include themify() {
+        background: getThemifyVariable('logo-color') !important;
+        fill: lightgrey !important;
+      }
+    }
+
+
 
     @include themify() {
       border: 1px solid getThemifyVariable('ide-border-color');

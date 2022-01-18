@@ -5,7 +5,7 @@ import { fabric } from 'fabric';
 import { defaults, DrawOperation } from '../ShapeToolboxOverlay';
 const EllipseDrawingTool: DrawOperation = {
   name: 'ellipse',
-  processExisitingCall: (args) => {
+  processExistingCall: (args) => {
     const [left, top, width, height] = args;
     return new fabric.Ellipse({
       ...defaults,

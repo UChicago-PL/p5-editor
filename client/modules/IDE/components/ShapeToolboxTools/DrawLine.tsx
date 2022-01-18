@@ -3,8 +3,7 @@ import React from 'react';
 // @ts-ignore
 import Line from '../../../../images/shapeToolbox/line.svg';
 import { fabric } from 'fabric';
-// @ts-ignore
-import { defaults, DrawOperation, fabricDefaults } from '../ShapeToolboxOverlay';
+import { defaults, DrawOperation } from '../ShapeToolboxOverlay';
 const calcAbsolutePointsForLine = (o) => {
   const { x1, y1, x2, y2 } = o;
   const center = new fabric.Point((x1 + x2) / 2, (y1 + y2) / 2);
@@ -24,7 +23,7 @@ const LineDrawingTool: DrawOperation = {
     const points = [gestureSeq[0].x, gestureSeq[0].y, gestureSeq[1].x, gestureSeq[1].y];
     canvas.add(new fabric.Line(points, defaults));
   },
-  processExisitingCall: (args) => new fabric.Line(args, defaults),
+  processExistingCall: (args) => new fabric.Line(args, defaults),
   generateCode: (o) => {
     const [p1, p2] = calcAbsolutePointsForLine(o);
     return ['line', [p1.x, p1.y, p2.x, p2.y]];
@@ -33,7 +32,7 @@ const LineDrawingTool: DrawOperation = {
   gestureLength: 2,
   gesturePreview: (seq, point) => {
     if (!seq.length) {
-      return <circle cx={point.x} cy={point.y} {...defaults}></circle>;
+      return <circle cx={point.x} cy={point.y} r={10} fill="black"></circle>;
     }
     return <line x1={point.x} y1={point.y} x2={seq[0].x} y2={seq[0].y} {...defaults}></line>;
   }

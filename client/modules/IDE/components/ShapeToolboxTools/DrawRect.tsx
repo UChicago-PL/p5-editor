@@ -14,7 +14,7 @@ const RectDrawingTool: DrawOperation = {
         ...defaultSize
       })
     ),
-  processExisitingCall: ([left, top, width, height]) => {
+  processExistingCall: ([left, top, width, height]) => {
     return new fabric.Rect({ ...defaults, left, top, width, height });
   },
   generateCode: (o) => {

@@ -2,21 +2,14 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 
-import { wrapEvent } from '../../../utils/analytics';
+import { wrapEvent, trackEvent } from '../../../utils/analytics';
 import DrawCircle from './ShapeToolboxTools/DrawCircle';
-// import DrawEllipse from './ShapeToolboxTools/DrawEllipse';
+import DrawEllipse from './ShapeToolboxTools/DrawEllipse';
 import DrawLine from './ShapeToolboxTools/DrawLine';
-// import DrawQuad from './ShapeToolboxTools/DrawQuad';
+import DrawQuad from './ShapeToolboxTools/DrawQuad';
 import DrawRect from './ShapeToolboxTools/DrawRect';
 import DrawTriangle from './ShapeToolboxTools/DrawTriangle';
-const drawOperations: DrawOperation[] = [
-  DrawCircle,
-  // DrawEllipse,
-  DrawLine,
-  // DrawQuad,
-  DrawRect,
-  DrawTriangle
-];
+const drawOperations: DrawOperation[] = [DrawCircle, DrawEllipse, DrawLine, DrawQuad, DrawRect, DrawTriangle];
 
 // @ts-ignore
 import Circle from '../../../images/shapeToolbox/circle.svg';
@@ -48,7 +41,7 @@ type Point = { x: number; y: number };
 export interface DrawOperation {
   name: string;
   insertIntoCanvas: (canvas, gestureSequence: Point[], defaults: LocalDefaults) => any | void;
-  processExisitingCall: (args) => any;
+  processExistingCall: (args) => any;
   generateCode: (o: fabric.Object) => [string, any[]];
   icon?: any;
   gestureLength: number | 'Infinity';
@@ -110,7 +103,7 @@ export default function ShapeToolbox(props: Props) {
     }
     const [name, args] = call;
     const operation = drawOperations.find((op) => op.name === name);
-    return operation ? operation.processExisitingCall(args) : null;
+    return operation ? operation.processExistingCall(args) : null;
   };
 
   // https://stackoverflow.com/a/53710375
@@ -188,13 +181,12 @@ export default function ShapeToolbox(props: Props) {
             const Icon = op.icon || Circle;
             return (
               <button
+                className={opType === op.name ? 'gesture-in-progress' : ''}
                 key={op.name}
-                // onClick={wrapEvent(() => op.insertIntoCanvas(canvas, { defaultLoc, defaultSize }), {
-                //   eventName: `stb-add${op.name}`
-                // })}
                 onClick={() => {
                   setGestureSequence([]);
                   setOpType(op.name);
+                  trackEvent({ eventName: `stb-add${op.name}-start` });
                 }}
               >
                 <Icon role="img" aria-label="circle()/ellipse()" focusable="false" />
@@ -216,21 +208,19 @@ export default function ShapeToolbox(props: Props) {
           onMouseMove={(e) => {
             setMouseMovePos({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
           }}
-          onClick={(e) => {
+          onClick={() => {
             const newGestureSeq = [...gestureSequence, mouseMovePos as Point];
             if (newGestureSeq.length >= operation.gestureLength) {
+              trackEvent({ eventName: `stb-add${opType}-end` });
               setGestureSequence(false);
               setOpType(false);
               operation.insertIntoCanvas(canvas, newGestureSeq, { defaultSize });
-              // onClick={wrapEvent(() => op.insertIntoCanvas(canvas, { defaultLoc, defaultSize }), {
-              //   eventName: `stb-add${op.name}`
-              // })}
             } else {
               setGestureSequence(newGestureSeq);
             }
           }}
         >
-          {operation.gesturePreview(gestureSequence, mouseMovePos as Point, { defaultSize })}
+          {mouseMovePos && operation.gesturePreview(gestureSequence, mouseMovePos as Point, { defaultSize })}
         </svg>
       )}
     </div>
