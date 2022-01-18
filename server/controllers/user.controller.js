@@ -362,7 +362,6 @@ async function prepPR(data, prefix) {
     if (file.fileType === 'file' && file.name.split('.')[1] === 'js') {
       file.content = strip(file.content);
     }
-    console.log(file);
     files.push(file);
   }
   const idsToFiles = files.reduce((acc, file) => {
