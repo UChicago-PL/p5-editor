@@ -88,6 +88,9 @@ class Editor extends React.Component {
     this.cmView = null;
     this.lastWidgetChangeTime = 0;
 
+    // https://reactjs.org/docs/error-boundaries.html
+    this.state = { hasError: false };
+
     // this.updateLintingMessageAccessibility = debounce((annotations) => {
     //   this.props.clearLintMessage();
     //   annotations.forEach((x) => {
@@ -104,6 +107,18 @@ class Editor extends React.Component {
     this.findPrev = this.findPrev.bind(this);
     this.getContent = this.getContent.bind(this);
     this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.log('CAUGHT ERROR', error, errorInfo);
+    // Without this setTimeout, if an error occurs on page load, then because
+    // the authentication information hasn't been initialized, the gui will show
+    // an "unable to save" dialogue
+    setTimeout(() => this.props.saveProject(this.getContent()), 1000);
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
   }
 
   componentDidMount() {
@@ -369,7 +384,7 @@ class Editor extends React.Component {
           </div>
         </header>
         <article className="editor-holder">
-          {!isFolder && (
+          {!isFolder && !this.state.hasError && (
             <CodeMirror
               code={this.props.file.content}
               lang={language}
@@ -443,6 +458,12 @@ class Editor extends React.Component {
               }}
             />
           )}
+          {this.state.hasError && (
+            <p className="editor-holder__error">
+              Unfortunately, it looks like something went wrong. Please report this to the course staff, and
+              in the meantime, you can also try reloading the page. Your progress has been saved.
+            </p>
+          )}
         </article>
         <EditorAccessibility lintMessages={this.props.lintMessages} />
       </section>
@@ -483,6 +504,7 @@ Editor.propTypes = {
   editorOptionsVisible: PropTypes.bool.isRequired,
   // showEditorOptions: PropTypes.func.isRequired,
   // closeEditorOptions: PropTypes.func.isRequired,
+  saveProject: PropTypes.func.isRequired,
   setUnsavedChanges: PropTypes.func.isRequired,
   startAutoRefreshSketch: PropTypes.func.isRequired,
   autorefresh: PropTypes.bool.isRequired,
