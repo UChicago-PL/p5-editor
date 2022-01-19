@@ -87,7 +87,7 @@ class PreviewFrame extends React.Component {
     if (iframeBody) {
       ReactDOM.unmountComponentAtNode(iframeBody);
     }
-    const iframeProbingBody = this.iframeProbingElement.contentDocument.body;
+    const iframeProbingBody = this.iframeProbingElement?.contentDocument?.body;
     if (iframeProbingBody) {
       ReactDOM.unmountComponentAtNode(iframeProbingBody);
     }
