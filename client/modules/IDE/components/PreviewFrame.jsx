@@ -101,14 +101,17 @@ class PreviewFrame extends React.Component {
         })
       );
       if (decodedMessages.some((message) => message.method === 'error')) {
-        console.log('ERRORED');
+        console.log('ERRORED', decodedMessages);
         this.hasErrored = true;
         decodedMessages
           .filter((msg) => msg.method === 'error')
           .forEach((msg) => {
             const content = msg.data.length ? msg.data[0] : '';
             const errorType =
-              content.split(/[ ,:]+/).find((x) => x.toLowerCase().includes('error')) || 'error';
+              (content &&
+                typeof content === 'string' &&
+                content.split(/[ ,:]+/).find((x) => x.toLowerCase().includes('error'))) ||
+              'error';
             if (errorType) {
               trackEvent({ eventName: errorType });
             }
