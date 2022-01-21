@@ -155,7 +155,6 @@
     "@octokit/rest": "^18.0.15",
     "@simonwep/pickr": "^1.8.2",
     "acorn": "^8.6.0",
-    "acorn-loose": "^8.3.0",
     "archiver": "^1.1.0",
     "async": "^2.6.3",
     "axios": "^0.21.1",
