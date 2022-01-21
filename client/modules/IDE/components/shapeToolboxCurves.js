@@ -11,7 +11,21 @@ export const createBezier = (points, defaults) => {
     originX: 'center',
     originY: 'center'
   });
-  line.selectable = false;
+  // line.selectable = false;
+  line.hasControls = false;
+
+  const controls = points.map(makeControl);
+
+  const relativePointPositions = points.map(([x, y]) => [line.left - x, line.top - y]);
+
+  line.on('moving', () => {
+    controls.forEach((o) => {
+      const [x, y] = relativePointPositions[o.i];
+      o.left = line.left - x;
+      o.top = line.top - y;
+      o.setCoords();
+    });
+  });
 
   const modifyLine = (i, [x, y]) => {
     // This weird code is necessary because the fabric path don't store points as a simple array,
@@ -27,8 +41,6 @@ export const createBezier = (points, defaults) => {
     }
   };
 
-  const controls = points.map(makeControl);
-
   function makeControl(loc, i) {
     const isEndpoint = i === 0 || i === 3;
     const c = new fabric.Circle({
@@ -39,7 +51,8 @@ export const createBezier = (points, defaults) => {
       fill: isEndpoint ? '#666' : '#fff',
       stroke: '#666',
       originX: 'center',
-      originY: 'center'
+      originY: 'center',
+      i
     });
 
     // Custom property
@@ -49,7 +62,15 @@ export const createBezier = (points, defaults) => {
 
     c.on('moving', ({ transform: { target } }) => {
       modifyLine(i, [target.left, target.top]);
+      relativePointPositions[i] = [line.left - target.left, line.top - target.top];
     });
+
+    // Future improvement: update the path selection box upon move
+    // The following updates the box but messes up the coordinates
+    // https://stackoverflow.com/a/58443916/6643726
+    // c.on('moved', () => {
+    //   fabric.Polyline.prototype._setPositionDimensions.call(line, {});
+    // });
 
     return c;
   }
