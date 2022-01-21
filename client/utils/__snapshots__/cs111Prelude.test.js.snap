@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`A bunch of shapetoolboxes should be removed 1`] = `
+exports[`strip should correctly remove multiple shapetoolboxes and sliders 1`] = `
 "// The timestamp of your freeze frame
 // TODO: Replace these zero values
 let minutes = 4;
@@ -226,7 +226,7 @@ function drawMyFreezeFrame() {
 }"
 `;
 
-exports[`A bunch of shapetoolboxes should be removed 2`] = `
+exports[`strip should correctly remove multiple shapetoolboxes and sliders 2`] = `
 "let minutes = 4;
 let seconds = 13;
 
