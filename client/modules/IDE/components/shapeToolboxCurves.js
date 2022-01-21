@@ -11,9 +11,11 @@ export const createBezier = (absolutePoints, defaults) => {
   const line = new fabric.Path(makeSvgString(absolutePoints), {
     ...defaults,
     originX: 'center',
-    originY: 'center'
+    originY: 'center',
+    hasControls: false,
+    // Custom properties
+    id: window.fabricObjectId
   });
-  line.hasControls = false;
 
   const controls = absolutePoints.map(makeControl);
 
@@ -53,13 +55,13 @@ export const createBezier = (absolutePoints, defaults) => {
       stroke: '#666',
       originX: 'center',
       originY: 'center',
-      i
+      hasBorders: false,
+      hasControls: false,
+      // Custom properties
+      i,
+      special: true,
+      parentId: line.id
     });
-
-    // Custom property
-    c.special = true;
-
-    c.hasBorders = c.hasControls = false;
 
     c.on('moving', ({ transform: { target } }) => {
       // The subtraction here is to account for the possibility that the path has been moved

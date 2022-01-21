@@ -20,6 +20,8 @@ function randrange(min, max) {
 // https://stackoverflow.com/a/51587105/6643726
 fabric.Object.prototype.objectCaching = false;
 
+window.fabricObjectId = 0;
+
 export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const el = useRef(null);
 
@@ -32,7 +34,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     let i = 0;
     existingCalls.flatMap(processExistingCall).forEach((o) => {
       if (!o.special) {
-        o.id = i;
+        o.orderId = i;
         i++;
       }
       canvas_.add(o);
@@ -48,7 +50,15 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
     const delHandler = (e) => {
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        canvas_.remove(canvas_.getActiveObject());
+        const o = canvas_.getActiveObject();
+        if (!o.special) {
+          canvas_.getObjects().forEach((o2) => {
+            if (o2.parentId === o.id) {
+              canvas_.remove(o2);
+            }
+          });
+          canvas_.remove(o);
+        }
       }
     };
     document.addEventListener('keyup', delHandler);
@@ -351,9 +361,9 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
       const funcCall = generateFuncCall(o);
       if (funcCall) {
         const line = generateFuncCallCode(roundNums(funcCall));
-        if (o.id !== undefined) {
+        if (o.orderId !== undefined) {
           // This is an existing object with a specific position among the other calls
-          res[o.id] = line;
+          res[o.orderId] = line;
         } else {
           // This is a new object
           res.push(line);
