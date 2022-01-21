@@ -29,7 +29,7 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
 
   const [color, lighterColor] = randomColorTheme();
 
-  const line = new fabric.Path(makeSvgString(absolutePoints), {
+  const path = new fabric.Path(makeSvgString(absolutePoints), {
     ...defaults,
     originX: 'center',
     originY: 'center',
@@ -42,28 +42,28 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
 
   const controls = absolutePoints.map(makeControl);
 
-  let relativePointPositions = absolutePoints.map(([x, y]) => [line.left - x, line.top - y]);
+  let relativePointPositions = absolutePoints.map(([x, y]) => [path.left - x, path.top - y]);
 
-  line.on('moving', () => {
+  path.on('moving', () => {
     controls.forEach((o) => {
       const [x, y] = relativePointPositions[o.i];
-      o.left = line.left - x;
-      o.top = line.top - y;
+      o.left = path.left - x;
+      o.top = path.top - y;
       o.setCoords();
     });
   });
 
-  const modifyLine = (i, [x, y]) => {
+  const modifyPath = (i, [x, y]) => {
     // This weird code is necessary because the fabric path don't store points as a simple array,
     // but instead in a nested array that's shaped according to the svg string that is passed to the constructor
     if (i === 0) {
       // The "M" part of the string
-      line.path[0][1] = x;
-      line.path[0][2] = y;
+      path.path[0][1] = x;
+      path.path[0][2] = y;
     } else {
       // The "C" part of the string
-      line.path[1][(i - 1) * 2 + 1] = x;
-      line.path[1][(i - 1) * 2 + 2] = y;
+      path.path[1][(i - 1) * 2 + 1] = x;
+      path.path[1][(i - 1) * 2 + 2] = y;
     }
   };
 
@@ -90,7 +90,7 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
       // Custom properties
       i,
       special: true,
-      parentId: line.id
+      parentId: path.id
     });
 
     c.on('moving', ({ transform: { target } }) => {
@@ -98,32 +98,32 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
       // When the path is moved, only the object's `left` and `top` fields are updated, and not the path values
       // Thus, since here we are setting the path values, we have to undo any translations
       // We undo relative to `pathOffset`, which specifies the initial top left position of the path
-      modifyLine(i, [
-        target.left - (line.left - line.pathOffset.x),
-        target.top - (line.top - line.pathOffset.y)
+      modifyPath(i, [
+        target.left - (path.left - path.pathOffset.x),
+        target.top - (path.top - path.pathOffset.y)
       ]);
-      relativePointPositions[i] = [line.left - target.left, line.top - target.top];
+      relativePointPositions[i] = [path.left - target.left, path.top - target.top];
     });
 
     c.on('moved', () => {
-      const points = toPoints(line.path);
-      // This technique is similar to the one used for modifying the line just above,
-      // except in this case we are adding (line.left - line.pathOffset.x) instead of subtracting it
+      const points = toPoints(path.path);
+      // This technique is similar to the one used for modifying the path just above,
+      // except in this case we are adding (path.left - path.pathOffset.x) instead of subtracting it
       // That's because we want to add any accrued translations to convert the path coordinates to their absolute form
       // so that the path can be safely re-initialized without messing up its coordinates/positioning
       const absolutePoints = points.map(([x, y]) => [
-        x + line.left - line.pathOffset.x,
-        y + line.top - line.pathOffset.y
+        x + path.left - path.pathOffset.x,
+        y + path.top - path.pathOffset.y
       ]);
-      line.initialize(makeSvgString(absolutePoints));
-      relativePointPositions = controls.map((o) => [line.left - o.left, line.top - o.top]);
-      line.setCoords();
+      path.initialize(makeSvgString(absolutePoints));
+      relativePointPositions = controls.map((o) => [path.left - o.left, path.top - o.top]);
+      path.setCoords();
     });
 
     return c;
   }
 
-  return [line, ...controls];
+  return [path, ...controls];
 };
 
 export const toPoints = (path) => {
