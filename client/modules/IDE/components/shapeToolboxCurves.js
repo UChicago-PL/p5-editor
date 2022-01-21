@@ -19,6 +19,20 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
         { canvas }
       );
       canvas.setActiveObject(sel);
+    } else if (activeObjects.length === 1) {
+      const bringAllControlsToFront = (parentId) => {
+        canvas.getObjects().forEach((o) => {
+          if (o.parentId === parentId || o.id === parentId) {
+            o.bringToFront();
+          }
+        });
+      };
+      const activeObject = activeObjects[0];
+      if (activeObject.type === 'path') {
+        bringAllControlsToFront(activeObject.id);
+      } else if (activeObject.special) {
+        bringAllControlsToFront(activeObject.parentId);
+      }
     }
   });
 

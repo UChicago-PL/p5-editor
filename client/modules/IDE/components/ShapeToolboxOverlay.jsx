@@ -45,6 +45,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     const canvas_ = new fabric.Canvas(el.current);
     canvas_.setDimensions(canvasSize);
     canvas_.selection = 'true';
+    canvas_.preserveObjectStacking = false;
     resetCanvas(canvas_);
     setCanvas(canvas_);
 
