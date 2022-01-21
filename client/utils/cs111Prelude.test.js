@@ -88,7 +88,7 @@ function drawMyFreezeFrame() {
   });
 
   // draw legs of the square character
-  Editor.shapeToolbox(() => {
+  Editor.shapeToolbox(function() {
     stroke("black");
     strokeWeight(6);
     line(x1, y1, x1, y2);
@@ -98,7 +98,7 @@ function drawMyFreezeFrame() {
   });
 
   // draw arms of the square character
-  Editor.shapeToolbox(() => {
+  Editor.shapeToolbox(function example() {
     // left arm (my pov)
     line(105, 127, 82, 140);
     line(84, 141, 94, 151);
