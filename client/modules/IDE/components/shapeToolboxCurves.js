@@ -2,6 +2,11 @@
 
 import { fabric } from 'fabric';
 
+const randomColorTheme = () => {
+  const hue = Math.random() * 360;
+  return [`hsl(${hue},40%,50%)`, `hsl(${hue},40%,75%)`];
+};
+
 export const createBezier = (absolutePoints, defaults, canvas) => {
   // Prevent the user from creating multi-selections that contain paths or paths handles
   // This is because operations on group selections, like scaling, can mess up the special path handles
@@ -22,11 +27,15 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
     return `M ${p_(0)} C ${p_(1)}, ${p_(2)}, ${p_(3)}`;
   };
 
+  const [color, lighterColor] = randomColorTheme();
+
   const line = new fabric.Path(makeSvgString(absolutePoints), {
     ...defaults,
     originX: 'center',
     originY: 'center',
     hasControls: false,
+    fill: 'rgba(0,0,0,0)',
+    stroke: color,
     // Custom properties
     id: window.fabricObjectId
   });
@@ -65,8 +74,15 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
       top: loc[1],
       strokeWidth: 3,
       radius: 12,
-      fill: isEndpoint ? '#666' : '#fff',
-      stroke: '#666',
+      ...(isEndpoint
+        ? {
+            fill: color,
+            stroke: lighterColor
+          }
+        : {
+            stroke: color,
+            fill: 'rgba(0,0,0,0)'
+          }),
       originX: 'center',
       originY: 'center',
       hasBorders: false,
