@@ -37,7 +37,7 @@ import {
 import { setGridOutput, setSoundOutput, setTextOutput } from '../actions/preferences';
 import { clearConsole, dispatchConsoleEvent } from '../actions/console';
 
-import cs111Prelude from '../../../utils/cs111Prelude.ts';
+import cs111Prelude from '../../../utils/cs111Prelude';
 
 const shouldRenderSketch = (props, prevProps = undefined) => {
   const { isPlaying, previewIsRefreshing, fullView } = props;

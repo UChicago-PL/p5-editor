@@ -24,9 +24,9 @@ function prepareCode(code) {
     onComment: comments
   });
   walk(ast, {
-    enter(node, parent, prop, index) {
+    enter(node) {
       if (node.type === 'BlockStatement') {
-        const children: any[] = [];
+        const children = [];
         // loop across the children of a block state, finding any places where there are shape toolboxes
         for (let idx = 0; idx < node.body.length; idx++) {
           const childNode = node.body[idx];
@@ -59,21 +59,10 @@ function prepareCode(code) {
     }
   });
   attachComments(ast, comments);
-  const result = recast.print(ast).code;
-  return result;
-  // return generate(attachComments(ast, comments), { comment: true });
-  // return (
-  //   code
-  //     .replaceAll(/Editor\.slider\(([\d\s,]+)\)/g, (match, args) => parseInt(args.split(',')[2]) || 0)
-  //     // .replaceAll(/Editor\.shapeToolbox\((\s*\(\s*\)\s*=>\s*\{((\s|.)*)\}\s*)?\)/g, (match, g1, g2) => g2);
-  //     .replaceAll(/Editor\.shapeToolbox\((\s*\(\s*\)\s*=>\s*\{((\s|.)*)\}\s*)?\)/g, (match, g1, g2) => {
-  //       console.log(g2);
-  //       return g2;
-  //     })
-  // );
+  return recast.print(ast).code;
 }
 
-export function strip(code: string) {
+export function strip(code) {
   try {
     return prepareCode(code);
   } catch (e) {
