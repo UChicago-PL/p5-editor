@@ -79,6 +79,21 @@ class Editor extends React.Component {
           return true;
         },
         preventDefault: true
+      },
+      {
+        key: 'Delete',
+        run: () => {
+          // true if you want to prevent default = prevent pressing the delete key to delete shape from deleting text
+          return this.props.showingShapeToolbox;
+        },
+        preventDefault: true
+      },
+      {
+        key: 'Backspace',
+        run: () => {
+          return this.props.showingShapeToolbox;
+        },
+        preventDefault: true
       }
     ];
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
@@ -507,7 +522,8 @@ Editor.propTypes = {
   provideController: PropTypes.func.isRequired,
   logRun: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
-  openShapeToolbox: PropTypes.func.isRequired
+  openShapeToolbox: PropTypes.func.isRequired,
+  showingShapeToolbox: PropTypes.bool.isRequired
 };
 
 // Editor.defaultProps = {
