@@ -52,13 +52,20 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     const delHandler = (e) => {
       if (e.key === 'Delete' || e.key === 'Backspace') {
         const o = canvas_.getActiveObject();
-        if (!o.special) {
-          canvas_.getObjects().forEach((o2) => {
-            if (o2.parentId === o.id) {
+        if (o && !o.special) {
+          if (o.type === 'activeSelection') {
+            o.getObjects().forEach((o2) => {
               canvas_.remove(o2);
-            }
-          });
-          canvas_.remove(o);
+            });
+            canvas_.discardActiveObject();
+          } else {
+            canvas_.getObjects().forEach((o2) => {
+              if (o2.special && o2.parentId === o.id) {
+                canvas_.remove(o2);
+              }
+            });
+            canvas_.remove(o);
+          }
         }
       }
     };

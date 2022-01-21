@@ -53,6 +53,7 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
     // Custom properties
     id: window.fabricObjectId
   });
+  window.fabricObjectId++;
 
   const controls = absolutePoints.map(makeControl);
 
