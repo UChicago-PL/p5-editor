@@ -132,7 +132,8 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         [loc.left + defaultSize.width - 10, loc.top],
         [loc.left + defaultSize.width, loc.top + defaultSize.height]
       ],
-      defaults
+      defaults,
+      canvas
     ).forEach((o) => canvas.add(o));
   };
 
@@ -210,7 +211,8 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
               [x3, y3],
               [x4, y4]
             ],
-            defaults
+            defaults,
+            canvas
           );
         }
         default:
@@ -318,7 +320,8 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         }
       }
       case 'path': {
-        return ['bezier', toPoints(o)];
+        const [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] = toPoints(o.path);
+        return ['bezier', [x1, y1, x2, y2, x3, y3, x4, y4]];
       }
       default:
         throw new Error('Attempting to generate code for unrecognized fabric.js object type: ' + o.type);
