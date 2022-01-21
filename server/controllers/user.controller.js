@@ -359,9 +359,9 @@ async function prepPR(data, prefix) {
       file.fileType = 'asset';
       delete file.url;
     }
-    if (file.fileType === 'file' && file.name.split('.')[1] === 'js') {
-      file.content = strip(file.content);
-    }
+    // if (file.fileType === 'file' && file.name.split('.')[1] === 'js') {
+    //   file.content = strip(file.content);
+    // }
     files.push(file);
   }
   const idsToFiles = files.reduce((acc, file) => {
