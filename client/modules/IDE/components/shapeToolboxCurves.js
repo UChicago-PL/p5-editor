@@ -2,7 +2,21 @@
 
 import { fabric } from 'fabric';
 
-export const createBezier = (absolutePoints, defaults) => {
+export const createBezier = (absolutePoints, defaults, canvas) => {
+  // Prevent the user from creating multi-selections that contain paths or paths handles
+  // This is because operations on group selections, like scaling, can mess up the special path handles
+  canvas.on('selection:created', () => {
+    const activeObjects = canvas.getActiveObjects();
+    if (activeObjects.some((o) => o.special || o.type === 'path') && activeObjects.length > 1) {
+      canvas.discardActiveObject();
+      const sel = new fabric.ActiveSelection(
+        activeObjects.filter((o) => !o.special && o.type !== 'path'),
+        { canvas }
+      );
+      canvas.setActiveObject(sel);
+    }
+  });
+
   const makeSvgString = (points) => {
     const p_ = (i) => `${points[i][0]} ${points[i][1]}`;
     return `M ${p_(0)} C ${p_(1)}, ${p_(2)}, ${p_(3)}`;

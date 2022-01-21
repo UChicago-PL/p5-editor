@@ -32,7 +32,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const resetCanvas = (canvas_) => {
     canvas_.clear();
     let i = 0;
-    existingCalls.flatMap(processExistingCall).forEach((o) => {
+    existingCalls.flatMap(processExistingCall(canvas_)).forEach((o) => {
       if (!o.special) {
         o.orderId = i;
         i++;
@@ -147,7 +147,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     ).forEach((o) => canvas.add(o));
   };
 
-  const processExistingCall = (call) => {
+  const processExistingCall = (canvas) => (call) => {
     if (typeof call === 'string') {
       // We are dealing with an ignored line, which has been left in its raw form
       return [];
