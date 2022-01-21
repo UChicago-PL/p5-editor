@@ -84,24 +84,29 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
 
   function makeControl(loc, i) {
     const isEndpoint = i === 0 || i === 3;
+    let theme;
+    if (isEndpoint) {
+      theme = {
+        fill: color,
+        stroke: lighterColor
+      };
+    } else {
+      theme = {
+        stroke: color,
+        fill: 'rgba(0,0,0,0)'
+      };
+    }
+
     const c = new fabric.Circle({
       left: loc[0],
       top: loc[1],
       strokeWidth: 3,
       radius: 12,
-      ...(isEndpoint
-        ? {
-            fill: color,
-            stroke: lighterColor
-          }
-        : {
-            stroke: color,
-            fill: 'rgba(0,0,0,0)'
-          }),
       originX: 'center',
       originY: 'center',
       hasBorders: false,
       hasControls: false,
+      ...theme,
       // Custom properties
       i,
       special: true,
