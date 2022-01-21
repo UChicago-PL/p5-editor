@@ -11,7 +11,7 @@ import Square from '../../../images/shapeToolbox/square.svg';
 import Triangle from '../../../images/shapeToolbox/triangle.svg';
 import Curve from '../../../images/shapeToolbox/curve.svg';
 
-import { createBezier, toPoints } from './shapeToolboxCurves';
+import { createBezier, toAbsolutePoints } from './shapeToolboxCurves';
 
 function randrange(min, max) {
   return Math.random() * (max - min) + min;
@@ -338,7 +338,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         }
       }
       case 'path': {
-        const [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] = toPoints(o.path);
+        const [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] = toAbsolutePoints(o);
         return ['bezier', [x1, y1, x2, y2, x3, y3, x4, y4]];
       }
       default:

@@ -126,15 +126,7 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
     });
 
     c.on('moved', () => {
-      const points = toPoints(path.path);
-      // This technique is similar to the one used for modifying the path just above,
-      // except in this case we are adding (path.left - path.pathOffset.x) instead of subtracting it
-      // That's because we want to add any accrued translations to convert the path coordinates to their absolute form
-      // so that the path can be safely re-initialized without messing up its coordinates/positioning
-      const absolutePoints = points.map(([x, y]) => [
-        x + path.left - path.pathOffset.x,
-        y + path.top - path.pathOffset.y
-      ]);
+      const absolutePoints = toAbsolutePoints(path);
       path.initialize(makeSvgString(absolutePoints));
       relativePointPositions = controls.map((o) => [path.left - o.left, path.top - o.top]);
       path.setCoords();
@@ -146,11 +138,17 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
   return [path, ...controls];
 };
 
-export const toPoints = (path) => {
-  return [
+export const toAbsolutePoints = (o) => {
+  const path = o.path;
+  const relativePoints = [
     [path[0][1], path[0][2]],
     [path[1][1], path[1][2]],
     [path[1][3], path[1][4]],
     [path[1][5], path[1][6]]
   ];
+  // This technique is similar to the one used for modifying the path just above,
+  // except in this case we are adding (path.left - path.pathOffset.x) instead of subtracting it
+  // That's because we want to add any accrued translations to convert the path coordinates to their absolute form
+  // so that the path can be safely re-initialized without messing up its coordinates/positioning
+  return relativePoints.map(([x, y]) => [x + o.left - o.pathOffset.x, y + o.top - o.pathOffset.y]);
 };
