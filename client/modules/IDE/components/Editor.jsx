@@ -80,21 +80,13 @@ class Editor extends React.Component {
         },
         preventDefault: true
       },
-      {
-        key: 'Delete',
-        run: () => {
-          // true if you want to prevent default = prevent pressing the delete key to delete shape from deleting text
-          return this.props.showingShapeToolbox;
-        },
-        preventDefault: true
-      },
-      {
-        key: 'Backspace',
+      ...['Delete', 'Backspace'].map((key) => ({
+        key,
         run: () => {
           return this.props.showingShapeToolbox;
         },
         preventDefault: true
-      }
+      }))
     ];
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
@@ -407,12 +399,15 @@ class Editor extends React.Component {
                   const localLanguage = config.lang || language;
 
                   let msgs = [];
+
                   function toOffset(line, ch) {
                     return view.state.doc.line(line).from + ch - 1;
                   }
+
                   function lineOffset(line) {
                     return view.state.doc.line(line).from;
                   }
+
                   if (localLanguage === 'javascript') {
                     JSHINT(code, jshintRules);
                     msgs = JSHINT.errors.map((e) => ({

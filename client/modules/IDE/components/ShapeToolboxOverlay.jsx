@@ -50,22 +50,22 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     setCanvas(canvas_);
 
     const delHandler = (e) => {
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        const o = canvas_.getActiveObject();
-        if (o && !o.special) {
-          if (o.type === 'activeSelection') {
-            o.getObjects().forEach((o2) => {
+      if (e.key !== 'Delete' && e.key !== 'Backspace') {
+        return;
+      }
+
+      const o = canvas_.getActiveObject();
+      if (o && !o.special) {
+        if (o.type === 'activeSelection') {
+          o.getObjects().forEach((o2) => canvas_.remove(o2));
+          canvas_.discardActiveObject();
+        } else {
+          canvas_.getObjects().forEach((o2) => {
+            if (o2.special && o2.parentId === o.id) {
               canvas_.remove(o2);
-            });
-            canvas_.discardActiveObject();
-          } else {
-            canvas_.getObjects().forEach((o2) => {
-              if (o2.special && o2.parentId === o.id) {
-                canvas_.remove(o2);
-              }
-            });
-            canvas_.remove(o);
-          }
+            }
+          });
+          canvas_.remove(o);
         }
       }
     };
@@ -141,7 +141,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
       })
     );
 
-  const addCurve = () => {
+  const addBezier = () => {
     const loc = defaultLoc();
     createBezier(
       [
@@ -401,7 +401,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         <button onClick={wrapEvent(addTriangle, { eventName: 'stb-addTri' })}>
           <Triangle role="img" aria-label="triangle()" focusable="false" />
         </button>
-        <button onClick={wrapEvent(addCurve, { eventName: 'stb-addCurve' })}>
+        <button onClick={wrapEvent(addBezier, { eventName: 'stb-addBezier' })}>
           <Curve role="img" aria-label="bezier()" focusable="false" />
         </button>
         <button className="reset" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
