@@ -9,6 +9,9 @@ import Line from '../../../images/shapeToolbox/line.svg';
 import Circle from '../../../images/shapeToolbox/circle.svg';
 import Square from '../../../images/shapeToolbox/square.svg';
 import Triangle from '../../../images/shapeToolbox/triangle.svg';
+import Curve from '../../../images/shapeToolbox/curve.svg';
+
+import { createBezier, toAbsolutePoints } from './shapeToolboxCurves';
 
 function randrange(min, max) {
   return Math.random() * (max - min) + min;
@@ -16,6 +19,8 @@ function randrange(min, max) {
 
 // https://stackoverflow.com/a/51587105/6643726
 fabric.Object.prototype.objectCaching = false;
+
+window.fabricObjectId = 0;
 
 export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const el = useRef(null);
@@ -26,11 +31,13 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   const resetCanvas = (canvas_) => {
     canvas_.clear();
-    existingCalls.map(processExistingCall).forEach((o, i) => {
-      if (o) {
-        o.id = i;
-        canvas_.add(o);
+    let i = 0;
+    existingCalls.flatMap(processExistingCall(canvas_)).forEach((o) => {
+      if (!o.special) {
+        o.orderId = i;
+        i++;
       }
+      canvas_.add(o);
     });
   };
 
@@ -38,12 +45,28 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     const canvas_ = new fabric.Canvas(el.current);
     canvas_.setDimensions(canvasSize);
     canvas_.selection = 'true';
+    canvas_.preserveObjectStacking = false;
     resetCanvas(canvas_);
     setCanvas(canvas_);
 
     const delHandler = (e) => {
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        canvas_.remove(canvas_.getActiveObject());
+      if (e.key !== 'Delete' && e.key !== 'Backspace') {
+        return;
+      }
+
+      const o = canvas_.getActiveObject();
+      if (o && !o.special) {
+        if (o.type === 'activeSelection') {
+          o.getObjects().forEach((o2) => canvas_.remove(o2));
+          canvas_.discardActiveObject();
+        } else {
+          canvas_.getObjects().forEach((o2) => {
+            if (o2.special && o2.parentId === o.id) {
+              canvas_.remove(o2);
+            }
+          });
+          canvas_.remove(o);
+        }
       }
     };
     document.addEventListener('keyup', delHandler);
@@ -118,25 +141,42 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
       })
     );
 
-  const processExistingCall = (call) => {
+  const addBezier = () => {
+    const loc = defaultLoc();
+    createBezier(
+      [
+        [loc.left, loc.top + defaultSize.height],
+        [loc.left + 10, loc.top],
+        [loc.left + defaultSize.width - 10, loc.top],
+        [loc.left + defaultSize.width, loc.top + defaultSize.height]
+      ],
+      defaults,
+      canvas
+    ).forEach((o) => canvas.add(o));
+  };
+
+  const processExistingCall = (canvas) => (call) => {
     if (typeof call === 'string') {
       // We are dealing with an ignored line, which has been left in its raw form
-      return null;
+      return [];
     } else {
       const [name, args] = call;
       switch (name) {
-        case 'line':
-          return new fabric.Line(args, defaults);
+        case 'line': {
+          return [new fabric.Line(args, defaults)];
+        }
         // Curly brackets necessary here because of duplicate declaration of left and top below :(
         case 'rect': {
           const [left, top, width, height] = args;
-          return new fabric.Rect({
-            ...defaults,
-            left,
-            top,
-            width,
-            height
-          });
+          return [
+            new fabric.Rect({
+              ...defaults,
+              left,
+              top,
+              width,
+              height
+            })
+          ];
         }
         case 'quad': {
           const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
@@ -146,36 +186,55 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             { x: x3, y: y3 },
             { x: x4, y: y4 }
           ];
-          return new fabric.Polygon(points, defaults);
+          return [new fabric.Polygon(points, defaults)];
         }
         case 'circle': {
           const [left, top, diameter] = args;
-          return new fabric.Circle({
-            ...defaults,
-            left: left - diameter / 2,
-            top: top - diameter / 2,
-            radius: diameter / 2
-          });
+          return [
+            new fabric.Circle({
+              ...defaults,
+              left: left - diameter / 2,
+              top: top - diameter / 2,
+              radius: diameter / 2
+            })
+          ];
         }
-        case 'ellipse':
+        case 'ellipse': {
           const [left, top, width, height] = args;
-          return new fabric.Ellipse({
-            ...defaults,
-            left: left - width / 2,
-            top: top - height / 2,
-            rx: width / 2,
-            ry: height / 2
-          });
-        case 'triangle':
+          return [
+            new fabric.Ellipse({
+              ...defaults,
+              left: left - width / 2,
+              top: top - height / 2,
+              rx: width / 2,
+              ry: height / 2
+            })
+          ];
+        }
+        case 'triangle': {
           const [x1, y1, x2, y2, x3, y3] = args;
           const points = [
             { x: x1, y: y1 },
             { x: x2, y: y2 },
             { x: x3, y: y3 }
           ];
-          return new fabric.Polygon(points, defaults);
+          return [new fabric.Polygon(points, defaults)];
+        }
+        case 'bezier': {
+          const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
+          return createBezier(
+            [
+              [x1, y1],
+              [x2, y2],
+              [x3, y3],
+              [x4, y4]
+            ],
+            defaults,
+            canvas
+          );
+        }
         default:
-          return null;
+          return [];
       }
     }
   };
@@ -205,10 +264,11 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const generateFuncCall = (o) => {
     const { oCoords: coords } = o;
     switch (o.type) {
-      case 'line':
+      case 'line': {
         const [p1, p2] = calcAbsolutePointsForLine(o);
         return ['line', [p1.x, p1.y, p2.x, p2.y]];
-      case 'rect':
+      }
+      case 'rect': {
         if (o.angle) {
           return [
             'quad',
@@ -224,7 +284,12 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             ]
           ];
         } else return ['rect', [coords.tl.x, coords.tl.y, o.width * o.scaleX, o.height * o.scaleY]];
-      case 'circle':
+      }
+      case 'circle': {
+        if (o.special) {
+          // This is a special control circle used in the curve shape
+          return null;
+        }
         if (o.scaleX === o.scaleY) {
           return [
             'circle',
@@ -240,9 +305,11 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             o.height * o.scaleY
           ]
         ];
-      case 'triangle':
+      }
+      case 'triangle': {
         return ['triangle', [coords.mt.x, coords.mt.y, coords.bl.x, coords.bl.y, coords.br.x, coords.br.y]];
-      case 'ellipse':
+      }
+      case 'ellipse': {
         return [
           'ellipse',
           [
@@ -252,7 +319,8 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             o.height * o.scaleY
           ]
         ];
-      case 'polygon':
+      }
+      case 'polygon': {
         const points = calcAbsolutePoints(o, o.points);
         switch (o.points.length) {
           case 3: {
@@ -268,8 +336,13 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
                 o.points.length
             );
         }
+      }
+      case 'path': {
+        const [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] = toAbsolutePoints(o);
+        return ['bezier', [x1, y1, x2, y2, x3, y3, x4, y4]];
+      }
       default:
-        return null;
+        throw new Error('Attempting to generate code for unrecognized fabric.js object type: ' + o.type);
     }
   };
 
@@ -293,13 +366,16 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
     // Add in the shapeToolbox calls
     objects.forEach((o) => {
-      const line = generateFuncCallCode(roundNums(generateFuncCall(o)));
-      if (o.id !== undefined) {
-        // This is an existing object with a specific position among the other calls
-        res[o.id] = line;
-      } else {
-        // This is a new object
-        res.push(line);
+      const funcCall = generateFuncCall(o);
+      if (funcCall) {
+        const line = generateFuncCallCode(roundNums(funcCall));
+        if (o.orderId !== undefined) {
+          // This is an existing object with a specific position among the other calls
+          res[o.orderId] = line;
+        } else {
+          // This is a new object
+          res.push(line);
+        }
       }
     });
 
@@ -324,6 +400,9 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         </button>
         <button onClick={wrapEvent(addTriangle, { eventName: 'stb-addTri' })}>
           <Triangle role="img" aria-label="triangle()" focusable="false" />
+        </button>
+        <button onClick={wrapEvent(addBezier, { eventName: 'stb-addBezier' })}>
+          <Curve role="img" aria-label="bezier()" focusable="false" />
         </button>
         <button className="reset" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
           reset

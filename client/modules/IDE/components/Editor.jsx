@@ -79,7 +79,14 @@ class Editor extends React.Component {
           return true;
         },
         preventDefault: true
-      }
+      },
+      ...['Delete', 'Backspace'].map((key) => ({
+        key,
+        run: () => {
+          return this.props.showingShapeToolbox;
+        },
+        preventDefault: true
+      }))
     ];
     // keep track of when the code was tidied, to prevent invoking redundant refresh and log save
     // on the 'onChange' event of the code being tidied
@@ -392,12 +399,15 @@ class Editor extends React.Component {
                   const localLanguage = config.lang || language;
 
                   let msgs = [];
+
                   function toOffset(line, ch) {
                     return view.state.doc.line(line).from + ch - 1;
                   }
+
                   function lineOffset(line) {
                     return view.state.doc.line(line).from;
                   }
+
                   if (localLanguage === 'javascript') {
                     JSHINT(code, jshintRules);
                     msgs = JSHINT.errors.map((e) => ({
@@ -507,7 +517,8 @@ Editor.propTypes = {
   provideController: PropTypes.func.isRequired,
   logRun: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
-  openShapeToolbox: PropTypes.func.isRequired
+  openShapeToolbox: PropTypes.func.isRequired,
+  showingShapeToolbox: PropTypes.bool.isRequired
 };
 
 // Editor.defaultProps = {
