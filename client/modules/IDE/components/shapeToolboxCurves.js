@@ -10,15 +10,15 @@ const randomColorTheme = () => {
 export const createBezier = (absolutePoints, defaults, canvas) => {
   // Prevent the user from creating multi-selections that contain paths or paths handles
   // This is because operations on group selections, like scaling, can mess up the special path handles
-  canvas.on('selection:created', () => {
+  const selectionHandler = () => {
     const activeObjects = canvas.getActiveObjects();
     if (activeObjects.some((o) => o.special || o.type === 'path') && activeObjects.length > 1) {
       canvas.discardActiveObject();
-      const sel = new fabric.ActiveSelection(
-        activeObjects.filter((o) => !o.special && o.type !== 'path'),
-        { canvas }
-      );
-      canvas.setActiveObject(sel);
+      const otherObjects = activeObjects.filter((o) => !o.special && o.type !== 'path');
+      if (otherObjects.length) {
+        const sel = new fabric.ActiveSelection({ canvas });
+        canvas.setActiveObject(sel);
+      }
     } else if (activeObjects.length === 1) {
       const bringAllControlsToFront = (parentId) => {
         canvas.getObjects().forEach((o) => {
@@ -34,7 +34,10 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
         bringAllControlsToFront(activeObject.parentId);
       }
     }
-  });
+  };
+
+  canvas.on('selection:created', selectionHandler);
+  canvas.on('selection:updated', selectionHandler);
 
   const makeSvgString = (points) => {
     const p_ = (i) => `${points[i][0]} ${points[i][1]}`;
