@@ -6,9 +6,9 @@ const appWidgetState: { [x: string]: boolean } = {
   showBoolWidgets: false,
   showNumWidgets: false,
   showColorWidgets: true,
-  showShapeWidgets: false,
   liveMode: false,
-  usingEditorSlider: false
+  usingEditorSlider: false,
+  usingShapeWidgets: false
 };
 
 interface EventConfig {
@@ -27,7 +27,8 @@ const appSettingsToIndex = () => {
     appWidgetState.showNumWidgets,
     appWidgetState.showColorWidgets,
     appWidgetState.liveMode,
-    appWidgetState.usingEditorSlider
+    appWidgetState.usingEditorSlider,
+    appWidgetState.usingShapeWidgets
   ]
     .map((v) => (v ? 1 : 0))
     .join('');
