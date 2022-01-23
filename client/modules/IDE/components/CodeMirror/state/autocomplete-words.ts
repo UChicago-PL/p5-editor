@@ -445,16 +445,16 @@ const words = {
   setBPM: false,
   saveSound: false,
   // Editor words:
-  'Editor.slider(minVal, maxVal, currentValue);': true,
+  'Editor.slider(??, ??, ??);': true,
   'Editor.shapeToolbox();': true,
   // Syntactic constructs
   'for (x in y) {\n}': true,
   let: true,
   const: true,
-  'while (condition) {\n}': true,
-  'if (condition) {\n}': true,
-  'if (condition) {\n} else {\n}': true,
-  'if (condition) {\n} else if(secondCondition) {\n} else {\n}': true
+  'while (??) {\n}': true,
+  'if (??) {\n}': true,
+  'if (??) {\n} else {\n}': true,
+  'if (??) {\n} else if(??) {\n} else {\n}': true
 };
 const preppedWords = Object.entries(words)
   .filter(([_, include]) => include)
