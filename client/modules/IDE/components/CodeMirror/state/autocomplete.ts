@@ -1,4 +1,5 @@
 import { autocompletion, CompletionSource } from '@codemirror/autocomplete';
+import words from './autocomplete-words';
 
 function from(list: string[]): CompletionSource {
   return (cx) => {
@@ -14,10 +15,10 @@ function from(list: string[]): CompletionSource {
   };
 }
 
-export default function (words: { [group: string]: string[] }) {
-  const allWords = Object.values(words).reduce((acc, row) => acc.concat(row), []);
+export default function () {
+  // const allWords = Object.values(words).reduce((acc, row) => acc.concat(row), []);
   return autocompletion({
     activateOnTyping: true,
-    override: [from(allWords)]
+    override: [from(words)]
   });
 }
