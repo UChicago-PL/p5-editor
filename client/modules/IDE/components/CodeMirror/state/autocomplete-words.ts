@@ -445,8 +445,8 @@ const words = {
   setBPM: false,
   saveSound: false,
   // Editor words:
-  'Editor.slider()': true,
-  'Editor.shapeToolbox()': true,
+  'Editor.slider(minVal, maxVal, currentValue);': true,
+  'Editor.shapeToolbox();': true,
   // Syntactic constructs
   'for (x in y) {\n}': true,
   let: true,
