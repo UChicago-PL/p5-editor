@@ -469,6 +469,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
   };
 
   let usingASliderWidget = false;
+  let usingShapeWidgets = false;
   for (const range of view.visibleRanges) {
     syntaxTree(view.state).iterate({
       from: range.from,
@@ -597,6 +598,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
               side: 1
             });
             addWidget(deco, argList.parent!.to);
+            usingShapeWidgets = true;
           }
         } else {
           // console.log("No widgets for", type.name)
@@ -605,6 +607,7 @@ function createWidgets(view: EditorView, showWidgets: CmState, { shapeToolboxCb 
     });
   }
   setGlobalTrack('usingEditorSlider', usingASliderWidget);
+  setGlobalTrack('usingShapeWidgets', usingShapeWidgets);
   // Widgets must be sorted by their starting location or else Codemirror will throw
   // `widgets` may be unsorted in the case of nested widgets (numbers inside of
   // the shape toolbox lambda)
