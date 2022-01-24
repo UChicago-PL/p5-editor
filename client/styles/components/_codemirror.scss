@@ -104,10 +104,6 @@
 
 .color-name-picker {
   // background: white;
-  @include themify() {
-    background: getThemifyVariable('background-color');
-    color: getThemifyVariable("primary-text-color")
-  }
   z-index: 100;
   overflow: auto;
   // This prevents the picker for becoming narrower
@@ -194,6 +190,31 @@
   // Javascript sets the `left` and `top` properties according to the button location
   // This property moves the picker over an additional bit
   margin-left: 20px;
+
+  @include themify() {
+    background: getThemifyVariable('background-color');
+    color: getThemifyVariable("primary-text-color");
+  }
+}
+// pcr tool tip exists outside of the themify :(
+body.dark .pcr-app.visible {
+  background: #030303;
+  color: #FFF;
+}
+body.light .pcr-app.visible {
+  background: #FBFBFB;
+  color: #333;
+}
+body.contrast .pcr-app.visible {
+  background: #1C1C1C;
+  color: #FFF;
+}
+.pcr-app.visible {
+
+  .pcr-type.active,
+  .pcr-save {
+    background: #ed225d;
+  }
 }
 
 .codemirror__root, .cm-editor {
