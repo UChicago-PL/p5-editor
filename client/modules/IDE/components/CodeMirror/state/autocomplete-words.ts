@@ -454,7 +454,7 @@ export default preppedWords;
 
 /// A collection of JavaScript-related
 export const snippets: readonly Completion[] = [
-  snip('Editor.slider(${minVal}, ${maxVal}, ${curVal});', {
+  snip('Editor.slider(${_minVal}, ${_maxVal}, ${_curVal});', {
     label: 'Editor.slider',
     detail: 'Editor slider',
     type: 'keyword'
@@ -464,72 +464,72 @@ export const snippets: readonly Completion[] = [
     detail: 'Editor shapeToolbox',
     type: 'keyword'
   }),
-  snip('const ${varName} = ${value}', {
+  snip('const ${_varName} = ${_value};', {
     label: 'const',
-    detail: 'const initialization',
+    detail: 'variable definition',
     type: 'keyword'
   }),
-  snip('let ${varName} = ${value}', {
+  snip('let ${_varName} = ${_value};', {
     label: 'let',
-    detail: 'let initialization',
+    detail: 'variable definition',
     type: 'keyword'
   }),
-  snip('if (${condition}){\nt${}\n}}', {
+  snip('if (${_condition}){\n\t${}\n}}', {
     label: 'if',
     detail: 'if statement',
     type: 'keyword'
   }),
-  snip('if (${condition}){\nt${}\n}} else {\nt${}\n}', {
+  snip('if (${_condition}){\n\t${}\n}} else {\n\t${}\n}', {
     label: 'if',
     detail: 'if else statement',
     type: 'keyword'
   }),
-  snip('if (${condition}){\nt${}\n}} if (${secondCondition}) else {\nt${}\n} else {\nt${}\n}', {
+  snip('if (${_condition}){\n\t${}\n}} if (${_condition}) else {\n\t${}\n} else {\n\t${}\n}', {
     label: 'if',
-    detail: 'if else statement',
+    detail: 'if else-if else statement',
     type: 'keyword'
   }),
-  snip('function ${name}(${params}) {\n\t${}\n}', {
+  snip('function ${_name}(${_params}) {\n\t${}\n}', {
     label: 'function',
     detail: 'definition',
     type: 'keyword'
   }),
-  snip('for (let ${index} = 0; ${index} < ${bound}; ${index}++) {\n\t${}\n}', {
+  snip('for (let ${_index} = 0; ${_index} < ${_bound}; ${_index}++) {\n\t${}\n}', {
     label: 'for',
     detail: 'loop',
     type: 'keyword'
   }),
-  snip('for (let ${name} of ${collection}) {\n\t${}\n}', {
+  snip('for (let ${_name} of ${_collection}) {\n\t${}\n}', {
     label: 'for',
     detail: 'of loop',
     type: 'keyword'
   }),
-  snip('for (let ${name} in ${collection}) {\n\t${}\n}', {
+  snip('for (let ${_name} in ${_collection}) {\n\t${}\n}', {
     label: 'for',
-    detail: 'in loop',
+    detail: 'in loop (fields of an object)',
     type: 'keyword'
   }),
-  snip('while (${condition}) {\n\t${}\n}', {
+  snip('while (${_condition}) {\n\t${}\n}', {
     label: 'while',
     detail: 'while loop',
     type: 'keyword'
   }),
-  snip('try {\n\t${}\n} catch (${error}) {\n\t${}\n}', {
+  snip('try {\n\t${}\n} catch (${_error}) {\n\t${}\n}', {
     label: 'try',
     detail: 'block',
     type: 'keyword'
   }),
-  snip('class ${name} {\n\tconstructor(${params}) {\n\t\t${}\n\t}\n}', {
+  snip('class ${_name} {\n\tconstructor(${_params}) {\n\t\t${}\n\t}\n}', {
     label: 'class',
     detail: 'definition',
     type: 'keyword'
   })
-  // snip('import {${names}} from "${module}"\n${}', {
+  // snip('import {${_names}} from "${module}"\n${}', {
   //   label: 'import',
   //   detail: 'named',
   //   type: 'keyword'
   // }),
-  // snip('import ${name} from "${module}"\n${}', {
+  // snip('import ${_name} from "${module}"\n${}', {
   //   label: 'import',
   //   detail: 'default',
   //   type: 'keyword'

@@ -434,3 +434,8 @@ div.CodeMirror-lint-message.CodeMirror-lint-message-error, div.CodeMirror-lint-m
 .editor__unsaved-changes {
   margin-left: #{2 / $base-font-size}rem;
 }
+
+
+.cm-completionIcon, .cm-completionIcon-keyword::after {
+  opacity: 0 !important;
+}
