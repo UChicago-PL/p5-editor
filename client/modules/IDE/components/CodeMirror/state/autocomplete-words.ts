@@ -474,17 +474,17 @@ export const snippets: readonly Completion[] = [
     detail: 'variable definition',
     type: 'keyword'
   }),
-  snip('if (${_condition}){\n\t${}\n}}', {
+  snip('if (${_condition}) {\n\t${}\n}', {
     label: 'if',
     detail: 'statement',
     type: 'keyword'
   }),
-  snip('if (${_condition}){\n\t${}\n}} else {\n\t${}\n}', {
+  snip('if (${_condition}) {\n\t${}\n} else {\n\t${}\n}', {
     label: 'if',
     detail: 'else statement',
     type: 'keyword'
   }),
-  snip('if (${_condition}){\n\t${}\n}} if (${_condition}) else {\n\t${}\n} else {\n\t${}\n}', {
+  snip('if (${_condition}) {\n\t${}\n} else if (${_condition})  {\n\t${}\n} else {\n\t${}\n}', {
     label: 'if',
     detail: 'else-if else statement',
     type: 'keyword'
