@@ -64,11 +64,9 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
             >
               {/* https://en.wikipedia.org/wiki/Geometric_Shapes */}
               <span className="color-group-arrow">
-                {(showGroupIndicators ? (state[groupName] ? '▲ ' : '▼ ') : '')}
+                {showGroupIndicators ? (state[groupName] ? '▲ ' : '▼ ') : ''}
               </span>
-              <span>
-                {groupName.slice(0, 1).toUpperCase() + groupName.slice(1)}
-              </span>
+              <span>{groupName.slice(0, 1).toUpperCase() + groupName.slice(1)}</span>
             </span>
             <span>
               {colors.map((color) => (
@@ -77,10 +75,7 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
                   className="color-swatch"
                   title={color}
                   onClick={() => cb(color)}
-                  style={{
-                    background: color,
-                    borderColor: color === initColor ? 'black' : 'white'
-                  }}
+                  style={{ background: color }}
                 ></span>
               ))}
             </span>
