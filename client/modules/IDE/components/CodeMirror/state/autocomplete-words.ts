@@ -456,12 +456,12 @@ export default preppedWords;
 export const snippets: readonly Completion[] = [
   snip('Editor.slider(${_minVal}, ${_maxVal}, ${_curVal});', {
     label: 'Editor.slider',
-    detail: 'Editor slider',
+    detail: '',
     type: 'keyword'
   }),
   snip('Editor.shapeToolbox();', {
     label: 'Editor.shapeToolbox',
-    detail: 'Editor shapeToolbox',
+    detail: '',
     type: 'keyword'
   }),
   snip('const ${_varName} = ${_value};', {
@@ -476,17 +476,17 @@ export const snippets: readonly Completion[] = [
   }),
   snip('if (${_condition}){\n\t${}\n}}', {
     label: 'if',
-    detail: 'if statement',
+    detail: 'statement',
     type: 'keyword'
   }),
   snip('if (${_condition}){\n\t${}\n}} else {\n\t${}\n}', {
     label: 'if',
-    detail: 'if else statement',
+    detail: 'else statement',
     type: 'keyword'
   }),
   snip('if (${_condition}){\n\t${}\n}} if (${_condition}) else {\n\t${}\n} else {\n\t${}\n}', {
     label: 'if',
-    detail: 'if else-if else statement',
+    detail: 'else-if else statement',
     type: 'keyword'
   }),
   snip('function ${_name}(${_params}) {\n\t${}\n}', {
@@ -511,7 +511,7 @@ export const snippets: readonly Completion[] = [
   }),
   snip('while (${_condition}) {\n\t${}\n}', {
     label: 'while',
-    detail: 'while loop',
+    detail: 'loop',
     type: 'keyword'
   }),
   snip('try {\n\t${}\n} catch (${_error}) {\n\t${}\n}', {
