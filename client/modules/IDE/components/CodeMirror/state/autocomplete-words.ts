@@ -447,13 +447,12 @@ const words = {
   saveSound: false
 };
 const preppedWords = Object.entries(words)
-  .filter(([_, include]) => include)
+  .filter((x) => x[1])
   .map(([word]) => word);
 
 export default preppedWords;
 
 /// A collection of JavaScript-related
-/// [snippets](#autocomplete.snippet).
 export const snippets: readonly Completion[] = [
   snip('Editor.slider(${minVal}, ${maxVal}, ${curVal});', {
     label: 'Editor.slider',

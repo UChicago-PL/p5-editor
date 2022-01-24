@@ -1,4 +1,4 @@
-import { autocompletion, CompletionSource, snippetCompletion as snip } from '@codemirror/autocomplete';
+import { autocompletion, CompletionSource } from '@codemirror/autocomplete';
 import words, { snippets } from './autocomplete-words';
 
 function from(list: string[]): CompletionSource {
