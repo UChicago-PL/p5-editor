@@ -1,4 +1,11 @@
 import { Completion, snippetCompletion as snip } from '@codemirror/autocomplete';
+import { methodInfo } from './p5-data';
+
+const methodInfoMap = methodInfo.reduce((acc, row) => {
+  acc[row.name] = row;
+  return acc;
+}, {});
+
 const words = {
   // constants
   P2D: false,
@@ -446,9 +453,27 @@ const words = {
   setBPM: false,
   saveSound: false
 };
+
 const preppedWords = Object.entries(words)
   .filter((x) => x[1])
+  .filter((x) => !methodInfoMap[x[0]] || !methodInfoMap[x[0]].params)
   .map(([word]) => word);
+
+export const preppedSnippets = Object.entries(words)
+  .filter((x) => x[1])
+  .filter((x) => methodInfoMap[x[0]] && methodInfoMap[x[0]].params)
+  .map((x) => methodInfoMap[x[0]])
+  .map((methodInfo) => {
+    console.log(methodInfo);
+    const args = methodInfo.params.map((param) => `\${${param.name}}`).join(', ');
+    const snipper = `${methodInfo.name}(${args})`;
+    // 'Editor.slider(${minVal}, ${maxVal}, ${curVal});'
+    return snip(snipper, {
+      label: methodInfo.name,
+      detail: methodInfo.description,
+      type: 'keyword'
+    });
+  });
 
 export default preppedWords;
 
