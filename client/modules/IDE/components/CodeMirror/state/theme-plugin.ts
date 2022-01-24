@@ -5,6 +5,7 @@ import { oneDarkTheme, oneDarkHighlightStyle } from '@codemirror/theme-one-dark'
 import { contrastTheme, contrastHighlightStyle } from './themes/contrast-theme';
 
 export interface ThemeConfig {
+  autocomplete?: boolean;
   autocloseBracketsQuotes?: boolean;
   theme?: string;
   linewrap?: boolean;

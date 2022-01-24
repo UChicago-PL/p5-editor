@@ -14,6 +14,7 @@ import MinusIcon from '../../../../images/minus.svg';
 class Preferences extends React.Component {
   constructor(props) {
     super(props);
+    // AM: are these still used?
     this.handleUpdateLinewrap = this.handleUpdateLinewrap.bind(this);
     this.handleLintWarning = this.handleLintWarning.bind(this);
     this.handleLineNumbers = this.handleLineNumbers.bind(this);
@@ -245,6 +246,37 @@ class Preferences extends React.Component {
                 </label>
               </div>
             </div>
+            <div className="preference">
+              <h4 className="preference__title">Autocomplete</h4>
+              <div className="preference__options">
+                <input
+                  type="radio"
+                  onChange={() => this.props.setAutocomplete(true)}
+                  aria-label={'Turn on Autocomplete'}
+                  name="autocomplete"
+                  id="autocomplete-on"
+                  className="preference__radio-button"
+                  value="On"
+                  checked={this.props.autocomplete}
+                />
+                <label htmlFor="autocomplete-on" className="preference__option">
+                  {this.props.t('Preferences.On')}
+                </label>
+                <input
+                  type="radio"
+                  onChange={() => this.props.setAutocomplete(false)}
+                  aria-label={'Turn off Autocomplete'}
+                  name="autocomplete"
+                  id="autocomplete-off"
+                  className="preference__radio-button"
+                  value="Off"
+                  checked={!this.props.autocomplete}
+                />
+                <label htmlFor="autocomplete-off" className="preference__option">
+                  {this.props.t('Preferences.Off')}
+                </label>
+              </div>
+            </div>
           </TabPanel>
           {/* <TabPanel>
             <div className="preference">
@@ -373,25 +405,27 @@ class Preferences extends React.Component {
 }
 
 Preferences.propTypes = {
+  autocloseBracketsQuotes: PropTypes.bool.isRequired,
+  autocomplete: PropTypes.bool.isRequired,
   fontSize: PropTypes.number.isRequired,
+  gridOutput: PropTypes.bool.isRequired,
   lineNumbers: PropTypes.bool.isRequired,
-  setFontSize: PropTypes.func.isRequired,
   linewrap: PropTypes.bool.isRequired,
+  lintWarning: PropTypes.bool.isRequired,
+  setAutocloseBracketsQuotes: PropTypes.func.isRequired,
+  setAutocomplete: PropTypes.func.isRequired,
+  setFontSize: PropTypes.func.isRequired,
+  setGridOutput: PropTypes.func.isRequired,
   setLineNumbers: PropTypes.func.isRequired,
   setLinewrap: PropTypes.func.isRequired,
-  textOutput: PropTypes.bool.isRequired,
-  gridOutput: PropTypes.bool.isRequired,
-  soundOutput: PropTypes.bool.isRequired,
-  setTextOutput: PropTypes.func.isRequired,
-  setGridOutput: PropTypes.func.isRequired,
-  setSoundOutput: PropTypes.func.isRequired,
-  lintWarning: PropTypes.bool.isRequired,
   setLintWarning: PropTypes.func.isRequired,
-  theme: PropTypes.string.isRequired,
+  setSoundOutput: PropTypes.func.isRequired,
+  setTextOutput: PropTypes.func.isRequired,
   setTheme: PropTypes.func.isRequired,
-  autocloseBracketsQuotes: PropTypes.bool.isRequired,
-  setAutocloseBracketsQuotes: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired
+  soundOutput: PropTypes.bool.isRequired,
+  t: PropTypes.func.isRequired,
+  textOutput: PropTypes.bool.isRequired,
+  theme: PropTypes.string.isRequired
 };
 
 export default withTranslation()(Preferences);

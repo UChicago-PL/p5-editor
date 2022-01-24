@@ -59,6 +59,7 @@ const userSchema = new Schema(
       autocloseBracketsQuotes: { type: Boolean, default: true },
       autorefresh: { type: Boolean, default: false },
       autosave: { type: Boolean, default: true },
+      autocomplete: { type: Boolean, default: true },
       fontSize: { type: Number, default: 18 },
       gridOutput: { type: Boolean, default: false },
       indentationAmount: { type: Number, default: 2 },
