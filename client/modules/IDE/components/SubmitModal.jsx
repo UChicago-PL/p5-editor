@@ -23,7 +23,6 @@ function SubmitalModal(props) {
 
   useEffect(() => {
     if (submitModal) {
-      console.log(submitModal);
       submitModal.current.focus();
     }
     setTimeout(() => {
@@ -34,8 +33,10 @@ function SubmitalModal(props) {
       document.removeEventListener('click', handleOutsideClick, false);
     };
   }, []);
-  const { repos, user, project, repoLoadState } = props;
+  const { repos, user, project, repoLoadState, owner } = props;
   const isAuthed = user.authenticated;
+  const isOwnRepo = owner && user && user.username && owner.username && owner.username === user.username;
+
   return (
     <section className="modal" ref={submitModal}>
       <div className="modal-content">
@@ -49,10 +50,11 @@ function SubmitalModal(props) {
             <ExitIcon focusable="false" aria-hidden="true" />
           </button>
         </div>
-        {isAuthed && <SubmitForm repos={repos} project={project} />}
+        {isAuthed && isOwnRepo && <SubmitForm repos={repos} project={project} />}
         {repoLoadState === 'loading' && <div>LOADING REPOS</div>}
         {repoLoadState === 'error' && <div>ERROR LOADING REPOS</div>}
-        {!isAuthed && <div>You must be logged in to use this feature</div>}
+        {!isAuthed && isOwnRepo && <div>You must be logged in to use this feature</div>}
+        {!isOwnRepo && <div> Can not submit someone elses work</div>}
       </div>
     </section>
   );
@@ -61,21 +63,17 @@ function SubmitalModal(props) {
 SubmitalModal.propTypes = {
   closeSubmitModal: PropTypes.func.isRequired,
   getGHRepos: PropTypes.func.isRequired,
-  repos: PropTypes.arrayOf(PropTypes.object).isRequired,
+  owner: PropTypes.shape({ username: PropTypes.string }),
+  project: PropTypes.shape({ name: PropTypes.string.isRequired, id: PropTypes.string.isRequired }).isRequired,
   repoLoadState: PropTypes.string.isRequired,
-  user: PropTypes.shape({
-    username: PropTypes.string,
-    authenticated: PropTypes.bool.isRequired
-  }).isRequired,
-  project: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired
-  }).isRequired,
-  t: PropTypes.func.isRequired
+  repos: PropTypes.arrayOf(PropTypes.object).isRequired,
+  t: PropTypes.func.isRequired,
+  user: PropTypes.shape({ username: PropTypes.string, authenticated: PropTypes.bool.isRequired }).isRequired
 };
 
 function mapStateToProps(state) {
   return {
+    owner: state.project.owner,
     user: state.user,
     project: state.project,
     repos: state.repos.repos,
