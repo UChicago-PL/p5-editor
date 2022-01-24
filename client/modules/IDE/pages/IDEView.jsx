@@ -250,8 +250,8 @@ class IDEView extends React.Component {
           >
             <Preferences
               autocloseBracketsQuotes={this.props.preferences.autocloseBracketsQuotes}
-              autosave={this.props.preferences.autosave}
               autocomplete={this.props.preferences.autocomplete}
+              autosave={this.props.preferences.autosave}
               fontSize={this.props.preferences.fontSize}
               gridOutput={this.props.preferences.gridOutput}
               lineNumbers={this.props.preferences.lineNumbers}

@@ -439,3 +439,7 @@ div.CodeMirror-lint-message.CodeMirror-lint-message-error, div.CodeMirror-lint-m
 .cm-completionIcon, .cm-completionIcon-keyword::after {
   opacity: 0 !important;
 }
+
+.codemirror__editor.hide_autocomplete .cm-tooltip-autocomplete {
+  display: none;
+}

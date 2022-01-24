@@ -8,219 +8,35 @@ function updatePreferences(formParams, dispatch) {
     .then(() => {})
     .catch((error) => {
       const { response } = error;
-      dispatch({
-        type: ActionTypes.ERROR,
-        error: response.data
-      });
+      dispatch({ type: ActionTypes.ERROR, error: response.data });
     });
 }
 
-export function setFontSize(value) {
-  return (dispatch, getState) => {
-    // eslint-disable-line
-    dispatch({
-      type: ActionTypes.SET_FONT_SIZE,
-      value
-    });
+function createPreferenceUpdate(type, prefName) {
+  return (value) => (dispatch, getState) => {
+    dispatch({ type, value });
     const state = getState();
     if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          fontSize: value
-        }
-      };
+      const formParams = { preferences: { [prefName]: value } };
       updatePreferences(formParams, dispatch);
     }
   };
 }
-
-export function setLineNumbers(value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_LINE_NUMBERS,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          lineNumbers: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setAutocloseBracketsQuotes(value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_AUTOCLOSE_BRACKETS_QUOTES,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          autocloseBracketsQuotes: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setAutosave(value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_AUTOSAVE,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          autosave: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setLinewrap(value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_LINEWRAP,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          linewrap: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setLintWarning(value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_LINT_WARNING,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          lintWarning: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setTextOutput(value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_TEXT_OUTPUT,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          textOutput: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setGridOutput(value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_GRID_OUTPUT,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          gridOutput: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setSoundOutput(value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_SOUND_OUTPUT,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          soundOutput: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setTheme(value) {
-  // return {
-  //   type: ActionTypes.SET_THEME,
-  //   value
-  // };
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_THEME,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          theme: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
-
-export function setAutorefresh(value) {
-  // return {
-  //   type: ActionTypes.SET_AUTOREFRESH,
-  //   value
-  // };
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.SET_AUTOREFRESH,
-      value
-    });
-    const state = getState();
-    if (state.user.authenticated) {
-      const formParams = {
-        preferences: {
-          autorefresh: value
-        }
-      };
-      updatePreferences(formParams, dispatch);
-    }
-  };
-}
+export const setFontSize = createPreferenceUpdate(ActionTypes.SET_FONT_SIZE, 'fontSize');
+export const setLineNumbers = createPreferenceUpdate(ActionTypes.SET_LINE_NUMBERS, 'lineNumbers');
+export const setAutocloseBracketsQuotes = createPreferenceUpdate(
+  ActionTypes.SET_AUTOCLOSE_BRACKETS_QUOTES,
+  'autocloseBracketsQuotes'
+);
+export const setAutocomplete = createPreferenceUpdate(ActionTypes.SET_AUTOCOMPLETE, 'autocomplete');
+export const setAutosave = createPreferenceUpdate(ActionTypes.SET_AUTOSAVE, 'autosave');
+export const setLinewrap = createPreferenceUpdate(ActionTypes.SET_LINEWRAP, 'linewrap');
+export const setLintWarning = createPreferenceUpdate(ActionTypes.SET_LINT_WARNING, 'lintWarning');
+export const setTextOutput = createPreferenceUpdate(ActionTypes.SET_TEXT_OUTPUT, 'textOutput');
+export const setGridOutput = createPreferenceUpdate(ActionTypes.SET_GRID_OUTPUT, 'gridOutput');
+export const setSoundOutput = createPreferenceUpdate(ActionTypes.SET_SOUND_OUTPUT, 'soundOutput');
+export const setTheme = createPreferenceUpdate(ActionTypes.SET_THEME, 'theme');
+export const setAutorefresh = createPreferenceUpdate(ActionTypes.SET_AUTOREFRESH, 'autorefresh');
 
 export function setAllAccessibleOutput(value) {
   return (dispatch) => {

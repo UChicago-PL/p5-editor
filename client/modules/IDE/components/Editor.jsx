@@ -114,72 +114,6 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    // this.beep = new Audio(beepUrl);
-    // this.widgets = [];
-    // this._cm = CodeMirror(this.codemirrorContainer, {
-    //   // eslint-disable-line
-    //   theme: `p5-${this.props.theme}`,
-    //   lineNumbers: this.props.lineNumbers,
-    //   styleActiveLine: true,
-    //   inputStyle: 'contenteditable',
-    //   lineWrapping: this.props.linewrap,
-    //   fixedGutter: false,
-    //   foldGutter: true,
-    //   foldOptions: { widget: '\u2026' },
-    //   gutters: ['CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-    //   keyMap: 'sublime',
-    //   highlightSelectionMatches: true, // highlight current search match
-    //   matchBrackets: true,
-    //   autoCloseBrackets: this.props.autocloseBracketsQuotes,
-    //   styleSelectedText: true
-    //   // lint: {
-    //   //   onUpdateLinting: (annotations) => {
-    //   //     this.updateLintingMessageAccessibility(annotations);
-    //   //   },
-    //   //   options: {
-    //   //     asi: true,
-    //   //     eqeqeq: true,
-    //   //     '-W041': false,
-    //   //     esversion: 7
-    //   //   }
-    //   // }
-    // });
-
-    // const replaceCommand = metaKey === 'Ctrl' ? `${metaKey}-H` : `${metaKey}-Option-F`;
-    // this._cm.setOption('extraKeys', {
-    //   Tab: (cm) => {
-    //     // might need to specify and indent more?
-    //     const selection = cm.doc.getSelection();
-    //     if (selection.length > 0) {
-    //       cm.execCommand('indentMore');
-    //     } else {
-    //       cm.replaceSelection(' '.repeat(INDENTATION_AMOUNT));
-    //     }
-    //   },
-    //   [`${metaKey}-Enter`]: () => null,
-    //   [`Shift-${metaKey}-Enter`]: () => null,
-    //   [`${metaKey}-F`]: 'findPersistent',
-    //   [`${metaKey}-G`]: 'findNext',
-    //   [`Shift-${metaKey}-G`]: 'findPrev',
-    //   [replaceCommand]: 'replace'
-    // });
-
-    // this._cm.on('keyup', () => {
-    //   const temp = this.props.t('Editor.KeyUpLineNumber', {
-    //     lineNumber: parseInt(this._cm.getCursor().line + 1, 10)
-    //   });
-    //   document.getElementById('current-line').innerHTML = temp;
-    // });
-
-    // this._cm.on('keydown', (_cm, e) => {
-    //   // 9 === Tab
-    //   if (e.keyCode === 9 && e.shiftKey) {
-    //     this.tidyCode();
-    //   }
-    // });
-    //
-    // this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
-
     this.props.provideController({
       tidyCode: this.tidyCode,
       showFind: this.showFind,
@@ -187,12 +121,6 @@ class Editor extends React.Component {
       findPrev: this.findPrev,
       getContent: this.getContent
     });
-
-    // this very very hacky function gets called in codemirror-search
-    // which allows us to log using the replaceAll stuff
-    // window.replaceSnooper = (isReplaceAll) => {
-    //   this.props.logRun(`structure-update-replace${isReplaceAll ? '-all' : ''}`);
-    // };
   }
 
   componentDidUpdate(prevProps) {
@@ -201,50 +129,6 @@ class Editor extends React.Component {
         setTimeout(() => this.props.setUnsavedChanges(false), 400);
       }
     }
-    // if (this.props.fontSize !== prevProps.fontSize) {
-    //   this._cm.getWrapperElement().style['font-size'] = `${this.props.fontSize}px`;
-    // }
-    // if (this.props.linewrap !== prevProps.linewrap) {
-    //   this._cm.setOption('lineWrapping', this.props.linewrap);
-    // }
-    // if (this.props.theme !== prevProps.theme) {
-    //   this._cm.setOption('theme', `p5-${this.props.theme}`);
-    // }
-    // if (this.props.lineNumbers !== prevProps.lineNumbers) {
-    //   this._cm.setOption('lineNumbers', this.props.lineNumbers);
-    // }
-    // if (this.props.autocloseBracketsQuotes !== prevProps.autocloseBracketsQuotes) {
-    //   this._cm.setOption('autoCloseBrackets', this.props.autocloseBracketsQuotes);
-    // }
-
-    // if (prevProps.consoleEvents !== this.props.consoleEvents) {
-    //   this.props.showRuntimeErrorWarning();
-    // }
-    // for (let i = 0; i < this._cm.lineCount(); i += 1) {
-    //   this._cm.removeLineClass(i, 'background', 'line-runtime-error');
-    // }
-    // if (this.props.runtimeErrorWarningVisible) {
-    //   this.props.consoleEvents.forEach((consoleEvent) => {
-    //     if (consoleEvent.method === 'error') {
-    //       if (
-    //         consoleEvent.data &&
-    //         consoleEvent.data[0] &&
-    //         consoleEvent.data[0].indexOf &&
-    //         consoleEvent.data[0].indexOf(')') > -1
-    //       ) {
-    //         const n = consoleEvent.data[0].replace(')', '').split(' ');
-    //         const lineNumber = parseInt(n[n.length - 1], 10) - 1;
-    //         const { source } = consoleEvent;
-    //         const fileName = this.props.file.name;
-    //         const errorFromJavaScriptFile = `${source}.js` === fileName;
-    //         const errorFromIndexHTML = source === fileName && fileName === 'index.html';
-    //         if (!Number.isNaN(lineNumber) && (errorFromJavaScriptFile || errorFromIndexHTML)) {
-    //           this._cm.addLineClass(lineNumber, 'background', 'line-runtime-error');
-    //         }
-    //       }
-    //     }
-    //   });
-    // }
   }
 
   componentWillUnmount() {
@@ -389,7 +273,8 @@ class Editor extends React.Component {
                 autocloseBracketsQuotes: this.props.autocloseBracketsQuotes,
                 fontSize: this.props.fontSize,
                 linewrap: this.props.linewrap,
-                theme: this.props.theme
+                theme: this.props.theme,
+                autocomplete: this.props.autocomplete
               }}
               extensions={[
                 lintGutter(),
@@ -437,7 +322,7 @@ class Editor extends React.Component {
                       };
                     });
                   }
-                  // is this too much
+
                   const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
                   const langShort = langToShort[localLanguage] || '';
                   trackEvent({
@@ -462,6 +347,7 @@ class Editor extends React.Component {
 
 Editor.propTypes = {
   autocloseBracketsQuotes: PropTypes.bool.isRequired,
+  autocomplete: PropTypes.bool.isRequired,
   // lineNumbers: PropTypes.bool.isRequired,
   // lintWarning: PropTypes.bool.isRequired,
   linewrap: PropTypes.bool.isRequired,

@@ -5,6 +5,7 @@ import { basicSetup, EditorState } from '@codemirror/basic-setup';
 import { EditorView, KeyBinding, keymap, ViewUpdate } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { indentWithTab } from '@codemirror/commands';
+import classNames from 'classnames';
 import { langPlugin, setLang } from '../state/lang';
 
 import autocomplete from '../state/autocomplete';
@@ -134,5 +135,13 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
     }
   }, [JSON.stringify(externalProps.configOptions)]);
 
-  return <div className="codemirror__editor" ref={cmParent} />;
+  return (
+    <div
+      className={classNames({
+        codemirror__editor: true,
+        hide_autocomplete: !externalProps?.configOptions?.autocomplete
+      })}
+      ref={cmParent}
+    />
+  );
 }
