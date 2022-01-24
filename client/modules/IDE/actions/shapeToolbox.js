@@ -21,7 +21,7 @@ function chToLine(code, ch) {
   return [...code.slice(0, ch)].filter((c) => c === '\n').length;
 }
 
-const shapeToolboxP5Functions = ['line', 'rect', 'circle', 'ellipse', 'triangle', 'quad'];
+const shapeToolboxP5Functions = ['line', 'rect', 'circle', 'ellipse', 'triangle', 'quad', 'bezier'];
 
 export function processExistingCode(code, startLine, dispatch) {
   if (code) {

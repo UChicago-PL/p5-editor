@@ -5,9 +5,10 @@ import { basicSetup, EditorState } from '@codemirror/basic-setup';
 import { EditorView, KeyBinding, keymap, ViewUpdate } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { indentWithTab } from '@codemirror/commands';
+import classNames from 'classnames';
 import { langPlugin, setLang } from '../state/lang';
 
-// import autocomplete from '../state/autocomplete';
+import autocomplete from '../state/autocomplete';
 import { widgetsPlugin } from '../state/widgets';
 import {
   cmStatePlugin,
@@ -52,7 +53,7 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
       state: EditorState.create({
         extensions: [
           keymap.of(externalProps.keyBindings),
-          // autocomplete(externalProps.keywords),
+          autocomplete(),
           themePlugin(externalProps.configOptions || {}),
           basicSetup,
           langPlugin(externalProps.lang),
@@ -134,5 +135,13 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
     }
   }, [JSON.stringify(externalProps.configOptions)]);
 
-  return <div className="codemirror__editor" ref={cmParent} />;
+  return (
+    <div
+      className={classNames({
+        codemirror__editor: true,
+        hide_autocomplete: !externalProps?.configOptions?.autocomplete
+      })}
+      ref={cmParent}
+    />
+  );
 }

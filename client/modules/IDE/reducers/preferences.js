@@ -1,18 +1,19 @@
 import * as ActionTypes from '../../../constants';
 
 const initialState = {
-  fontSize: 18,
-  autosave: true,
-  linewrap: true,
-  lineNumbers: true,
-  lintWarning: false,
-  textOutput: false,
-  gridOutput: false,
-  soundOutput: false,
-  theme: 'light',
+  autocloseBracketsQuotes: true,
+  autocomplete: true,
   autorefresh: false,
+  autosave: true,
+  fontSize: 18,
+  gridOutput: false,
   language: 'en-US',
-  autocloseBracketsQuotes: true
+  lineNumbers: true,
+  linewrap: true,
+  lintWarning: false,
+  soundOutput: false,
+  textOutput: false,
+  theme: 'light'
 };
 
 const preferences = (state = initialState, action) => {
@@ -32,7 +33,7 @@ const preferences = (state = initialState, action) => {
     case ActionTypes.SET_SOUND_OUTPUT:
       return Object.assign({}, state, { soundOutput: action.value });
     case ActionTypes.SET_PREFERENCES:
-      return action.preferences;
+      return { ...initialState, ...action.preferences };
     case ActionTypes.SET_THEME:
       return Object.assign({}, state, { theme: action.value });
     case ActionTypes.SET_AUTOREFRESH:
@@ -43,6 +44,8 @@ const preferences = (state = initialState, action) => {
       return Object.assign({}, state, { language: action.language });
     case ActionTypes.SET_AUTOCLOSE_BRACKETS_QUOTES:
       return Object.assign({}, state, { autocloseBracketsQuotes: action.value });
+    case ActionTypes.SET_AUTOCOMPLETE:
+      return Object.assign({}, state, { autocomplete: action.value });
     default:
       return state;
   }

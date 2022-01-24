@@ -249,26 +249,28 @@ class IDEView extends React.Component {
             closeOverlay={this.props.closePreferences}
           >
             <Preferences
-              fontSize={this.props.preferences.fontSize}
-              setFontSize={this.props.setFontSize}
-              autosave={this.props.preferences.autosave}
-              linewrap={this.props.preferences.linewrap}
-              lineNumbers={this.props.preferences.lineNumbers}
-              setLineNumbers={this.props.setLineNumbers}
-              setAutosave={this.props.setAutosave}
-              setLinewrap={this.props.setLinewrap}
-              lintWarning={this.props.preferences.lintWarning}
-              setLintWarning={this.props.setLintWarning}
-              textOutput={this.props.preferences.textOutput}
-              gridOutput={this.props.preferences.gridOutput}
-              soundOutput={this.props.preferences.soundOutput}
-              setTextOutput={this.props.setTextOutput}
-              setGridOutput={this.props.setGridOutput}
-              setSoundOutput={this.props.setSoundOutput}
-              theme={this.props.preferences.theme}
-              setTheme={this.props.setTheme}
               autocloseBracketsQuotes={this.props.preferences.autocloseBracketsQuotes}
+              autocomplete={this.props.preferences.autocomplete}
+              autosave={this.props.preferences.autosave}
+              fontSize={this.props.preferences.fontSize}
+              gridOutput={this.props.preferences.gridOutput}
+              lineNumbers={this.props.preferences.lineNumbers}
+              linewrap={this.props.preferences.linewrap}
+              lintWarning={this.props.preferences.lintWarning}
               setAutocloseBracketsQuotes={this.props.setAutocloseBracketsQuotes}
+              setAutocomplete={this.props.setAutocomplete}
+              setAutosave={this.props.setAutosave}
+              setFontSize={this.props.setFontSize}
+              setGridOutput={this.props.setGridOutput}
+              setLineNumbers={this.props.setLineNumbers}
+              setLinewrap={this.props.setLinewrap}
+              setLintWarning={this.props.setLintWarning}
+              setSoundOutput={this.props.setSoundOutput}
+              setTextOutput={this.props.setTextOutput}
+              setTheme={this.props.setTheme}
+              soundOutput={this.props.preferences.soundOutput}
+              textOutput={this.props.preferences.textOutput}
+              theme={this.props.preferences.theme}
             />
           </Overlay>
         )}
@@ -503,6 +505,7 @@ IDEView.propTypes = {
   preferences: PropTypes.shape({
     autocloseBracketsQuotes: PropTypes.bool.isRequired,
     autorefresh: PropTypes.bool.isRequired,
+    autocomplete: PropTypes.bool.isRequired,
     autosave: PropTypes.bool.isRequired,
     fontSize: PropTypes.number.isRequired,
     gridOutput: PropTypes.bool.isRequired,
@@ -530,6 +533,7 @@ IDEView.propTypes = {
   }).isRequired,
   setAllAccessibleOutput: PropTypes.func.isRequired,
   setAutocloseBracketsQuotes: PropTypes.func.isRequired,
+  setAutocomplete: PropTypes.func.isRequired,
   setAutosave: PropTypes.func.isRequired,
   setFontSize: PropTypes.func.isRequired,
   setGridOutput: PropTypes.func.isRequired,
