@@ -8,11 +8,7 @@ function updatePreferences(formParams, dispatch) {
     .then(() => {})
     .catch((error) => {
       const { response } = error;
-      console.log('set prefs error', error);
-      dispatch({
-        type: ActionTypes.ERROR,
-        error: response.data
-      });
+      dispatch({ type: ActionTypes.ERROR, error: response.data });
     });
 }
 
