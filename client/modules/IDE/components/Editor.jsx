@@ -169,6 +169,8 @@ class Editor extends React.Component {
       return 'application/json';
     } else if (fileName.match(/.+\.(frag|vert)$/i)) {
       return 'clike';
+    } else if (fileName.match(/.+\.(png|jpg|bmp|jpeg)$/i)) {
+      return 'imagelike';
     }
     return 'text/plain';
   }
@@ -204,15 +206,6 @@ class Editor extends React.Component {
     this.cmView.focus();
   }
 
-  // toggleEditorOptions() {
-  //   if (this.props.editorOptionsVisible) {
-  //     this.props.closeEditorOptions();
-  //   } else {
-  //     this.optionsButton.focus();
-  //     this.props.showEditorOptions();
-  //   }
-  // }
-  //
   render() {
     const editorSectionClass = classNames({
       editor: true,
@@ -220,12 +213,9 @@ class Editor extends React.Component {
       'editor--options': this.props.editorOptionsVisible
     });
 
-    // const editorHolderClass = classNames({
-    //   'editor-holder': true,
-    //   'editor-holder--hidden': this.props.file.fileType === 'folder' || this.props.file.url
-    // });
     const language = this.getFileMode(this.props.file.name);
     const isFolder = this.props.file.fileType === 'folder';
+    const isNonTextFile = this.props.file.url || language === 'imagelike';
     return (
       <section className={editorSectionClass}>
         <header className="editor__header">
@@ -260,7 +250,13 @@ class Editor extends React.Component {
           </div>
         </header>
         <article className="editor-holder">
-          {!isFolder && (
+          {language === 'imagelike' && (
+            <div>
+              <img src={this.props.file.url} />
+              <div />
+            </div>
+          )}
+          {!isFolder && !isNonTextFile && (
             <CodeMirror
               code={this.props.file.content}
               lang={language}
