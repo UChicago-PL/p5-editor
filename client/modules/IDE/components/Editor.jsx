@@ -80,6 +80,12 @@ class Editor extends React.Component {
         },
         preventDefault: true
       },
+      // block the use of the linter pop up
+      {
+        key: `${metaKey}-Shift-m`,
+        run: () => true,
+        preventDefault: true
+      },
       ...['Delete', 'Backspace'].map((key) => ({
         key,
         run: () => {

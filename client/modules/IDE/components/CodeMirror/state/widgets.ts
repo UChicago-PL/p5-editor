@@ -97,18 +97,20 @@ class NumWidget extends WidgetType {
   }
 }
 
-function changeNum(view: EditorView, isInc: boolean, from: number) {
+const fixFloatingPoint = (val: number) => Number.parseFloat(val.toPrecision(15));
+function changeNum(view: EditorView, isInc: boolean, from: number, amount: number) {
   const s = codeString(view, from)
     // eslint-disable-next-line no-useless-escape
     .match(/([0-9\-\.]+)([^0-9]?)/)!
     .splice(1)[0];
   const num = parseFloat(s) * (codeString(view, from - 1, from) === '-' ? -1 : 1);
+
   view.dispatch({
     changes: {
       // When the number is negative we need to overwrite the existing minus sign
       from: from - (num < 0 ? 1 : 0),
       to: from + s.length,
-      insert: (isInc ? num + 1 : num - 1).toString()
+      insert: `${fixFloatingPoint(isInc ? num + amount : num - amount)}`
     }
   });
   return true;
@@ -623,6 +625,7 @@ function unwrap(value: any, errorMessage: string) {
   }
 }
 
+const keysPressed: { [x: string]: boolean } = {};
 // eslint-disable-next-line import/prefer-default-export
 export const widgetsPlugin = (props: WidgetProps) =>
   ViewPlugin.fromClass(
@@ -648,10 +651,17 @@ export const widgetsPlugin = (props: WidgetProps) =>
       decorations: (v: any) => v.decorations,
 
       eventHandlers: {
-        mousedown: (e) => {
+        keydown: (e) => {
+          keysPressed[e.key] = true;
+        },
+        keyup: (e) => {
+          keysPressed[e.key] = false;
+        },
+        mousedown: (e, view) => {
           const target = e.target as HTMLElement;
           // This is necessary to prevent a bug where button clicks aren't registered the first time around
           // But I'm not sure why exactly
+          view.focus();
           if (
             target.classList.contains('cm-inc-widget') ||
             target.classList.contains('cm-dec-widget') ||
@@ -665,8 +675,10 @@ export const widgetsPlugin = (props: WidgetProps) =>
           if (target.classList.contains('cm-inc-widget') || target.classList.contains('cm-dec-widget')) {
             const from = unwrap(target.parentElement!.dataset.from, "Missing 'from' dataset value");
             const isIncrease = target.classList.contains('cm-inc-widget');
+
             props.onWidgetChange(isIncrease ? 'inc-val' : 'dec-val');
-            changeNum(view, isIncrease, parseInt(from));
+            const amount = keysPressed.Shift ? 10 : keysPressed.Alt ? 1 / 10 : 1;
+            changeNum(view, isIncrease, parseInt(from), amount);
 
             return true;
           }
