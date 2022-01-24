@@ -1,5 +1,5 @@
-import { autocompletion, CompletionSource } from '@codemirror/autocomplete';
-import words from './autocomplete-words';
+import { autocompletion, CompletionSource, snippetCompletion as snip } from '@codemirror/autocomplete';
+import words, { snippets } from './autocomplete-words';
 
 function from(list: string[]): CompletionSource {
   return (cx) => {
@@ -9,7 +9,7 @@ function from(list: string[]): CompletionSource {
     }
     return {
       from: word ? word.from : cx.pos,
-      options: list.map((w) => ({ label: w })),
+      options: snippets.concat(list.map((w) => ({ label: w }))),
       span: /\w*/
     };
   };

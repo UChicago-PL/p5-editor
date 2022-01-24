@@ -1,3 +1,4 @@
+import { Completion, snippetCompletion as snip } from '@codemirror/autocomplete';
 const words = {
   // constants
   P2D: false,
@@ -338,7 +339,7 @@ const words = {
   noiseDetail: false,
   noiseSeed: false,
   randomSeed: false,
-  random: false,
+  random: true,
   randomGaussian: false,
   acos: true,
   asin: true,
@@ -443,20 +444,95 @@ const words = {
   loadSound: false,
   createConvolver: false,
   setBPM: false,
-  saveSound: false,
-  // Editor words:
-  'Editor.slider(??, ??, ??);': true,
-  'Editor.shapeToolbox();': true,
-  // Syntactic constructs
-  'for (x in y) {\n}': true,
-  let: true,
-  const: true,
-  'while (??) {\n}': true,
-  'if (??) {\n}': true,
-  'if (??) {\n} else {\n}': true,
-  'if (??) {\n} else if(??) {\n} else {\n}': true
+  saveSound: false
 };
 const preppedWords = Object.entries(words)
   .filter(([_, include]) => include)
   .map(([word]) => word);
+
 export default preppedWords;
+
+/// A collection of JavaScript-related
+/// [snippets](#autocomplete.snippet).
+export const snippets: readonly Completion[] = [
+  snip('Editor.slider(${minVal}, ${maxVal}, ${curVal});', {
+    label: 'Editor.slider',
+    detail: 'Editor slider',
+    type: 'keyword'
+  }),
+  snip('Editor.shapeToolbox();', {
+    label: 'Editor.shapeToolbox',
+    detail: 'Editor shapeToolbox',
+    type: 'keyword'
+  }),
+  snip('const ${varName} = ${value}', {
+    label: 'const',
+    detail: 'const initialization',
+    type: 'keyword'
+  }),
+  snip('let ${varName} = ${value}', {
+    label: 'let',
+    detail: 'let initialization',
+    type: 'keyword'
+  }),
+  snip('if (${condition}){\nt${}\n}}', {
+    label: 'if',
+    detail: 'if statement',
+    type: 'keyword'
+  }),
+  snip('if (${condition}){\nt${}\n}} else {\nt${}\n}', {
+    label: 'if',
+    detail: 'if else statement',
+    type: 'keyword'
+  }),
+  snip('if (${condition}){\nt${}\n}} if (${secondCondition}) else {\nt${}\n} else {\nt${}\n}', {
+    label: 'if',
+    detail: 'if else statement',
+    type: 'keyword'
+  }),
+  snip('function ${name}(${params}) {\n\t${}\n}', {
+    label: 'function',
+    detail: 'definition',
+    type: 'keyword'
+  }),
+  snip('for (let ${index} = 0; ${index} < ${bound}; ${index}++) {\n\t${}\n}', {
+    label: 'for',
+    detail: 'loop',
+    type: 'keyword'
+  }),
+  snip('for (let ${name} of ${collection}) {\n\t${}\n}', {
+    label: 'for',
+    detail: 'of loop',
+    type: 'keyword'
+  }),
+  snip('for (let ${name} in ${collection}) {\n\t${}\n}', {
+    label: 'for',
+    detail: 'in loop',
+    type: 'keyword'
+  }),
+  snip('while (${condition}) {\n\t${}\n}', {
+    label: 'while',
+    detail: 'while loop',
+    type: 'keyword'
+  }),
+  snip('try {\n\t${}\n} catch (${error}) {\n\t${}\n}', {
+    label: 'try',
+    detail: 'block',
+    type: 'keyword'
+  }),
+  snip('class ${name} {\n\tconstructor(${params}) {\n\t\t${}\n\t}\n}', {
+    label: 'class',
+    detail: 'definition',
+    type: 'keyword'
+  })
+  // snip('import {${names}} from "${module}"\n${}', {
+  //   label: 'import',
+  //   detail: 'named',
+  //   type: 'keyword'
+  // }),
+  // snip('import ${name} from "${module}"\n${}', {
+  //   label: 'import',
+  //   detail: 'default',
+  //   type: 'keyword'
+  // })
+];
