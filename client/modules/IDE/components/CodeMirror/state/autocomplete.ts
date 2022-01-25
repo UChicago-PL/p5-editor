@@ -11,7 +11,7 @@ function from(list: string[]): CompletionSource {
     function apply(template: string) {
       const snipBind = snippet(template);
       return function snippetCatcher(view, completion, from, to) {
-        trackEvent({ eventName: 'ac', context: completion.shortLabel || completion.label });
+        trackEvent({ eventName: 'ac', context: [completion.shortLabel || completion.label] });
         snipBind(view, completion, from, to);
       };
     }
