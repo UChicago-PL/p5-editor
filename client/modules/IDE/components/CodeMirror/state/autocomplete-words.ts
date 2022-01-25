@@ -1,4 +1,3 @@
-import { Completion, snippetCompletion as snip } from '@codemirror/autocomplete';
 const words = {
   // constants
   P2D: false,
@@ -453,85 +452,68 @@ const preppedWords = Object.entries(words)
 export default preppedWords;
 
 /// A collection of JavaScript-related
-export const snippets: readonly Completion[] = [
-  snip('Editor.slider(${_minVal}, ${_maxVal}, ${_curVal});', {
+export const preCompletions = [
+  {
+    template: 'Editor.slider(${_minVal}, ${_maxVal}, ${_curVal});',
     label: 'Editor.slider',
     detail: '',
-    type: 'keyword'
-  }),
-  snip('Editor.shapeToolbox();', {
-    label: 'Editor.shapeToolbox',
-    detail: '',
-    type: 'keyword'
-  }),
-  snip('const ${_varName} = ${_value};', {
+    shortLabel: 'e.slider'
+  },
+  { template: 'Editor.shapeToolbox();', label: 'Editor.shapeToolbox', detail: '', type: 'keyword' },
+  {
+    template: 'const ${_varName} = ${_value};',
     label: 'const',
-    detail: 'variable definition',
-    type: 'keyword'
-  }),
-  snip('let ${_varName} = ${_value};', {
-    label: 'let',
-    detail: 'variable definition',
-    type: 'keyword'
-  }),
-  snip('if (${_condition}) {\n\t${}\n}', {
-    label: 'if',
-    detail: 'statement',
-    type: 'keyword'
-  }),
-  snip('if (${_condition}) {\n\t${}\n} else {\n\t${}\n}', {
+    detail: 'variable definition'
+  },
+  { template: 'let ${_varName} = ${_value};', label: 'let', detail: 'variable definition', type: 'keyword' },
+  { template: 'if (${_condition}) {\n\t${}\n}', label: 'if', detail: 'statement', type: 'keyword' },
+  {
+    template: 'if (${_condition}) {\n\t${}\n} else {\n\t${}\n}',
     label: 'if',
     detail: 'else statement',
-    type: 'keyword'
-  }),
-  snip('if (${_condition}) {\n\t${}\n} else if (${_condition})  {\n\t${}\n} else {\n\t${}\n}', {
+    shortLabel: 'if/else'
+  },
+  {
+    template: 'if (${_condition}) {\n\t${}\n} else if (${_condition})  {\n\t${}\n} else {\n\t${}\n}',
     label: 'if',
     detail: 'else-if else statement',
-    type: 'keyword'
-  }),
-  snip('function ${_name}(${_params}) {\n\t${}\n}', {
+    shortLabel: 'if/else/else'
+  },
+  {
+    template: 'function ${_name}(${_params}) {\n\t${}\n}',
     label: 'function',
-    detail: 'definition',
-    type: 'keyword'
-  }),
-  snip('for (let ${_index} = 0; ${_index} < ${_bound}; ${_index}++) {\n\t${}\n}', {
+    detail: 'definition'
+  },
+  {
+    template: 'for (let ${_index} = 0; ${_index} < ${_bound}; ${_index}++) {\n\t${}\n}',
     label: 'for',
-    detail: 'loop',
-    type: 'keyword'
-  }),
-  snip('for (let ${_name} of ${_collection}) {\n\t${}\n}', {
+    detail: 'loop'
+  },
+  {
+    template: 'for (let ${_name} of ${_collection}) {\n\t${}\n}',
     label: 'for',
-    detail: 'of loop',
-    type: 'keyword'
-  }),
-  snip('for (let ${_name} in ${_collection}) {\n\t${}\n}', {
+    detail: 'of loop'
+  },
+  {
+    template: 'for (let ${_name} in ${_collection}) {\n\t${}\n}',
     label: 'for',
-    detail: 'in loop (fields of an object)',
-    type: 'keyword'
-  }),
-  snip('while (${_condition}) {\n\t${}\n}', {
+    detail: 'in loop (fields of an object)'
+  },
+  {
+    template: 'while (${_condition}) {\n\t${}\n}',
     label: 'while',
     detail: 'loop',
-    type: 'keyword'
-  }),
-  snip('try {\n\t${}\n} catch (${_error}) {\n\t${}\n}', {
+    type: 'keyword',
+    shortLabel: 'while'
+  },
+  {
+    template: 'try {\n\t${}\n} catch (${_error}) {\n\t${}\n}',
     label: 'try',
-    detail: 'block',
-    type: 'keyword'
-  }),
-  snip('class ${_name} {\n\tconstructor(${_params}) {\n\t\t${}\n\t}\n}', {
+    detail: 'block'
+  },
+  {
+    template: 'class ${_name} {\n\tconstructor(${_params}) {\n\t\t${}\n\t}\n}',
     label: 'class',
-    detail: 'definition',
-    type: 'keyword'
-  })
-  // snip('import {${_names}} from "${module}"\n${}', {
-  //   label: 'import',
-  //   detail: 'named',
-  //   type: 'keyword'
-  // }),
-  // snip('import ${_name} from "${module}"\n${}', {
-  //   label: 'import',
-  //   detail: 'default',
-  //   type: 'keyword'
-  // })
-];
+    detail: 'definition'
+  }
+].map((x) => ({ ...x, type: 'keyword' }));
