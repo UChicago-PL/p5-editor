@@ -11,7 +11,7 @@ import User from '../models/user';
 import { resolvePathToFile } from '../utils/filePath';
 import generateFileSystemSafeName from '../utils/generateFileSystemSafeName';
 import isPartOfStudy from './user.controller/isPartOfStudy';
-import { strip } from '../../client/utils/cs111Prelude';
+import { injectPrelude } from '../../client/utils/cs111Prelude';
 
 export { default as createProject, apiCreateProject } from './project.controller/createProject';
 export { default as deleteProject } from './project.controller/deleteProject';
@@ -239,6 +239,7 @@ function bundleExternalLibs(project, zip, callback) {
   });
 }
 
+const last = (arr) => arr[arr.length - 1];
 function buildZip(project, req, res) {
   console.log('starting to build zip');
   const zip = archiver('zip');
@@ -246,13 +247,12 @@ function buildZip(project, req, res) {
   const numFiles = project.files.filter((file) => file.fileType !== 'folder').length;
   const { files } = project;
 
-  // Remove special functions from JS files
+  // Inject the prelude into html files
   files.forEach((file) => {
-    if (file.fileType === 'file' && file.name.split('.')[1] === 'js') {
-      file.content = strip(file.content);
+    if (file.fileType === 'file' && last(file.name.split('.')) === 'html') {
+      file.content = injectPrelude(file.content);
     }
   });
-  console.log(files);
 
   let numCompletedFiles = 0;
 
