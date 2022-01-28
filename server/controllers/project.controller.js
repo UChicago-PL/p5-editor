@@ -11,7 +11,7 @@ import User from '../models/user';
 import { resolvePathToFile } from '../utils/filePath';
 import generateFileSystemSafeName from '../utils/generateFileSystemSafeName';
 import isPartOfStudy from './user.controller/isPartOfStudy';
-import { injectPrelude } from '../../client/utils/cs111Prelude';
+import { injectPrelude, last } from '../../client/utils/cs111Prelude';
 
 export { default as createProject, apiCreateProject } from './project.controller/createProject';
 export { default as deleteProject } from './project.controller/deleteProject';
@@ -239,7 +239,6 @@ function bundleExternalLibs(project, zip, callback) {
   });
 }
 
-const last = (arr) => arr[arr.length - 1];
 function buildZip(project, req, res) {
   console.log('starting to build zip');
   const zip = archiver('zip');
