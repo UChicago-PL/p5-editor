@@ -9,7 +9,7 @@ import Project from '../models/project';
 import User from '../models/user';
 import UserAllowlist from '../models/userAllowlist';
 import Assignment from '../models/assignment';
-import { injectPrelude } from '../../client/utils/cs111Prelude';
+import { injectPrelude, last } from '../../client/utils/cs111Prelude';
 
 export * from './user.controller/apiKey';
 
@@ -339,8 +339,6 @@ const promiseRequest = (url) => {
     });
   });
 };
-
-const last = (arr) => arr[arr.length - 1];
 
 /**
  * prepare a PR based on a project

@@ -7,6 +7,8 @@ const Editor = {
 }
 `;
 
+export const last = (arr) => arr[arr.length - 1];
+
 export function injectPrelude(code) {
   const script = `<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/UChicago-PL/cs11111-assets/prelude.js" ></script>`;
   const splits = code.split('</head>');
