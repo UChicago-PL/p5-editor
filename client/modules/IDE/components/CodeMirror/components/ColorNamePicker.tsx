@@ -11,7 +11,6 @@ type Props = {
 const initialState = Object.fromEntries(Object.keys(colorGroups).map((k) => [k, false]));
 
 export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Element {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const initColorGroup = Object.entries(colorGroups).find(([_, colors]) => colors.includes(initColor));
   if (!initColorGroup) {
     throw new Error('Invalid color passed to the color name picker');
@@ -71,7 +70,7 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
             <span>
               {colors.map((color) => (
                 <span
-                  key={color + '-swatch'}
+                  key={`${color}-swatch`}
                   className="color-swatch"
                   title={color}
                   onClick={() => cb(color)}
@@ -100,7 +99,6 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
         ))}
       </ul>
       <div className="buttons">
-        {/* TODO: Escape */}
         <button onClick={() => cb(null)}>Close</button>
         <button onClick={() => cb(colorNames[initColor])}>Convert to hex and close</button>
       </div>

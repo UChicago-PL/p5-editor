@@ -32,7 +32,7 @@
     "no-underscore-dangle": 0,
     "max-len": [1, 120, 2, {"ignoreComments": true, "ignoreTemplateLiterals": true, "ignoreStrings": true}],
     "quote-props":"off",
-    "no-unused-vars": [1, {"vars": "local", "args": "none"}],
+    "no-unused-vars": [1, {"vars": "local", "args": "none",}],
     "consistent-return":"off",
     "no-param-reassign": [2, { "props": false }],
     "react/self-closing-comp": ["error", {
@@ -97,6 +97,12 @@
     "@typescript-eslint/no-empty-function": 0,
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "react/jsx-uses-react": 1
   },
   "settings": {
