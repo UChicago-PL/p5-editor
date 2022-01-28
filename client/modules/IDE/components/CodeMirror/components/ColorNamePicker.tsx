@@ -82,7 +82,7 @@ export default function ColorNamePicker({ cb, initColor, wrap }: Props): JSX.Ele
               <ul>
                 {colors.map((color) => (
                   <li
-                    key={color + '-item'}
+                    key={`${color}-item`}
                     className={'color-item ' + (color === initColor ? 'selected' : '')}
                     onClick={() => cb(color)}
                     style={{
