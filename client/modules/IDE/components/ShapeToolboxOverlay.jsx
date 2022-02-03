@@ -96,10 +96,15 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     top: canvasSize.height / 2 - defaultSize.height / 2 + randrange(-variation, variation)
   });
 
+  const add = (o) => {
+    canvas.add(o);
+    canvas.setActiveObject(o);
+  };
+
   const addLine = () => {
     const loc = defaultLoc();
 
-    canvas.add(
+    add(
       new fabric.Line(
         [loc.left, loc.top, loc.left + defaultSize.width, loc.top + defaultSize.height],
         defaults
@@ -108,7 +113,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   };
 
   const addRect = () =>
-    canvas.add(
+    add(
       new fabric.Rect({
         ...defaults,
         ...defaultLoc(),
@@ -129,11 +134,11 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     // whereas, for example, it is possible to do that with rects using quad()
     o.setControlsVisibility({ mtr: false });
 
-    canvas.add(o);
+    add(o);
   };
 
   const addTriangle = () =>
-    canvas.add(
+    add(
       new fabric.Triangle({
         ...defaults,
         ...defaultLoc(),
@@ -143,7 +148,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   const addBezier = () => {
     const loc = defaultLoc();
-    createBezier(
+    const [path, controls] = createBezier(
       [
         [loc.left, loc.top + defaultSize.height],
         [loc.left + 10, loc.top],
@@ -152,7 +157,9 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
       ],
       defaults,
       canvas
-    ).forEach((o) => canvas.add(o));
+    );
+    controls.forEach((o) => canvas.add(o));
+    add(path);
   };
 
   const processExistingCall = (canvas) => (call) => {
@@ -222,7 +229,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         }
         case 'bezier': {
           const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
-          return createBezier(
+          const [path, controls] = createBezier(
             [
               [x1, y1],
               [x2, y2],
@@ -232,6 +239,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             defaults,
             canvas
           );
+          return [path, ...controls];
         }
         default:
           return [];

@@ -138,7 +138,7 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
     return c;
   }
 
-  return [path, ...controls];
+  return [path, controls];
 };
 
 export const toAbsolutePoints = (o) => {
