@@ -425,10 +425,12 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
           <Curve role="img" aria-label="bezier()" focusable="false" />
         </button>
         <button className="button" onClick={wrapEvent(moveToOrigin, { eventName: 'stb-moveToOrigin' })}>
-          move to origin
+          move to
+          <br />
+          origin
         </button>
         <button className="button" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
-          reset
+          reset all
         </button>
         <button className="button" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
           save
