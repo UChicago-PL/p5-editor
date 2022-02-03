@@ -155,3 +155,20 @@ export const toAbsolutePoints = (o) => {
   // so that the path can be safely re-initialized without messing up its coordinates/positioning
   return relativePoints.map(([x, y]) => [x + o.left - o.pathOffset.x, y + o.top - o.pathOffset.y]);
 };
+
+export const movePathToOrigin = (canvas, path) => {
+  const leftOffset = path.width / 2 - path.left;
+  const topOffset = path.height / 2 - path.top;
+  canvas.getObjects().forEach((o) => {
+    if (o.parentId === path.id) {
+      o.bringToFront();
+      o.left += leftOffset;
+      o.top += topOffset;
+      o.setCoords();
+    }
+  });
+
+  path.top = path.height / 2;
+  path.left = path.width / 2;
+  path.setCoords();
+};

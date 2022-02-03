@@ -11,7 +11,7 @@ import Square from '../../../images/shapeToolbox/square.svg';
 import Triangle from '../../../images/shapeToolbox/triangle.svg';
 import Curve from '../../../images/shapeToolbox/curve.svg';
 
-import { createBezier, toAbsolutePoints } from './shapeToolboxCurves';
+import { createBezier, movePathToOrigin, toAbsolutePoints } from './shapeToolboxCurves';
 
 function randrange(min, max) {
   return Math.random() * (max - min) + min;
@@ -385,6 +385,26 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     closeCb(res);
   };
 
+  // TODO: make this function work properly for rotated shapes
+  const moveToOrigin = () => {
+    const object = canvas.getActiveObject();
+    if (object) {
+      if (object.type === 'path') {
+        movePathToOrigin(canvas, object);
+      } else if (object.special) {
+        const path = canvas.getObjects().find((o) => o.id === object.parentId);
+        if (path) {
+          movePathToOrigin(canvas, path);
+        }
+      } else {
+        object.top = 0;
+        object.left = 0;
+        object.setCoords();
+      }
+      canvas.requestRenderAll();
+    }
+  };
+
   return (
     <div className="shape-toolbox-overlay">
       <canvas ref={el} />
@@ -404,10 +424,13 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         <button onClick={wrapEvent(addBezier, { eventName: 'stb-addBezier' })}>
           <Curve role="img" aria-label="bezier()" focusable="false" />
         </button>
-        <button className="reset" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
+        <button className="button" onClick={wrapEvent(moveToOrigin, { eventName: 'stb-moveToOrigin' })}>
+          move to origin
+        </button>
+        <button className="button" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
           reset
         </button>
-        <button className="apply" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
+        <button className="button" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
           save
         </button>
       </div>

@@ -90,7 +90,7 @@
       border: 1px solid getThemifyVariable('ide-border-color');
     }
 
-    .reset, .apply {
+    .button {
       @include themify() {
         background: getThemifyVariable('modal-background-color');
       }
