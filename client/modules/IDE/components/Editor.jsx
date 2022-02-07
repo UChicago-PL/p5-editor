@@ -222,6 +222,8 @@ class Editor extends React.Component {
     const language = this.getFileMode(this.props.file.name);
     const isFolder = this.props.file.fileType === 'folder';
     const isNonTextFile = this.props.file.url || language === 'imagelike';
+    const code = this.props.file.content || [...new Array(25)].join('\n');
+    console.log({ code });
     return (
       <section className={editorSectionClass}>
         <header className="editor__header">
@@ -264,7 +266,7 @@ class Editor extends React.Component {
           )}
           {!isFolder && !isNonTextFile && (
             <CodeMirror
-              code={this.props.file.content}
+              code={code}
               lang={language}
               onChange={this.onChange}
               shapeToolboxCb={this.props.openShapeToolbox}
