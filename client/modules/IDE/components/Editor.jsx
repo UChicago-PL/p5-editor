@@ -223,7 +223,6 @@ class Editor extends React.Component {
     const isFolder = this.props.file.fileType === 'folder';
     const isNonTextFile = this.props.file.url || language === 'imagelike';
     const code = this.props.file.content || [...new Array(25)].join('\n');
-    console.log({ code });
     return (
       <section className={editorSectionClass}>
         <header className="editor__header">
