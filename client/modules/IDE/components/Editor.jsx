@@ -281,59 +281,62 @@ class Editor extends React.Component {
               }}
               extensions={[
                 lintGutter(),
-                linter((view) => {
-                  const code = view.state.doc.toString();
-                  const config = view.state.field(cmStatePlugin);
-                  const localLanguage = config.lang || language;
+                linter(
+                  (view) => {
+                    const code = view.state.doc.toString();
+                    const config = view.state.field(cmStatePlugin);
+                    const localLanguage = config.lang || language;
 
-                  let msgs = [];
+                    let msgs = [];
 
-                  function toOffset(line, ch) {
-                    return view.state.doc.line(line).from + ch - 1;
-                  }
+                    function toOffset(line, ch) {
+                      return view.state.doc.line(line).from + ch - 1;
+                    }
 
-                  function lineOffset(line) {
-                    return view.state.doc.line(line).from;
-                  }
+                    function lineOffset(line) {
+                      return view.state.doc.line(line).from;
+                    }
 
-                  if (localLanguage === 'javascript') {
-                    JSHINT(code, jshintRules);
-                    msgs = JSHINT.errors.map((e) => ({
-                      message: e.reason,
-                      severity: e.id && e.id.includes('error') ? 'error' : 'warning',
-                      from: toOffset(e.line, e.character),
-                      to: toOffset(e.line, e.character + 1)
-                    }));
-                  } else if (localLanguage === 'htmlmixed') {
-                    // msgs = HTMLHint.verify(code, htmlHintConfig).
+                    if (localLanguage === 'javascript') {
+                      JSHINT(code, jshintRules);
+                      msgs = JSHINT.errors.map((e) => ({
+                        message: e.reason,
+                        severity: e.id && e.id.includes('error') ? 'error' : 'warning',
+                        from: toOffset(e.line, e.character),
+                        to: toOffset(e.line, e.character + 1)
+                      }));
+                    } else if (localLanguage === 'htmlmixed') {
+                      // msgs = HTMLHint.verify(code, htmlHintConfig).
 
-                    msgs = HTMLHint.verify(code).map((e) => {
-                      return {
-                        message: e.message,
-                        severity: e.type,
-                        from: lineOffset(e.line),
-                        to: lineOffset(e.line + 1) - 1
-                      };
+                      msgs = HTMLHint.verify(code).map((e) => {
+                        return {
+                          message: e.message,
+                          severity: e.type,
+                          from: lineOffset(e.line),
+                          to: lineOffset(e.line + 1) - 1
+                        };
+                      });
+                    } else if (localLanguage === 'css') {
+                      msgs = CSSLint.verify(code).messages.map((e) => {
+                        return {
+                          message: e.message,
+                          severity: e.type,
+                          from: lineOffset(e.line),
+                          to: lineOffset(e.line + 1) - 1
+                        };
+                      });
+                    }
+
+                    const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
+                    const langShort = langToShort[localLanguage] || '';
+                    trackEvent({
+                      eventName: 'lint',
+                      context: [msgs.length, langShort]
                     });
-                  } else if (localLanguage === 'css') {
-                    msgs = CSSLint.verify(code).messages.map((e) => {
-                      return {
-                        message: e.message,
-                        severity: e.type,
-                        from: lineOffset(e.line),
-                        to: lineOffset(e.line + 1) - 1
-                      };
-                    });
-                  }
-
-                  const langToShort = { javascript: 'js', htmlmixed: 'html', css: 'css' };
-                  const langShort = langToShort[localLanguage] || '';
-                  trackEvent({
-                    eventName: 'lint',
-                    context: [msgs.length, langShort]
-                  });
-                  return msgs;
-                })
+                    return msgs;
+                  },
+                  { delay: 500 }
+                )
               ]}
               onWidgetChange={(widgetEvent) => {
                 this.lastWidgetChangeTime = Date.now();

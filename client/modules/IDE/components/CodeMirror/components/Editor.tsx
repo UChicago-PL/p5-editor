@@ -134,12 +134,11 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
       });
     }
   }, [JSON.stringify(externalProps.configOptions)]);
-
   return (
     <div
       className={classNames({
         codemirror__editor: true,
-        hide_autocomplete: !externalProps?.configOptions?.autocomplete
+        hide_autocomplete: externalProps.lang !== 'javascript' || !externalProps?.configOptions?.autocomplete
       })}
       ref={cmParent}
     />
