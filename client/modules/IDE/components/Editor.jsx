@@ -9,6 +9,47 @@ import { withTranslation } from 'react-i18next';
 
 import { JSHINT } from 'jshint';
 import { CSSLint } from 'csslint';
+const CSSLintConfig = {
+  'adjoining-classes': 1,
+  'box-model': 1,
+  'box-sizing': 1,
+  'bulletproof-font-face': 1,
+  'compatible-vendor-prefixes': 1,
+  'display-property-grouping': 1,
+  'duplicate-background-images': 1,
+  'duplicate-properties': 1,
+  'empty-rules': 1,
+  errors: 2,
+  'fallback-colors': 1,
+  floats: 1,
+  'font-faces': 1,
+  'font-sizes': 1,
+  gradients: 1,
+  ids: 0,
+  import: 1,
+  'import-ie-limit': 1,
+  important: 1,
+  'known-properties': 1,
+  'order-alphabetical': 1,
+  'outline-none': 1,
+  'overqualified-elements': 1,
+  'qualified-headings': 1,
+  'regex-selectors': 1,
+  'rules-count': 1,
+  'selector-max': 1,
+  'selector-max-approaching': 1,
+  'selector-newline': 1,
+  shorthand: 1,
+  'star-property-hack': 1,
+  'text-indent': 1,
+  'underscore-property-hack': 1,
+  'unique-headings': 1,
+  'universal-selector': 1,
+  'unqualified-attributes': 1,
+  'vendor-prefix': 1,
+  'zero-units': 1
+};
+
 import { HTMLHint } from 'htmlhint';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -317,7 +358,7 @@ class Editor extends React.Component {
                         };
                       });
                     } else if (localLanguage === 'css') {
-                      msgs = CSSLint.verify(code).messages.map((e) => {
+                      msgs = CSSLint.verify(code, CSSLintConfig).messages.map((e) => {
                         return {
                           message: e.message,
                           severity: e.type,
