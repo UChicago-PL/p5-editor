@@ -10,7 +10,7 @@ import { withTranslation } from 'react-i18next';
 import { JSHINT } from 'jshint';
 import { CSSLint } from 'csslint';
 const CSSLintConfig = {
-  'adjoining-classes': 1,
+  'adjoining-classes': 0,
   'box-model': 1,
   'box-sizing': 1,
   'bulletproof-font-face': 1,
