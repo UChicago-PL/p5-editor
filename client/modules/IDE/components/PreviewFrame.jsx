@@ -171,13 +171,16 @@ class PreviewFrame extends React.Component {
 
   jsPreprocess(jsText) {
     let newContent = jsText;
+    JSHINT(newContent);
 
     try {
-      newContent = decomment(newContent, {
-        ignore: /\/\/\s*noprotect/g,
-        space: true
-      });
-      newContent = loopProtect(newContent);
+      if (JSHINT.errors.length === 0) {
+        newContent = decomment(newContent, {
+          ignore: /\/\/\s*noprotect/g,
+          space: true
+        });
+        newContent = loopProtect(newContent);
+      }
       return newContent;
     } catch (e) {
       // There's a chance that one of the above parsing steps fails due to invalid JS code
