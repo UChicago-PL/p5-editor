@@ -7,6 +7,7 @@ import Button from '../../../common/Button';
 import { submitToGH } from '../../User/actions';
 
 function errorDisplay(submitState) {
+  const content = JSON.stringify(submitState);
   if (submitState.err === 'Not Found') {
     return (
       <div className="flex-down">
@@ -21,9 +22,25 @@ function errorDisplay(submitState) {
       </div>
     );
   }
+  if (content.toLowerCase().includes('bad credentials')) {
+    return (
+      <div className="flex-down">
+        <div>{"There's been a credential error! To fix"}</div>
+        <ol>
+          <li>
+            go to this link <a href="https://editor.cs111.org/account">https://editor.cs111.org/account</a>
+          </li>
+          <li>
+            {'Click "Unlink Github Account", and then wait a few seconds for it to finish processing. '}
+          </li>
+          <li>{'Click "Connect Github Account", and that will redirect you to the editor'}</li>
+        </ol>
+      </div>
+    );
+  }
   return (
     <div className="flex-down">
-      <b>Failure!</b> <div>{JSON.stringify(submitState)}</div>
+      <b>Failure!</b> <div>{content}</div>
     </div>
   );
 }
