@@ -152,6 +152,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
 
   function handlePolygon(o: fabric.Object): [string, any[]] {
     const points = calcAbsolutePoints(o, (o as any).points);
+    console.log('here??');
     const numPoints = (o as any).points.length;
     if (numPoints === 3) {
       const [p1, p2, p3] = points;

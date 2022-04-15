@@ -4,7 +4,7 @@ import { DrawingTool, defaults } from '../ShapeToolboxOverlay';
 // @ts-ignore
 import Triangle from '../../../../images/shapeToolbox/triangle.svg';
 const TriangleDrawingTool: DrawingTool = {
-  name: 'stb-triangle',
+  name: 'triangle',
   generateFuncCall: (args) => {
     const { coords } = args;
     return ['triangle', [coords.mt.x, coords.mt.y, coords.bl.x, coords.bl.y, coords.br.x, coords.br.y]];

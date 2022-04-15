@@ -448,7 +448,7 @@ IDEView.propTypes = {
   closeUploadFileModal: PropTypes.func.isRequired,
   collapseConsole: PropTypes.func.isRequired,
   collapseSidebar: PropTypes.func.isRequired,
-  // createFolder: PropTypes.func.isRequired,
+  createFolder: PropTypes.func.isRequired,
   deleteFile: PropTypes.func.isRequired,
   // editorAccessibility: PropTypes.shape({ lintMessages: PropTypes.objectOf(PropTypes.shape()).isRequired })
   //   .isRequired,
