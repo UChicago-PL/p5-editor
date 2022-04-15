@@ -13,12 +13,12 @@ import Circle from '../../../images/shapeToolbox/circle.svg';
 // import Curve from '../../../images/shapeToolbox/curve.svg';
 
 import BezierDrawingTool from './ShapeToolboxTools/BezierTool';
-// import EllipseDrawingTool from './ShapeToolboxTools/EllipseTool';
+import EllipseDrawingTool from './ShapeToolboxTools/EllipseTool';
 import TriangleDrawingTool from './ShapeToolboxTools/TriTool';
 import CircleDrawingTool from './ShapeToolboxTools/CircleTool';
 import RectDrawingTool from './ShapeToolboxTools/RectTool';
 import LineDrawingTool from './ShapeToolboxTools/LineTool';
-// import QuadDrawingTool from './ShapeToolboxTools/QuadTool';
+import QuadDrawingTool from './ShapeToolboxTools/QuadTool';
 
 type LocalDefaults = {
   defaultSize: { height: number; width: number };
@@ -30,25 +30,25 @@ export interface DrawingTool {
   addShape: (args: { canvas: fabric.Canvas; localDefaults: LocalDefaults; gestureSeq: Point[] }) => void;
   icon?: any;
   ariaLabel: string;
-  processExistingCall: (args: { args: any; canvas: fabric.Canvas }) => any;
+  processExistingCall: (args: { args: any; canvas: fabric.Canvas }) => fabric.Object[];
   gestureLength: number | 'Infinity';
   skip?: boolean;
   gesturePreview: (seq: Point[], newPoint: Point, defaults: LocalDefaults) => JSX.Element;
 }
 
 const DrawingTools: DrawingTool[] = [
-  // QuadDrawingTool,
+  QuadDrawingTool,
   BezierDrawingTool,
-  // EllipseDrawingTool,
+  EllipseDrawingTool,
   TriangleDrawingTool,
   CircleDrawingTool,
   RectDrawingTool,
   LineDrawingTool
 ];
 
-function randrange(min, max) {
-  return Math.random() * (max - min) + min;
-}
+// function randrange(min, max) {
+//   return Math.random() * (max - min) + min;
+// }
 
 export function defaultLoc() {
   return { left: 100, top: 100 };
@@ -62,12 +62,6 @@ export const defaults = {
   // originX: 'left',
   // originY: 'top'
 };
-// export const defaultSize = {
-//   // width: Math.min(canvasSize.width / 2, 70),
-//   // height: Math.min(canvasSize.height / 2, 70)
-//   width: 400,
-//   height: 400
-// };
 
 // https://stackoverflow.com/a/51587105/6643726
 fabric.Object.prototype.objectCaching = false;
@@ -75,9 +69,9 @@ fabric.Object.prototype.objectCaching = false;
 // @ts-ignore
 window.fabricObjectId = 0;
 
-// https://stackoverflow.com/a/53710375
-// Polygon points are not updated on transformations. The first function is an implementation of the SO answer,
-// and the second function is a specialized version for lines, because they do not have the pathOffset property
+// // https://stackoverflow.com/a/53710375
+// // Polygon points are not updated on transformations. The first function is an implementation of the SO answer,
+// // and the second function is a specialized version for lines, because they do not have the pathOffset property
 export const calcAbsolutePoints = (o, points) => {
   const matrix = o.calcTransformMatrix();
   return points
@@ -104,13 +98,17 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const resetCanvas = (canvas_) => {
     canvas_.clear();
     let i = 0;
-    existingCalls.flatMap(processExistingCall(canvas_)).forEach((o) => {
-      if (!o.special) {
-        o.orderId = i;
-        i++;
-      }
-      canvas_.add(o);
-    });
+    existingCalls
+      .flatMap(processExistingCall(canvas_))
+      // fail graciously
+      .filter((x) => x)
+      .forEach((o: fabric.Object) => {
+        if (o && !(o as any).special) {
+          (o as any).orderId = i;
+          i++;
+        }
+        canvas_.add(o);
+      });
   };
 
   useEffect(() => {
@@ -223,7 +221,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
       <canvas ref={el} />
       <div className="shape-toolbox-overlay__tools">
         {canvas &&
-          DrawingTools.map((tool) => {
+          DrawingTools.filter((tool) => !tool.skip).map((tool) => {
             const Icon = tool.icon || Circle;
             return (
               <button
