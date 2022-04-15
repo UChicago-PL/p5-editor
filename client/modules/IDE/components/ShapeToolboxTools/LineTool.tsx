@@ -3,7 +3,7 @@ import React from 'react';
 import { fabric } from 'fabric';
 // @ts-ignore
 import Line from '../../../../images/shapeToolbox/line.svg';
-import { DrawingTool, defaultLoc, defaults } from '../ShapeToolboxOverlay';
+import { DrawingTool, defaults } from '../ShapeToolboxOverlay';
 
 const calcAbsolutePointsForLine = (o) => {
   const { x1, y1, x2, y2 } = o;

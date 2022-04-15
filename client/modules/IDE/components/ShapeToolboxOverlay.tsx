@@ -59,9 +59,9 @@ fabric.Object.prototype.objectCaching = false;
 // @ts-ignore
 window.fabricObjectId = 0;
 
-// // https://stackoverflow.com/a/53710375
-// // Polygon points are not updated on transformations. The first function is an implementation of the SO answer,
-// // and the second function is a specialized version for lines, because they do not have the pathOffset property
+// https://stackoverflow.com/a/53710375
+// Polygon points are not updated on transformations. The first function is an implementation of the SO answer,
+// and the second function is a specialized version for lines, because they do not have the pathOffset property
 export const calcAbsolutePoints = (o, points) => {
   const matrix = o.calcTransformMatrix();
   return points
