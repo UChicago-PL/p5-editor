@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { setGlobalTrack, trackEvent } from '../../../../../utils/analytics';
+import { setGlobalTrack, trackEvent, appSettingsToIndex } from '../../../../../utils/analytics';
 import { ThemeConfig } from './theme-plugin';
 
 export type State = {
@@ -28,6 +28,7 @@ export const initialState = {
 
 export function reducer(state: State, action: Action): State {
   let newState: State;
+  let settingsToggled = true;
   switch (action.type) {
     case 'toggleBoolWidgets':
       newState = { ...state, showBoolWidgets: !state.showBoolWidgets };
@@ -43,12 +44,16 @@ export function reducer(state: State, action: Action): State {
       break;
     default:
       newState = state;
+      settingsToggled = false;
       break;
   }
 
+  const oldSettingsString = appSettingsToIndex();
   ['showBoolWidgets', 'showNumWidgets', 'showColorWidgets'].forEach((key) => {
     setGlobalTrack(key, (newState as any)[key]);
-    trackEvent({ eventName: 'toggleSettings' });
   });
+  if (settingsToggled) {
+    trackEvent({ eventName: 'toggleSettings', context: [oldSettingsString] });
+  }
   return newState;
 }

@@ -1,6 +1,7 @@
 import { StateEffect, StateField } from '@codemirror/state';
 import { initialState } from './state';
 import { ThemeConfig } from './theme-plugin';
+import { setGlobalTrack } from '../../../../../utils/analytics';
 
 export const setShowBoolWidgets = StateEffect.define<boolean>();
 export const setShowNumWidgets = StateEffect.define<boolean>();
@@ -34,7 +35,12 @@ function reducer(state: CmState, effect: StateEffect<any>) {
 }
 
 export const cmStatePlugin = StateField.define({
-  create: () => initialCmState,
+  create: () => {
+    ['showBoolWidgets', 'showNumWidgets', 'showColorWidgets'].forEach((key) =>
+      setGlobalTrack(key, initialCmState[key])
+    );
+    return initialCmState;
+  },
   update(state, tr) {
     let newState = state;
     for (const effect of tr.effects) {

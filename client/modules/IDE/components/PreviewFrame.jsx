@@ -411,11 +411,13 @@ class PreviewFrame extends React.Component {
         const doesLinterError = files.some((file) => {
           if (file.name.match(/.*\.js$/i)) {
             JSHINT(file.content, jshintRules);
-            trackEvent({ eventName: 'codeRefreshBlockedByLint' });
             return JSHINT.errors.some((e) => e.id && e.id.includes('error'));
           }
           return false;
         });
+        if (doesLinterError) {
+          trackEvent({ eventName: 'codeRefreshBlockedByLint' });
+        }
         shouldRefresh = !doesLinterError;
       }
 

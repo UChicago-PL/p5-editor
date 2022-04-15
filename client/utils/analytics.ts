@@ -20,7 +20,7 @@ export const setGlobalTrack = (key: string, value: boolean) => {
   appWidgetState[key] = value;
 };
 
-const appSettingsToIndex = () => {
+export const appSettingsToIndex = () => {
   // not doing anything clever with obj vals to make sure the order is consistent
   const binRep = [
     appWidgetState.showBoolWidgets,
@@ -48,7 +48,8 @@ export function wrapEvent(wrapped: (x: any) => any, eventConfig: EventConfig) {
   }
 
   return function (e: any) {
-    tracker.trackEvent(prepName(eventConfig), eventConfig.eventName);
+    // tracker.trackEvent(prepName(eventConfig), eventConfig.eventName);
+    track(prepName(eventConfig), eventConfig.eventName);
     wrapped(e);
   };
 }
@@ -60,7 +61,13 @@ export function trackEvent(eventConfig: EventConfig) {
     return;
   }
 
-  tracker.trackEvent(prepName(eventConfig), eventConfig.eventName);
+  // tracker.trackEvent(prepName(eventConfig), eventConfig.eventName);
+  track(prepName(eventConfig), eventConfig.eventName);
+}
+
+function track(name, config) {
+  console.log(name, config, appWidgetState);
+  tracker.trackEvent(name, config);
 }
 
 /**
