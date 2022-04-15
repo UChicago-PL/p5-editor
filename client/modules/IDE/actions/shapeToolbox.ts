@@ -5,7 +5,7 @@ import { FuncCall } from '../components/ShapeToolboxOverlay';
 export function applyShapeToolbox(code: string, lines: string[], [from, to]) {
   const splitCode = code.substring(0, from).split('\n');
   const prevLine = splitCode[splitCode.length - 1];
-  const indent = prevLine.match(/\s*/g)[0];
+  const indent = prevLine.match(/\s*/g)![0];
   const body = lines.map((line) => indent + '  ' + line + (line.slice(-1) === ';' ? '' : ';')).join('\n');
   return (
     code.substring(0, from) +
@@ -75,13 +75,13 @@ export function processExistingCode(code: string, startLine: number, dispatch): 
         }
       });
 
-      const invalidCalls = lines.map((v, i) => [v, i]).filter(([line, i]) => line === null);
+      const invalidCalls = lines.map((v, i) => [v, i]).filter(([line]) => line === null);
 
       if (!invalidCalls.length) {
         return lines;
       } else {
         reportCodeError(
-          invalidCalls.map(([line, i]) => i + 1),
+          invalidCalls.map(([_, i]) => i + 1),
           'Any p5 function calls in shape toolbox code can only have number literals as arguments, and cannot have variables or values of other types.'
         );
       }

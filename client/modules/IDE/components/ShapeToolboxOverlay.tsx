@@ -4,7 +4,6 @@ import { fabric } from 'fabric';
 
 import { trackEvent, wrapEvent } from '../../../utils/analytics';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import Circle from '../../../images/shapeToolbox/circle.svg';
 
@@ -60,7 +59,6 @@ export const defaults = {
 // https://stackoverflow.com/a/51587105/6643726
 fabric.Object.prototype.objectCaching = false;
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 window.fabricObjectId = 0;
 
@@ -126,7 +124,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
       const o = canvas_.getActiveObject();
       if (o && !(o as any).special) {
         if (o.type === 'activeSelection') {
-          o.getObjects().forEach((o2) => canvas_.remove(o2));
+          (o as any).getObjects().forEach((o2) => canvas_.remove(o2));
           canvas_.discardActiveObject();
         } else {
           canvas_.getObjects().forEach((o2) => {

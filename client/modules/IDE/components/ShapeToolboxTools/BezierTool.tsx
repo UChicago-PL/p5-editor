@@ -74,6 +74,7 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
       canvas.discardActiveObject();
       const otherObjects = activeObjects.filter((o) => !(o as any).special && o.type !== 'path');
       if (otherObjects.length) {
+        //   @ts-ignore
         const sel = new fabric.ActiveSelection({ canvas });
         canvas.setActiveObject(sel);
       }
@@ -87,9 +88,9 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
       };
       const activeObject = activeObjects[0];
       if (activeObject.type === 'path') {
-        bringAllControlsToFront(activeObject.id);
-      } else if (activeObject.special) {
-        bringAllControlsToFront(activeObject.parentId);
+        bringAllControlsToFront((activeObject as any).id);
+      } else if ((activeObject as any).special) {
+        bringAllControlsToFront((activeObject as any).parentId);
       }
     }
   };
@@ -112,6 +113,7 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
     id: window.fabricObjectId,
     stbType: 'bezier'
   });
+  // @ts-ignore
   window.fabricObjectId++;
   const controls = absolutePoints.map(makeControl);
 
@@ -171,7 +173,10 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
       parentId: (path as any).id
     });
 
-    c.on('moving', ({ transform: { target } }) => {
+    c.on('moving', (arg: any) => {
+      const {
+        transform: { target }
+      } = arg;
       // The subtraction here is to account for the possibility that the path has been moved
       // When the path is moved, only the object's `left` and `top` fields are updated, and not the path values
       // Thus, since here we are setting the path values, we have to undo any translations

@@ -22,7 +22,7 @@ const RectDrawingTool: DrawingTool = {
         ]
       ];
     } else {
-      return ['rect', [coords.tl.x, coords.tl.y, o.width * o.scaleX, o.height * o.scaleY]];
+      return ['rect', [coords.tl.x, coords.tl.y, o.width! * o.scaleX!, o.height! * o.scaleY!]];
     }
   },
   addShape: ({ canvas, localDefaults: { defaultSize }, gestureSeq }) => {

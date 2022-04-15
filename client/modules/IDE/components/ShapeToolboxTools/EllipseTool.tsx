@@ -5,14 +5,13 @@ const EllipseDrawingTool: DrawingTool = {
   name: 'ellipse',
   generateFuncCall: (args) => {
     const { coords, o } = args;
-    const o_ = o as fabric.Ellipse;
     return [
       'ellipse',
       [
-        coords.tl.x + (o_.width * o_.scaleX) / 2,
-        coords.tl.y + (o_.height * o_.scaleY) / 2,
-        o_.width * o_.scaleX,
-        o_.height * o_.scaleY
+        coords.tl.x + (o.width! * o.scaleX!) / 2,
+        coords.tl.y + (o.height! * o.scaleY!) / 2,
+        o.width! * o.scaleX!,
+        o.height! * o.scaleY!
       ]
     ];
   },

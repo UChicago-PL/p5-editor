@@ -12,18 +12,16 @@ const CircleDrawingTool: DrawingTool = {
       return null;
     }
     if (o.scaleX === o.scaleY) {
-      return [
-        'circle',
-        [coords.tl.x + o.radius * o.scaleX, coords.tl.y + o.radius * o.scaleX, o.radius * 2 * o.scaleX]
-      ];
+      const r = (o as any).radius;
+      return ['circle', [coords.tl.x + r * o.scaleX!, coords.tl.y + r * o.scaleX!, r * 2 * o.scaleX!]];
     }
     return [
       'ellipse',
       [
-        coords.tl.x + (o.width * o.scaleX) / 2,
-        coords.tl.y + (o.height * o.scaleY) / 2,
-        o.width * o.scaleX,
-        o.height * o.scaleY
+        coords.tl.x + (o.width! * o.scaleX!) / 2,
+        coords.tl.y + (o.height! * o.scaleY!) / 2,
+        o.width! * o.scaleX!,
+        o.height! * o.scaleY!
       ]
     ];
   },
