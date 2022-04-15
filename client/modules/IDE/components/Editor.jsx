@@ -109,7 +109,11 @@ class Editor extends React.Component {
         key: `${metaKey}-m`,
         run: () => {
           trackEvent({ eventName: 'tidyCode' });
-          this.tidyCode();
+          try {
+            this.tidyCode();
+          } catch (e) {
+            console.log('tidy error', e);
+          }
           return true;
         },
         preventDefault: true
