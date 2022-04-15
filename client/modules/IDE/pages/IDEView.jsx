@@ -491,7 +491,7 @@ IDEView.propTypes = {
     shapeToolboxExistingCalls: PropTypes.arrayOf(PropTypes.any).isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
-  // canvasSize: PropTypes.arrayOf(PropTypes.number).isRequired,
+  canvasSize: PropTypes.shape({ height: PropTypes.number, width: PropTypes.number }).isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   newFile: PropTypes.func.isRequired,
   newFolder: PropTypes.func.isRequired,

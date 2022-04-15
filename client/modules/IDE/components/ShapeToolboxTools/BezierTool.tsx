@@ -2,7 +2,6 @@ import React from 'react';
 import { fabric } from 'fabric';
 import { DrawingTool, defaults } from '../ShapeToolboxOverlay';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import Curve from '../../../../images/shapeToolbox/curve.svg';
 
@@ -71,9 +70,9 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
   // This is because operations on group selections, like scaling, can mess up the special path handles
   const selectionHandler = () => {
     const activeObjects = canvas.getActiveObjects();
-    if (activeObjects.some((o) => o.special || o.type === 'path') && activeObjects.length > 1) {
+    if (activeObjects.some((o) => (o as any).special || o.type === 'path') && activeObjects.length > 1) {
       canvas.discardActiveObject();
-      const otherObjects = activeObjects.filter((o) => !o.special && o.type !== 'path');
+      const otherObjects = activeObjects.filter((o) => !(o as any).special && o.type !== 'path');
       if (otherObjects.length) {
         const sel = new fabric.ActiveSelection({ canvas });
         canvas.setActiveObject(sel);
@@ -81,7 +80,7 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
     } else if (activeObjects.length === 1) {
       const bringAllControlsToFront = (parentId) => {
         canvas.getObjects().forEach((o) => {
-          if (o.parentId === parentId || o.id === parentId) {
+          if ((o as any).parentId === parentId || (o as any).id === parentId) {
             o.bringToFront();
           }
         });
@@ -108,19 +107,21 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
     fill: 'rgba(0,0,0,0)',
     stroke: color,
     // Custom properties
+
+    // @ts-ignore
     id: window.fabricObjectId,
     stbType: 'bezier'
   });
   window.fabricObjectId++;
   const controls = absolutePoints.map(makeControl);
 
-  let relativePointPositions = absolutePoints.map(([x, y]) => [path.left - x, path.top - y]);
+  let relativePointPositions = absolutePoints.map(([x, y]) => [path.left! - x, path.top! - y]);
 
   path.on('moving', () => {
     controls.forEach((o) => {
       const [x, y] = relativePointPositions[o.i];
-      o.left = path.left - x;
-      o.top = path.top - y;
+      o.left = path.left! - x;
+      o.top = path.top! - y;
       o.setCoords();
     });
   });
@@ -130,12 +131,12 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
     // but instead in a nested array that's shaped according to the svg string that is passed to the constructor
     if (i === 0) {
       // The "M" part of the string
-      path.path[0][1] = x;
-      path.path[0][2] = y;
+      path.path![0][1] = x;
+      path.path![0][2] = y;
     } else {
       // The "C" part of the string
-      path.path[1][(i - 1) * 2 + 1] = x;
-      path.path[1][(i - 1) * 2 + 2] = y;
+      path.path![1][(i - 1) * 2 + 1] = x;
+      path.path![1][(i - 1) * 2 + 2] = y;
     }
   };
 
@@ -167,7 +168,7 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
       // Custom properties
       i,
       special: true,
-      parentId: path.id
+      parentId: (path as any).id
     });
 
     c.on('moving', ({ transform: { target } }) => {
@@ -176,16 +177,16 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
       // Thus, since here we are setting the path values, we have to undo any translations
       // We undo relative to `pathOffset`, which specifies the initial top left position of the path
       modifyPath(i, [
-        target.left - (path.left - path.pathOffset.x),
-        target.top - (path.top - path.pathOffset.y)
+        target.left - (path.left! - path.pathOffset.x),
+        target.top - (path.top! - path.pathOffset.y)
       ]);
-      relativePointPositions[i] = [path.left - target.left, path.top - target.top];
+      relativePointPositions[i] = [path.left! - target.left, path.top! - target.top];
     });
 
     c.on('moved', () => {
       const absolutePoints = toAbsolutePoints(path);
-      path.initialize(makeSvgString(absolutePoints));
-      relativePointPositions = controls.map((o) => [path.left - o.left, path.top - o.top]);
+      path.initialize(makeSvgString(absolutePoints) as any);
+      relativePointPositions = controls.map((o) => [path.left! - o.left, path.top! - o.top]);
       path.setCoords();
     });
 

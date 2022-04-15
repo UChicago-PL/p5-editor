@@ -25,17 +25,9 @@ const LineDrawingTool: DrawingTool = {
     const [p1, p2] = calcAbsolutePointsForLine(o);
     return ['line', [p1.x, p1.y, p2.x, p2.y]];
   },
-  addShape: ({ canvas, localDefaults: { defaultSize }, gestureSeq }) => {
-    const loc = defaultLoc();
-
+  addShape: ({ canvas, gestureSeq }) => {
     const [p1, p2] = gestureSeq;
-    canvas.add(
-      new fabric.Line(
-        // [loc.left, loc.top, loc.left + defaultSize.width, loc.top + defaultSize.height],
-        [p1.x, p1.y, p2.x, p2.y],
-        defaults
-      )
-    );
+    canvas.add(new fabric.Line([p1.x, p1.y, p2.x, p2.y], defaults));
   },
   icon: Line,
   ariaLabel: 'line()',

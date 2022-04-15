@@ -1,6 +1,6 @@
 import React from 'react';
 import { fabric } from 'fabric';
-import { DrawingTool, defaultLoc, defaults } from '../ShapeToolboxOverlay';
+import { DrawingTool, defaults } from '../ShapeToolboxOverlay';
 // @ts-ignore
 import Circle from '../../../../images/shapeToolbox/circle.svg';
 const CircleDrawingTool: DrawingTool = {

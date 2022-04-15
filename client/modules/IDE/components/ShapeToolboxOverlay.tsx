@@ -1,16 +1,12 @@
-/* eslint-disable */
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 
-import { wrapEvent } from '../../../utils/analytics';
+import { trackEvent, wrapEvent } from '../../../utils/analytics';
 
-// import Line from '../../../images/shapeToolbox/line.svg';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import Circle from '../../../images/shapeToolbox/circle.svg';
-// import Square from '../../../images/shapeToolbox/square.svg';
-// import Triangle from '../../../images/shapeToolbox/triangle.svg';
-// import Curve from '../../../images/shapeToolbox/curve.svg';
 
 import BezierDrawingTool from './ShapeToolboxTools/BezierTool';
 import EllipseDrawingTool from './ShapeToolboxTools/EllipseTool';
@@ -36,6 +32,8 @@ export interface DrawingTool {
   gesturePreview: (seq: Point[], newPoint: Point, defaults: LocalDefaults) => JSX.Element;
 }
 
+export type FuncCall = [string, any[]];
+
 const DrawingTools: DrawingTool[] = [
   QuadDrawingTool,
   BezierDrawingTool,
@@ -45,10 +43,6 @@ const DrawingTools: DrawingTool[] = [
   RectDrawingTool,
   LineDrawingTool
 ];
-
-// function randrange(min, max) {
-//   return Math.random() * (max - min) + min;
-// }
 
 export function defaultLoc() {
   return { left: 100, top: 100 };
@@ -66,6 +60,7 @@ export const defaults = {
 // https://stackoverflow.com/a/51587105/6643726
 fabric.Object.prototype.objectCaching = false;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 window.fabricObjectId = 0;
 
@@ -79,10 +74,14 @@ export const calcAbsolutePoints = (o, points) => {
     .map((p) => fabric.util.transformPoint(p, matrix));
 };
 
-export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
-  const el = useRef(null);
+interface Props {
+  closeCb: (lines: string[]) => void;
+  canvasSize: { width: number; height: number };
+  existingCalls: FuncCall[];
+}
 
-  canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.height, 20) };
+export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Props) {
+  const el = useRef(null);
 
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [gestureSequence, setGestureSequence] = useState<false | Point[]>(false);
@@ -102,7 +101,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
       .flatMap(processExistingCall(canvas_))
       // fail graciously
       .filter((x) => x)
-      .forEach((o: fabric.Object) => {
+      .forEach((o: fabric.Object | null) => {
         if (o && !(o as any).special) {
           (o as any).orderId = i;
           i++;
@@ -193,7 +192,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     canvas.clear();
 
     // Start with just the ignored lines
-    let res = existingCalls.map((call) => (typeof call === 'string' ? call : null));
+    let res = existingCalls.map((call) => (typeof call === 'string' ? call : null)) as unknown as string[];
 
     // Add in the shapeToolbox calls
     objects.forEach((o) => {
@@ -225,32 +224,17 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             const Icon = tool.icon || Circle;
             return (
               <button
+                aria-label={tool.ariaLabel}
                 key={tool.name}
                 onClick={() => {
-                  // tool.addShape({ canvas });
                   setGestureSequence([]);
                   setSelectedTool(tool);
                 }}
               >
-                <Icon role="img" aria-label={tool.ariaLabel} focusable="false" />
+                <Icon role="img" focusable="false" />
               </button>
             );
           })}
-        {/* <button onClick={wrapEvent(addLine, { eventName: 'stb-addLine' })}>
-          <Line role="img" aria-label="line()" focusable="false" />
-        </button>
-        <button onClick={wrapEvent(addRect, { eventName: 'stb-addRect' })}>
-          <Square role="img" aria-label="square()/rect()" focusable="false" />
-        </button>
-        <button onClick={wrapEvent(addCircle, { eventName: 'stb-addCircle' })}>
-          <Circle role="img" aria-label="circle()/ellipse()" focusable="false" />
-        </button>
-        <button onClick={wrapEvent(addTriangle, { eventName: 'stb-addTri' })}>
-          <Triangle role="img" aria-label="triangle()" focusable="false" />
-        </button>
-        <button onClick={wrapEvent(addBezier, { eventName: 'stb-addBezier' })}>
-          <Curve role="img" aria-label="bezier()" focusable="false" />
-        </button> */}
         <button className="reset" onClick={wrapEvent(() => resetCanvas(canvas), { eventName: 'stb-reset' })}>
           reset
         </button>
@@ -269,7 +253,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
           onClick={() => {
             const newGestureSeq = [...gestureSequence, mouseMovePos as Point];
             if (newGestureSeq.length >= selectedTool.gestureLength) {
-              // trackEvent({ eventName: `stb-add${opType}-end` });
+              trackEvent({ eventName: `stb-add${selectedTool.name}-end` });
               setGestureSequence(false);
               setSelectedTool(false);
               setMouseMovePos(false);
@@ -290,4 +274,3 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     </div>
   );
 }
-/* eslint-enable */
