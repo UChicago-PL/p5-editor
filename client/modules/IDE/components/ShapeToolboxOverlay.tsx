@@ -34,13 +34,13 @@ export interface DrawingTool {
 export type FuncCall = [string, any[]];
 
 const DrawingTools: DrawingTool[] = [
-  QuadDrawingTool,
-  BezierDrawingTool,
+  LineDrawingTool,
+  RectDrawingTool,
+  CircleDrawingTool,
   EllipseDrawingTool,
   TriangleDrawingTool,
-  CircleDrawingTool,
-  RectDrawingTool,
-  LineDrawingTool
+  QuadDrawingTool,
+  BezierDrawingTool
 ];
 
 export function defaultLoc() {
@@ -51,9 +51,6 @@ export const defaults = {
   fill: 'rgb(158,158,236)',
   stroke: 'black',
   strokeWidth: 3
-  // strokeUniform: true
-  // originX: 'left',
-  // originY: 'top'
 };
 
 // https://stackoverflow.com/a/51587105/6643726
@@ -152,7 +149,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
 
   function handlePolygon(o: fabric.Object): [string, any[]] {
     const points = calcAbsolutePoints(o, (o as any).points);
-    console.log('here??');
     const numPoints = (o as any).points.length;
     if (numPoints === 3) {
       const [p1, p2, p3] = points;

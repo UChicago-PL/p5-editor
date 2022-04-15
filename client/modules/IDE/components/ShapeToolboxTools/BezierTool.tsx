@@ -7,21 +7,20 @@ import Curve from '../../../../images/shapeToolbox/curve.svg';
 
 const BezierDrawingTool: DrawingTool = {
   name: 'bezier',
-  generateFuncCall: (args) => {
-    const { o } = args;
+  generateFuncCall: ({ o }) => {
     const [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] = toAbsolutePoints(o);
     return ['bezier', [x1, y1, x2, y2, x3, y3, x4, y4]];
   },
   addShape: ({ canvas, gestureSeq }) => {
     const [p1, p2] = gestureSeq;
-    const topPoint = p1.y > p2.y ? p1 : p2;
-    const botPoint = p1.y < p2.y ? p1 : p2;
+    const top = p1.y > p2.y ? p1 : p2;
+    const bot = p1.y < p2.y ? p1 : p2;
     createBezier(
       [
-        [botPoint.x, botPoint.y],
-        [botPoint.x, botPoint.y + Math.abs(botPoint.y - topPoint.y) / 2],
-        [topPoint.x, topPoint.y - Math.abs(botPoint.y - topPoint.y) / 2],
-        [topPoint.x, topPoint.y]
+        [bot.x, bot.y],
+        [bot.x, bot.y + Math.abs(bot.y - top.y) / 2],
+        [top.x, top.y - Math.abs(bot.y - top.y) / 2],
+        [top.x, top.y]
       ],
       defaults,
       canvas
