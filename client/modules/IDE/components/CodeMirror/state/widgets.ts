@@ -22,7 +22,7 @@ import colorRegex from './colorRegex';
 import { colorNames } from './colorNames';
 import ColorNamePicker from '../components/ColorNamePicker';
 
-export function codeString(view: EditorView, from: number, to?: number): string {
+function codeString(view: EditorView, from: number, to?: number): string {
   return view.state.doc.sliceString(from, to);
 }
 

@@ -81,7 +81,6 @@ import * as ConsoleActions from '../actions/console';
 
 import CodeMirror from './CodeMirror';
 import { cmStatePlugin } from './CodeMirror/state/cmState';
-import { codeString } from './CodeMirror/state/widgets';
 
 import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
 
