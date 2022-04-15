@@ -1,13 +1,58 @@
-// Modified from http://fabricjs.com/quadratic-curve
-
 import { fabric } from 'fabric';
+import { DrawingTool, defaultLoc, defaults, defaultSize } from '../ShapeToolboxOverlay';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import Curve from '../../../../images/shapeToolbox/curve.svg';
+// import { toAbsolutePoints, createBezier } from '../shapeToolboxCurves';
+
+const BezierDrawingTool: DrawingTool = {
+  name: 'bezier',
+  generateFuncCall: (args) => {
+    const { o } = args;
+    const [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] = toAbsolutePoints(o);
+    return ['bezier', [x1, y1, x2, y2, x3, y3, x4, y4]];
+  },
+  addShape: ({ canvas }) => {
+    const loc = defaultLoc();
+    createBezier(
+      [
+        [loc.left, loc.top + defaultSize.height],
+        [loc.left + 10, loc.top],
+        [loc.left + defaultSize.width - 10, loc.top],
+        [loc.left + defaultSize.width, loc.top + defaultSize.height]
+      ],
+      defaults,
+      canvas
+    ).forEach((o) => canvas.add(o));
+  },
+  processExistingCall: ({ args, canvas }) => {
+    const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
+    return createBezier(
+      [
+        [x1, y1],
+        [x2, y2],
+        [x3, y3],
+        [x4, y4]
+      ],
+      defaults,
+      canvas
+    );
+  },
+  icon: Curve,
+  ariaLabel: 'bezier()'
+};
+
+export default BezierDrawingTool;
 
 const randomColorTheme = () => {
   const hue = Math.random() * 360;
   return [`hsl(${hue},40%,50%)`, `hsl(${hue},40%,75%)`];
 };
 
-export const createBezier = (absolutePoints, defaults, canvas) => {
+// Modified from http://fabricjs.com/quadratic-curve
+
+const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
   // Prevent the user from creating multi-selections that contain paths or paths handles
   // This is because operations on group selections, like scaling, can mess up the special path handles
   const selectionHandler = () => {
@@ -39,11 +84,6 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
   canvas.on('selection:created', selectionHandler);
   canvas.on('selection:updated', selectionHandler);
 
-  const makeSvgString = (points) => {
-    const p_ = (i) => `${points[i][0]} ${points[i][1]}`;
-    return `M ${p_(0)} C ${p_(1)}, ${p_(2)}, ${p_(3)}`;
-  };
-
   const [color, lighterColor] = randomColorTheme();
 
   const path = new fabric.Path(makeSvgString(absolutePoints), {
@@ -57,7 +97,6 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
     id: window.fabricObjectId
   });
   window.fabricObjectId++;
-
   const controls = absolutePoints.map(makeControl);
 
   let relativePointPositions = absolutePoints.map(([x, y]) => [path.left - x, path.top - y]);
@@ -141,7 +180,12 @@ export const createBezier = (absolutePoints, defaults, canvas) => {
   return [path, ...controls];
 };
 
-export const toAbsolutePoints = (o) => {
+const makeSvgString = (points: number[][]): string => {
+  const p_ = (i) => `${points[i][0]} ${points[i][1]}`;
+  return `M ${p_(0)} C ${p_(1)}, ${p_(2)}, ${p_(3)}`;
+};
+
+const toAbsolutePoints = (o) => {
   const path = o.path;
   const relativePoints = [
     [path[0][1], path[0][2]],
