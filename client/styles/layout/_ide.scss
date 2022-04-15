@@ -62,6 +62,12 @@
     display: flex;
     flex-direction: column;
 
+    @include themify() {
+      background: getThemifyVariable('modal-background-color');
+    }
+    z-index: 100;
+
+
     button {
       z-index: 100;
       // z-index only works when position is set
@@ -90,7 +96,7 @@
       border: 1px solid getThemifyVariable('ide-border-color');
     }
 
-    .reset, .apply {
+    .button {
       @include themify() {
         background: getThemifyVariable('modal-background-color');
       }

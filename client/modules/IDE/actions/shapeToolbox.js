@@ -67,10 +67,25 @@ export function processExistingCode(code, startLine, dispatch) {
             arguments: args
           } = o.expression;
           if (shapeToolboxP5Functions.includes(name)) {
-            if (args.some((a) => a.type !== 'Literal' || typeof a.value !== 'number')) {
+            if (
+              !args.every(
+                (a) =>
+                  (a.type === 'UnaryExpression' && typeof a.argument.value === 'number') ||
+                  (a.type === 'Literal' && typeof a.value === 'number')
+              )
+            ) {
               return null;
             } else {
-              return [name, args.map((arg) => arg.value)];
+              return [
+                name,
+                args.map((arg) => {
+                  if (arg.type === 'UnaryExpression') {
+                    return -arg.argument.value;
+                  } else {
+                    return arg.value;
+                  }
+                })
+              ];
             }
           } else {
             return code.slice(o.start, o.end);

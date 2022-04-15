@@ -11,7 +11,7 @@ import Square from '../../../images/shapeToolbox/square.svg';
 import Triangle from '../../../images/shapeToolbox/triangle.svg';
 import Curve from '../../../images/shapeToolbox/curve.svg';
 
-import { createBezier, toAbsolutePoints } from './shapeToolboxCurves';
+import { createBezier, movePathToOrigin, toAbsolutePoints } from './shapeToolboxCurves';
 
 function randrange(min, max) {
   return Math.random() * (max - min) + min;
@@ -96,10 +96,15 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     top: canvasSize.height / 2 - defaultSize.height / 2 + randrange(-variation, variation)
   });
 
+  const add = (o) => {
+    canvas.add(o);
+    canvas.setActiveObject(o);
+  };
+
   const addLine = () => {
     const loc = defaultLoc();
 
-    canvas.add(
+    add(
       new fabric.Line(
         [loc.left, loc.top, loc.left + defaultSize.width, loc.top + defaultSize.height],
         defaults
@@ -108,7 +113,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   };
 
   const addRect = () =>
-    canvas.add(
+    add(
       new fabric.Rect({
         ...defaults,
         ...defaultLoc(),
@@ -129,11 +134,11 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     // whereas, for example, it is possible to do that with rects using quad()
     o.setControlsVisibility({ mtr: false });
 
-    canvas.add(o);
+    add(o);
   };
 
   const addTriangle = () =>
-    canvas.add(
+    add(
       new fabric.Triangle({
         ...defaults,
         ...defaultLoc(),
@@ -143,7 +148,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   const addBezier = () => {
     const loc = defaultLoc();
-    createBezier(
+    const [path, controls] = createBezier(
       [
         [loc.left, loc.top + defaultSize.height],
         [loc.left + 10, loc.top],
@@ -152,7 +157,9 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
       ],
       defaults,
       canvas
-    ).forEach((o) => canvas.add(o));
+    );
+    controls.forEach((o) => canvas.add(o));
+    add(path);
   };
 
   const processExistingCall = (canvas) => (call) => {
@@ -222,7 +229,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         }
         case 'bezier': {
           const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
-          return createBezier(
+          const [path, controls] = createBezier(
             [
               [x1, y1],
               [x2, y2],
@@ -232,6 +239,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
             defaults,
             canvas
           );
+          return [path, ...controls];
         }
         default:
           return [];
@@ -385,6 +393,26 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     closeCb(res);
   };
 
+  // TODO: make this function work properly for rotated shapes
+  const moveToOrigin = () => {
+    const object = canvas.getActiveObject();
+    if (object) {
+      if (object.type === 'path') {
+        movePathToOrigin(canvas, object);
+      } else if (object.special) {
+        const path = canvas.getObjects().find((o) => o.id === object.parentId);
+        if (path) {
+          movePathToOrigin(canvas, path);
+        }
+      } else {
+        object.top = 0;
+        object.left = 0;
+        object.setCoords();
+      }
+      canvas.requestRenderAll();
+    }
+  };
+
   return (
     <div className="shape-toolbox-overlay">
       <canvas ref={el} />
@@ -404,10 +432,15 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         <button onClick={wrapEvent(addBezier, { eventName: 'stb-addBezier' })}>
           <Curve role="img" aria-label="bezier()" focusable="false" />
         </button>
-        <button className="reset" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
-          reset
+        <button className="button" onClick={wrapEvent(moveToOrigin, { eventName: 'stb-moveToOrigin' })}>
+          move to
+          <br />
+          origin
         </button>
-        <button className="apply" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
+        <button className="button" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
+          reset all
+        </button>
+        <button className="button" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
           save
         </button>
       </div>
