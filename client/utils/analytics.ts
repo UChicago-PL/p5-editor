@@ -48,7 +48,6 @@ export function wrapEvent(wrapped: (x: any) => any, eventConfig: EventConfig) {
   }
 
   return function (e: any) {
-    // tracker.trackEvent(prepName(eventConfig), eventConfig.eventName);
     track(prepName(eventConfig), eventConfig.eventName);
     wrapped(e);
   };
@@ -61,12 +60,11 @@ export function trackEvent(eventConfig: EventConfig) {
     return;
   }
 
-  // tracker.trackEvent(prepName(eventConfig), eventConfig.eventName);
   track(prepName(eventConfig), eventConfig.eventName);
 }
 
+// consolidate track calls to one place for debugging/monitoring
 function track(name, config) {
-  console.log(name, config, appWidgetState);
   tracker.trackEvent(name, config);
 }
 
