@@ -20,13 +20,20 @@ import RectDrawingTool from './ShapeToolboxTools/RectTool';
 import LineDrawingTool from './ShapeToolboxTools/LineTool';
 // import QuadDrawingTool from './ShapeToolboxTools/QuadTool';
 
+type LocalDefaults = {
+  defaultSize: { height: number; width: number };
+};
+type Point = { x: number; y: number };
 export interface DrawingTool {
   name: string;
   generateFuncCall: (args: { o: fabric.Object; coords: any }) => [string, any[]] | null; // REDO?
-  addShape: (args: { canvas: fabric.Canvas }) => void;
+  addShape: (args: { canvas: fabric.Canvas; localDefaults: LocalDefaults; gestureSeq: Point[] }) => void;
   icon?: any;
   ariaLabel: string;
   processExistingCall: (args: { args: any; canvas: fabric.Canvas }) => any;
+  gestureLength: number | 'Infinity';
+  skip?: boolean;
+  gesturePreview: (seq: Point[], newPoint: Point, defaults: LocalDefaults) => JSX.Element;
 }
 
 const DrawingTools: DrawingTool[] = [
@@ -47,20 +54,20 @@ export function defaultLoc() {
   return { left: 100, top: 100 };
 }
 export const defaults = {
-  strokeDashArray: [5, 5],
+  strokeDasharray: '[5, 5]',
   fill: 'rgb(158,158,236)',
   stroke: 'black',
-  strokeWidth: 3,
-  strokeUniform: true,
-  originX: 'left',
-  originY: 'top'
+  strokeWidth: 3
+  // strokeUniform: true
+  // originX: 'left',
+  // originY: 'top'
 };
-export const defaultSize = {
-  // width: Math.min(canvasSize.width / 2, 70),
-  // height: Math.min(canvasSize.height / 2, 70)
-  width: 400,
-  height: 400
-};
+// export const defaultSize = {
+//   // width: Math.min(canvasSize.width / 2, 70),
+//   // height: Math.min(canvasSize.height / 2, 70)
+//   width: 400,
+//   height: 400
+// };
 
 // https://stackoverflow.com/a/51587105/6643726
 fabric.Object.prototype.objectCaching = false;
@@ -77,18 +84,6 @@ export const calcAbsolutePoints = (o, points) => {
     .map((p) => new fabric.Point(p.x - o.pathOffset.x, p.y - o.pathOffset.y))
     .map((p) => fabric.util.transformPoint(p, matrix));
 };
-export const calcAbsolutePointsForLine = (o) => {
-  const { x1, y1, x2, y2 } = o;
-  const center = new fabric.Point((x1 + x2) / 2, (y1 + y2) / 2);
-  const matrix = o.calcTransformMatrix();
-  return (
-    [new fabric.Point(x1, y1), new fabric.Point(x2, y2)]
-      .map((p) => new fabric.Point(p.x - center.x, p.y - center.y))
-      .map((p) => fabric.util.transformPoint(p, matrix))
-      // This is very strange, but for some reason the points increase by 0.5 every time this function is applied
-      .map((p) => new fabric.Point(p.x - 0.5, p.y - 0.5))
-  );
-};
 
 export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   const el = useRef(null);
@@ -96,6 +91,15 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
   canvasSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.height, 20) };
 
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
+  const [gestureSequence, setGestureSequence] = useState<false | Point[]>(false);
+  const [selectedTool, setSelectedTool] = useState<false | DrawingTool>(false);
+  const [mouseMovePos, setMouseMovePos] = useState<false | Point>(false);
+
+  const computedSize = { width: Math.max(canvasSize.width, 20), height: Math.max(canvasSize.height, 20) };
+  const defaultSize = {
+    width: Math.min(computedSize.width / 2, 70),
+    height: Math.min(computedSize.height / 2, 70)
+  };
 
   const resetCanvas = (canvas_) => {
     canvas_.clear();
@@ -170,8 +174,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   const generateFuncCall = (o: fabric.Object): [string, any[]] | null => {
     const { oCoords: coords } = o;
-    const tool = DrawingTools.find((tool) => tool.name === o.type);
-    console.log({ tool });
+    const tool = DrawingTools.find((tool) => tool.name === ((o as any).stbType || o.type));
     if (tool) {
       return tool.generateFuncCall({ o, coords });
     }
@@ -183,14 +186,12 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
 
   const roundNums = ([name, args]): [string, any[]] => [name, args.map(Math.round)];
   const generateFuncCallCode = ([name, args]) => `${name}(${args.join(', ')})`;
-  const reset = () => resetCanvas(canvas);
 
   const apply = () => {
     if (!canvas) {
       return;
     }
     const objects = canvas.getObjects();
-    console.log(objects);
     canvas.clear();
 
     // Start with just the ignored lines
@@ -199,7 +200,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
     // Add in the shapeToolbox calls
     objects.forEach((o) => {
       const funcCall = generateFuncCall(o);
-      console.log(funcCall);
       if (funcCall) {
         const line = generateFuncCallCode(roundNums(funcCall));
         if ((o as any).orderId !== undefined) {
@@ -229,7 +229,9 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
               <button
                 key={tool.name}
                 onClick={() => {
-                  tool.addShape({ canvas });
+                  // tool.addShape({ canvas });
+                  setGestureSequence([]);
+                  setSelectedTool(tool);
                 }}
               >
                 <Icon role="img" aria-label={tool.ariaLabel} focusable="false" />
@@ -251,13 +253,42 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }) {
         <button onClick={wrapEvent(addBezier, { eventName: 'stb-addBezier' })}>
           <Curve role="img" aria-label="bezier()" focusable="false" />
         </button> */}
-        <button className="reset" onClick={wrapEvent(reset, { eventName: 'stb-reset' })}>
+        <button className="reset" onClick={wrapEvent(() => resetCanvas(canvas), { eventName: 'stb-reset' })}>
           reset
         </button>
         <button className="apply" onClick={wrapEvent(apply, { eventName: 'stb-apply' })}>
           save
         </button>
       </div>
+      {Array.isArray(gestureSequence) && selectedTool && (
+        <svg
+          height={canvas?.height}
+          width={canvas?.width}
+          style={{ position: 'absolute' }}
+          onMouseMove={(e) => {
+            setMouseMovePos({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
+          }}
+          onClick={() => {
+            const newGestureSeq = [...gestureSequence, mouseMovePos as Point];
+            if (newGestureSeq.length >= selectedTool.gestureLength) {
+              // trackEvent({ eventName: `stb-add${opType}-end` });
+              setGestureSequence(false);
+              setSelectedTool(false);
+              setMouseMovePos(false);
+              selectedTool.addShape({
+                canvas: canvas as fabric.Canvas,
+                localDefaults: { defaultSize },
+                gestureSeq: newGestureSeq
+              });
+            } else {
+              setGestureSequence(newGestureSeq);
+            }
+          }}
+        >
+          {mouseMovePos &&
+            selectedTool.gesturePreview(gestureSequence, mouseMovePos as Point, { defaultSize })}
+        </svg>
+      )}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 import { fabric } from 'fabric';
 
 import { defaults, DrawingTool } from '../ShapeToolboxOverlay';
@@ -17,9 +18,10 @@ const QuadDrawingTool: DrawingTool = {
   generateFuncCall: () => {
     return ['console.log', ['"not implemented yet']];
   },
-  ariaLabel: 'quad()'
+  ariaLabel: 'quad()',
   //   generateCode: () => ['console.log', ['"not implemented yet"']],
-  //   skip: true,
-  //   gesturePreview: () => <g></g>
+  gestureLength: 2,
+  skip: true,
+  gesturePreview: () => <g></g>
 };
 export default QuadDrawingTool;

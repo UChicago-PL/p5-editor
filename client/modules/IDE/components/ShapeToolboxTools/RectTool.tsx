@@ -1,5 +1,6 @@
+import React from 'react';
 import { fabric } from 'fabric';
-import { DrawingTool, defaultLoc, defaultSize, defaults } from '../ShapeToolboxOverlay';
+import { DrawingTool, defaults } from '../ShapeToolboxOverlay';
 // @ts-ignore
 import Square from '../../../../images/shapeToolbox/square.svg';
 const RectDrawingTool: DrawingTool = {
@@ -24,11 +25,12 @@ const RectDrawingTool: DrawingTool = {
       return ['rect', [coords.tl.x, coords.tl.y, o.width * o.scaleX, o.height * o.scaleY]];
     }
   },
-  addShape: ({ canvas }) => {
+  addShape: ({ canvas, localDefaults: { defaultSize }, gestureSeq }) => {
     canvas.add(
       new fabric.Rect({
         ...defaults,
-        ...defaultLoc(),
+        left: gestureSeq[0].x,
+        top: gestureSeq[0].y,
         ...defaultSize
       })
     );
@@ -46,7 +48,17 @@ const RectDrawingTool: DrawingTool = {
         height
       })
     ];
-  }
+  },
+  gestureLength: 1,
+  gesturePreview: (seq, point, def) => (
+    <rect
+      x={point.x}
+      y={point.y}
+      height={def.defaultSize.height}
+      width={def.defaultSize.width}
+      {...defaults}
+    ></rect>
+  )
 };
 
 export default RectDrawingTool;

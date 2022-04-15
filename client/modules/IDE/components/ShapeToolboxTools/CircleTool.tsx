@@ -1,5 +1,6 @@
+import React from 'react';
 import { fabric } from 'fabric';
-import { DrawingTool, defaultLoc, defaults, defaultSize } from '../ShapeToolboxOverlay';
+import { DrawingTool, defaultLoc, defaults } from '../ShapeToolboxOverlay';
 // @ts-ignore
 import Circle from '../../../../images/shapeToolbox/circle.svg';
 const CircleDrawingTool: DrawingTool = {
@@ -26,10 +27,11 @@ const CircleDrawingTool: DrawingTool = {
       ]
     ];
   },
-  addShape: ({ canvas }) => {
+  addShape: ({ canvas, localDefaults: { defaultSize }, gestureSeq }) => {
     const o = new fabric.Circle({
       ...defaults,
-      ...defaultLoc(),
+      left: gestureSeq[0].x,
+      top: gestureSeq[0].y,
       radius: defaultSize.width / 2
     });
 
@@ -53,7 +55,14 @@ const CircleDrawingTool: DrawingTool = {
     ];
   },
   icon: Circle,
-  ariaLabel: 'circle()/ellipse()'
+  ariaLabel: 'circle()/ellipse()',
+  gestureLength: 2,
+  gesturePreview: (seq, point, def) => {
+    const r = Math.min(def.defaultSize.height, def.defaultSize.width) / 2;
+    const cx = point.x;
+    const cy = point.y;
+    return <circle cx={cx + r} cy={cy + r} r={r} {...defaults}></circle>;
+  }
 };
 
 export default CircleDrawingTool;

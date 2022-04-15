@@ -448,10 +448,10 @@ IDEView.propTypes = {
   closeUploadFileModal: PropTypes.func.isRequired,
   collapseConsole: PropTypes.func.isRequired,
   collapseSidebar: PropTypes.func.isRequired,
-  createFolder: PropTypes.func.isRequired,
+  // createFolder: PropTypes.func.isRequired,
   deleteFile: PropTypes.func.isRequired,
-  editorAccessibility: PropTypes.shape({ lintMessages: PropTypes.objectOf(PropTypes.shape()).isRequired })
-    .isRequired,
+  // editorAccessibility: PropTypes.shape({ lintMessages: PropTypes.objectOf(PropTypes.shape()).isRequired })
+  //   .isRequired,
   expandConsole: PropTypes.func.isRequired,
   expandSidebar: PropTypes.func.isRequired,
   files: PropTypes.arrayOf(
@@ -491,7 +491,7 @@ IDEView.propTypes = {
     shapeToolboxExistingCalls: PropTypes.arrayOf(PropTypes.any).isRequired
   }).isRequired,
   isUserOwner: PropTypes.bool.isRequired,
-  canvasSize: PropTypes.arrayOf(PropTypes.number).isRequired,
+  // canvasSize: PropTypes.arrayOf(PropTypes.number).isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   newFile: PropTypes.func.isRequired,
   newFolder: PropTypes.func.isRequired,

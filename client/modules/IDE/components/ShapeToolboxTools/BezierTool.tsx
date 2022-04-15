@@ -1,10 +1,10 @@
+import React from 'react';
 import { fabric } from 'fabric';
-import { DrawingTool, defaultLoc, defaults, defaultSize } from '../ShapeToolboxOverlay';
+import { DrawingTool, defaults } from '../ShapeToolboxOverlay';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import Curve from '../../../../images/shapeToolbox/curve.svg';
-// import { toAbsolutePoints, createBezier } from '../shapeToolboxCurves';
 
 const BezierDrawingTool: DrawingTool = {
   name: 'bezier',
@@ -13,14 +13,16 @@ const BezierDrawingTool: DrawingTool = {
     const [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] = toAbsolutePoints(o);
     return ['bezier', [x1, y1, x2, y2, x3, y3, x4, y4]];
   },
-  addShape: ({ canvas }) => {
-    const loc = defaultLoc();
+  addShape: ({ canvas, gestureSeq }) => {
+    const [p1, p2] = gestureSeq;
+    const topPoint = p1.y > p2.y ? p1 : p2;
+    const botPoint = p1.y < p2.y ? p1 : p2;
     createBezier(
       [
-        [loc.left, loc.top + defaultSize.height],
-        [loc.left + 10, loc.top],
-        [loc.left + defaultSize.width - 10, loc.top],
-        [loc.left + defaultSize.width, loc.top + defaultSize.height]
+        [botPoint.x, botPoint.y],
+        [botPoint.x, botPoint.y + Math.abs(botPoint.y - topPoint.y) / 2],
+        [topPoint.x, topPoint.y - Math.abs(botPoint.y - topPoint.y) / 2],
+        [topPoint.x, topPoint.y]
       ],
       defaults,
       canvas
@@ -40,7 +42,19 @@ const BezierDrawingTool: DrawingTool = {
     );
   },
   icon: Curve,
-  ariaLabel: 'bezier()'
+  ariaLabel: 'bezier()',
+  gestureLength: 2,
+  gesturePreview: (seq, point) => {
+    if (!seq.length) {
+      return <circle cx={point.x} cy={point.y} r={10} fill="black"></circle>;
+    }
+    return (
+      <g>
+        <line stroke="black" x1={seq[0].x} y1={seq[0].y} x2={point.x} y2={point.y}></line>
+        <circle cx={point.x} cy={point.y} r={10} fill="black"></circle>
+      </g>
+    );
+  }
 };
 
 export default BezierDrawingTool;
@@ -94,7 +108,8 @@ const createBezier = (absolutePoints, defaults, canvas: fabric.Canvas) => {
     fill: 'rgba(0,0,0,0)',
     stroke: color,
     // Custom properties
-    id: window.fabricObjectId
+    id: window.fabricObjectId,
+    stbType: 'bezier'
   });
   window.fabricObjectId++;
   const controls = absolutePoints.map(makeControl);
