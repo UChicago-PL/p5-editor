@@ -400,7 +400,6 @@ class PreviewFrame extends React.Component {
       if (this.props.endSketchRefresh) {
         this.props.endSketchRefresh();
       }
-      trackEvent({ eventName: 'codeRun' });
 
       let shouldRefresh = true;
 
@@ -417,6 +416,8 @@ class PreviewFrame extends React.Component {
         });
         if (doesLinterError) {
           trackEvent({ eventName: 'codeRefreshBlockedByLint' });
+        } else {
+          trackEvent({ eventName: 'autorefresh' });
         }
         shouldRefresh = !doesLinterError;
       }
@@ -427,6 +428,7 @@ class PreviewFrame extends React.Component {
         srcDoc.set(this.iframeElement, localFiles);
 
         this.props.setShowing();
+        trackEvent({ eventName: 'codeRun' });
       } else {
         this.props.setStale();
       }
