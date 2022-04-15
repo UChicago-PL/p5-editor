@@ -526,6 +526,15 @@ class Nav extends React.PureComponent {
     );
   }
 
+  renderUnauthenticatedUserMenu(navDropdownState) {
+    return (
+      <ul className="nav__items-right" title="user-menu">
+        {getConfig('TRANSLATIONS_ENABLED') && this.renderLanguageMenu(navDropdownState)}
+        <SocialAuthButton service={SocialAuthButton.services.github} />
+      </ul>
+    );
+  }
+
   renderAuthenticatedUserMenu(navDropdownState) {
     return (
       <ul className="nav__items-right" title="user-menu">
@@ -577,7 +586,13 @@ class Nav extends React.PureComponent {
     const isLoginEnabled = getConfig('LOGIN_ENABLED');
     const isAuthenticated = this.props.user.authenticated;
 
-    return isLoginEnabled && isAuthenticated ? this.renderAuthenticatedUserMenu(navDropdownState) : null;
+    if (isLoginEnabled && isAuthenticated) {
+      return this.renderAuthenticatedUserMenu(navDropdownState);
+    } else if (isLoginEnabled && !isAuthenticated) {
+      return this.renderUnauthenticatedUserMenu(navDropdownState);
+    }
+
+    return null;
   }
 
   renderLeftLayout(navDropdownState) {
