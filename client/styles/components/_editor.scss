@@ -443,3 +443,32 @@ div.CodeMirror-lint-message.CodeMirror-lint-message-error, div.CodeMirror-lint-m
 .codemirror__editor.hide_autocomplete .cm-tooltip-autocomplete {
   display: none;
 }
+
+.editor__message-box {
+  align-items: center;
+  @include themify() {
+    background: getThemifyVariable('console-background-color');
+    border-color: getThemifyVariable('ide-border-color');
+  }
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  // font-weight: bolder;
+  font-size: 20px;
+  height: 100px;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+
+  .editor__message {
+    display: inline;
+    text-align: center;
+  }
+
+  .editor__message-box__button {
+    @include themify() {
+      color: getThemifyVariable('error-color');
+    }
+    cursor: pointer;
+  }
+}

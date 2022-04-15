@@ -81,6 +81,7 @@ import * as ConsoleActions from '../actions/console';
 
 import CodeMirror from './CodeMirror';
 import { cmStatePlugin } from './CodeMirror/state/cmState';
+import { codeString } from './CodeMirror/state/widgets';
 
 import { p5FunctionKeywords, p5VariableKeywords } from '../../../utils/p5-keywords';
 
@@ -113,6 +114,8 @@ class Editor extends React.Component {
             this.tidyCode();
           } catch (e) {
             console.log('tidy error', e);
+            this.setState({ tidyError: true });
+            setTimeout(() => this.setState({ tidyError: false }), 5000);
           }
           return true;
         },
@@ -146,22 +149,16 @@ class Editor extends React.Component {
     this.cmView = null;
     this.lastWidgetChangeTime = 0;
 
-    // this.updateLintingMessageAccessibility = debounce((annotations) => {
-    //   this.props.clearLintMessage();
-    //   annotations.forEach((x) => {
-    //     if (x.from.line > -1) {
-    //       this.props.updateLintMessage(x.severity, x.from.line + 1, x.message);
-    //     }
-    //   });
-    //   if (this.props.lintMessages.length > 0 && this.props.lintWarning) {
-    //     this.beep.play();
-    //   }
-    // }, 2000);
     this.showFind = this.showFind.bind(this);
     this.findNext = this.findNext.bind(this);
     this.findPrev = this.findPrev.bind(this);
     this.getContent = this.getContent.bind(this);
     this.onChange = this.onChange.bind(this);
+
+    this.state = {
+      proposedChange: false,
+      tidyError: false
+    };
   }
 
   componentDidMount() {
@@ -187,6 +184,9 @@ class Editor extends React.Component {
   }
 
   onChange(newCode) {
+    if (this.state.proposedChange) {
+      return false;
+    }
     this.props.updateFileContent(this.props.file.id, newCode);
     this.lastChange = Date.now();
 
@@ -249,12 +249,43 @@ class Editor extends React.Component {
     this.props.logRun('tidy');
     const mode = this.getFileMode(this.props.file.name);
     const parserMap = { javascript: 'babel', css: 'css', htmlmixed: 'html' };
-    if (new Set(['javascript', 'css', 'htmlmixed']).has(mode)) {
-      const parser = parserMap[mode];
-      const newCode = prettier.format(this.props.file.content, { parser, plugins: prettierPlugins });
-      this.props.updateFileContent(this.props.file.id, newCode);
+
+    const canPretty = new Set(['javascript', 'css', 'htmlmixed']).has(mode);
+    if (!canPretty) {
+      return;
     }
-    this.cmView.focus();
+
+    const parser = parserMap[mode];
+    const oldCode = this.props.file.content;
+    const newCode = prettier.format(oldCode, { parser, plugins: prettierPlugins });
+
+    // don't do anything if the old code hasn't changed anything
+    if (newCode === oldCode) {
+      return;
+    }
+
+    // create proposed change and corresponding update functions
+    this.setState({ proposedChange: newCode });
+    const unsetProposal = () => this.setState({ proposedChange: false });
+    const focus = () => this.cmView.focus();
+    const updateContent = () =>
+      this.state.proposedChange &&
+      this.props.updateFileContent(this.props.file.id, this.state.proposedChange);
+
+    // dumb hack to handle clash with short cut usage
+    setTimeout(
+      () =>
+        window.addEventListener('keydown', function commitChange(e) {
+          e.preventDefault();
+          if (e.key !== 'Escape') {
+            updateContent();
+          }
+          this.window.removeEventListener('keydown', commitChange);
+          unsetProposal();
+          focus();
+        }),
+      150
+    );
   }
 
   render() {
@@ -310,7 +341,7 @@ class Editor extends React.Component {
           )}
           {!isFolder && !isNonTextFile && (
             <CodeMirror
-              code={code}
+              code={this.state.proposedChange ? this.state.proposedChange : code}
               lang={language}
               onChange={this.onChange}
               shapeToolboxCb={this.props.openShapeToolbox}
@@ -388,6 +419,27 @@ class Editor extends React.Component {
                 trackEvent({ eventName: widgetEvent });
               }}
             />
+          )}
+          {this.state.proposedChange && (
+            <div className="editor__message-box">
+              <div className="editor__message">
+                Proposed change. Click{' '}
+                <span
+                  className="editor__message-box__button"
+                  onClick={() => this.setState({ proposedChange: false })}
+                >
+                  here
+                </span>{' '}
+                or press Escape to reject, or press any other key to accept
+              </div>
+            </div>
+          )}
+          {this.state.tidyError && (
+            <div className="editor__message-box">
+              <div className="editor__message">
+                A parsing error prevent code from being tidied. Please fix error and try again.
+              </div>
+            </div>
           )}
         </article>
         <EditorAccessibility lintMessages={this.props.lintMessages} />
