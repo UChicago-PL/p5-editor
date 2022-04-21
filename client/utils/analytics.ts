@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const tracker = window.umami || { trackEvent: () => {} };
+const tracker = window.tanlytics || { trackEvent: () => {} };
 
 const appWidgetState: { [x: string]: boolean } = {
   showBoolWidgets: false,
@@ -65,7 +65,7 @@ export function trackEvent(eventConfig: EventConfig) {
 
 // consolidate track calls to one place for debugging/monitoring
 function track(name, config) {
-  console.log(name, config);
+  // console.log(name, config);
   tracker.trackEvent(name, config);
 }
 
