@@ -65,7 +65,11 @@ export function trackEvent(eventConfig: EventConfig) {
 
 // consolidate track calls to one place for debugging/monitoring
 function track(name, config) {
-  // console.log(name, config);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (window.debugTanlytics) {
+    console.log(name, config);
+  }
   tracker.trackEvent(name, config);
 }
 
