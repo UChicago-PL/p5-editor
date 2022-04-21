@@ -65,7 +65,7 @@ export function trackEvent(eventConfig: EventConfig) {
 
 // consolidate track calls to one place for debugging/monitoring
 function track(name, config) {
-  // console.log(name, config);
+  console.log(name, config);
   tracker.trackEvent(name, config);
 }
 
