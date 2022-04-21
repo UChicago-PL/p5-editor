@@ -5,6 +5,7 @@ import { Form, Field } from 'react-final-form';
 import { useDispatch } from 'react-redux';
 import Button from '../../../common/Button';
 import { submitToGH } from '../../User/actions';
+import { trackEvent } from '../../../utils/analytics';
 
 function errorDisplay(submitState) {
   const content = JSON.stringify(submitState);
@@ -72,11 +73,15 @@ function SubmitForm(props) {
 
   function onSubmit(formProps) {
     const repo = repos.find(({ urlName }) => urlName === formProps.repo);
+    // here
+    trackEvent({ eventName: 'create-submission' });
     return dispatch(submitToGH({ repo, project }))
       .then((result) => {
+        trackEvent({ eventName: 'create-submission-success' });
         setSubmitState(result.data);
       })
       .catch((e) => {
+        trackEvent({ eventName: 'create-submission-error' });
         console.log('submit error', e);
       });
   }
