@@ -222,6 +222,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
                 aria-label={tool.ariaLabel}
                 key={tool.name}
                 onClick={() => {
+                  trackEvent({ eventName: `stb-add${tool.name}-start` });
                   setGestureSequence([]);
                   setSelectedTool(tool);
                 }}
