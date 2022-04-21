@@ -240,7 +240,6 @@ class Nav extends React.PureComponent {
   }
 
   renderProjectMenu(navDropdownState) {
-    // const replaceCommand = metaKey === 'Ctrl' ? `${metaKeyName}+H` : `${metaKeyName}+⌥+F`;
     return (
       <ul className="nav__items-left">
         <li className="nav__item-logo">
@@ -262,13 +261,21 @@ class Nav extends React.PureComponent {
           </button>
           <ul className="nav__dropdown">
             <li className="nav__dropdown-item">
-              <button onClick={this.handleNew} onFocus={this.handleFocusForFile} onBlur={this.handleBlur}>
+              <button
+                onClick={wrapEvent(this.handleNew, { eventName: 'clickNew' })}
+                onFocus={this.handleFocusForFile}
+                onBlur={this.handleBlur}
+              >
                 {this.props.t('Nav.File.New')}
               </button>
             </li>
             {getConfig('LOGIN_ENABLED') && (!this.props.project.owner || this.props.isUserOwner) && (
               <li className="nav__dropdown-item">
-                <button onClick={this.handleSave} onFocus={this.handleFocusForFile} onBlur={this.handleBlur}>
+                <button
+                  onClick={wrapEvent(this.handleSave, { eventName: 'clickSave' })}
+                  onFocus={this.handleFocusForFile}
+                  onBlur={this.handleBlur}
+                >
                   {this.props.t('Common.Save')}
                   <span className="nav__keyboard-shortcut">
                     {metaKeyName}
@@ -348,10 +355,13 @@ class Nav extends React.PureComponent {
           <ul className="nav__dropdown">
             <li className="nav__dropdown-item">
               <button
-                onClick={() => {
-                  this.props.cmController.tidyCode();
-                  this.setDropdown('none');
-                }}
+                onClick={wrapEvent(
+                  () => {
+                    this.props.cmController.tidyCode();
+                    this.setDropdown('none');
+                  },
+                  { eventName: 'clickTidyCode' }
+                )}
                 onFocus={this.handleFocusForEdit}
                 onBlur={this.handleBlur}
               >
@@ -363,7 +373,11 @@ class Nav extends React.PureComponent {
               </button>
             </li>
             <li className="nav__dropdown-item">
-              <button onClick={this.handleFind} onFocus={this.handleFocusForEdit} onBlur={this.handleBlur}>
+              <button
+                onClick={wrapEvent(this.handleFind, { eventName: 'clickFind' })}
+                onFocus={this.handleFocusForEdit}
+                onBlur={this.handleBlur}
+              >
                 {this.props.t('Nav.Edit.Find')}
                 <span className="nav__keyboard-shortcut">
                   {metaKeyName}
@@ -373,7 +387,7 @@ class Nav extends React.PureComponent {
             </li>
             <li className="nav__dropdown-item">
               <button
-                onClick={this.handleFindNext}
+                onClick={wrapEvent(this.handleFindNext, { eventName: 'clickFindNext' })}
                 onFocus={this.handleFocusForEdit}
                 onBlur={this.handleBlur}
               >
@@ -386,7 +400,7 @@ class Nav extends React.PureComponent {
             </li>
             <li className="nav__dropdown-item">
               <button
-                onClick={this.handleFindPrevious}
+                onClick={wrapEvent(this.handleFindPrevious, { eventName: 'clickFindPrev' })}
                 onFocus={this.handleFocusForEdit}
                 onBlur={this.handleBlur}
               >
@@ -449,6 +463,7 @@ class Nav extends React.PureComponent {
                 rel="noopener noreferrer"
                 onFocus={this.handleFocusForHelp}
                 onBlur={this.handleBlur}
+                onClick={wrapEvent(this.setDropdownForNone, { eventName: 'linkToEditorDocs' })}
               >
                 {this.props.t('Nav.Help.EditorReference')}
               </a>

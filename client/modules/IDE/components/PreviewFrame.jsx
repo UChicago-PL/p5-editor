@@ -400,22 +400,26 @@ class PreviewFrame extends React.Component {
       if (this.props.endSketchRefresh) {
         this.props.endSketchRefresh();
       }
-      trackEvent({ eventName: 'codeRun' });
 
       let shouldRefresh = true;
 
       // When autorefresh is enabled, perform a JSHINT check before reloading the sketch
       // So that the sketch isn't reloaded when there's a parsing error or something like that
       if (this.props.isAutoRefresh) {
+        trackEvent({ eventName: 'autorefresh-attempt' });
         const files = this.mergeLocalFilesAndEditorActiveFile();
         const doesLinterError = files.some((file) => {
           if (file.name.match(/.*\.js$/i)) {
             JSHINT(file.content, jshintRules);
-            trackEvent({ eventName: 'codeRefreshBlockedByLint' });
             return JSHINT.errors.some((e) => e.id && e.id.includes('error'));
           }
           return false;
         });
+        if (doesLinterError) {
+          trackEvent({ eventName: 'codeRefreshBlockedByLint' });
+        } else {
+          trackEvent({ eventName: 'autorefresh' });
+        }
         shouldRefresh = !doesLinterError;
       }
 
@@ -425,6 +429,7 @@ class PreviewFrame extends React.Component {
         srcDoc.set(this.iframeElement, localFiles);
 
         this.props.setShowing();
+        trackEvent({ eventName: 'codeRun' });
       } else {
         this.props.setStale();
       }

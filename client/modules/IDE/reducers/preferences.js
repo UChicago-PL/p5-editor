@@ -1,4 +1,5 @@
 import * as ActionTypes from '../../../constants';
+import { setGlobalTrack } from '../../../utils/analytics';
 
 const initialState = {
   autocloseBracketsQuotes: true,
@@ -33,6 +34,7 @@ const preferences = (state = initialState, action) => {
     case ActionTypes.SET_SOUND_OUTPUT:
       return Object.assign({}, state, { soundOutput: action.value });
     case ActionTypes.SET_PREFERENCES:
+      setGlobalTrack('liveMode', action.preferences.autorefresh);
       return { ...initialState, ...action.preferences };
     case ActionTypes.SET_THEME:
       return Object.assign({}, state, { theme: action.value });
