@@ -45,18 +45,6 @@ passport.use(
       scope: ['repo', 'user:email']
     },
     (req, accessToken, refreshToken, profile, done) => {
-      // UserAllowlist.findOne({ github: profile.username }, (userExistsErr, allowListEntry) => {
-      // first, verify that the user is a part of the allowlist
-      // if (!allowListEntry) {
-      //   console.log(`User ${profile.username} is not whitelisted.`);
-      //   done(new Error('User is not whitelisted.'));
-      //   return;
-      // }
-      // if (allowListEntry.banned) {
-      //   console.log(`User ${profile.username} is banned.`);
-      //   done(new Error('User is banned.'));
-      //   return;
-      // }
       User.findOne({ github: profile.username }, (findByGithubErr, existingUser) => {
         if (existingUser) {
           // if after the login, the user exists in the database but with a different email
@@ -131,7 +119,6 @@ passport.use(
           );
         });
       });
-      // });
     }
   )
 );
