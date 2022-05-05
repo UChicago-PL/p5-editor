@@ -436,8 +436,13 @@ export async function submitGHRepo(req, res) {
   );
 
   const edition = await CourseEdition.findOne({ name: allowListItem.edition });
-  if (!edition?.edition) {
-    console.log('error finding edition for', JSON.stringify(allowListItem));
+  if (!edition) {
+    console.log(
+      'error finding edition for',
+      !edition?.edition,
+      JSON.stringify({ edition, allowListItem })
+      // JSON.stringify(allowListItem)
+    );
     res.status(300).json({ success: false, message: 'Incomplete request - no corresponding edition' });
     return;
   }

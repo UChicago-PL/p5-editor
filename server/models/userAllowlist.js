@@ -18,7 +18,7 @@ const userAllowlistSchema = new Schema(
       enum: ['banned', 'unauthed', 'authed']
     }
   },
-  { timestamps: true, _id: true, usePushEach: true }
+  { _id: true, usePushEach: true }
 );
 
 const UserAllowlist = mongoose.model('UserAllowlist', userAllowlistSchema);
