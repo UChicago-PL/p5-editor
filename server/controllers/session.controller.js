@@ -30,7 +30,7 @@ export function getSession(req, res) {
         response.editionAuthState = x.authState || 'unauthed';
         res.json(response);
       })
-      .catch((e) => {
+      .catch(() => {
         res.json({ ...userResponse(req.user), editionAuthState: 'unauthed' });
       });
   } else {

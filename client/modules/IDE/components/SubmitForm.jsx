@@ -13,13 +13,16 @@ function errorDisplay(submitState, classroomInvite) {
     return (
       <div className="flex-down">
         <div>Unable to submit because you have not accepted the assignment!</div>
-        <div>
-          {'Please '}
-          <a href={classroomInvite} target="_blank" rel="noreferrer">
-            Click here
-          </a>
-          {' to accept'}
-        </div>
+        {classroomInvite && (
+          <div>
+            {'Please '}
+            <a href={classroomInvite} target="_blank" rel="noreferrer">
+              Click here
+            </a>
+            {' to accept'}
+          </div>
+        )}
+        {!classroomInvite && <div>See Ed for additional instructions</div>}
       </div>
     );
   }
@@ -145,14 +148,16 @@ function SubmitForm(props) {
                 {notPassedDue && <div>{`This assignment is due at (${new Date(dueDate).toString()}).`}</div>}
               </div>
               <br />
-              <div>
-                If you are having difficulty submitting please ensure that you have accepted the assignment
-                for course by clicking{' '}
-                <a href={classroomInvite} target="_blank" rel="noreferrer">
-                  here
-                </a>
-                .
-              </div>
+              {classroomInvite && (
+                <div>
+                  If you are having difficulty submitting please ensure that you have accepted the assignment
+                  for course by clicking{' '}
+                  <a href={classroomInvite} target="_blank" rel="noreferrer">
+                    here
+                  </a>
+                  .
+                </div>
+              )}
               <br />
               <Button type="submit" disabled={invalid || submitting}>
                 Submit

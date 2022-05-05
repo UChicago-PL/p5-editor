@@ -431,20 +431,17 @@ export async function submitGHRepo(req, res) {
     res.status(300).json({ success: false, message: 'Incomplete request - no allow list' });
     return;
   }
-  // const { edition } = allowListItem;
   const [preppedPr, contents] = await getFileContent(id).then((contents) =>
     prepPR(contents, `${urlName}/`, true).then((preppedPr) => [preppedPr, contents])
   );
 
   const edition = await CourseEdition.findOne({ name: allowListItem.edition });
-  if (!edition) {
-    console.log('error finding edition for', allowListItem);
+  if (!edition?.edition) {
+    console.log('error finding edition for', JSON.stringify(allowListItem));
     res.status(300).json({ success: false, message: 'Incomplete request - no corresponding edition' });
     return;
   }
 
-  // .then(([preppedPr, contents]) => {
-  // const repoName = 'creative-coding-wi22';
   const O = Octokit.plugin(createPullRequest);
   const submissionId = `${Math.floor(Math.random() * 1000000000000000000000)}`;
   new O({ auth: req.user.githubToken })
@@ -482,7 +479,6 @@ export async function submitGHRepo(req, res) {
       console.log('pr creation fail', err);
       res.json({ success: false, err: err.message }).status(300);
     });
-  // });
 }
 
 export function getGHRepos(req, res) {

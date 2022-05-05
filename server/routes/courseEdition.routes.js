@@ -59,30 +59,33 @@ function getEditions(req, res) {
     });
 }
 
+export function getEditionForGithub(github) {
+  return new Promise((resolve, reject) => {
+    UserAllowList.findOne({ github }).then((x) => {
+      if (!x || !x.edition) {
+        reject('Not allowed to view this content');
+        return;
+      }
+      CourseEdition.findOne({ name: x.edition }).then((edition) => {
+        if (!edition) {
+          reject('Invalid edition');
+          return;
+        }
+        resolve(edition);
+      });
+    });
+  });
+}
+
 function getClassroomInvite(req, res) {
   if (!req.user || !req.user.github || !req.user.githubToken) {
     res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
     return;
   }
   const github = req.user.github;
-  UserAllowList.findOne({ github })
-    .then((x) => {
-      if (!x || !x.edition) {
-        res.status(300).json({ success: false, message: 'Not allowed to view this content' });
-        return;
-      }
-      CourseEdition.findOne({ name: x.edition }).then((edition) => {
-        if (!edition) {
-          res.status(300).json({ success: false, message: 'Invalid edition' });
-          return;
-        }
-        console.log('xxx', edition);
-        res.status(200).json({ success: true, content: edition.classroomInvite });
-      });
-    })
-    .catch((e) => {
-      res.status(500).json({ success: false, message: 'Service Error' });
-    });
+  getEditionForGithub(github)
+    .then((x) => res.status(200).json({ success: true, content: x.classroomInvite }))
+    .catch((e) => res.status(300).json({ success: false, message: `${e}` }));
 }
 
 const router = new Router();
