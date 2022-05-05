@@ -4,7 +4,7 @@ import isAuthenticated from '../utils/isAuthenticated';
 import UserAllowList from '../models/userAllowlist';
 import CourseEdition from '../models/courseEdition';
 
-export function editionSignUp(req, res) {
+function editionSignUp(req, res) {
   if (!req.user || !req.user.github || !req.user.githubToken) {
     res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
     return;
@@ -48,7 +48,7 @@ export function editionSignUp(req, res) {
     });
 }
 
-export function getEditions(req, res) {
+function getEditions(req, res) {
   CourseEdition.find({})
     .then((results) => {
       const editions = results.map((x) => x.name);
@@ -59,9 +59,36 @@ export function getEditions(req, res) {
     });
 }
 
+function getClassroomInvite(req, res) {
+  if (!req.user || !req.user.github || !req.user.githubToken) {
+    res.status(404).json({ success: false, message: 'You must be logged in to complete this action.' });
+    return;
+  }
+  const github = req.user.github;
+  UserAllowList.findOne({ github })
+    .then((x) => {
+      if (!x || !x.edition) {
+        res.status(300).json({ success: false, message: 'Not allowed to view this content' });
+        return;
+      }
+      CourseEdition.findOne({ name: x.edition }).then((edition) => {
+        if (!edition) {
+          res.status(300).json({ success: false, message: 'Invalid edition' });
+          return;
+        }
+        console.log('xxx', edition);
+        res.status(200).json({ success: true, content: edition.classroomInvite });
+      });
+    })
+    .catch((e) => {
+      res.status(500).json({ success: false, message: 'Service Error' });
+    });
+}
+
 const router = new Router();
 
 router.post('/edition-signup', isAuthenticated, editionSignUp);
 router.get('/get-editions', isAuthenticated, getEditions);
+router.get('/edition-classroom-invite', isAuthenticated, getClassroomInvite);
 
 export default router;
