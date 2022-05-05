@@ -20,6 +20,7 @@ import collections from './routes/collection.routes';
 import aws from './routes/aws.routes';
 import previewRoutes from './routes/preview.routes';
 import serverRoutes from './routes/server.routes';
+import courseEditionRoutes from './routes/courseEdition.routes';
 import embedRoutes from './routes/embed.routes';
 import assetRoutes from './routes/asset.routes';
 import passportRoutes from './routes/passport.routes';
@@ -109,13 +110,14 @@ app.use(Express.static(dist));
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/editor', requestsOfTypeJSON(), users);
-app.use('/editor', requestsOfTypeJSON(), sessions);
-app.use('/editor', requestsOfTypeJSON(), files);
-app.use('/editor', requestsOfTypeJSON(), projects);
 app.use('/editor', requestsOfTypeJSON(), aws);
 app.use('/editor', requestsOfTypeJSON(), collections);
+app.use('/editor', requestsOfTypeJSON(), courseEditionRoutes);
+app.use('/editor', requestsOfTypeJSON(), files);
+app.use('/editor', requestsOfTypeJSON(), projects);
+app.use('/editor', requestsOfTypeJSON(), sessions);
 app.use('/editor', requestsOfTypeJSON(), submissions);
+app.use('/editor', requestsOfTypeJSON(), users);
 
 // this is supposed to be TEMPORARY -- until i figure out
 // isomorphic rendering
@@ -126,7 +128,6 @@ app.use(assetRoutes);
 app.use('/', embedRoutes);
 app.use('/', passportRoutes);
 app.use('/', previewRoutes);
-
 // configure passport
 require('./config/passport');
 

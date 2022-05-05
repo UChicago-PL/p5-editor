@@ -240,6 +240,20 @@
   z-index: 100000;
 }
 
+#course-enroll {
+  align-items: center;
+  background: rgba(255, 255, 255, 1);
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 100px;
+  position: absolute;
+  top: 50px;
+  width: 100%;
+  z-index: 100000;
+}
+
 #load-from-folder {
   align-items: center;
   display: flex;

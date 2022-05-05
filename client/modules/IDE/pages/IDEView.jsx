@@ -21,6 +21,7 @@ import Nav from '../../../components/Nav';
 import Console from '../components/Console';
 import Toast from '../components/Toast';
 import RequestLogin from '../components/RequestLogin';
+import CourseEnroll from '../components/CourseEnroll';
 import * as FileActions from '../actions/files';
 import * as IDEActions from '../actions/ide';
 import * as ProjectActions from '../actions/project';
@@ -233,12 +234,15 @@ class IDEView extends React.Component {
 
   render() {
     const isStale = this.props.ide.isStale && this.props.ide.isShowing;
+    const isAuthedForEditor = this.props.user.authenticated;
+    const courseEnroll = isAuthedForEditor && this.props.user.editionAuthState;
     return (
       <div className="ide">
         <Helmet>
           <title>{getTitle(this.props)}</title>
         </Helmet>
-        {this.props.user.authenticated ? <div id="fine"></div> : <RequestLogin />}
+        {isAuthedForEditor ? <div id="fine"></div> : <RequestLogin />}
+        {isAuthedForEditor && courseEnroll !== 'authed' ? <CourseEnroll /> : <div id="fine"></div>}
         {this.props.toast.isVisible && <Toast />}
         <Nav warnIfUnsavedChanges={this.handleUnsavedChanges} cmController={this.cmController} />
         <Toolbar key={this.props.project.id} cmController={this.cmController} />
@@ -554,7 +558,8 @@ IDEView.propTypes = {
   user: PropTypes.shape({
     authenticated: PropTypes.bool.isRequired,
     id: PropTypes.string,
-    username: PropTypes.string
+    username: PropTypes.string,
+    editionAuthState: PropTypes.string
   }).isRequired,
   closeShapeToolbox: PropTypes.func.isRequired
 };

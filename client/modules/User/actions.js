@@ -109,6 +109,10 @@ export function getUser() {
       .get('/session')
       .then((response) => {
         dispatch({ type: ActionTypes.AUTH_USER, user: response.data });
+        dispatch({
+          type: ActionTypes.RECEIVE_COURSE_ENROLLMENT_STATE,
+          editionAuthState: response.data?.editionAuthState || 'unauthed'
+        });
         dispatch({ type: ActionTypes.SET_PREFERENCES, preferences: response.data.preferences });
         setLanguage(response.data.preferences.language, { persistPreference: false });
       })
@@ -120,24 +124,29 @@ export function getUser() {
   };
 }
 
-export function validateSession() {
-  return (dispatch, getState) => {
-    apiClient
-      .get('/session')
-      .then((response) => {
-        const state = getState();
-        if (state.user.username !== response.data.username) {
-          dispatch(showErrorModal('staleSession'));
-        }
-      })
-      .catch((error) => {
-        const { response } = error;
-        if (response.status === 404) {
-          dispatch(showErrorModal('staleSession'));
-        }
-      });
-  };
+export function SignUpForEdition(formProps) {
+  return (dispatch) => apiClient.post('/edition-signup', formProps).then(() => dispatch(getUser()));
 }
+
+// apparently unused
+// export function validateSession() {
+//   return (dispatch, getState) => {
+//     apiClient
+//       .get('/session')
+//       .then((response) => {
+//         const state = getState();
+//         if (state.user.username !== response.data.username) {
+//           dispatch(showErrorModal('staleSession'));
+//         }
+//       })
+//       .catch((error) => {
+//         const { response } = error;
+//         if (response.status === 404) {
+//           dispatch(showErrorModal('staleSession'));
+//         }
+//       });
+//   };
+// }
 
 export function logoutUser() {
   return (dispatch) => {

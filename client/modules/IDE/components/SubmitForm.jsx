@@ -1,25 +1,28 @@
 /* eslint-disable jsx-a11y/label-has-for */
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Field } from 'react-final-form';
 import { useDispatch } from 'react-redux';
 import Button from '../../../common/Button';
 import { submitToGH } from '../../User/actions';
 import { trackEvent } from '../../../utils/analytics';
 
-function errorDisplay(submitState) {
+function errorDisplay(submitState, classroomInvite) {
   const content = JSON.stringify(submitState);
   if (submitState.err === 'Not Found') {
     return (
       <div className="flex-down">
         <div>Unable to submit because you have not accepted the assignment!</div>
-        <div>
-          {'Please '}
-          <a href="https://classroom.github.com/a/duQh2yvt" target="_blank" rel="noreferrer">
-            Click here
-          </a>
-          {' to accept'}
-        </div>
+        {classroomInvite && (
+          <div>
+            {'Please '}
+            <a href={classroomInvite} target="_blank" rel="noreferrer">
+              Click here
+            </a>
+            {' to accept'}
+          </div>
+        )}
+        {!classroomInvite && <div>See Ed for additional instructions</div>}
       </div>
     );
   }
@@ -49,6 +52,17 @@ function errorDisplay(submitState) {
 function SubmitForm(props) {
   const { repos, project } = props;
   const [submitState, setSubmitState] = useState(false);
+  const [classroomInvite, setClassroomInvite] = useState(false);
+
+  useEffect(() => {
+    fetch('/editor/edition-classroom-invite')
+      .then((x) => x.json())
+      .then((x) => {
+        if (x.success && x.content) {
+          setClassroomInvite(x.content);
+        }
+      });
+  }, []);
 
   const dispatch = useDispatch();
 
@@ -134,14 +148,16 @@ function SubmitForm(props) {
                 {notPassedDue && <div>{`This assignment is due at (${new Date(dueDate).toString()}).`}</div>}
               </div>
               <br />
-              <div>
-                If you are having difficulty submitting please ensure that you have accepted the assignment
-                for course by clicking{' '}
-                <a href="https://classroom.github.com/a/duQh2yvt" target="_blank" rel="noreferrer">
-                  here
-                </a>
-                .
-              </div>
+              {classroomInvite && (
+                <div>
+                  If you are having difficulty submitting please ensure that you have accepted the assignment
+                  for course by clicking{' '}
+                  <a href={classroomInvite} target="_blank" rel="noreferrer">
+                    here
+                  </a>
+                  .
+                </div>
+              )}
               <br />
               <Button type="submit" disabled={invalid || submitting}>
                 Submit
@@ -161,7 +177,10 @@ function SubmitForm(props) {
                   </a>
                 </div>
               )}
-              {!submitting && submitState && !submitState.success && errorDisplay(submitState)}
+              {!submitting &&
+                submitState &&
+                !submitState.success &&
+                errorDisplay(submitState, classroomInvite)}
             </div>
           </form>
         );

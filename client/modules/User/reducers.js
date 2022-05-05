@@ -28,6 +28,8 @@ const user = (state = { authenticated: false }, action) => {
       return { ...state, ...action.user };
     case ActionTypes.API_KEY_CREATED:
       return { ...state, ...action.user };
+    case ActionTypes.RECEIVE_COURSE_ENROLLMENT_STATE:
+      return { ...state, editionAuthState: action.editionAuthState };
     default:
       return state;
   }
