@@ -11,7 +11,7 @@ import createRedirectWithUsername from './components/createRedirectWithUsername'
 import { getUser } from './modules/User/actions';
 import { stopSketch } from './modules/IDE/actions/ide';
 import { userIsAuthorized, userIsNotAuthenticated } from './utils/auth';
-import { mobileFirst, responsiveForm } from './utils/responsive';
+// import { mobileFirst, responsiveForm } from './utils/responsive';
 import AccountView from './modules/User/pages/AccountView';
 
 import LoadInitialCodeRedirect from './components/LoadInitialCodeRedirect';
@@ -46,10 +46,7 @@ const routes = (store) => (
     >
       <IndexRoute onEnter={checkAuth(store)} component={IDEView} />
 
-      <Route
-        path="/login"
-        component={userIsNotAuthenticated(mobileFirst(responsiveForm(LoginView), LoginView))}
-      />
+      <Route path="/login" component={userIsNotAuthenticated(LoginView)} />
       <Route path="/projects/:project_id" component={IDEView} />
       <Route path="/:username/full/:project_id" component={userIsAuthorized(FullView)} />
 

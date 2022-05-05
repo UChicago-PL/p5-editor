@@ -1,6 +1,7 @@
 import passport from 'passport';
 
 import { userResponse } from './user.controller';
+import UserAllowList from '../models/userAllowlist';
 
 export function createSession(req, res, next) {
   passport.authenticate('local', (err, user) => {
@@ -23,9 +24,18 @@ export function createSession(req, res, next) {
 
 export function getSession(req, res) {
   if (req.user) {
-    return res.json(userResponse(req.user));
+    UserAllowList.findOne({ github: req.user?.username })
+      .then((x) => {
+        const response = userResponse(req.user);
+        response.editionAuthState = x.authState || 'unauthed';
+        res.json(response);
+      })
+      .catch((e) => {
+        res.json({ ...userResponse(req.user), editionAuthState: 'unauthed' });
+      });
+  } else {
+    return res.status(404).send({ message: 'Session does not exist' });
   }
-  return res.status(404).send({ message: 'Session does not exist' });
 }
 
 export function destroySession(req, res) {

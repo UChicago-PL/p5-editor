@@ -13,7 +13,6 @@ function LoginView({ location }) {
   const { t } = useTranslation();
 
   const queryParams = parse(location.search);
-
   return (
     <div className="login">
       <Nav layout="dashboard" />
