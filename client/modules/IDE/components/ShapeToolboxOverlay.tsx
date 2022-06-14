@@ -136,7 +136,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
   }, []);
 
   const processExistingCall = (canvas) => (call) => {
-    console.log('woow', call);
     if (typeof call === 'string') {
       // We are dealing with an ignored line, which has been left in its raw form
       return null;
