@@ -91,10 +91,12 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
 
   const resetCanvas = (canvas_) => {
     canvas_.clear();
+    // this logic handles the setting of ids as well as the ignore lines
     existingCalls.flatMap(processExistingCall(canvas_)).forEach((o: fabric.Object | null, i) => {
       if (o && !(o as any).special) {
         (o as any).orderId = i;
       }
+      // don't try to add a non shape command to the canvas
       if (o) {
         canvas_.add(o);
       }
@@ -185,7 +187,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
 
     // Start with just the ignored lines
     let res = existingCalls.map((call) => (typeof call === 'string' ? call : null)) as unknown as string[];
-    console.log('here i am', res);
 
     // Add in the shapeToolbox calls
     objects.forEach((o) => {
@@ -201,7 +202,6 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
         }
       }
     });
-    console.log('bang abg', JSON.stringify(res));
 
     // Filter out any nulls that may be left over from original calls that have since been deleted
     res = res.filter(Boolean);
