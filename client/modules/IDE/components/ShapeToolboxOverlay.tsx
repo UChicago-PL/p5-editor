@@ -91,18 +91,14 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
 
   const resetCanvas = (canvas_) => {
     canvas_.clear();
-    let i = 0;
-    existingCalls
-      .flatMap(processExistingCall(canvas_))
-      // fail graciously
-      .filter((x) => x)
-      .forEach((o: fabric.Object | null) => {
-        if (o && !(o as any).special) {
-          (o as any).orderId = i;
-          i++;
-        }
+    existingCalls.flatMap(processExistingCall(canvas_)).forEach((o: fabric.Object | null, i) => {
+      if (o && !(o as any).special) {
+        (o as any).orderId = i;
+      }
+      if (o) {
         canvas_.add(o);
-      });
+      }
+    });
   };
 
   useEffect(() => {
@@ -138,9 +134,10 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
   }, []);
 
   const processExistingCall = (canvas) => (call) => {
+    console.log('woow', call);
     if (typeof call === 'string') {
       // We are dealing with an ignored line, which has been left in its raw form
-      return [];
+      return null;
     }
     const [name, args] = call;
     const tool = DrawingTools.find((tool) => tool.name === name);
@@ -188,6 +185,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
 
     // Start with just the ignored lines
     let res = existingCalls.map((call) => (typeof call === 'string' ? call : null)) as unknown as string[];
+    console.log('here i am', res);
 
     // Add in the shapeToolbox calls
     objects.forEach((o) => {
@@ -203,6 +201,7 @@ export default function ShapeToolbox({ closeCb, canvasSize, existingCalls }: Pro
         }
       }
     });
+    console.log('bang abg', JSON.stringify(res));
 
     // Filter out any nulls that may be left over from original calls that have since been deleted
     res = res.filter(Boolean);
