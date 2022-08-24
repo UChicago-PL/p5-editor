@@ -23,7 +23,12 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    modules: ['client', 'node_modules']
+    modules: ['client',  'node_modules'],
+    // https://github.com/facebook/react/issues/13991#issuecomment-435587809
+    alias: {
+      react: path.resolve('./node_modules/react'),
+      '@codemirror/state': path.resolve('./node_modules/@codemirror/state')
+    }
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -98,5 +103,10 @@ module.exports = {
         }
       }
     ]
+  },
+  // https://stackoverflow.com/a/46246272/6643726
+  externals: {
+    fs: 'commonjs fs',
+    path: 'commonjs path'
   }
 };

@@ -23,7 +23,12 @@ module.exports = [
     output: { path: dist, filename: '[name].[hash].js', publicPath: '/' },
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      modules: ['client', 'node_modules']
+      modules: ['client', 'node_modules'],
+      // https://github.com/facebook/react/issues/13991#issuecomment-435587809
+      alias: {
+        react: path.resolve('./node_modules/react'),
+        '@codemirror/state': path.resolve('./node_modules/@codemirror/state')
+      }
     },
     module: {
       rules: [
@@ -130,7 +135,12 @@ module.exports = [
           { from: path.resolve(__dirname, '../translations/locales'), to: path.resolve(dist, 'locales') }
         ]
       })
-    ]
+    ],
+    // https://stackoverflow.com/a/46246272/6643726
+    externals: {
+      fs: 'commonjs fs',
+      path: 'commonjs path'
+    }
   },
   {
     entry: { app: [path.resolve(__dirname, '../client/utils/previewEntry.js')] },

@@ -1,26 +1,22 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-
-import { basicSetup, EditorState } from '@codemirror/basic-setup';
-import { EditorView, KeyBinding, keymap, ViewUpdate } from '@codemirror/view';
+import { EditorView, KeyBinding, keymap } from '@codemirror/view';
 import { Extension } from '@codemirror/state';
 import { indentWithTab } from '@codemirror/commands';
-import classNames from 'classnames';
-import { langPlugin, setLang } from '../state/lang';
-
-import autocomplete from '../state/autocomplete';
+import { setLang } from '../state/lang';
 import { widgetsPlugin } from '../state/widgets';
 import {
   cmStatePlugin,
+  setCurrentLanguage,
+  setCurrentTheme,
   setShowBoolWidgets,
   setShowColorWidgets,
-  setCurrentLanguage,
-  setShowNumWidgets,
-  setCurrentTheme
+  setShowNumWidgets
 } from '../state/cmState';
 import { keywordPlugin, Keywords } from '../state/keywordPlugin';
 import { Dispatch, State } from '../state/state';
-import { ThemeConfig, themePlugin, setTheme } from '../state/theme-plugin';
+import { setTheme, ThemeConfig, themePlugin } from '../state/theme-plugin';
+import { default as TreeHouseEditor } from '../../../../../../../tree-house/src/components/App';
 
 export type ExternalProps = {
   onChange: (code: string) => void;
@@ -42,41 +38,19 @@ type Props = {
 };
 
 export default function Editor({ state, dispatch, externalProps }: Props) {
-  const cmParent = useRef<HTMLDivElement>(null);
-
   const [view, setView] = useState<EditorView | null>(null);
 
-  useEffect(() => {
-    const { shapeToolboxCb, onWidgetChange } = externalProps;
-    const widgetProps = { shapeToolboxCb, onWidgetChange };
-    const localView = new EditorView({
-      state: EditorState.create({
-        extensions: [
-          keymap.of(externalProps.keyBindings),
-          autocomplete(),
-          themePlugin(externalProps.configOptions || {}),
-          basicSetup,
-          langPlugin(externalProps.lang),
-
-          keymap.of([indentWithTab]),
-
-          cmStatePlugin,
-          widgetsPlugin(widgetProps),
-          ...keywordPlugin(externalProps.keywords),
-          EditorView.updateListener.of((v: ViewUpdate) => {
-            if (v.docChanged) {
-              externalProps.onChange(v.state.doc.toString());
-            }
-          }),
-          ...externalProps.extensions
-        ],
-        doc: externalProps.code
-      }),
-      parent: cmParent.current!
-    });
-    setView(localView);
-    externalProps.provideView(localView);
-  }, []);
+  const { shapeToolboxCb, onWidgetChange } = externalProps;
+  const widgetProps = { shapeToolboxCb, onWidgetChange };
+  const extensions = [
+    keymap.of(externalProps.keyBindings),
+    themePlugin(externalProps.configOptions || {}),
+    keymap.of([indentWithTab]),
+    cmStatePlugin,
+    widgetsPlugin(widgetProps),
+    ...keywordPlugin(externalProps.keywords),
+    ...externalProps.extensions
+  ];
 
   // Control the widget configs
   useEffect(() => {
@@ -134,13 +108,26 @@ export default function Editor({ state, dispatch, externalProps }: Props) {
       });
     }
   }, [JSON.stringify(externalProps.configOptions)]);
-  return (
-    <div
-      className={classNames({
-        codemirror__editor: true,
-        hide_autocomplete: externalProps.lang !== 'javascript' || !externalProps?.configOptions?.autocomplete
-      })}
-      ref={cmParent}
-    />
-  );
+
+
+  return <TreeHouseEditor
+    code={externalProps.code}
+    onCodeChange={externalProps.onChange}
+    onViewInit={(view) => {
+      const view_ = view as unknown as EditorView
+      externalProps.provideView(view_);
+      setView(view_);
+    }}
+    extensions={extensions}
+  />;
+  //
+  // return (
+  //   <div
+  //     className={classNames({
+  //       codemirror__editor: true,
+  //       hide_autocomplete: externalProps.lang !== 'javascript' || !externalProps?.configOptions?.autocomplete
+  //     })}
+  //     ref={cmParent}
+  //   />
+  // );
 }
