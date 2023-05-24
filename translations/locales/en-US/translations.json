@@ -27,7 +27,7 @@
     },
     "Help": {
       "Title": "Help",
-      "KeyboardShortcuts": "Keyboard Shortcuts",
+      "KeyboardShortcuts": "Keyboard shortcuts",
       "Reference": "p5 Reference",
       "EditorReference": "Editor Reference",
       "About": "About"
@@ -174,7 +174,7 @@
     "SoundOutputARIA": "sound output on"
   },
   "KeyboardShortcuts": {
-    "Title": " Keyboard Shortcuts",
+    "Title": " Keyboard shortcuts",
     "ShortcutsFollow": "Code editing keyboard shortcuts follow",
     "SublimeText": "Sublime Text shortcuts",
     "CodeEditing": {
