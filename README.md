@@ -1,3 +1,10 @@
+# UChicago CMSC11111 Fork 
+
+This is a fork of the p5.js web editor. The goal of this fork is/was to explore various additional features to the p5 editor useful for UChicago CMSC11111 course and for understanding the role of creative coding more generally. It is now a bit behind the primary p5.js web editor, but it is still a useful resource for understanding the p5.js web editor and how it can be modified. A number of features have been stripped out (to try to reduce build times) while others have been added. For more details about the work done in this fork, see  our paper [here](https://arxiv.org/abs/2301.13302). 
+
+What follows is the normal documentation for the p5.js web editor when we forked it. 
+
+
 # [p5.js Web Editor](https://editor.p5js.org)
 
 
