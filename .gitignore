@@ -3,6 +3,9 @@
 .env.production
 .env.staging
 .vscode/
+.direnv
+.envrc
+shell.nix
 node_modules/
 npm-debug.log
 dump.rdb
