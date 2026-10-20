@@ -1,11 +1,11 @@
-FROM node:12.16.1 as base
+FROM node:12.16.1 AS base
 ENV APP_HOME=/usr/src/app \
   TERM=xterm
 RUN mkdir -p $APP_HOME
 WORKDIR $APP_HOME
 EXPOSE 8000
 
-FROM base as development
+FROM base AS development
 ENV NODE_ENV development
 COPY package.json package-lock.json ./
 RUN npm install
@@ -17,11 +17,11 @@ COPY server ./server
 COPY translations/locales ./translations/locales
 CMD ["npm", "start"]
 
-FROM development as build
+FROM development AS build
 ENV NODE_ENV production
 RUN npm run build
 
-FROM base as production
+FROM base AS production
 ENV NODE_ENV=production
 COPY package.json package-lock.json index.js ./
 RUN npm install --production
