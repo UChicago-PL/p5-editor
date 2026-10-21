@@ -17,5 +17,14 @@ services:
       - '8000:8000'
     depends_on:
       - mongo
+  frontend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: development
+    command: ['npm', 'run', 'start:frontend']
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 volumes:
   dbdata:

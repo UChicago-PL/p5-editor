@@ -15,7 +15,7 @@ COPY ./webpack ./webpack
 COPY client ./client
 COPY server ./server
 COPY translations/locales ./translations/locales
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:server"]
 
 FROM development AS build
 ENV NODE_ENV production

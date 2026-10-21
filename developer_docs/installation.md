@@ -28,7 +28,7 @@ _Note_: The installation steps assume you are using a Unix-like shell. If you ar
 8. (Optional) Update `.env` with necessary keys to enable certain app behaviors, i.e. add Github ID and Github Secret if you want to be able to log in with Github.
 9. Run `$ npm run fetch-examples` to download the example sketches into a user called 'p5'. Note that you need to configure your GitHub Credentials, which you can do by following the [Github API Configuration](#github-api-configuration) section.
 
-10. `$ npm start`
+10. `$ npm run start:server` and, in a separate terminal, `$ npm run start:frontend`
 11. Navigate to [http://localhost:8000](http://localhost:8000) in your browser
 12. Install the [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
 
