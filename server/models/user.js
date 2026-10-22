@@ -52,7 +52,6 @@ const userSchema = new Schema(
     email: { type: String },
     github: { type: String, unique: true },
     githubToken: { type: String },
-    google: { type: String },
     name: { type: String, default: '' },
     password: { type: String },
     preferences: {

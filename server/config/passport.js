@@ -1,7 +1,5 @@
-import lodash from 'lodash';
-
 import passport from 'passport';
-import GitHubStrategy from 'passport-github';
+import GitLabStrategy from 'passport-gitlab2';
 
 import User from '../models/user';
 import UserAllowlist from '../models/userAllowlist';
@@ -19,30 +17,27 @@ passport.deserializeUser((id, done) => {
 /*
   Input:
   [
-    { value: 'email@example.com', primary: false, verified: true },
-    { value: 'unverified@example.com', primary: false, verified: false }
+    { value: 'email@example.com' }
   ]
 
   Output:
     ['email@example.com']
 */
-const getVerifiedEmails = (githubEmails) =>
-  (githubEmails || []).filter((item) => item.verified === true).map((item) => item.value);
-
-const getPrimaryEmail = (githubEmails) => (lodash.find(githubEmails, { primary: true }) || {}).value;
+const getEmails = (gitlabEmails) => (gitlabEmails || []).map((item) => item.value).filter(Boolean);
 
 /**
- * Sign in with GitHub.
+ * Sign in with GitLab.
  */
 passport.use(
-  new GitHubStrategy(
+  new GitLabStrategy(
     {
-      clientID: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-      callbackURL: '/auth/github/callback',
+      clientID: process.env.GITLAB_ID,
+      clientSecret: process.env.GITLAB_SECRET,
+      baseURL: process.env.GITLAB_URL,
+      callbackURL: '/auth/gitlab/callback',
       passReqToCallback: true,
-      // repo is for creating pull requests
-      scope: ['repo', 'user:email']
+      // api is for creating merge requests
+      scope: ['api']
     },
     (req, accessToken, refreshToken, profile, done) => {
       User.findOne({ github: profile.username }, (findByGithubErr, existingUser) => {
@@ -50,14 +45,14 @@ passport.use(
           // if after the login, the user exists in the database but with a different email
           // then they have already logged in with a different github account
           if (req.user && req.user.email !== existingUser.email) {
-            done(new Error('GitHub account is already linked to another account.'));
+            done(new Error('GitLab account is already linked to another account.'));
             return;
           }
           done(null, existingUser);
           return;
         }
-        const emails = getVerifiedEmails(profile.emails);
-        const primaryEmail = getPrimaryEmail(profile.emails);
+        const emails = getEmails(profile.emails);
+        const primaryEmail = emails[0];
         // otherwise, if the user exists in the database but is missing a github assocation,
         // populate the github field
         if (req.user) {

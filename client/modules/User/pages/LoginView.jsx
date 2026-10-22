@@ -23,7 +23,7 @@ function LoginView({ location }) {
         <div className="form-container__content">
           <h2 className="form-container__title">{t('LoginView.Login')}</h2>
           <div className="form-container__stack">
-            <SocialAuthButton service={SocialAuthButton.services.github} />
+            <SocialAuthButton service={SocialAuthButton.services.gitlab} />
           </div>
 
           {queryParams.error && (

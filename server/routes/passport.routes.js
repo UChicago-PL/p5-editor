@@ -3,12 +3,12 @@ import passport from 'passport';
 
 const router = new Router();
 
-router.get('/auth/github', passport.authenticate('github'));
-router.get('/auth/github/callback', (req, res, next) => {
-  passport.authenticate('github', { failureRedirect: '/login' }, (err, user) => {
+router.get('/auth/gitlab', passport.authenticate('gitlab'));
+router.get('/auth/gitlab/callback', (req, res, next) => {
+  passport.authenticate('gitlab', { failureRedirect: '/login' }, (err, user) => {
     if (err) {
       // use query string param to show error;
-      res.redirect('/login?error=github');
+      res.redirect('/login?error=gitlab');
       return;
     }
 

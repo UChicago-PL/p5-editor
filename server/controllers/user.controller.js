@@ -23,8 +23,7 @@ export function userResponse(user) {
     verified: user.verified,
     id: user._id,
     totalSize: user.totalSize,
-    github: user.github,
-    google: user.google
+    github: user.github
   };
 }
 
@@ -284,7 +283,7 @@ export function updateSettings(req, res) {
   });
 }
 
-export function unlinkGithub(req, res) {
+export function unlinkGitlab(req, res) {
   if (req.user) {
     req.user.github = undefined;
     req.user.githubToken = undefined;

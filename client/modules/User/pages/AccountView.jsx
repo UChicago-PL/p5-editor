@@ -17,7 +17,7 @@ function SocialLoginPanel(props) {
     <>
       <p className="account__social-text">{t('AccountView.SocialLoginDescription')}</p>
       <div className="account__social-stack">
-        <SocialAuthButton service={SocialAuthButton.services.github} linkStyle isConnected={!!user.github} />
+        <SocialAuthButton service={SocialAuthButton.services.gitlab} linkStyle isConnected={!!user.github} />
       </div>
     </>
   );

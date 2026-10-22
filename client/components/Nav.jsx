@@ -530,7 +530,7 @@ class Nav extends React.PureComponent {
     return (
       <ul className="nav__items-right" title="user-menu">
         {getConfig('TRANSLATIONS_ENABLED') && this.renderLanguageMenu(navDropdownState)}
-        <SocialAuthButton service={SocialAuthButton.services.github} />
+        <SocialAuthButton service={SocialAuthButton.services.gitlab} />
       </ul>
     );
   }

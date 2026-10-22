@@ -13,12 +13,16 @@
     "API_URL": {
       "value": "/editor"
     },
-    "GITHUB_ID": {
-      "description": "The GitHub Client Id for sign in with GitHub support",
+    "GITLAB_URL": {
+      "description": "The GitLab instance URL",
       "value": "placeholder"
     },
-    "GITHUB_SECRET": {
-      "description": "The GitHub Client Secret",
+    "GITLAB_ID": {
+      "description": "The GitLab Client Id for sign in with GitLab support",
+      "value": "placeholder"
+    },
+    "GITLAB_SECRET": {
+      "description": "The GitLab Client Secret",
       "value": "placeholder"
     },
     "NODE_ENV": {

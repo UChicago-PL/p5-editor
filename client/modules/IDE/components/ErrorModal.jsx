@@ -20,8 +20,7 @@ class ErrorModal extends React.Component {
   oauthError() {
     const { t, service } = this.props;
     const serviceLabels = {
-      github: 'GitHub',
-      google: 'Google'
+      gitlab: 'GitLab'
     };
     return <p>{t('ErrorModal.LinkMessage', { serviceauth: serviceLabels[service] })}</p>;
   }

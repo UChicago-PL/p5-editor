@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { prop } from '../theme';
 import SortArrowUp from '../images/sort-arrow-up.svg';
 import SortArrowDown from '../images/sort-arrow-down.svg';
-import Github from '../images/github.svg';
-import Google from '../images/google.svg';
+import Gitlab from '../images/gitlab.svg';
 import Plus from '../images/plus-icon.svg';
 import Close from '../images/close.svg';
 import Exit from '../images/exit.svg';
@@ -71,8 +70,7 @@ function withLabel(SvgComponent) {
 
 export const SortArrowUpIcon = withLabel(SortArrowUp);
 export const SortArrowDownIcon = withLabel(SortArrowDown);
-export const GithubIcon = withLabel(Github);
-export const GoogleIcon = withLabel(Google);
+export const GitlabIcon = withLabel(Gitlab);
 export const PlusIcon = withLabel(Plus);
 export const CloseIcon = withLabel(Close);
 export const ExitIcon = withLabel(Exit);

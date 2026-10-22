@@ -24,8 +24,9 @@ services:
       - AWS_SECRET_KEY
       - S3_BUCKET
       - AWS_REGION
-      - GITHUB_ID
-      - GITHUB_SECRET
+      - GITLAB_URL
+      - GITLAB_ID
+      - GITLAB_SECRET
       - MAILGUN_DOMAIN
       - MAILGUN_KEY
       - EMAIL_SENDER

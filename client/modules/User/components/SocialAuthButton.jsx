@@ -5,28 +5,24 @@ import { withTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { remSize } from '../../../theme';
-import { GithubIcon, GoogleIcon } from '../../../common/icons';
+import { GitlabIcon } from '../../../common/icons';
 import Button from '../../../common/Button';
 import { unlinkService } from '../actions';
 
 const authUrls = {
-  github: '/auth/github',
-  google: '/auth/google'
+  gitlab: '/auth/gitlab'
 };
 
 const icons = {
-  github: GithubIcon,
-  google: GoogleIcon
+  gitlab: GitlabIcon
 };
 
 const services = {
-  github: 'github',
-  google: 'google'
+  gitlab: 'gitlab'
 };
 
 const servicesLabels = {
-  github: 'GitHub',
-  google: 'Google'
+  gitlab: 'GitLab'
 };
 
 const StyledButton = styled(Button)`
@@ -82,7 +78,7 @@ function SocialAuthButton({ service, linkStyle, isConnected, t }) {
 SocialAuthButton.services = services;
 
 SocialAuthButton.propTypes = {
-  service: PropTypes.oneOf(['github', 'google']).isRequired,
+  service: PropTypes.oneOf(['gitlab']).isRequired,
   linkStyle: PropTypes.bool,
   isConnected: PropTypes.bool,
   t: PropTypes.func.isRequired
