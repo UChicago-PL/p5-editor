@@ -1,4 +1,4 @@
-FROM node:16.14 AS base
+FROM node:16.20.2 AS base
 ENV APP_HOME=/usr/src/app \
   TERM=xterm
 RUN mkdir -p $APP_HOME
@@ -8,7 +8,7 @@ EXPOSE 8000
 FROM base AS development
 ENV NODE_ENV development
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 RUN npm rebuild node-sass
 COPY .babelrc index.js nodemon.json ./
 COPY ./webpack ./webpack
@@ -24,7 +24,7 @@ RUN npm run build
 FROM base AS production
 ENV NODE_ENV=production
 COPY package.json package-lock.json index.js ./
-RUN npm install --production
+RUN npm install --production --legacy-peer-deps
 RUN npm rebuild node-sass
 COPY --from=build $APP_HOME/dist ./dist
 CMD ["npm", "run", "start:prod"]
