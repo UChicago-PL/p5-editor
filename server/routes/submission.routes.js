@@ -39,6 +39,7 @@ router.get('/get-all-submissions', (req, res) => {
           projectName: sub.projectName,
           assignment: sub.assignment,
           prNumber: sub.prNumber,
+          prURL: sub.prURL,
           assign: sub.assign,
           createdAt: sub.createdAt
         }))

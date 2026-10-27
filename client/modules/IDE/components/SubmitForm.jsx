@@ -166,14 +166,8 @@ function SubmitForm(props) {
               {!submitting && submitState && submitState.success && (
                 <div>
                   Success!{' '}
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href={submitState.prURL
-                      .replace('https://api.github.com/repos/', 'https://github.com/')
-                      .replace('/pulls/', '/pull/')}
-                  >
-                    click here to view pull request
+                  <a target="_blank" rel="noreferrer" href={submitState.prURL}>
+                    click here to view merge request
                   </a>
                 </div>
               )}

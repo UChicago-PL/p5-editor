@@ -29,13 +29,8 @@ function SubmissionGroup(props) {
         {`${new Date(submittedAssignment.createdAt)}`}
       </h5>
       <div className="submission-details">
-        <a
-          target="_blank"
-          rel="noreferrer"
-          // eslint-disable-next-line max-len
-          href={`https://github.com/UChicago-PL/cs-11111-${submissions[0].username}/${submittedAssignment.prNumber}/pulls`}
-        >
-          Link to Pull Request
+        <a target="_blank" rel="noreferrer" href={submittedAssignment.prURL}>
+          Link to Merge Request
         </a>
         <span>{', '}</span>
         <a

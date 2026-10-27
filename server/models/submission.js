@@ -13,6 +13,7 @@ const submissionSchema = new Schema(
     projectName: { type: String, ref: 'Project' },
     assignment: { type: Schema.Types.ObjectId, ref: 'Assignment' },
     prNumber: { type: Number },
+    prURL: { type: String },
     ignore: { type: Boolean, default: false }
   },
   { timestamps: true, _id: true, usePushEach: true }
