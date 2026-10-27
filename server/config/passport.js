@@ -48,7 +48,8 @@ passport.use(
             done(new Error('GitLab account is already linked to another account.'));
             return;
           }
-          done(null, existingUser);
+          existingUser.githubToken = accessToken;
+          existingUser.save(() => done(null, existingUser));
           return;
         }
         const emails = getEmails(profile.emails);
